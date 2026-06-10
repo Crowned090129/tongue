@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Content Library — Tonge Admin</title>
+  <link rel="stylesheet" href="/brand.css"/>
+  <style>
+    body { background: var(--bg); }
+
+    .admin-wrap { max-width: 960px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    .admin-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+    .admin-header img { height: 34px; }
+    .admin-header h1 { font-size: 20px; font-weight: 900; color: var(--text); margin: 0; }
+    .admin-badge { background: var(--blue); color: #fff; border-radius: 20px; font-size: 10px; font-weight: 700; padding: 3px 10px; letter-spacing: .5px; }
+    #summary-text { font-size: 12px; color: var(--text-dim); margin-left: auto; font-weight: 600; }
+
+    /* ── Auth gate ─────────────────────────────────────────────────────────── */
+    #auth-gate { max-width: 380px; margin: 80px auto; }
+    #auth-gate h2 { font-size: 18px; font-weight: 900; color: var(--text); margin-bottom: 18px; text-align: center; }
+    #auth-err { display: none; }
+
+    /* ── Legend + bulk bar ────────────────────────────────────────────────── */
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 22px; }
+    .legend { display: flex; gap: 14px; align-items: center; margin-left: auto; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-dim); font-weight: 600; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green  { background: #22c55e; }
+    .dot-red    { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+
+    /* ── Table ────────────────────────────────────────────────────────────── */
+    .grid-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 9px 13px; text-align: left; font-weight: 700; color: var(--text-dim);
+      font-size: 10px; text-transform: uppercase; letter-spacing: .6px;
+      border-bottom: 2px solid var(--border); white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .12s; }
+    tbody tr:hover { background: rgba(37,99,235,.04); }
+    td { padding: 10px 13px; vertical-align: top; }
+    td.td-flag { font-size: 22px; width: 36px; text-align: center; padding-right: 0; }
+    td.td-name { font-weight: 800; color: var(--text); white-space: nowrap; }
+
+    /* ── Status cell ──────────────────────────────────────────────────────── */
+    .status-cell { display: flex; flex-direction: column; gap: 4px; min-width: 88px; }
+    .s-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 700;
+    }
+    .s-badge.ok      { background: #22c55e18; color: #15803d; border: 1px solid #22c55e35; }
+    .s-badge.missing { background: #ef444418; color: #b91c1c; border: 1px solid #ef444435; }
+    .s-badge.busy    { background: #f59e0b18; color: #92400e; border: 1px solid #f59e0b35; }
+    .s-date { font-size: 9px; color: var(--text-dim); padding-left: 2px; }
+    .s-actions { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
+
+    /* ── Buttons ──────────────────────────────────────────────────────────── */
+    .btn-regen {
+      font-size: 10px; font-weight: 700; padding: 2px 9px;
+      border-radius: 6px; border: 1.5px solid var(--blue);
+      color: var(--blue); background: transparent; cursor: pointer;
+      transition: background .12s, color .12s;
+    }
+    .btn-regen:hover:not(:disabled) { background: var(--blue); color: #fff; }
+    .btn-regen:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-preview {
+      font-size: 10px; font-weight: 700; padding: 2px 9px;
+      border-radius: 6px; border: 1.5px solid var(--border);
+      color: var(--text-dim); background: transparent; cursor: pointer;
+    }
+    .btn-preview:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── Totals row ───────────────────────────────────────────────────────── */
+    tfoot td { font-weight: 700; font-size: 12px; border-top: 2px solid var(--border); padding: 9px 13px; }
+
+    /* ── Preview modal ────────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      z-index: 999; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border-radius: 16px; width: 100%; max-width: 700px;
+      max-height: 87vh; display: flex; flex-direction: column; box-shadow: var(--shadow-lg);
+    }
+    .modal-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .modal-head h3 { font-size: 15px; font-weight: 900; color: var(--text); margin: 0; }
+    .modal-close { font-size: 22px; cursor: pointer; color: var(--text-dim); border: none; background: none; line-height: 1; padding: 0; }
+    .modal-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+    pre { font-size: 11px; line-height: 1.55; background: var(--bg); border: 1px solid var(--border); border-radius: 9px; padding: 14px; overflow-x: auto; white-space: pre-wrap; color: var(--text); }
+
+    /* ── Spinner ──────────────────────────────────────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; width: 10px; height: 10px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .55s linear infinite; vertical-align: middle; }
+
+    /* ── Toast ────────────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #0f172a; color: #fff; padding: 9px 20px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; z-index: 9999;
+      opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<nav class="t-nav">
+  <div class="t-nav-inner">
+    <a href="/" class="t-nav-logo"><img src="/logo.svg" alt="Tonge"/></a>
+    <div class="t-nav-links">
+      <a href="/admin" class="t-nav-link">Full Dashboard</a>
+      <a href="/" class="t-nav-link">← App</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Auth Gate ──────────────────────────────────────────────────────────── -->
+<div id="auth-gate" style="display:none">
+  <div id="auth-gate" class="t-card" style="max-width:380px;margin:80px auto">
+    <h2 style="font-size:18px;font-weight:900;color:var(--text);margin-bottom:18px;text-align:center">Admin Login</h2>
+    <div class="t-alert t-alert-err" id="auth-err" style="display:none">Wrong password.</div>
+    <div class="t-form-group">
+      <label class="t-label">Admin Password</label>
+      <input id="pwd-input" type="password" class="t-input" placeholder="Enter admin password" autocomplete="current-password"/>
+    </div>
+    <button class="t-btn t-btn-primary" style="width:100%;margin-top:10px" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ── Main Panel ─────────────────────────────────────────────────────────── -->
+<div id="main-panel" class="admin-wrap" style="display:none">
+
+  <div class="admin-header">
+    <img src="/logo.svg" alt="Tonge"/>
+    <h1>Content Library</h1>
+    <span class="admin-badge">ADMIN</span>
+    <span id="summary-text"></span>
+  </div>
+
+  <div class="toolbar">
+    <button class="t-btn t-btn-ghost" style="font-size:12px;padding:7px 14px" onclick="generateMissing()">
+      Generate all missing
+    </button>
+    <button class="t-btn t-btn-ghost" style="font-size:12px;padding:7px 14px" onclick="loadStatus()">
+      ↺ Refresh
+    </button>
+    <div class="legend">
+      <div class="legend-item"><span class="dot dot-green"></span> Cached</div>
+      <div class="legend-item"><span class="dot dot-red"></span> Missing</div>
+      <div class="legend-item"><span class="dot dot-yellow"></span> Generating</div>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <table>
+      <thead id="table-head"></thead>
+      <tbody id="table-body">
+        <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-dim)">Loading…</td></tr>
+      </tbody>
+      <tfoot id="table-foot"></tfoot>
+    </table>
+  </div>
+
+  <p style="font-size:11px;color:var(--text-dim);margin-top:16px">
+    Content is generated once per language/tab, validated for correctness (native script check, schema check, minimum counts),
+    then cached in the database and served to all users instantly. Generation uses claude-opus-4-5 with up to 3 retries.
+    After clicking Regenerate, the item will update in ~30–60 seconds — use Refresh to check.
+  </p>
+</div>
+
+<!-- ── Preview Modal ──────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="preview-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Preview</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body"><pre id="modal-pre"></pre></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── Constants ──────────────────────────────────────────────────────────────
+const TABS = ["grammar","cheatsheet","structures","vocab","dialogues"];
+const LANGS = ["es","pt","it","de","ja","zh","ko","ru","ar","hi"];
+const LANG_INFO = {
+  es:{name:"Spanish",    flag:"🇪🇸"},
+  pt:{name:"Portuguese", flag:"🇧🇷"},
+  it:{name:"Italian",    flag:"🇮🇹"},
+  de:{name:"German",     flag:"🇩🇪"},
+  ja:{name:"Japanese",   flag:"🇯🇵"},
+  zh:{name:"Chinese",    flag:"🇨🇳"},
+  ko:{name:"Korean",     flag:"🇰🇷"},
+  ru:{name:"Russian",    flag:"🇷🇺"},
+  ar:{name:"Arabic",     flag:"🇸🇦"},
+  hi:{name:"Hindi",      flag:"🇮🇳"},
+};
+
+// ── Auth ───────────────────────────────────────────────────────────────────
+let TOKEN = "";
+
+function authHeaders() {
+  return { "Content-Type":"application/json", "x-admin-token": TOKEN };
+}
+
+function doLogin() {
+  const pwd = document.getElementById("pwd-input").value.trim();
+  fetch("/admin/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password: pwd }),
+  })
+    .then(r => r.json())
+    .then(d => {
+      if (d.token) {
+        TOKEN = d.token;
+        localStorage.setItem("admin_token", TOKEN);
+        showPanel();
+      } else {
+        const el = document.getElementById("auth-err");
+        el.style.display = "block";
+        el.textContent = d.error || "Incorrect password.";
+      }
+    })
+    .catch(() => toast("Login request failed."));
+}
+
+document.getElementById("pwd-input")?.addEventListener("keydown", e => {
+  if (e.key === "Enter") doLogin();
+});
+
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem("admin_token");
+  if (saved) {
+    TOKEN = saved;
+    // Quick validation
+    fetch("/api/content/status", { headers: { "x-admin-token": TOKEN } })
+      .then(r => r.ok ? showPanel() : showGate())
+      .catch(() => showGate());
+  } else {
+    showGate();
+  }
+});
+
+function showGate() {
+  document.getElementById("auth-gate").style.display  = "block";
+  document.getElementById("main-panel").style.display = "none";
+}
+function showPanel() {
+  document.getElementById("auth-gate").style.display  = "none";
+  document.getElementById("main-panel").style.display = "block";
+  loadStatus();
+}
+
+// ── Status ─────────────────────────────────────────────────────────────────
+let CACHED = {}; // { lang: { tab: generated_at | null } }
+let BUSY   = {}; // keys like "es.grammar" that are currently regenerating
+
+function loadStatus() {
+  fetch("/api/content/status", { headers: authHeaders() })
+    .then(r => { if (r.status === 401) { showGate(); return null; } return r.json(); })
+    .then(data => {
+      if (!data) return;
+      CACHED = data.cached || {};
+      renderGrid(data);
+    })
+    .catch(e => toast("Refresh failed: " + e.message));
+}
+
+function renderGrid(data) {
+  // Head
+  document.getElementById("table-head").innerHTML =
+    `<tr>
+      <th></th><th>Language</th>
+      ${TABS.map(t => `<th>${t.charAt(0).toUpperCase()+t.slice(1)}</th>`).join("")}
+    </tr>`;
+
+  // Body
+  const tbody = document.getElementById("table-body");
+  tbody.innerHTML = "";
+
+  let totalCached = 0;
+  const tabCounts = Object.fromEntries(TABS.map(t => [t, 0]));
+
+  LANGS.forEach(lang => {
+    const info = LANG_INFO[lang];
+    const tr = document.createElement("tr");
+
+    // Flag
+    const tdF = document.createElement("td");
+    tdF.className = "td-flag";
+    tdF.textContent = info.flag;
+    tr.appendChild(tdF);
+
+    // Name
+    const tdN = document.createElement("td");
+    tdN.className = "td-name";
+    tdN.textContent = info.name;
+    tr.appendChild(tdN);
+
+    TABS.forEach(tab => {
+      const genAt = CACHED[lang]?.[tab] || null;
+      if (genAt) { totalCached++; tabCounts[tab]++; }
+      const key = lang + "." + tab;
+      const isBusy = !!BUSY[key];
+
+      const td = document.createElement("td");
+      td.id = "cell-" + key;
+
+      const cell = document.createElement("div");
+      cell.className = "status-cell";
+
+      // Badge
+      const badge = document.createElement("span");
+      if (isBusy) {
+        badge.className = "s-badge busy";
+        badge.innerHTML = `<span class="spin"></span> Generating…`;
+      } else if (genAt) {
+        badge.className = "s-badge ok";
+        badge.textContent = "✓ Cached";
+      } else {
+        badge.className = "s-badge missing";
+        badge.textContent = "✗ Missing";
+      }
+      cell.appendChild(badge);
+
+      // Date
+      if (genAt && !isBusy) {
+        const dateEl = document.createElement("div");
+        dateEl.className = "s-date";
+        dateEl.textContent = new Date(genAt).toLocaleDateString();
+        cell.appendChild(dateEl);
+      }
+
+      // Actions
+      if (!isBusy) {
+        const actions = document.createElement("div");
+        actions.className = "s-actions";
+
+        const btnR = document.createElement("button");
+        btnR.className = "btn-regen";
+        btnR.textContent = genAt ? "↺ Regen" : "Generate";
+        btnR.onclick = () => regenOne(lang, tab);
+        actions.appendChild(btnR);
+
+        if (genAt) {
+          const btnP = document.createElement("button");
+          btnP.className = "btn-preview";
+          btnP.textContent = "Preview";
+          btnP.onclick = () => previewItem(lang, tab, info.name, tab);
+          actions.appendChild(btnP);
+        }
+        cell.appendChild(actions);
+      }
+
+      td.appendChild(cell);
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  // Foot totals
+  const total = LANGS.length * TABS.length;
+  document.getElementById("table-foot").innerHTML =
+    `<tr>
+      <td></td>
+      <td style="color:var(--text-dim);font-size:10px;text-transform:uppercase;letter-spacing:.5px">TOTAL</td>
+      ${TABS.map(t =>
+        `<td><span style="color:${tabCounts[t]===LANGS.length?"#15803d":"#b91c1c"}">${tabCounts[t]}/${LANGS.length}</span></td>`
+      ).join("")}
+    </tr>`;
+
+  // Summary
+  document.getElementById("summary-text").textContent =
+    `${totalCached}/${total} cached (${Math.round(totalCached/total*100)}%)`;
+}
+
+// ── Regenerate one ─────────────────────────────────────────────────────────
+function regenOne(lang, tab) {
+  const key = lang + "." + tab;
+  BUSY[key] = true;
+  // Re-render just this cell as busy
+  renderGrid({ cached: CACHED });
+
+  fetch(`/api/content/regenerate/${lang}/${tab}`, {
+    method: "POST",
+    headers: authHeaders(),
+  })
+    .then(r => { if (r.status === 401) { showGate(); return null; } return r.json(); })
+    .then(d => {
+      if (!d) return;
+      toast(`Generating ${LANG_INFO[lang].name} ${tab}… (~30–60 sec)`);
+      // Poll after 35s
+      setTimeout(() => pollUntilDone(lang, tab, key, 0), 35000);
+    })
+    .catch(e => {
+      delete BUSY[key];
+      toast("Error: " + e.message);
+      renderGrid({ cached: CACHED });
+    });
+}
+
+function pollUntilDone(lang, tab, key, attempt) {
+  fetch("/api/content/status", { headers: authHeaders() })
+    .then(r => r.json())
+    .then(data => {
+      const newAt = data.cached?.[lang]?.[tab];
+      const oldAt = CACHED[lang]?.[tab];
+      if (newAt && newAt !== oldAt) {
+        // Done!
+        delete BUSY[key];
+        if (!CACHED[lang]) CACHED[lang] = {};
+        CACHED[lang][tab] = newAt;
+        renderGrid({ cached: CACHED });
+        toast(`✓ ${LANG_INFO[lang].name} ${tab} ready!`);
+      } else if (attempt < 6) {
+        // Not done yet — retry in 20s (up to 6 more times = 2 min total)
+        setTimeout(() => pollUntilDone(lang, tab, key, attempt + 1), 20000);
+      } else {
+        delete BUSY[key];
+        renderGrid({ cached: CACHED });
+        toast(`${LANG_INFO[lang].name} ${tab}: check again manually (may still be generating).`);
+      }
+    })
+    .catch(() => {
+      if (attempt < 3) setTimeout(() => pollUntilDone(lang, tab, key, attempt + 1), 20000);
+    });
+}
+
+// ── Generate all missing ───────────────────────────────────────────────────
+async function generateMissing() {
+  const missing = [];
+  LANGS.forEach(lang => TABS.forEach(tab => {
+    if (!CACHED[lang]?.[tab] && !BUSY[lang+"."+tab]) missing.push({ lang, tab });
+  }));
+  if (missing.length === 0) { toast("All content is already cached!"); return; }
+  toast(`Queuing ${missing.length} missing items… (may take several minutes)`);
+  for (const { lang, tab } of missing) {
+    regenOne(lang, tab);
+    await new Promise(r => setTimeout(r, 800)); // stagger 0.8s between requests
+  }
+}
+
+// ── Preview ────────────────────────────────────────────────────────────────
+function previewItem(lang, tab, langName, tabName) {
+  fetch(`/api/content/${lang}/${tab}`, { headers: authHeaders() })
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("modal-title").textContent =
+        `${langName} — ${tabName.charAt(0).toUpperCase()+tabName.slice(1)}`;
+      document.getElementById("modal-pre").textContent =
+        JSON.stringify(data.content, null, 2);
+      document.getElementById("preview-modal").classList.add("open");
+    })
+    .catch(e => toast("Preview failed: " + e.message));
+}
+
+function closeModal() {
+  document.getElementById("preview-modal").classList.remove("open");
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+let _toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove("show"), 4000);
+}
+</script>
+</body>
+</html>

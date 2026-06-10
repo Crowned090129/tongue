@@ -1,0 +1,41 @@
+{
+  "appId": "app.tonge.language",
+  "appName": "Tonge",
+  "webDir": "public",
+  "server": {
+    "url": "https://tonge-app.fly.dev",
+    "cleartext": false
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#2563eb",
+      "showSpinner": false,
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP"
+    },
+    "StatusBar": {
+      "style": "DEFAULT",
+      "backgroundColor": "#2563eb"
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
+    }
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": false,
+    "limitsNavigationsToAppBoundDomains": true,
+    "appendUserAgent": "TongeApp/iOS"
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false,
+    "appendUserAgent": "TongeApp/Android"
+  }
+}

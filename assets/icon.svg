@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Background with gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1024" y2="1024" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="230" fill="url(#bg)"/>
+
+  <!-- Globe circle -->
+  <circle cx="512" cy="460" r="260" stroke="white" stroke-width="52" fill="none"/>
+  <!-- Vertical meridian — T stem -->
+  <line x1="512" y1="200" x2="512" y2="720" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <!-- Horizontal crossbar — T crossbar / equator -->
+  <line x1="252" y1="380" x2="772" y2="380" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <!-- Lower latitude arc -->
+  <path d="M 300 570 Q 512 640 724 570" stroke="white" stroke-width="36" stroke-linecap="round" fill="none" opacity="0.55"/>
+
+  <!-- TONGE wordmark at bottom -->
+  <text x="512" y="870" text-anchor="middle"
+        font-family="system-ui,-apple-system,Arial,sans-serif"
+        font-size="148" font-weight="800" fill="white" letter-spacing="10">TONGE</text>
+</svg>

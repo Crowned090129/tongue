@@ -1,0 +1,35 @@
+# fly.toml — Fly.io deployment config for Tonge
+# Deploy with: fly deploy
+# Docs: https://fly.io/docs/reference/configuration/
+
+app            = "tonge-app"
+primary_region = "iad"   # US East (Ashburn) — closest to most English-speaking users
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT     = "3000"
+
+[http_service]
+  internal_port        = 3000
+  force_https          = true
+  auto_stop_machines   = "stop"
+  auto_start_machines  = true
+  min_machines_running = 1         # always 1 warm machine → zero cold starts for users
+
+  [http_service.concurrency]
+    type       = "connections"
+    hard_limit = 500
+    soft_limit = 300
+
+[[vm]]
+  memory   = "512mb"
+  cpu_kind = "shared"
+  cpus     = 1
+  # Scale up by adding more [[vm]] blocks or via: fly scale count 3
+
+# Uncomment to add a second region (e.g. for Europe):
+# [[regions]]
+#   code = "lhr"   # London

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Page Not Found — Tonge</title>
+  <link rel="stylesheet" href="/brand.css"/>
+  <style>
+    .page-center {
+      min-height: calc(100vh - 56px - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .error-card {
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .error-num {
+      font-size: 96px;
+      font-weight: 900;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: -4px;
+    }
+    .error-card h1 { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 10px; }
+    .error-card p  { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 28px; }
+    .error-card .logo-wrap { margin-bottom: 24px; }
+    .error-card .logo-wrap img { height: 36px; }
+
+    .btn-stack { display: flex; flex-direction: column; gap: 10px; }
+  </style>
+</head>
+<body>
+
+<nav class="t-nav">
+  <div class="t-nav-inner">
+    <a href="/" class="t-nav-logo">
+      <img src="/logo.svg" alt="Tonge"/>
+    </a>
+    <div class="t-nav-links">
+      <a href="/faq" class="t-nav-link">Help</a>
+      <a href="/subscribe" class="t-nav-cta">Subscribe</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-center">
+  <div class="error-card t-card">
+    <div class="logo-wrap">
+      <img src="/logo.svg" alt="Tonge"/>
+    </div>
+    <div class="error-num">404</div>
+    <h1>Page not found</h1>
+    <p>This page doesn't exist or may have moved.<br>Head back to the app or check the links below.</p>
+    <div class="btn-stack">
+      <a href="/" class="t-btn t-btn-primary">← Back to app</a>
+      <a href="/subscribe" class="t-btn t-btn-ghost">Subscribe</a>
+      <a href="/resend-code" class="t-btn t-btn-ghost">Lost your access code?</a>
+    </div>
+  </div>
+</div>
+
+<footer class="t-footer">
+  <div class="t-footer-inner">
+    <img src="/logo.svg" class="t-footer-logo" alt="Tonge"/>
+    <div class="t-footer-links">
+      <a href="/">App</a>
+      <a href="/subscribe">Subscribe</a>
+      <a href="/faq">Help</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+    <p class="t-footer-copy">© 2026 Tonge</p>
+  </div>
+</footer>
+
+</body>
+</html>

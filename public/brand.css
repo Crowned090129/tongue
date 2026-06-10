@@ -1,0 +1,162 @@
+/* ── Tonge brand system ───────────────────────────────────────────────────── */
+/* Imported by all public pages (subscribe, faq, terms, privacy, 404, resend) */
+
+:root {
+  --blue:       #2563eb;
+  --blue-dark:  #1d4ed8;
+  --blue-dim:   #1e40af;
+  --blue-light: #eff6ff;
+  --blue-mid:   #bfdbfe;
+  --text:       #0f172a;
+  --text-mid:   #334155;
+  --text-dim:   #64748b;
+  --text-faint: #94a3b8;
+  --border:     #e2e8f0;
+  --bg:         #f8fafc;
+  --white:      #ffffff;
+  --green:      #16a34a;
+  --green-bg:   #dcfce7;
+  --red:        #dc2626;
+  --red-bg:     #fee2e2;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:  0 4px 16px rgba(0,0,0,.10);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,.14);
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Nav bar shared by all pages ─────────────────────────────────────────── */
+.t-nav {
+  position: sticky; top: 0; z-index: 40;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+}
+.t-nav-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; gap: 12px;
+}
+.t-nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.t-nav-logo img { height: 32px; width: auto; }
+.t-nav-links { display: flex; gap: 6px; align-items: center; }
+.t-nav-link {
+  padding: 6px 13px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; color: var(--text-dim);
+  text-decoration: none; transition: color .15s, background .15s;
+}
+.t-nav-link:hover { color: var(--blue); background: var(--blue-light); }
+.t-nav-cta {
+  padding: 7px 16px; border-radius: var(--radius-sm);
+  background: var(--blue); color: #fff;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: background .15s;
+}
+.t-nav-cta:hover { background: var(--blue-dark); }
+
+/* ── Footer shared by all pages ──────────────────────────────────────────── */
+.t-footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 20px; margin-top: 40px;
+  text-align: center;
+}
+.t-footer-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.t-footer-logo { height: 26px; opacity: .6; }
+.t-footer-links { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.t-footer-links a {
+  color: var(--text-faint); font-size: 12px; text-decoration: none;
+  padding: 4px 8px; border-radius: 6px; transition: color .15s;
+}
+.t-footer-links a:hover { color: var(--blue); }
+.t-footer-copy { color: var(--text-faint); font-size: 11px; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.t-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 7px; padding: 12px 24px;
+  border-radius: var(--radius-md); font-size: 15px; font-weight: 700;
+  text-decoration: none; cursor: pointer; border: none;
+  transition: transform .15s, box-shadow .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.t-btn:active { transform: scale(.97); }
+.t-btn-primary {
+  background: var(--blue); color: #fff;
+  box-shadow: 0 2px 12px rgba(37,99,235,.35);
+}
+.t-btn-primary:hover { background: var(--blue-dark); box-shadow: 0 4px 20px rgba(37,99,235,.45); }
+.t-btn-ghost {
+  background: transparent; color: var(--blue);
+  border: 2px solid var(--blue-mid);
+}
+.t-btn-ghost:hover { background: var(--blue-light); }
+.t-btn-white {
+  background: #fff; color: var(--blue);
+  box-shadow: 0 2px 12px rgba(0,0,0,.12);
+}
+.t-btn-white:hover { box-shadow: 0 4px 20px rgba(0,0,0,.18); }
+.t-btn-lg { padding: 15px 32px; font-size: 16px; border-radius: var(--radius-md); }
+.t-btn-sm { padding: 8px 16px; font-size: 13px; border-radius: var(--radius-sm); }
+.t-btn-full { width: 100%; }
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.t-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.t-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: .3px;
+}
+.t-badge-blue  { background: var(--blue-light); color: var(--blue); }
+.t-badge-green { background: var(--green-bg);   color: var(--green); }
+
+/* ── Form elements ───────────────────────────────────────────────────────── */
+.t-input {
+  width: 100%; padding: 12px 15px;
+  border: 2px solid var(--border); border-radius: var(--radius-md);
+  font-size: 15px; color: var(--text); background: #fff;
+  transition: border-color .15s;
+  -webkit-appearance: none;
+}
+.t-input:focus { outline: none; border-color: var(--blue); }
+.t-label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: var(--text-mid); margin-bottom: 6px;
+}
+
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
+.t-alert { padding: 12px 15px; border-radius: var(--radius-md); font-size: 13px; line-height: 1.5; }
+.t-alert-err { background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5; }
+.t-alert-ok  { background: var(--green-bg); color: var(--green); border: 1px solid #86efac; }
+
+/* ── Utilities ───────────────────────────────────────────────────────────── */
+.t-wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+.t-wrap-sm { max-width: 540px; margin: 0 auto; padding: 0 20px; }
+
+@media(max-width:600px) {
+  .t-nav-links .t-nav-link { display: none; }
+  .t-btn-lg { padding: 13px 24px; font-size: 15px; }
+}

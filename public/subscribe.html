@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Subscribe — Tonge</title>
+  <meta name="description" content="Start learning a new language today. 11 languages, AI tutor, spaced repetition. From $9/month."/>
+  <link rel="stylesheet" href="/brand.css"/>
+  <style>
+    .hero {
+      text-align: center;
+      padding: 48px 20px 32px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.18;
+      margin-bottom: 12px;
+    }
+    .hero h1 span { color: var(--blue); }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-dim);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* ── Plan cards ── */
+    .plans {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .plan {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 18px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+      position: relative;
+      text-align: center;
+    }
+    .plan:hover { border-color: var(--blue); }
+    .plan.selected {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .plan-badge {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 11px;
+      border-radius: 20px;
+      white-space: nowrap;
+      letter-spacing: .3px;
+    }
+    .plan-label { font-size: 12px; font-weight: 700; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .5px; }
+    .plan-price { font-size: 32px; font-weight: 900; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .plan-period { font-size: 11px; color: var(--text-faint); }
+    .plan-saving { font-size: 11px; color: var(--green); font-weight: 700; margin-top: 8px; }
+
+    /* ── Comparison table ── */
+    .compare-wrap { margin-bottom: 24px; }
+    .compare-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .compare-table th {
+      padding: 10px 12px;
+      font-weight: 700;
+      color: var(--text-dim);
+      background: var(--bg);
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table th:not(:first-child) { text-align: center; }
+    .compare-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-mid);
+    }
+    .compare-table td:not(:first-child) { text-align: center; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .col-premium { color: var(--blue); font-weight: 700; }
+    .yes { color: var(--green); font-weight: 700; }
+    .no  { color: var(--text-faint); }
+
+    /* ── Divider ── */
+    .divider {
+      text-align: center;
+      color: var(--text-faint);
+      font-size: 12px;
+      margin: 16px 0;
+      position: relative;
+    }
+    .divider::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      width: 100%; height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      background: var(--bg);
+      padding: 0 12px;
+      position: relative;
+    }
+
+    .note { text-align: center; font-size: 11px; color: var(--text-faint); margin-top: 6px; }
+    .note a { color: var(--text-dim); }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 13px;
+      margin-top: 18px;
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--blue); }
+
+    @media(max-width:420px) {
+      .plans { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="t-nav">
+  <div class="t-nav-inner">
+    <a href="/" class="t-nav-logo">
+      <img src="/logo.svg" alt="Tonge"/>
+    </a>
+    <div class="t-nav-links">
+      <a href="/faq" class="t-nav-link">Help</a>
+      <a href="/" class="t-nav-link">← App</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Speak every <span>tongue.</span></h1>
+  <p>AI tutor · 11 languages · Spaced repetition · Cancel anytime</p>
+</div>
+
+<div class="t-wrap-sm">
+
+  <!-- Free vs Premium comparison -->
+  <div class="compare-wrap t-card" style="padding:20px">
+    <div class="compare-label">Free vs Premium</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Free</th>
+          <th class="col-premium">Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>AI Coach messages</td><td>5 / day</td><td class="col-premium yes">300 / day</td></tr>
+        <tr><td>Grammar &amp; Vocab reference</td><td class="yes">✓</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>Instant translator</td><td class="yes">✓</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>All 11 languages</td><td class="yes">✓</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>Flashcards &amp; spaced repetition</td><td class="no">—</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>Progress streaks</td><td class="no">—</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>Text-to-speech</td><td class="no">—</td><td class="yes col-premium">✓</td></tr>
+        <tr><td>Word notebook</td><td class="no">—</td><td class="yes col-premium">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:16px">
+    <a href="/" class="t-btn t-btn-ghost t-btn-full" style="font-size:14px">
+      Start free — no credit card required →
+    </a>
+  </div>
+
+  <div class="divider" style="margin:20px 0"><span>or unlock everything</span></div>
+
+  <!-- Plan selector -->
+  <div class="plans">
+    <div class="plan" id="plan-monthly" onclick="selectPlan('monthly')">
+      <div class="plan-label">Monthly</div>
+      <div class="plan-price">$9</div>
+      <div class="plan-period">per month</div>
+    </div>
+    <div class="plan selected" id="plan-yearly" onclick="selectPlan('yearly')">
+      <div class="plan-badge">Best value</div>
+      <div class="plan-label">Annual</div>
+      <div class="plan-price">$79</div>
+      <div class="plan-period">per year</div>
+      <div class="plan-saving">Save $29 vs monthly</div>
+    </div>
+  </div>
+
+  <div id="alert" class="t-alert t-alert-err" style="display:none;margin-bottom:14px"></div>
+
+  <div style="margin-bottom:14px">
+    <label class="t-label" for="email">
+      Email address <span style="color:var(--text-faint);font-weight:400">(your access code is sent here)</span>
+    </label>
+    <input type="email" class="t-input" id="email" placeholder="you@example.com" autocomplete="email"/>
+  </div>
+
+  <button class="t-btn t-btn-primary t-btn-full t-btn-lg" id="cta" onclick="checkout()">
+    Subscribe — $79/year
+  </button>
+
+  <div class="note" style="margin-top:10px">
+    Secure payment via Stripe · Cancel anytime
+  </div>
+  <div class="note" style="margin-top:6px">
+    By subscribing you agree to our
+    <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>
+  </div>
+
+  <a href="/" class="back-link">← Back to app</a>
+
+</div>
+
+<footer class="t-footer">
+  <div class="t-footer-inner">
+    <img src="/logo.svg" class="t-footer-logo" alt="Tonge"/>
+    <div class="t-footer-links">
+      <a href="/">App</a>
+      <a href="/faq">Help</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="mailto:support@tonge.app">Contact</a>
+    </div>
+    <p class="t-footer-copy">© 2026 Tonge · AI-powered language learning</p>
+  </div>
+</footer>
+
+<script>
+let selectedPlan = 'yearly';
+const prices = { monthly: '$9/month', yearly: '$79/year' };
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.getElementById('plan-monthly').classList.toggle('selected', plan === 'monthly');
+  document.getElementById('plan-yearly').classList.toggle('selected', plan === 'yearly');
+  document.getElementById('cta').textContent = 'Subscribe — ' + prices[plan];
+}
+
+async function checkout() {
+  const email = document.getElementById('email').value.trim();
+  const btn   = document.getElementById('cta');
+  const alertEl = document.getElementById('alert');
+  alertEl.style.display = 'none';
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alertEl.textContent = 'Please enter a valid email address.';
+    alertEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to checkout…';
+
+  try {
+    const r = await fetch('/api/stripe/create-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: selectedPlan, email }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Checkout failed');
+    window.location.href = d.url;
+  } catch(e) {
+    alertEl.textContent = e.message;
+    alertEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Subscribe — ' + prices[selectedPlan];
+  }
+}
+
+// Auto-show cancelled message
+const params = new URLSearchParams(location.search);
+if (params.get('checkout') === 'cancelled') {
+  const a = document.getElementById('alert');
+  a.textContent = 'Checkout was cancelled. You can try again below.';
+  a.style.display = 'block';
+}
+</script>
+</body>
+</html>

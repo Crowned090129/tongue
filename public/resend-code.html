@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Resend Access Code — Tonge</title>
+  <link rel="stylesheet" href="/brand.css"/>
+  <style>
+    .page-center {
+      min-height: calc(100vh - 56px - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .card {
+      width: 100%;
+      max-width: 400px;
+    }
+    .card-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .card-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .card-logo img { height: 40px; width: auto; }
+    .card-header h1 { font-size: 22px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+    .card-header p  { font-size: 14px; color: var(--text-dim); line-height: 1.5; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .helper-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: center;
+    }
+    .helper-links a {
+      font-size: 13px;
+      color: var(--blue);
+      text-decoration: none;
+    }
+    .helper-links a:hover { text-decoration: underline; }
+    .helper-links .muted { color: var(--text-dim); }
+    .helper-links .muted:hover { color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<nav class="t-nav">
+  <div class="t-nav-inner">
+    <a href="/" class="t-nav-logo">
+      <img src="/logo.svg" alt="Tonge"/>
+    </a>
+    <div class="t-nav-links">
+      <a href="/faq" class="t-nav-link">Help</a>
+      <a href="/subscribe" class="t-nav-cta">Subscribe</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-center">
+  <div class="card">
+
+    <div class="t-card">
+      <div class="card-header">
+        <div class="card-logo">
+          <img src="/logo.svg" alt="Tonge"/>
+        </div>
+        <h1>Resend access code</h1>
+        <p>Enter your email and we'll resend your current code immediately.</p>
+      </div>
+
+      <div id="alert" class="t-alert" style="display:none;margin-bottom:16px"></div>
+
+      <div id="form">
+        <div style="margin-bottom:14px">
+          <label class="t-label" for="email">Email address</label>
+          <input type="email" class="t-input" id="email" placeholder="you@example.com"
+                 autocomplete="email" onkeydown="if(event.key==='Enter')send()"/>
+        </div>
+        <button class="t-btn t-btn-primary t-btn-full" id="btn" onclick="send()">
+          Send my code
+        </button>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="helper-links">
+        <a href="/" class="muted">← Back to login</a>
+        <a href="/subscribe">Don't have a subscription? Subscribe here</a>
+        <a href="/faq" class="muted">Help & FAQ</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer class="t-footer">
+  <div class="t-footer-inner">
+    <img src="/logo.svg" class="t-footer-logo" alt="Tonge"/>
+    <div class="t-footer-links">
+      <a href="/">App</a>
+      <a href="/subscribe">Subscribe</a>
+      <a href="/faq">Help</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+    </div>
+    <p class="t-footer-copy">© 2026 Tonge</p>
+  </div>
+</footer>
+
+<script>
+async function send() {
+  const email   = document.getElementById('email').value.trim();
+  const btn     = document.getElementById('btn');
+  const alertEl = document.getElementById('alert');
+  alertEl.style.display = 'none';
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showAlert('err', 'Please enter a valid email address.');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    const r = await fetch('/api/auth/resend-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const d = await r.json();
+    if (r.status === 429) {
+      showAlert('err', d.error);
+    } else {
+      document.getElementById('form').style.display = 'none';
+      showAlert('ok', 'If that email is linked to an active subscription, your access code is on its way. Check your inbox (and spam folder).');
+    }
+  } catch(e) {
+    showAlert('err', 'Connection error. Please try again.');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Send my code';
+}
+
+function showAlert(type, msg) {
+  const el = document.getElementById('alert');
+  el.className = 't-alert t-alert-' + type;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>

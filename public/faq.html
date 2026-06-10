@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>FAQ & Help — Tonge</title>
+  <meta name="description" content="Frequently asked questions about Tonge — access codes, subscriptions, supported languages, and how the AI tutor works."/>
+  <link rel="stylesheet" href="/brand.css"/>
+  <style>
+    .page-hero {
+      text-align: center;
+      padding: 48px 20px 36px;
+    }
+    .page-hero h1 {
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .page-hero p { color: var(--text-dim); font-size: 15px; }
+
+    /* Search */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 32px;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding: 13px 16px 13px 44px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      font-size: 14px;
+      background: var(--white);
+      color: var(--text);
+      transition: border-color .15s;
+    }
+    .search-wrap input:focus { outline: none; border-color: var(--blue); }
+    .search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-faint);
+      font-size: 17px;
+      pointer-events: none;
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-dim);
+      margin: 28px 0 10px;
+    }
+
+    /* FAQ items */
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .faq-q {
+      padding: 16px 18px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      user-select: none;
+      transition: background .12s;
+    }
+    .faq-q:hover { background: var(--bg); }
+    .faq-a {
+      padding: 0 18px 16px;
+      font-size: 13px;
+      color: var(--text-mid);
+      line-height: 1.75;
+      display: none;
+      border-top: 1px solid var(--border);
+    }
+    .faq-a.open { display: block; }
+    .faq-a a { color: var(--blue); }
+    .faq-a code {
+      background: var(--bg);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: monospace;
+      border: 1px solid var(--border);
+    }
+    .faq-a ul, .faq-a ol { padding-left: 20px; margin: 8px 0; }
+    .faq-a li { margin-bottom: 4px; }
+    .faq-a p + p { margin-top: 8px; }
+    .chevron {
+      color: var(--text-faint);
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: transform .2s;
+    }
+    .chevron.open { transform: rotate(180deg); }
+
+    /* CTA and contact boxes */
+    .cta-box {
+      background: linear-gradient(135deg, var(--blue-dim), var(--blue));
+      border-radius: var(--radius-xl);
+      padding: 36px 28px;
+      text-align: center;
+      color: #fff;
+      margin: 36px 0;
+    }
+    .cta-box h2 { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+    .cta-box p  { font-size: 14px; opacity: .88; margin-bottom: 22px; }
+
+    .contact-box {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 28px;
+    }
+    .contact-box h3 { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+    .contact-box p  { font-size: 14px; color: var(--text-dim); margin-bottom: 16px; line-height: 1.6; }
+
+    .no-results {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-faint);
+      font-size: 14px;
+      display: none;
+    }
+    .no-results a { color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<nav class="t-nav">
+  <div class="t-nav-inner">
+    <a href="/" class="t-nav-logo">
+      <img src="/logo.svg" alt="Tonge"/>
+    </a>
+    <div class="t-nav-links">
+      <a href="/subscribe" class="t-nav-link">Pricing</a>
+      <a href="/" class="t-nav-link">← App</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>FAQ &amp; Help</h1>
+  <p>Everything you need to know about Tonge</p>
+</div>
+
+<div class="t-wrap" style="max-width:740px">
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Search questions…" oninput="filterFAQ(this.value)"/>
+  </div>
+
+  <div id="faq-content">
+
+    <div class="section-label" data-section>Getting Started</div>
+
+    <div class="faq-item" data-q="free plan how does it work try for free no credit card">
+      <div class="faq-q" onclick="toggle(this)">Can I try Tonge for free? What's included? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes! You can sign up for free — no credit card required. Just click <strong>"Try free"</strong> on the login screen and enter your email.</p>
+        <p><strong>Free plan includes:</strong></p>
+        <ul>
+          <li>All 11 languages</li>
+          <li>Full grammar, vocabulary, quick reference, and sentence structure guides</li>
+          <li>5 AI Coach messages per day (resets at midnight)</li>
+          <li>Drills and Dialogues</li>
+          <li>Flashcards (local, browser-based)</li>
+          <li>Roadmap and Word Space</li>
+        </ul>
+        <p><strong>Premium plan adds:</strong> 300 AI messages/day, streak sync across devices, and priority support.</p>
+        <p>Upgrade anytime at <a href="/subscribe">/subscribe</a> for $9/month or $79/year.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="how do i get started access code subscribe premium">
+      <div class="faq-q" onclick="toggle(this)">How do I subscribe and get started with Premium? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <ol>
+          <li>Go to <a href="/subscribe">/subscribe</a> and choose your plan (monthly $9 or yearly $79)</li>
+          <li>Enter your email and complete checkout via Stripe</li>
+          <li>Check your email — your access code arrives within 1 minute</li>
+          <li>Come back to <a href="/">the app</a>, tap <strong>"Have a code"</strong>, enter your code, and start learning</li>
+        </ol>
+        <p style="color:var(--text-dim)">The code looks like <code>TG-XXXXXXXX</code>. Enter it exactly as shown — it's case-insensitive.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="upgrade free to paid premium how to upgrade account">
+      <div class="faq-q" onclick="toggle(this)">I'm on the free plan. How do I upgrade to Premium? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Go to <a href="/subscribe">/subscribe</a> and complete checkout. You'll receive an access code by email. Then:</p>
+        <ol>
+          <li>Open the app and tap <strong>Account</strong> (top right)</li>
+          <li>Tap <strong>Sign Out</strong></li>
+          <li>On the login screen, tap <strong>"Have a code"</strong> and enter your new Premium access code</li>
+        </ol>
+        <p style="color:var(--text-dim)">Your free account data (flashcards, roadmap progress) is stored in your browser and will still be there after you log in with your Premium code.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="which languages can i learn">
+      <div class="faq-q" onclick="toggle(this)">Which languages can I learn? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Tonge supports <strong>11 target languages</strong>:</p>
+        <p style="margin:10px 0;line-height:2.2">🇫🇷 French &nbsp;·&nbsp; 🇪🇸 Spanish &nbsp;·&nbsp; 🇺🇸 English &nbsp;·&nbsp; 🇧🇷 Portuguese &nbsp;·&nbsp; 🇮🇹 Italian &nbsp;·&nbsp; 🇩🇪 German &nbsp;·&nbsp; 🇨🇳 Chinese &nbsp;·&nbsp; 🇯🇵 Japanese &nbsp;·&nbsp; 🇰🇷 Korean &nbsp;·&nbsp; 🇷🇺 Russian &nbsp;·&nbsp; 🇸🇦 Arabic</p>
+        <p>You can also set up to 3 reference languages (the languages you already speak) for personalised comparisons and translations. Switch between any language at any time — your subscription covers all of them.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="does it work on phone mobile iphone android">
+      <div class="faq-q" onclick="toggle(this)">Does it work on my phone? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes — Tonge is a web app that works on <strong>any device with a browser</strong>: iPhone, Android, iPad, Mac, Windows, and Chromebook.</p>
+        <p>For the best mobile experience, add it to your home screen:</p>
+        <ul>
+          <li><strong>iPhone / Safari:</strong> Tap the Share icon → "Add to Home Screen"</li>
+          <li><strong>Android / Chrome:</strong> Tap the three-dot menu → "Add to Home Screen" or "Install App"</li>
+        </ul>
+        <p style="color:var(--text-dim)">This makes it launch like a native app with no browser chrome.</p>
+      </div>
+    </div>
+
+    <div class="section-label" data-section>Access Codes &amp; Login</div>
+
+    <div class="faq-item" data-q="lost code resend access code email">
+      <div class="faq-q" onclick="toggle(this)">I lost my access code. How do I get it again? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Go to <a href="/resend-code">/resend-code</a>, enter the email you used to subscribe, and your current code will be resent immediately.</p>
+        <p>Also check your spam/junk folder for an email from Tonge.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="access code invalid not working error typo">
+      <div class="faq-q" onclick="toggle(this)">My access code isn't working. What do I do? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Common reasons a code won't work:</p>
+        <ul>
+          <li><strong>Expired:</strong> Monthly codes expire after 31 days. Check your email for the most recent renewal email.</li>
+          <li><strong>Typo:</strong> The code is case-insensitive but must be entered exactly (e.g. <code>TG-AB12CD34</code>).</li>
+          <li><strong>Subscription cancelled:</strong> If payment failed or you cancelled, the code is deactivated.</li>
+          <li><strong>Renewed:</strong> When your subscription renews, your old code is replaced with a new one. Check your latest email.</li>
+        </ul>
+        <p>If none of these apply, use <a href="/resend-code">Resend my code</a> or <a href="mailto:support@tonge.app">contact support</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="multiple devices two devices phone laptop">
+      <div class="faq-q" onclick="toggle(this)">Can I use the app on multiple devices? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes — you can be logged in on <strong>up to 2 devices simultaneously</strong> with the same access code. For example, your phone and your laptop.</p>
+        <p style="color:var(--text-dim)">Each subscription is for one person. Access codes are personal and must not be shared.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="session expired kicked out logged out">
+      <div class="faq-q" onclick="toggle(this)">I keep getting logged out / "session expired" — why? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Three reasons this might happen:</p>
+        <ul>
+          <li><strong>Subscription renewed:</strong> When your billing cycle renews, a new code is issued. The old code is deactivated. Check your email for the new one.</li>
+          <li><strong>Code expired:</strong> Codes expire at the end of your billing period. After renewal, log in with the new code.</li>
+          <li><strong>A third device logged in:</strong> The system supports 2 devices. If a third device logs in, the oldest session is ended.</li>
+        </ul>
+        <p>If you see a yellow "Subscription renewed" banner on the login screen, that's expected — just enter your new code from the email.</p>
+      </div>
+    </div>
+
+    <div class="section-label" data-section>Features &amp; Learning</div>
+
+    <div class="faq-item" data-q="todays practice daily plan recommended schedule">
+      <div class="faq-q" onclick="toggle(this)">What is "Today's Practice" and how does it work? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Today's Practice is a daily recommendation shown at the top of the Quick Reference tab. It suggests a different focus each day of the week:</p>
+        <ul>
+          <li>Monday — New vocabulary words</li>
+          <li>Tuesday — Grammar study</li>
+          <li>Wednesday — Translation exercises</li>
+          <li>Thursday — Speaking drills</li>
+          <li>Friday — Conversation role-play</li>
+          <li>Saturday — Free writing practice</li>
+          <li>Sunday — Flashcard review</li>
+        </ul>
+        <p>Tap the button to jump directly to the recommended feature. It's a suggested starting point to keep your learning varied and balanced — you don't have to follow it.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="ai coach how does it work exercises">
+      <div class="faq-q" onclick="toggle(this)">How does the AI Coach work? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>The AI Coach generates personalised exercises tailored to your target language and reference languages. Choose from 7 exercise types:</p>
+        <ul>
+          <li><strong>New Word</strong> — vocabulary with pronunciation, memory tips, and examples</li>
+          <li><strong>Fill the Gap</strong> — complete a sentence in your target language</li>
+          <li><strong>Translate</strong> — translate from your reference language</li>
+          <li><strong>Give Opinion</strong> — express a view on a topic</li>
+          <li><strong>Free Writing</strong> — write anything; AI corrects it with explanations</li>
+          <li><strong>Mini Quiz</strong> — multiple-choice grammar or vocabulary</li>
+          <li><strong>Role Play</strong> — respond to a real-life conversation scenario</li>
+        </ul>
+        <p>Every exercise is unique, generated on demand, and graded with detailed feedback.</p>
+        <p>Free users get <strong>5 AI messages per day</strong>. Premium users get up to 300 per day.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="flashcards spaced repetition how to add cards anki sm2">
+      <div class="faq-q" onclick="toggle(this)">How do Flashcards and spaced repetition work? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Tonge uses the <strong>SM-2 spaced repetition algorithm</strong> (the same as Anki) to schedule flashcard reviews:</p>
+        <ul>
+          <li>New cards are shown on day 1</li>
+          <li>After rating a card "Good", it comes back in 6 days, then 15, then 35…</li>
+          <li>"Again" resets the card; "Easy" extends the interval faster</li>
+          <li>You only review cards exactly when you're about to forget them — maximally efficient</li>
+        </ul>
+        <p>To add cards: in the <strong>Flashcards tab</strong>, tap "+ Add Card" or import words directly from Word Space. In the AI Coach, any "New Word" exercise has a "Save to Flashcards" button.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="grammar tab quick reference generate button other languages">
+      <div class="faq-q" onclick="toggle(this)">The Grammar / Quick Reference shows a "Generate" button — is that normal? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes, that's by design. French has a hand-built grammar library with 500+ vocabulary cards and 27 grammar topics. For all other languages, content is <strong>AI-generated on demand</strong> and personalised to your reference languages.</p>
+        <p>Click "Generate" and wait ~15 seconds. The content is then <strong>saved in your browser</strong> — you'll never have to wait again for that language. If you want fresh content, use the "↺ Regenerate" button.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="streaks how do they work practice daily consistency">
+      <div class="faq-q" onclick="toggle(this)">How do streaks work? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Every day you complete any exercise (AI Coach, Drills, Flashcards), your streak count increases by 1. Miss a day and the streak resets to zero. Your longest streak ever is also tracked.</p>
+        <p>Your streak is displayed in the app header. Consistency — even just 15 minutes a day — is the most important factor in language learning.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="word space translator how to use vocabulary builder">
+      <div class="faq-q" onclick="toggle(this)">What is Word Space? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Word Space is an AI-powered translator and vocabulary builder. Type any word or phrase — in your target language, reference language, or even a mix — and get:</p>
+        <ul>
+          <li>Translation in your target and reference languages</li>
+          <li>Phonetic pronunciation guide</li>
+          <li>Word-by-word breakdown (literal meaning of each part)</li>
+          <li>Grammar explanation (why is it structured this way?)</li>
+          <li>4 real-life example sentences with voice</li>
+          <li>Comparison to your reference language</li>
+        </ul>
+        <p>Tap "+ Save" to add words to your saved list. Tap "Reload" to expand any saved word again.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="voice pronunciation no sound tts text to speech robotic">
+      <div class="faq-q" onclick="toggle(this)">The pronunciation (▶ button) sounds wrong / robotic — how do I fix it? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Pronunciation uses your device's built-in text-to-speech (TTS). If it sounds wrong, your device doesn't have a voice installed for the target language.</p>
+        <p><strong>Fix:</strong> Tap <strong>Voice</strong> in the app header. The Voice Settings panel will show whether you have voices for your language and give exact steps to install them for your device (iPhone, Android, Mac, Windows).</p>
+        <p style="color:var(--text-dim)">After installing, restart your browser and reopen the app.</p>
+      </div>
+    </div>
+
+    <div class="section-label" data-section>Subscription &amp; Billing</div>
+
+    <div class="faq-item" data-q="cancel subscription how to cancel stop">
+      <div class="faq-q" onclick="toggle(this)">How do I cancel my subscription? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>You can cancel anytime in two ways:</p>
+        <ol>
+          <li>Open the app → tap <strong>Account</strong> (top right) → <strong>Manage Billing</strong> → Cancel subscription in the Stripe portal.</li>
+          <li>Or go directly to <a href="https://billing.stripe.com" target="_blank">billing.stripe.com</a>, enter your email, and cancel from there.</li>
+        </ol>
+        <p>After cancellation, your access code stays active until the end of your current billing period. You will not be charged again.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="refund money back policy 7 days">
+      <div class="faq-q" onclick="toggle(this)">Can I get a refund? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>We offer a <strong>7-day refund</strong> for first-time subscribers if you're not satisfied. Email us at <a href="mailto:support@tonge.app">support@tonge.app</a> within 7 days of your first payment.</p>
+        <p style="color:var(--text-dim)">Renewal charges are non-refundable. See our <a href="/terms">Terms of Service</a> for full details.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="change plan monthly yearly upgrade downgrade switch">
+      <div class="faq-q" onclick="toggle(this)">Can I switch from monthly to yearly (or vice versa)? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes. Open the app → tap <strong>Account</strong> → <strong>Manage Billing</strong>. In the Stripe billing portal, click "Update plan" to switch between monthly and yearly.</p>
+        <p style="color:var(--text-dim)">The change takes effect at your next billing cycle.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="payment failed card declined update payment method retry">
+      <div class="faq-q" onclick="toggle(this)">My payment failed. What do I do? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>If a payment fails, Stripe retries automatically over the next few days. You'll also receive an email with instructions.</p>
+        <p>To update your card: Open the app → <strong>Account</strong> → <strong>Manage Billing</strong> → Update payment method.</p>
+        <p style="color:var(--text-dim)">If all retries fail, your subscription is cancelled and your access code deactivated. You can resubscribe anytime at <a href="/subscribe">/subscribe</a>.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="delete account data gdpr privacy erasure">
+      <div class="faq-q" onclick="toggle(this)">How do I delete my account? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Open the app → tap <strong>Account</strong> (top right) → scroll to the bottom → tap <strong>Delete my account</strong>. This will:</p>
+        <ul>
+          <li>Cancel any active Stripe subscriptions immediately</li>
+          <li>Deactivate and delete all access codes</li>
+          <li>Anonymise your email address (GDPR erasure)</li>
+        </ul>
+        <p style="color:var(--text-dim)">This action is permanent and cannot be undone.</p>
+      </div>
+    </div>
+
+    <div class="section-label" data-section>Technical</div>
+
+    <div class="faq-item" data-q="offline no internet connection cache">
+      <div class="faq-q" onclick="toggle(this)">Does it work offline? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Partially. The app shell and previously-visited pages load offline. However, AI exercises, Word Space, and generating language content all require an internet connection (they call the AI API in real-time).</p>
+        <p>Flashcards and previously generated Grammar/Vocabulary tabs work offline since they're cached in your browser.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="data privacy security api key safe">
+      <div class="faq-q" onclick="toggle(this)">Is my data safe? Is the AI API key exposed? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>Yes, your data is secure. Key facts:</p>
+        <ul>
+          <li>The Anthropic AI API key is stored only on the server — it is <strong>never sent to your browser</strong>.</li>
+          <li>All AI requests go through our server as an authenticated proxy.</li>
+          <li>Passwords are never stored — only hashed tokens.</li>
+          <li>We do not store credit card numbers — all billing is handled by Stripe.</li>
+          <li>You can delete your account and all data at any time.</li>
+        </ul>
+        <p>See our <a href="/privacy">Privacy Policy</a> for full details.</p>
+      </div>
+    </div>
+
+    <div class="faq-item" data-q="rate limit too many requests slow down 429">
+      <div class="faq-q" onclick="toggle(this)">I'm seeing "Too many requests" — what does that mean? <span class="chevron">▾</span></div>
+      <div class="faq-a">
+        <p>The AI proxy allows up to <strong>30 requests per minute</strong> per account. This prevents abuse and keeps the service fast for everyone.</p>
+        <p>If you hit the limit, wait 60 seconds and continue. In normal use — even heavy study sessions — you won't hit this limit.</p>
+      </div>
+    </div>
+
+    <div class="no-results" id="no-results">
+      No questions match your search. Try different keywords or <a href="mailto:support@tonge.app">email us</a>.
+    </div>
+
+  </div><!-- /faq-content -->
+
+  <!-- Contact box -->
+  <div class="t-card contact-box">
+    <h3>Still need help?</h3>
+    <p>Our support team responds within 24 hours.<br>Include your subscription email in your message.</p>
+    <a href="mailto:support@tonge.app" class="t-btn t-btn-ghost t-btn-sm">Email Support →</a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <h2>Ready to start learning?</h2>
+    <p>11 languages · AI tutor · Spaced repetition · From $9/month</p>
+    <a href="/subscribe" class="t-btn t-btn-white">Subscribe now →</a>
+  </div>
+
+</div><!-- /t-wrap -->
+
+<footer class="t-footer">
+  <div class="t-footer-inner">
+    <img src="/logo.svg" class="t-footer-logo" alt="Tonge"/>
+    <div class="t-footer-links">
+      <a href="/">App</a>
+      <a href="/subscribe">Subscribe</a>
+      <a href="/terms">Terms</a>
+      <a href="/privacy">Privacy</a>
+      <a href="mailto:support@tonge.app">Contact</a>
+    </div>
+    <p class="t-footer-copy">© 2026 Tonge · AI-powered language learning</p>
+  </div>
+</footer>
+
+<script>
+function toggle(el) {
+  const a  = el.nextElementSibling;
+  const ch = el.querySelector('.chevron');
+  const isOpen = a.classList.contains('open');
+  document.querySelectorAll('.faq-a.open').forEach(x => x.classList.remove('open'));
+  document.querySelectorAll('.chevron.open').forEach(x => x.classList.remove('open'));
+  if (!isOpen) { a.classList.add('open'); ch.classList.add('open'); }
+}
+
+function filterFAQ(q) {
+  const terms = q.toLowerCase().split(' ').filter(Boolean);
+  let any = false;
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const keywords = (item.dataset.q || '') + ' ' + item.textContent.toLowerCase();
+    const match = !terms.length || terms.every(t => keywords.includes(t));
+    item.style.display = match ? '' : 'none';
+    if (match) any = true;
+  });
+  document.querySelectorAll('[data-section]').forEach(s => s.style.display = '');
+  document.getElementById('no-results').style.display = (!any && terms.length) ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
