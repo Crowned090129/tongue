@@ -8,6 +8,7 @@
  * triggering any of the side-effects here.
  */
 
+require("dns").setDefaultResultOrder("ipv4first"); // force IPv4 — Railway can't reach Supabase via IPv6
 require("dotenv").config();
 const cron = require("node-cron");
 const db   = require("./db");
