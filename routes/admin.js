@@ -261,7 +261,7 @@ function adminHTML() {
     .tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
     .tab{padding:6px 16px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;font-size:12px;font-weight:700;color:#64748b;cursor:pointer}
     .tab.active{border-color:#2563eb;color:#2563eb;background:#eff6ff}
-    .hidden{display:none}
+    .hidden{display:none!important}
     /* Email modal */
     .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
     .modal-box{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
