@@ -419,13 +419,13 @@ function SaveToFlashcardsBtn({ card }) {
 
 // ─── AI COACH ────────────────────────────────────────────────────────────────
 const EXERCISE_TYPES = [
-  { id: "word",    label: "New Word",     desc: "Vocabulary with pronunciation guide and context" },
-  { id: "fill",    label: "Fill the Gap", desc: "Complete a sentence in your target language"     },
-  { id: "trans",   label: "Translate",    desc: "Translate from your reference language"           },
-  { id: "opinion", label: "Give Opinion", desc: "Express your view on a topic in the language"    },
-  { id: "write",   label: "Free Writing", desc: "Write anything — your coach will correct it"     },
-  { id: "quiz",    label: "Mini Quiz",    desc: "Multiple-choice grammar or vocabulary question"   },
-  { id: "convo",   label: "Role Play",    desc: "Respond to a real-life conversation scenario"    },
+  { id: "word",    icon: "🔤", label: "Learn a New Word",  desc: "Tap to get a word with pronunciation & examples" },
+  { id: "fill",    icon: "✏️", label: "Fill the Gap",      desc: "Complete a sentence — tap to check your answer"  },
+  { id: "trans",   icon: "🔁", label: "Translate This",    desc: "Translate a sentence into your new language"      },
+  { id: "convo",   icon: "💬", label: "Role Play",         desc: "Have a real conversation — like ordering food"    },
+  { id: "quiz",    icon: "❓", label: "Quick Quiz",        desc: "4-choice question — grammar or vocabulary"        },
+  { id: "opinion", icon: "💭", label: "Express Yourself",  desc: "Say what you think about a topic"                },
+  { id: "write",   icon: "📄", label: "Free Writing",      desc: "Write anything — your coach fixes your mistakes"  },
 ];
 
 // ── AUTH / SESSION MANAGEMENT ─────────────────────────────────────────────────
@@ -594,19 +594,20 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
   return (
     <div style={{ fontFamily:"system-ui,-apple-system,sans-serif", background:"#f1f5f9", minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"20px" }}>
       <div style={{ background:"#fff", borderRadius:16, padding:28, width:"100%", maxWidth:390, boxShadow:"0 4px 24px rgba(0,0,0,0.10)" }}>
-        <div style={{ textAlign:"center", marginBottom:20 }}>
-          <img src="/logo.svg" alt="Tonge" style={{ height:44, marginBottom:4 }}/>
-          <div style={{ color:"#64748b", fontSize:13, marginTop:4 }}>AI-powered language learning</div>
+        <div style={{ textAlign:"center", marginBottom:22 }}>
+          <div style={{ fontSize:42, marginBottom:6 }}>🌐</div>
+          <div style={{ fontWeight:900, fontSize:22, color:"#0f172a", marginBottom:4 }}>Welcome to Tonge</div>
+          <div style={{ color:"#64748b", fontSize:13 }}>Learn any language with your personal AI tutor</div>
         </div>
 
         {/* Mode switcher */}
-        <div style={{ display:"flex", background:"#f1f5f9", borderRadius:10, padding:3, marginBottom:20, gap:3 }}>
-          {[["code","Have a code"],["free","Try free"]].map(([m,label]) => (
+        <div style={{ display:"flex", background:"#f1f5f9", borderRadius:12, padding:4, marginBottom:20, gap:3 }}>
+          {[["free","🆓 Start Free"],["code","🔑 I Have a Code"]].map(([m,label]) => (
             <button key={m} onClick={()=>{setMode(m);setErr("");}} style={{
-              flex:1, padding:"8px 0", borderRadius:8, border:"none", fontWeight:700, fontSize:13, cursor:"pointer",
+              flex:1, padding:"10px 0", borderRadius:9, border:"none", fontWeight:700, fontSize:13, cursor:"pointer",
               background: mode===m ? "#fff" : "transparent",
               color: mode===m ? "#2563eb" : "#64748b",
-              boxShadow: mode===m ? "0 1px 3px rgba(0,0,0,.1)" : "none",
+              boxShadow: mode===m ? "0 1px 4px rgba(0,0,0,.12)" : "none",
             }}>{label}</button>
           ))}
         </div>
@@ -640,11 +641,12 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
           </>
         ) : (
           <>
-            <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:10, padding:"12px 14px", marginBottom:14, fontSize:12, color:"#1d4ed8", lineHeight:1.6 }}>
-              <strong>Free plan includes:</strong><br/>
-              ✓ All 11 languages · Grammar, vocab &amp; reference guides<br/>
-              ✓ 5 AI coach messages per day<br/>
-              ✗ Unlimited AI · Streaks sync · Drills · Dialogues
+            <div style={{ background:"#eff6ff", border:"1px solid #bfdbfe", borderRadius:12, padding:"14px 16px", marginBottom:14, fontSize:13, color:"#1d4ed8", lineHeight:1.8 }}>
+              <div style={{ fontWeight:800, marginBottom:6 }}>✨ Free — no credit card needed</div>
+              <div>✅ All 12 languages</div>
+              <div>✅ Grammar, vocabulary &amp; reference guides</div>
+              <div>✅ 5 AI Coach messages every day</div>
+              <div>✅ Flashcards &amp; Word Space</div>
             </div>
             <input value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&signupFree()}
               placeholder="your@email.com" type="email" autoFocus
@@ -791,26 +793,29 @@ function AICoach({ tLang, rLangs }) {
 
       {/* Exercise type grid */}
       <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>
-        All exercises
+        Pick an exercise — tap any to start instantly
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
         {EXERCISE_TYPES.map(et => (
           <button key={et.id} onClick={() => generate(et.id)} style={{
             background: type === et.id ? C.purple : C.card,
             border: `2px solid ${type === et.id ? C.purple : C.bdr}`,
-            borderRadius: 11, padding: "10px 13px", textAlign: "left",
-            cursor: "pointer", boxShadow: C.sh,
+            borderRadius: 14, padding: "13px 12px", textAlign: "left",
+            cursor: "pointer", boxShadow: C.sh, transition: "transform .1s",
           }}>
-            <div style={{ fontWeight: 800, color: type === et.id ? "#fff" : C.text, fontSize: 13 }}>{et.label}</div>
-            <div style={{ color: type === et.id ? "rgba(255,255,255,.7)" : C.muted, fontSize: 11, marginTop: 3 }}>{et.desc}</div>
+            <div style={{ fontSize: 24, marginBottom: 5 }}>{et.icon}</div>
+            <div style={{ fontWeight: 800, color: type === et.id ? "#fff" : C.text, fontSize: 13, marginBottom: 3 }}>{et.label}</div>
+            <div style={{ color: type === et.id ? "rgba(255,255,255,.8)" : C.muted, fontSize: 11, lineHeight: 1.4 }}>{et.desc}</div>
           </button>
         ))}
       </div>
 
       {loading && (
         <Box>
-          <div style={{ textAlign: "center", padding: "24px 0", color: C.muted }}>
-            <div style={{ fontSize: 13 }}>Preparing your exercise...</div>
+          <div style={{ textAlign: "center", padding: "28px 0" }}>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>🤖</div>
+            <div style={{ fontWeight: 700, color: C.text, fontSize: 14, marginBottom: 4 }}>Your coach is preparing a fresh exercise…</div>
+            <div style={{ color: C.muted, fontSize: 12 }}>This takes about 3 seconds</div>
           </div>
         </Box>
       )}
@@ -4875,6 +4880,9 @@ function App() {
     return (days >= 0 && days <= 3) ? days : null;
   });
   const [streak, setStreak] = useState(() => _streak.get().count);
+  const [showGuide, setShowGuide] = useState(() => {
+    try { return parseInt(localStorage.getItem("_guide_seen") || "0") < 3; } catch(e) { return false; }
+  });
 
   useEffect(() => {
     // Listen for session-renewed events dispatched by askClaude when nonce mismatch
@@ -4946,7 +4954,18 @@ function App() {
     );
   };
 
-  const TAB_LABELS = ["Quick Reference","AI Coach","Grammar","Structures","Vocabulary","Drills","Dialogues","Roadmap","Word Space","Flashcards"];
+  const TAB_LABELS = [
+    { icon:"📖", label:"Quick Reference", hint:"Start here — the basics" },
+    { icon:"🤖", label:"AI Coach",        hint:"Practice with your tutor" },
+    { icon:"📝", label:"Grammar",         hint:"How the language works" },
+    { icon:"🧱", label:"Structures",      hint:"Common sentence patterns" },
+    { icon:"🔤", label:"Vocabulary",      hint:"Words by topic" },
+    { icon:"⚡", label:"Drills",          hint:"Quick practice rounds" },
+    { icon:"💬", label:"Dialogues",       hint:"Real conversations" },
+    { icon:"🗺️", label:"Roadmap",         hint:"Your learning path" },
+    { icon:"✍️", label:"Word Space",      hint:"Translate anything" },
+    { icon:"🃏", label:"Flashcards",      hint:"Review your saved words" },
+  ];
 
   if (!loggedIn) return <AccessCodeLogin onLogin={() => setLoggedIn(true)} renewedBanner={renewedBanner} />;
 
@@ -5093,17 +5112,43 @@ function App() {
         )}
 
         {/* Tab bar */}
-        <div style={{ display: "flex", overflowX: "auto", scrollbarWidth: "none", borderTop: `1px solid ${C.bdr}` }}>
-          {TAB_LABELS.map((label, i) => (
+        <div style={{ display: "flex", overflowX: "auto", scrollbarWidth: "none", borderTop: `1px solid ${C.bdr}`, background: C.card }}>
+          {TAB_LABELS.map((t, i) => (
             <button key={i} onClick={() => setTab(i)} style={{
-              padding: mobile ? "11px 11px 9px" : "10px 13px 8px", background: "none", border: "none",
+              padding: mobile ? "8px 10px 6px" : "9px 14px 7px",
+              background: "none", border: "none",
               borderBottom: tab === i ? `3px solid ${C.blue}` : "3px solid transparent",
-              color: tab === i ? C.blue : C.muted, cursor: "pointer",
-              fontSize: mobile ? 10 : 11, fontWeight: 700, whiteSpace: "nowrap",
-            }}>{label}</button>
+              borderTop: tab === i ? `3px solid transparent` : "3px solid transparent",
+              cursor: "pointer", whiteSpace: "nowrap", textAlign: "center",
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
+              opacity: tab === i ? 1 : 0.65,
+              transition: "opacity .15s",
+            }}>
+              <span style={{ fontSize: mobile ? 18 : 20 }}>{t.icon}</span>
+              <span style={{ fontSize: mobile ? 9 : 10, fontWeight: 800, color: tab === i ? C.blue : C.mid, letterSpacing: "0.01em" }}>{t.label}</span>
+              {tab === i && <span style={{ fontSize: 8, color: C.muted, fontWeight: 500, marginTop: 1 }}>{t.hint}</span>}
+            </button>
           ))}
         </div>
       </div>
+
+      {/* ── START HERE STRIP (first 3 visits only) ── */}
+      {showGuide && (
+        <div style={{ background:"linear-gradient(135deg,#2563eb,#7c3aed)", color:"#fff", padding:"12px 16px", display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+          <span style={{ fontSize:22 }}>👋</span>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontWeight:800, fontSize:13, marginBottom:3 }}>New here? Here's where to start:</div>
+            <div style={{ fontSize:11, opacity:.9, display:"flex", gap:12, flexWrap:"wrap" }}>
+              <span>1️⃣ Pick your language above</span>
+              <span>2️⃣ Read <strong>📖 Quick Reference</strong> first</span>
+              <span>3️⃣ Practice with <strong>🤖 AI Coach</strong></span>
+            </div>
+          </div>
+          <button onClick={() => { try { localStorage.setItem("_guide_seen","99"); } catch(e){} setShowGuide(false); }} style={{ background:"rgba(255,255,255,.2)", border:"none", color:"#fff", borderRadius:8, padding:"6px 12px", fontWeight:700, fontSize:11, cursor:"pointer", whiteSpace:"nowrap" }}>
+            Got it ✓
+          </button>
+        </div>
+      )}
 
       {/* ── CONTENT ── */}
       <div style={{ padding: mobile ? "12px 10px 80px" : "16px 13px 60px" }}>
