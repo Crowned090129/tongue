@@ -4245,8 +4245,12 @@ function Flashcards({ tLang, onStreakUpdate }) {
   const [addErr, setAddErr]   = useState("");
   const [addOk, setAddOk]     = useState(false);
 
+  const [practiceAll, setPracticeAll]       = useState(false);
+  const [sessionReviewed, setSessionReviewed] = useState(new Set());
   const now      = Date.now();
-  const dueCards = cards.filter(c => c.next_review <= now);
+  const dueCards = practiceAll
+    ? cards.filter(c => !sessionReviewed.has(c.id))
+    : cards.filter(c => c.next_review <= now);
   const current  = dueCards[0] || null;
 
   const refreshCards = () => setCards(fcLoad().filter(c => c.lang === tLang));
@@ -4257,6 +4261,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
     const all = fcLoad();
     const idx = all.findIndex(c => c.id === current.id);
     if (idx >= 0) { all[idx] = updated; fcSave(all); }
+    if (practiceAll) setSessionReviewed(prev => new Set([...prev, current.id]));
     setFlipped(false);
     refreshCards();
     _streak.log();
@@ -4344,15 +4349,32 @@ function Flashcards({ tLang, onStreakUpdate }) {
         <div>
           {dueCards.length === 0 ? (
             <div style={{ background:C.card, borderRadius:16, padding:"36px 20px", textAlign:"center", boxShadow:C.sh, border:`1px solid ${C.bdr}` }}>
-              <div style={{ fontSize:44, marginBottom:12 }}>🎉</div>
-              <div style={{ fontWeight:900, fontSize:18, color:C.green, marginBottom:8 }}>All caught up!</div>
-              <div style={{ color:C.muted, fontSize:13, marginBottom:16 }}>
-                {totalCards === 0 ? "You have no flashcards yet. Add some using the AI Coach, Word Space, or the Add Card tab." : `All ${totalCards} cards reviewed. Come back tomorrow for your next session.`}
+              <div style={{ fontSize:44, marginBottom:12 }}>{practiceAll ? "💪" : "🎉"}</div>
+              <div style={{ fontWeight:900, fontSize:18, color:C.green, marginBottom:8 }}>
+                {practiceAll ? "Practice session done!" : "All caught up!"}
               </div>
-              {totalCards === 0 && (
+              <div style={{ color:C.muted, fontSize:13, marginBottom:16 }}>
+                {totalCards === 0
+                  ? "You have no flashcards yet. Add some using the AI Coach, Word Space, or the Add Card tab."
+                  : practiceAll
+                    ? `You went through all ${totalCards} cards. SM-2 scheduling updated.`
+                    : `All ${totalCards} cards reviewed for today.`}
+              </div>
+              {totalCards === 0 ? (
                 <button onClick={() => setView("add")} style={{ padding:"11px 24px", background:C.teal, color:"#fff", border:"none", borderRadius:10, fontWeight:700, cursor:"pointer" }}>
                   Add Your First Card
                 </button>
+              ) : (
+                <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
+                  <button onClick={() => { setSessionReviewed(new Set()); setFlipped(false); }} style={{ padding:"11px 24px", background:C.blue, color:"#fff", border:"none", borderRadius:10, fontWeight:700, cursor:"pointer" }}>
+                    Practice Again
+                  </button>
+                  {practiceAll && (
+                    <button onClick={() => { setPracticeAll(false); setSessionReviewed(new Set()); setFlipped(false); }} style={{ padding:"11px 24px", background:C.card, color:C.mid, border:`1px solid ${C.bdr}`, borderRadius:10, fontWeight:700, cursor:"pointer" }}>
+                      Back to Schedule
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           ) : (
