@@ -173,6 +173,7 @@ async function initialize() {
     "ALTER TABLE users           ADD COLUMN IF NOT EXISTS user_goal            TEXT",
     "ALTER TABLE users           ADD COLUMN IF NOT EXISTS daily_commitment     INTEGER",
     "ALTER TABLE users           ADD COLUMN IF NOT EXISTS onboarding_completed BOOLEAN DEFAULT FALSE",
+    "ALTER TABLE users           ADD COLUMN IF NOT EXISTS target_lang          TEXT",
     "ALTER TABLE subscriptions   ADD COLUMN IF NOT EXISTS cancel_at_period_end BOOLEAN DEFAULT FALSE",
     "ALTER TABLE subscriptions   ADD COLUMN IF NOT EXISTS paid_access_until    TIMESTAMPTZ",
     "ALTER TABLE users           ADD COLUMN IF NOT EXISTS stripe_customer_id   TEXT",

@@ -219,6 +219,10 @@
       transition:transform .15s,box-shadow .15s}
     .support-fab:active{transform:scale(0.92);box-shadow:0 2px 8px rgba(192,21,62,0.3)}
     .support-fab.hidden-fab{display:none}
+    /* Lift the support button clear of the bottom nav dock only on the screens
+       that actually show it (mobile home), so it never covers the menu — and
+       stays low on every other screen. */
+    body.has-bottom-dock .support-fab{bottom:calc(96px + env(safe-area-inset-bottom))}
   </style>
   <script>
     if ("serviceWorker" in navigator) {
@@ -753,7 +757,7 @@ const UI_STRINGS = {
     i_am_learning:"I am learning",
     reference_langs:"My reference languages (up to 3)",
     done:"Done ✓",
-    synergy_msg:"✨ Synergy — your languages share vocabulary and grammar!",
+    synergy_msg:"Synergy — your languages share vocabulary and grammar!",
     guide_title:"New here? Here's where to start:",
     guide_step1:"Pick your language above",
     guide_step2:"Read Quick Reference first",
@@ -761,21 +765,21 @@ const UI_STRINGS = {
     guide_got_it:"Got it ✓",
     free_plan:"Free plan · 5 AI messages/day",
     upgrade:"Upgrade →",
-    native_lang_title:"🌐 My Native Language",
+    native_lang_title:"My Native Language",
     native_lang_desc:"The AI Coach will give explanations and corrections in this language.",
     manage_billing:"Manage Billing & Cancel",
     sign_out:"Sign Out", del_account:"Delete my account",
     tabs:[
-      {icon:"📖",label:"Quick Reference",hint:"Start here — the basics"},
-      {icon:"🤖",label:"AI Coach",       hint:"Practice with your tutor"},
-      {icon:"📝",label:"Grammar",        hint:"How the language works"},
-      {icon:"🧱",label:"Structures",     hint:"Common sentence patterns"},
-      {icon:"🔤",label:"Vocabulary",     hint:"Words by topic"},
-      {icon:"⚡",label:"Drills",         hint:"Quick practice rounds"},
-      {icon:"💬",label:"Dialogues",      hint:"Real conversations"},
-      {icon:"🗺️",label:"Roadmap",        hint:"Your learning path"},
-      {icon:"✍️",label:"Word Space",     hint:"Translate anything"},
-      {icon:"🃏",label:"Flashcards",     hint:"Review your saved words"},
+      {icon:"",label:"Quick Reference",hint:"Start here — the basics"},
+      {icon:"",label:"AI Coach",       hint:"Practice with your tutor"},
+      {icon:"",label:"Grammar",        hint:"How the language works"},
+      {icon:"",label:"Structures",     hint:"Common sentence patterns"},
+      {icon:"",label:"Vocabulary",     hint:"Words by topic"},
+      {icon:"",label:"Drills",         hint:"Quick practice rounds"},
+      {icon:"",label:"Dialogues",      hint:"Real conversations"},
+      {icon:"",label:"Roadmap",        hint:"Your learning path"},
+      {icon:"",label:"Word Space",     hint:"Translate anything"},
+      {icon:"",label:"Flashcards",     hint:"Review your saved words"},
     ],
   },
   fr: {
@@ -784,7 +788,7 @@ const UI_STRINGS = {
     i_am_learning:"J'apprends",
     reference_langs:"Mes langues de référence (3 max.)",
     done:"Terminé ✓",
-    synergy_msg:"✨ Synergie — vos langues partagent vocabulaire et grammaire !",
+    synergy_msg:"Synergie — vos langues partagent vocabulaire et grammaire !",
     guide_title:"Nouveau ? Par où commencer :",
     guide_step1:"Choisissez votre langue ci-dessus",
     guide_step2:"Lisez Référence rapide en premier",
@@ -792,21 +796,21 @@ const UI_STRINGS = {
     guide_got_it:"Compris ✓",
     free_plan:"Plan gratuit · 5 messages IA/jour",
     upgrade:"Upgrader →",
-    native_lang_title:"🌐 Ma langue maternelle",
+    native_lang_title:"Ma langue maternelle",
     native_lang_desc:"Le Tuteur IA donnera des explications et corrections dans cette langue.",
     manage_billing:"Gérer l'abonnement & Annuler",
     sign_out:"Se déconnecter", del_account:"Supprimer mon compte",
     tabs:[
-      {icon:"📖",label:"Référence",   hint:"Commencez ici — les bases"},
-      {icon:"🤖",label:"Tuteur IA",   hint:"Pratiquez avec votre tuteur"},
-      {icon:"📝",label:"Grammaire",   hint:"Comment fonctionne la langue"},
-      {icon:"🧱",label:"Structures",  hint:"Modèles de phrases courants"},
-      {icon:"🔤",label:"Vocabulaire", hint:"Mots par thème"},
-      {icon:"⚡",label:"Exercices",   hint:"Rounds de pratique rapide"},
-      {icon:"💬",label:"Dialogues",   hint:"Vraies conversations"},
-      {icon:"🗺️",label:"Plan",        hint:"Votre parcours d'apprentissage"},
-      {icon:"✍️",label:"Traducteur",  hint:"Traduisez n'importe quoi"},
-      {icon:"🃏",label:"Fiches",      hint:"Révisez vos mots sauvegardés"},
+      {icon:"",label:"Référence",   hint:"Commencez ici — les bases"},
+      {icon:"",label:"Tuteur IA",   hint:"Pratiquez avec votre tuteur"},
+      {icon:"",label:"Grammaire",   hint:"Comment fonctionne la langue"},
+      {icon:"",label:"Structures",  hint:"Modèles de phrases courants"},
+      {icon:"",label:"Vocabulaire", hint:"Mots par thème"},
+      {icon:"",label:"Exercices",   hint:"Rounds de pratique rapide"},
+      {icon:"",label:"Dialogues",   hint:"Vraies conversations"},
+      {icon:"",label:"Plan",        hint:"Votre parcours d'apprentissage"},
+      {icon:"",label:"Traducteur",  hint:"Traduisez n'importe quoi"},
+      {icon:"",label:"Fiches",      hint:"Révisez vos mots sauvegardés"},
     ],
   },
   es: {
@@ -815,7 +819,7 @@ const UI_STRINGS = {
     i_am_learning:"Estoy aprendiendo",
     reference_langs:"Mis idiomas de referencia (máx. 3)",
     done:"Listo ✓",
-    synergy_msg:"✨ Sinergia — ¡tus idiomas comparten vocabulario y gramática!",
+    synergy_msg:"Sinergia — ¡tus idiomas comparten vocabulario y gramática!",
     guide_title:"¿Nuevo? Por dónde empezar:",
     guide_step1:"Elige tu idioma arriba",
     guide_step2:"Lee Referencia rápida primero",
@@ -823,21 +827,21 @@ const UI_STRINGS = {
     guide_got_it:"Entendido ✓",
     free_plan:"Plan gratuito · 5 mensajes IA/día",
     upgrade:"Mejorar →",
-    native_lang_title:"🌐 Mi idioma nativo",
+    native_lang_title:"Mi idioma nativo",
     native_lang_desc:"El Tutor IA dará explicaciones y correcciones en este idioma.",
     manage_billing:"Gestionar facturación y cancelar",
     sign_out:"Cerrar sesión", del_account:"Eliminar mi cuenta",
     tabs:[
-      {icon:"📖",label:"Referencia",  hint:"Empieza aquí — lo básico"},
-      {icon:"🤖",label:"Tutor IA",    hint:"Practica con tu tutor"},
-      {icon:"📝",label:"Gramática",   hint:"Cómo funciona el idioma"},
-      {icon:"🧱",label:"Estructuras", hint:"Patrones de frases comunes"},
-      {icon:"🔤",label:"Vocabulario", hint:"Palabras por tema"},
-      {icon:"⚡",label:"Ejercicios",  hint:"Rondas de práctica rápida"},
-      {icon:"💬",label:"Diálogos",    hint:"Conversaciones reales"},
-      {icon:"🗺️",label:"Hoja de ruta",hint:"Tu ruta de aprendizaje"},
-      {icon:"✍️",label:"Traductor",   hint:"Traduce cualquier cosa"},
-      {icon:"🃏",label:"Tarjetas",    hint:"Repasa tus palabras guardadas"},
+      {icon:"",label:"Referencia",  hint:"Empieza aquí — lo básico"},
+      {icon:"",label:"Tutor IA",    hint:"Practica con tu tutor"},
+      {icon:"",label:"Gramática",   hint:"Cómo funciona el idioma"},
+      {icon:"",label:"Estructuras", hint:"Patrones de frases comunes"},
+      {icon:"",label:"Vocabulario", hint:"Palabras por tema"},
+      {icon:"",label:"Ejercicios",  hint:"Rondas de práctica rápida"},
+      {icon:"",label:"Diálogos",    hint:"Conversaciones reales"},
+      {icon:"",label:"Hoja de ruta",hint:"Tu ruta de aprendizaje"},
+      {icon:"",label:"Traductor",   hint:"Traduce cualquier cosa"},
+      {icon:"",label:"Tarjetas",    hint:"Repasa tus palabras guardadas"},
     ],
   },
   pt: {
@@ -846,7 +850,7 @@ const UI_STRINGS = {
     i_am_learning:"Estou aprendendo",
     reference_langs:"Meus idiomas de referência (até 3)",
     done:"Pronto ✓",
-    synergy_msg:"✨ Sinergia — seus idiomas compartilham vocabulário e gramática!",
+    synergy_msg:"Sinergia — seus idiomas compartilham vocabulário e gramática!",
     guide_title:"Novo aqui? Por onde começar:",
     guide_step1:"Escolha seu idioma acima",
     guide_step2:"Leia Referência rápida primeiro",
@@ -854,21 +858,21 @@ const UI_STRINGS = {
     guide_got_it:"Entendi ✓",
     free_plan:"Plano gratuito · 5 mensagens IA/dia",
     upgrade:"Atualizar →",
-    native_lang_title:"🌐 Meu idioma nativo",
+    native_lang_title:"Meu idioma nativo",
     native_lang_desc:"O Tutor IA dará explicações e correções neste idioma.",
     manage_billing:"Gerenciar cobrança e cancelar",
     sign_out:"Sair", del_account:"Excluir minha conta",
     tabs:[
-      {icon:"📖",label:"Referência",  hint:"Comece aqui — o básico"},
-      {icon:"🤖",label:"Tutor IA",    hint:"Pratique com seu tutor"},
-      {icon:"📝",label:"Gramática",   hint:"Como o idioma funciona"},
-      {icon:"🧱",label:"Estruturas",  hint:"Padrões de frases comuns"},
-      {icon:"🔤",label:"Vocabulário", hint:"Palavras por tema"},
-      {icon:"⚡",label:"Exercícios",  hint:"Rodadas de prática rápida"},
-      {icon:"💬",label:"Diálogos",    hint:"Conversas reais"},
-      {icon:"🗺️",label:"Roteiro",     hint:"Seu caminho de aprendizado"},
-      {icon:"✍️",label:"Tradutor",    hint:"Traduza qualquer coisa"},
-      {icon:"🃏",label:"Cartões",     hint:"Revise suas palavras salvas"},
+      {icon:"",label:"Referência",  hint:"Comece aqui — o básico"},
+      {icon:"",label:"Tutor IA",    hint:"Pratique com seu tutor"},
+      {icon:"",label:"Gramática",   hint:"Como o idioma funciona"},
+      {icon:"",label:"Estruturas",  hint:"Padrões de frases comuns"},
+      {icon:"",label:"Vocabulário", hint:"Palavras por tema"},
+      {icon:"",label:"Exercícios",  hint:"Rodadas de prática rápida"},
+      {icon:"",label:"Diálogos",    hint:"Conversas reais"},
+      {icon:"",label:"Roteiro",     hint:"Seu caminho de aprendizado"},
+      {icon:"",label:"Tradutor",    hint:"Traduza qualquer coisa"},
+      {icon:"",label:"Cartões",     hint:"Revise suas palavras salvas"},
     ],
   },
   it: {
@@ -877,7 +881,7 @@ const UI_STRINGS = {
     i_am_learning:"Sto imparando",
     reference_langs:"Le mie lingue di riferimento (max 3)",
     done:"Fatto ✓",
-    synergy_msg:"✨ Sinergia — le tue lingue condividono vocabolario e grammatica!",
+    synergy_msg:"Sinergia — le tue lingue condividono vocabolario e grammatica!",
     guide_title:"Sei nuovo? Da dove iniziare:",
     guide_step1:"Scegli la tua lingua sopra",
     guide_step2:"Leggi prima Riferimento rapido",
@@ -885,21 +889,21 @@ const UI_STRINGS = {
     guide_got_it:"Capito ✓",
     free_plan:"Piano gratuito · 5 messaggi IA/giorno",
     upgrade:"Aggiorna →",
-    native_lang_title:"🌐 La mia lingua madre",
+    native_lang_title:"La mia lingua madre",
     native_lang_desc:"Il Tutor IA darà spiegazioni e correzioni in questa lingua.",
     manage_billing:"Gestisci abbonamento e annulla",
     sign_out:"Esci", del_account:"Elimina il mio account",
     tabs:[
-      {icon:"📖",label:"Riferimento", hint:"Inizia qui — le basi"},
-      {icon:"🤖",label:"Tutor IA",   hint:"Esercitati con il tuo tutor"},
-      {icon:"📝",label:"Grammatica", hint:"Come funziona la lingua"},
-      {icon:"🧱",label:"Strutture",  hint:"Strutture di frasi comuni"},
-      {icon:"🔤",label:"Vocabolario",hint:"Parole per argomento"},
-      {icon:"⚡",label:"Esercizi",   hint:"Sessioni di pratica rapida"},
-      {icon:"💬",label:"Dialoghi",   hint:"Conversazioni reali"},
-      {icon:"🗺️",label:"Percorso",   hint:"Il tuo percorso di apprendimento"},
-      {icon:"✍️",label:"Traduttore", hint:"Traduci qualsiasi cosa"},
-      {icon:"🃏",label:"Schede",     hint:"Ripassa le parole salvate"},
+      {icon:"",label:"Riferimento", hint:"Inizia qui — le basi"},
+      {icon:"",label:"Tutor IA",   hint:"Esercitati con il tuo tutor"},
+      {icon:"",label:"Grammatica", hint:"Come funziona la lingua"},
+      {icon:"",label:"Strutture",  hint:"Strutture di frasi comuni"},
+      {icon:"",label:"Vocabolario",hint:"Parole per argomento"},
+      {icon:"",label:"Esercizi",   hint:"Sessioni di pratica rapida"},
+      {icon:"",label:"Dialoghi",   hint:"Conversazioni reali"},
+      {icon:"",label:"Percorso",   hint:"Il tuo percorso di apprendimento"},
+      {icon:"",label:"Traduttore", hint:"Traduci qualsiasi cosa"},
+      {icon:"",label:"Schede",     hint:"Ripassa le parole salvate"},
     ],
   },
   de: {
@@ -908,7 +912,7 @@ const UI_STRINGS = {
     i_am_learning:"Ich lerne",
     reference_langs:"Meine Referenzsprachen (max. 3)",
     done:"Fertig ✓",
-    synergy_msg:"✨ Synergie — deine Sprachen teilen Vokabular und Grammatik!",
+    synergy_msg:"Synergie — deine Sprachen teilen Vokabular und Grammatik!",
     guide_title:"Neu hier? Wo anfangen:",
     guide_step1:"Wähle deine Sprache oben",
     guide_step2:"Lies zuerst die Schnellreferenz",
@@ -916,21 +920,21 @@ const UI_STRINGS = {
     guide_got_it:"Verstanden ✓",
     free_plan:"Kostenloser Plan · 5 KI-Nachrichten/Tag",
     upgrade:"Upgraden →",
-    native_lang_title:"🌐 Meine Muttersprache",
+    native_lang_title:"Meine Muttersprache",
     native_lang_desc:"Der KI-Tutor gibt Erklärungen und Korrekturen in dieser Sprache.",
     manage_billing:"Abrechnung verwalten und kündigen",
     sign_out:"Abmelden", del_account:"Mein Konto löschen",
     tabs:[
-      {icon:"📖",label:"Referenz",   hint:"Hier anfangen — die Grundlagen"},
-      {icon:"🤖",label:"KI-Tutor",   hint:"Mit deinem Tutor üben"},
-      {icon:"📝",label:"Grammatik",  hint:"Wie die Sprache funktioniert"},
-      {icon:"🧱",label:"Strukturen", hint:"Häufige Satzmuster"},
-      {icon:"🔤",label:"Wortschatz", hint:"Wörter nach Thema"},
-      {icon:"⚡",label:"Übungen",    hint:"Schnelle Übungsrunden"},
-      {icon:"💬",label:"Dialoge",    hint:"Echte Gespräche"},
-      {icon:"🗺️",label:"Lernplan",   hint:"Dein Lernweg"},
-      {icon:"✍️",label:"Übersetzer", hint:"Übersetze alles"},
-      {icon:"🃏",label:"Lernkarten", hint:"Gespeicherte Wörter wiederholen"},
+      {icon:"",label:"Referenz",   hint:"Hier anfangen — die Grundlagen"},
+      {icon:"",label:"KI-Tutor",   hint:"Mit deinem Tutor üben"},
+      {icon:"",label:"Grammatik",  hint:"Wie die Sprache funktioniert"},
+      {icon:"",label:"Strukturen", hint:"Häufige Satzmuster"},
+      {icon:"",label:"Wortschatz", hint:"Wörter nach Thema"},
+      {icon:"",label:"Übungen",    hint:"Schnelle Übungsrunden"},
+      {icon:"",label:"Dialoge",    hint:"Echte Gespräche"},
+      {icon:"",label:"Lernplan",   hint:"Dein Lernweg"},
+      {icon:"",label:"Übersetzer", hint:"Übersetze alles"},
+      {icon:"",label:"Lernkarten", hint:"Gespeicherte Wörter wiederholen"},
     ],
   },
   zh: {
@@ -939,7 +943,7 @@ const UI_STRINGS = {
     i_am_learning:"我在学习",
     reference_langs:"参考语言（最多3种）",
     done:"完成 ✓",
-    synergy_msg:"✨ 协同效应 — 你的语言共享词汇和语法！",
+    synergy_msg:"协同效应 — 你的语言共享词汇和语法！",
     guide_title:"新来的？从这里开始：",
     guide_step1:"在上方选择你的目标语言",
     guide_step2:"先阅读快速参考",
@@ -947,21 +951,21 @@ const UI_STRINGS = {
     guide_got_it:"明白了 ✓",
     free_plan:"免费计划 · 每天5条AI消息",
     upgrade:"升级 →",
-    native_lang_title:"🌐 我的母语",
+    native_lang_title:"我的母语",
     native_lang_desc:"AI教练将用这种语言给出解释和纠正。",
     manage_billing:"管理账单和取消订阅",
     sign_out:"退出登录", del_account:"删除我的账户",
     tabs:[
-      {icon:"📖",label:"快速参考", hint:"从这里开始 — 基础知识"},
-      {icon:"🤖",label:"AI教练",  hint:"与你的导师一起练习"},
-      {icon:"📝",label:"语法",    hint:"语言如何运作"},
-      {icon:"🧱",label:"句型",    hint:"常见句子结构"},
-      {icon:"🔤",label:"词汇",    hint:"按主题分类的单词"},
-      {icon:"⚡",label:"练习",    hint:"快速练习轮次"},
-      {icon:"💬",label:"对话",    hint:"真实对话"},
-      {icon:"🗺️",label:"路线图",  hint:"你的学习路径"},
-      {icon:"✍️",label:"翻译",    hint:"翻译任何内容"},
-      {icon:"🃏",label:"单词卡",  hint:"复习你保存的单词"},
+      {icon:"",label:"快速参考", hint:"从这里开始 — 基础知识"},
+      {icon:"",label:"AI教练",  hint:"与你的导师一起练习"},
+      {icon:"",label:"语法",    hint:"语言如何运作"},
+      {icon:"",label:"句型",    hint:"常见句子结构"},
+      {icon:"",label:"词汇",    hint:"按主题分类的单词"},
+      {icon:"",label:"练习",    hint:"快速练习轮次"},
+      {icon:"",label:"对话",    hint:"真实对话"},
+      {icon:"",label:"路线图",  hint:"你的学习路径"},
+      {icon:"",label:"翻译",    hint:"翻译任何内容"},
+      {icon:"",label:"单词卡",  hint:"复习你保存的单词"},
     ],
   },
   ja: {
@@ -970,7 +974,7 @@ const UI_STRINGS = {
     i_am_learning:"学習中の言語",
     reference_langs:"参照言語（最大3つ）",
     done:"完了 ✓",
-    synergy_msg:"✨ シナジー — あなたの言語は語彙と文法を共有しています！",
+    synergy_msg:"シナジー — あなたの言語は語彙と文法を共有しています！",
     guide_title:"初めての方へ：",
     guide_step1:"上で言語を選んでください",
     guide_step2:"まずクイックリファレンスを読む",
@@ -978,21 +982,21 @@ const UI_STRINGS = {
     guide_got_it:"わかりました ✓",
     free_plan:"無料プラン · 1日5件のAIメッセージ",
     upgrade:"アップグレード →",
-    native_lang_title:"🌐 母国語",
+    native_lang_title:"母国語",
     native_lang_desc:"AIコーチはこの言語で説明と添削を行います。",
     manage_billing:"請求を管理してキャンセル",
     sign_out:"サインアウト", del_account:"アカウントを削除",
     tabs:[
-      {icon:"📖",label:"クイック参照",  hint:"基礎から始めましょう"},
-      {icon:"🤖",label:"AIコーチ",     hint:"チューターと練習する"},
-      {icon:"📝",label:"文法",         hint:"言語の仕組み"},
-      {icon:"🧱",label:"文型",         hint:"一般的な文のパターン"},
-      {icon:"🔤",label:"語彙",         hint:"トピック別の単語"},
-      {icon:"⚡",label:"ドリル",       hint:"クイック練習ラウンド"},
-      {icon:"💬",label:"ダイアログ",   hint:"リアルな会話"},
-      {icon:"🗺️",label:"ロードマップ", hint:"あなたの学習パス"},
-      {icon:"✍️",label:"翻訳",         hint:"何でも翻訳する"},
-      {icon:"🃏",label:"単語カード",   hint:"保存した単語を復習する"},
+      {icon:"",label:"クイック参照",  hint:"基礎から始めましょう"},
+      {icon:"",label:"AIコーチ",     hint:"チューターと練習する"},
+      {icon:"",label:"文法",         hint:"言語の仕組み"},
+      {icon:"",label:"文型",         hint:"一般的な文のパターン"},
+      {icon:"",label:"語彙",         hint:"トピック別の単語"},
+      {icon:"",label:"ドリル",       hint:"クイック練習ラウンド"},
+      {icon:"",label:"ダイアログ",   hint:"リアルな会話"},
+      {icon:"",label:"ロードマップ", hint:"あなたの学習パス"},
+      {icon:"",label:"翻訳",         hint:"何でも翻訳する"},
+      {icon:"",label:"単語カード",   hint:"保存した単語を復習する"},
     ],
   },
   ko: {
@@ -1001,7 +1005,7 @@ const UI_STRINGS = {
     i_am_learning:"학습 중인 언어",
     reference_langs:"참조 언어 (최대 3개)",
     done:"완료 ✓",
-    synergy_msg:"✨ 시너지 — 당신의 언어는 어휘와 문법을 공유합니다!",
+    synergy_msg:"시너지 — 당신의 언어는 어휘와 문법을 공유합니다!",
     guide_title:"처음 오셨나요? 시작하는 방법:",
     guide_step1:"위에서 언어 선택하기",
     guide_step2:"먼저 빠른 참조 읽기",
@@ -1009,21 +1013,21 @@ const UI_STRINGS = {
     guide_got_it:"알겠습니다 ✓",
     free_plan:"무료 플랜 · 하루 AI 5개 메시지",
     upgrade:"업그레이드 →",
-    native_lang_title:"🌐 모국어",
+    native_lang_title:"모국어",
     native_lang_desc:"AI 코치가 이 언어로 설명과 교정을 제공합니다.",
     manage_billing:"청구 관리 및 취소",
     sign_out:"로그아웃", del_account:"내 계정 삭제",
     tabs:[
-      {icon:"📖",label:"빠른 참조",   hint:"기초부터 시작하세요"},
-      {icon:"🤖",label:"AI 코치",     hint:"튜터와 연습하기"},
-      {icon:"📝",label:"문법",        hint:"언어가 작동하는 방식"},
-      {icon:"🧱",label:"문장 구조",   hint:"일반적인 문장 패턴"},
-      {icon:"🔤",label:"어휘",        hint:"주제별 단어"},
-      {icon:"⚡",label:"드릴",        hint:"빠른 연습 라운드"},
-      {icon:"💬",label:"대화",        hint:"실제 대화"},
-      {icon:"🗺️",label:"로드맵",      hint:"당신의 학습 경로"},
-      {icon:"✍️",label:"번역",        hint:"무엇이든 번역하기"},
-      {icon:"🃏",label:"플래시카드",  hint:"저장한 단어 복습"},
+      {icon:"",label:"빠른 참조",   hint:"기초부터 시작하세요"},
+      {icon:"",label:"AI 코치",     hint:"튜터와 연습하기"},
+      {icon:"",label:"문법",        hint:"언어가 작동하는 방식"},
+      {icon:"",label:"문장 구조",   hint:"일반적인 문장 패턴"},
+      {icon:"",label:"어휘",        hint:"주제별 단어"},
+      {icon:"",label:"드릴",        hint:"빠른 연습 라운드"},
+      {icon:"",label:"대화",        hint:"실제 대화"},
+      {icon:"",label:"로드맵",      hint:"당신의 학습 경로"},
+      {icon:"",label:"번역",        hint:"무엇이든 번역하기"},
+      {icon:"",label:"플래시카드",  hint:"저장한 단어 복습"},
     ],
   },
   ru: {
@@ -1032,7 +1036,7 @@ const UI_STRINGS = {
     i_am_learning:"Я учу",
     reference_langs:"Мои справочные языки (до 3)",
     done:"Готово ✓",
-    synergy_msg:"✨ Синергия — ваши языки разделяют словарный запас и грамматику!",
+    synergy_msg:"Синергия — ваши языки разделяют словарный запас и грамматику!",
     guide_title:"Новичок? Вот с чего начать:",
     guide_step1:"Выберите язык выше",
     guide_step2:"Сначала прочитайте Быстрый справочник",
@@ -1040,21 +1044,21 @@ const UI_STRINGS = {
     guide_got_it:"Понятно ✓",
     free_plan:"Бесплатный план · 5 ИИ-сообщений/день",
     upgrade:"Улучшить →",
-    native_lang_title:"🌐 Мой родной язык",
+    native_lang_title:"Мой родной язык",
     native_lang_desc:"ИИ-тренер будет давать объяснения и исправления на этом языке.",
     manage_billing:"Управлять подпиской и отменить",
     sign_out:"Выйти", del_account:"Удалить мой аккаунт",
     tabs:[
-      {icon:"📖",label:"Справочник", hint:"Начните здесь — основы"},
-      {icon:"🤖",label:"ИИ-тренер", hint:"Практикуйтесь с вашим тренером"},
-      {icon:"📝",label:"Грамматика", hint:"Как работает язык"},
-      {icon:"🧱",label:"Структуры",  hint:"Общие структуры предложений"},
-      {icon:"🔤",label:"Словарь",    hint:"Слова по темам"},
-      {icon:"⚡",label:"Упражнения", hint:"Быстрые раунды практики"},
-      {icon:"💬",label:"Диалоги",    hint:"Реальные разговоры"},
-      {icon:"🗺️",label:"Маршрут",    hint:"Ваш путь обучения"},
-      {icon:"✍️",label:"Переводчик", hint:"Переведите что угодно"},
-      {icon:"🃏",label:"Карточки",   hint:"Повторяйте сохранённые слова"},
+      {icon:"",label:"Справочник", hint:"Начните здесь — основы"},
+      {icon:"",label:"ИИ-тренер", hint:"Практикуйтесь с вашим тренером"},
+      {icon:"",label:"Грамматика", hint:"Как работает язык"},
+      {icon:"",label:"Структуры",  hint:"Общие структуры предложений"},
+      {icon:"",label:"Словарь",    hint:"Слова по темам"},
+      {icon:"",label:"Упражнения", hint:"Быстрые раунды практики"},
+      {icon:"",label:"Диалоги",    hint:"Реальные разговоры"},
+      {icon:"",label:"Маршрут",    hint:"Ваш путь обучения"},
+      {icon:"",label:"Переводчик", hint:"Переведите что угодно"},
+      {icon:"",label:"Карточки",   hint:"Повторяйте сохранённые слова"},
     ],
   },
   ar: {
@@ -1063,7 +1067,7 @@ const UI_STRINGS = {
     i_am_learning:"أنا أتعلم",
     reference_langs:"لغاتي المرجعية (حتى 3)",
     done:"تم ✓",
-    synergy_msg:"✨ تآزر — لغاتك تشترك في المفردات والقواعد!",
+    synergy_msg:"تآزر — لغاتك تشترك في المفردات والقواعد!",
     guide_title:"جديد هنا؟ من أين تبدأ:",
     guide_step1:"اختر لغتك أعلاه",
     guide_step2:"اقرأ المرجع السريع أولاً",
@@ -1071,21 +1075,21 @@ const UI_STRINGS = {
     guide_got_it:"فهمت ✓",
     free_plan:"خطة مجانية · 5 رسائل ذكاء اصطناعي/يوم",
     upgrade:"ترقية →",
-    native_lang_title:"🌐 لغتي الأم",
+    native_lang_title:"لغتي الأم",
     native_lang_desc:"سيقدم مدرب الذكاء الاصطناعي الشروحات والتصحيحات بهذه اللغة.",
     manage_billing:"إدارة الفواتير والإلغاء",
     sign_out:"تسجيل الخروج", del_account:"حذف حسابي",
     tabs:[
-      {icon:"📖",label:"مرجع سريع",    hint:"ابدأ هنا — الأساسيات"},
-      {icon:"🤖",label:"مدرب الذكاء",  hint:"تدرب مع مدربك"},
-      {icon:"📝",label:"القواعد",       hint:"كيف تعمل اللغة"},
-      {icon:"🧱",label:"التراكيب",      hint:"أنماط الجمل الشائعة"},
-      {icon:"🔤",label:"المفردات",      hint:"كلمات حسب الموضوع"},
-      {icon:"⚡",label:"التدريبات",     hint:"جولات تدريب سريعة"},
-      {icon:"💬",label:"الحوارات",      hint:"محادثات حقيقية"},
-      {icon:"🗺️",label:"خارطة الطريق", hint:"مسار تعلمك"},
-      {icon:"✍️",label:"المترجم",       hint:"ترجم أي شيء"},
-      {icon:"🃏",label:"بطاقات التعلم", hint:"راجع كلماتك المحفوظة"},
+      {icon:"",label:"مرجع سريع",    hint:"ابدأ هنا — الأساسيات"},
+      {icon:"",label:"مدرب الذكاء",  hint:"تدرب مع مدربك"},
+      {icon:"",label:"القواعد",       hint:"كيف تعمل اللغة"},
+      {icon:"",label:"التراكيب",      hint:"أنماط الجمل الشائعة"},
+      {icon:"",label:"المفردات",      hint:"كلمات حسب الموضوع"},
+      {icon:"",label:"التدريبات",     hint:"جولات تدريب سريعة"},
+      {icon:"",label:"الحوارات",      hint:"محادثات حقيقية"},
+      {icon:"",label:"خارطة الطريق", hint:"مسار تعلمك"},
+      {icon:"",label:"المترجم",       hint:"ترجم أي شيء"},
+      {icon:"",label:"بطاقات التعلم", hint:"راجع كلماتك المحفوظة"},
     ],
   },
   hi: {
@@ -1094,7 +1098,7 @@ const UI_STRINGS = {
     i_am_learning:"मैं सीख रहा/रही हूँ",
     reference_langs:"मेरी संदर्भ भाषाएँ (अधिकतम 3)",
     done:"हो गया ✓",
-    synergy_msg:"✨ समन्वय — आपकी भाषाएँ शब्दावली और व्याकरण साझा करती हैं!",
+    synergy_msg:"समन्वय — आपकी भाषाएँ शब्दावली और व्याकरण साझा करती हैं!",
     guide_title:"नए हैं? यहाँ से शुरू करें:",
     guide_step1:"ऊपर अपनी भाषा चुनें",
     guide_step2:"पहले त्वरित संदर्भ पढ़ें",
@@ -1102,21 +1106,21 @@ const UI_STRINGS = {
     guide_got_it:"समझ गया ✓",
     free_plan:"निःशुल्क योजना · 5 AI संदेश/दिन",
     upgrade:"अपग्रेड करें →",
-    native_lang_title:"🌐 मेरी मातृभाषा",
+    native_lang_title:"मेरी मातृभाषा",
     native_lang_desc:"AI कोच इस भाषा में स्पष्टीकरण और सुधार देगा।",
     manage_billing:"बिलिंग प्रबंधित करें और रद्द करें",
     sign_out:"साइन आउट", del_account:"मेरा खाता हटाएँ",
     tabs:[
-      {icon:"📖",label:"त्वरित संदर्भ", hint:"यहाँ से शुरू करें — मूल बातें"},
-      {icon:"🤖",label:"AI कोच",        hint:"अपने ट्यूटर के साथ अभ्यास करें"},
-      {icon:"📝",label:"व्याकरण",       hint:"भाषा कैसे काम करती है"},
-      {icon:"🧱",label:"वाक्य संरचना",  hint:"सामान्य वाक्य पैटर्न"},
-      {icon:"🔤",label:"शब्द भंडार",    hint:"विषय के अनुसार शब्द"},
-      {icon:"⚡",label:"अभ्यास",        hint:"त्वरित अभ्यास राउंड"},
-      {icon:"💬",label:"संवाद",         hint:"वास्तविक बातचीत"},
-      {icon:"🗺️",label:"रोडमैप",        hint:"आपका सीखने का मार्ग"},
-      {icon:"✍️",label:"अनुवाद",        hint:"कुछ भी अनुवाद करें"},
-      {icon:"🃏",label:"फ्लैशकार्ड",   hint:"सहेजे गए शब्दों की समीक्षा करें"},
+      {icon:"",label:"त्वरित संदर्भ", hint:"यहाँ से शुरू करें — मूल बातें"},
+      {icon:"",label:"AI कोच",        hint:"अपने ट्यूटर के साथ अभ्यास करें"},
+      {icon:"",label:"व्याकरण",       hint:"भाषा कैसे काम करती है"},
+      {icon:"",label:"वाक्य संरचना",  hint:"सामान्य वाक्य पैटर्न"},
+      {icon:"",label:"शब्द भंडार",    hint:"विषय के अनुसार शब्द"},
+      {icon:"",label:"अभ्यास",        hint:"त्वरित अभ्यास राउंड"},
+      {icon:"",label:"संवाद",         hint:"वास्तविक बातचीत"},
+      {icon:"",label:"रोडमैप",        hint:"आपका सीखने का मार्ग"},
+      {icon:"",label:"अनुवाद",        hint:"कुछ भी अनुवाद करें"},
+      {icon:"",label:"फ्लैशकार्ड",   hint:"सहेजे गए शब्दों की समीक्षा करें"},
     ],
   },
 };
@@ -1126,7 +1130,7 @@ const UI_EXT = {
   en: {
     // SaveToFlashcardsBtn
     already_saved: "Already in flashcards",
-    save_flashcard: "🃏 Save to Flashcards",
+    save_flashcard: "Save to Flashcards",
     saved_flashcard: "✓ Saved to Flashcards",
     // EXERCISE_TYPES
     ex_word_label: "Learn a New Word",
@@ -1161,14 +1165,14 @@ const UI_EXT = {
     auto_translating: "Auto-translating...",
     start_typing: "Start typing to translate",
     clear: "Clear",
-    hear_it: "▶ Hear it",
+    hear_it: "Hear it",
     translating_content: "Translating and building your learning content...",
-    listen: "▶ Listen",
+    listen: "Listen",
     save_btn: "+ Save",
     word_by_word: "Word by word",
     grammar_usage: "Grammar & Usage",
     compared_to: "Compared to",
-    more_examples: "More examples in context — tap ▶ to hear",
+    more_examples: "More examples in context — tap to hear",
     session_expired: "Session expired",
     please_refresh: "Please refresh the page and log in again.",
     saved_words: "Saved Words",
@@ -1196,7 +1200,7 @@ const UI_EXT = {
     roadmap_title: "Learning Roadmap",
     // SettingsPanel remaining
     your_account: "Your Account",
-    free_plan_label: "🆓 Free Plan",
+    free_plan_label: "Free Plan",
     active_sub: "✓ Active Subscription",
     about_code: "About your access code",
     opening: "Opening...",
@@ -1208,13 +1212,13 @@ const UI_EXT = {
     upgrade_body: "You've used your 5 free AI messages for today. Upgrade for unlimited AI coaching, streaks, drills, dialogues, and more.",
     maybe_later: "Maybe later",
     // Session expiry
-    expires_today: "⚠️ Your session expires today. Re-enter your code to stay logged in.",
-    expires_tomorrow: "⚠️ Your session expires tomorrow. Re-enter your code to stay logged in.",
-    expires_days: "⚠️ Your session expires in {n} days. Re-enter your code to stay logged in.",
+    expires_today: "Your session expires today. Re-enter your code to stay logged in.",
+    expires_tomorrow: "Your session expires tomorrow. Re-enter your code to stay logged in.",
+    expires_days: "Your session expires in {n} days. Re-enter your code to stay logged in.",
     // SupportChat
-    support_greeting: "Hi! 👋 I'm the Tongue support assistant. Ask me anything about the app, your subscription, or your access code.",
+    support_greeting: "Hi! I'm the Tongue support assistant. Ask me anything about the app, your subscription, or your access code.",
     support_placeholder: "Ask a question...",
-    support_title: "💬 Support Chat",
+    support_title: "Support Chat",
     support_subtitle: "AI assistant · usually instant",
     // Onboarding
     ob_welcome: "Welcome to Tongue",
@@ -1234,7 +1238,7 @@ const UI_EXT = {
   },
   fr: {
     already_saved: "Déjà dans les flashcards",
-    save_flashcard: "🃏 Ajouter aux flashcards",
+    save_flashcard: "Ajouter aux flashcards",
     saved_flashcard: "✓ Ajouté aux flashcards",
     ex_word_label: "Apprendre un nouveau mot",
     ex_word_desc: "Appuyez pour obtenir un mot avec prononciation et exemples",
@@ -1266,14 +1270,14 @@ const UI_EXT = {
     auto_translating: "Traduction automatique...",
     start_typing: "Commencez à écrire pour traduire",
     clear: "Effacer",
-    hear_it: "▶ Écouter",
+    hear_it: "Écouter",
     translating_content: "Traduction et création de votre contenu d'apprentissage...",
-    listen: "▶ Écouter",
+    listen: "Écouter",
     save_btn: "+ Sauvegarder",
     word_by_word: "Mot par mot",
     grammar_usage: "Grammaire et usage",
     compared_to: "Comparé à",
-    more_examples: "Plus d'exemples en contexte — appuyez ▶ pour écouter",
+    more_examples: "Plus d'exemples en contexte — appuyez pour écouter",
     session_expired: "Session expirée",
     please_refresh: "Veuillez rafraîchir la page et vous reconnecter.",
     saved_words: "Mots sauvegardés",
@@ -1297,7 +1301,7 @@ const UI_EXT = {
     voice_speed: "Vitesse",
     roadmap_title: "Feuille de route",
     your_account: "Votre compte",
-    free_plan_label: "🆓 Plan gratuit",
+    free_plan_label: "Plan gratuit",
     active_sub: "✓ Abonnement actif",
     about_code: "À propos de votre code d'accès",
     opening: "Ouverture...",
@@ -1307,12 +1311,12 @@ const UI_EXT = {
     upgrade_title: "Passer à Tongue Premium",
     upgrade_body: "Vous avez utilisé vos 5 messages IA gratuits aujourd'hui. Passez à Premium pour un coaching IA illimité, des séries, des exercices et plus encore.",
     maybe_later: "Peut-être plus tard",
-    expires_today: "⚠️ Votre session expire aujourd'hui. Saisissez à nouveau votre code.",
-    expires_tomorrow: "⚠️ Votre session expire demain. Saisissez à nouveau votre code.",
-    expires_days: "⚠️ Votre session expire dans {n} jours. Saisissez à nouveau votre code.",
-    support_greeting: "Bonjour ! 👋 Je suis l'assistant support de Tongue. Posez-moi toutes vos questions sur l'application, votre abonnement ou votre code d'accès.",
+    expires_today: "Votre session expire aujourd'hui. Saisissez à nouveau votre code.",
+    expires_tomorrow: "Votre session expire demain. Saisissez à nouveau votre code.",
+    expires_days: "Votre session expire dans {n} jours. Saisissez à nouveau votre code.",
+    support_greeting: "Bonjour ! Je suis l'assistant support de Tongue. Posez-moi toutes vos questions sur l'application, votre abonnement ou votre code d'accès.",
     support_placeholder: "Posez une question...",
-    support_title: "💬 Support",
+    support_title: "Support",
     support_subtitle: "Assistant IA · généralement instantané",
     ob_welcome: "Bienvenue sur Tongue",
     ob_subtitle: "Configurons votre expérience d'apprentissage",
@@ -1331,7 +1335,7 @@ const UI_EXT = {
   },
   es: {
     already_saved: "Ya está en las flashcards",
-    save_flashcard: "🃏 Guardar en flashcards",
+    save_flashcard: "Guardar en flashcards",
     saved_flashcard: "✓ Guardado en flashcards",
     ex_word_label: "Aprender una nueva palabra",
     ex_word_desc: "Toca para obtener una palabra con pronunciación y ejemplos",
@@ -1363,14 +1367,14 @@ const UI_EXT = {
     auto_translating: "Traducción automática...",
     start_typing: "Empieza a escribir para traducir",
     clear: "Limpiar",
-    hear_it: "▶ Escuchar",
+    hear_it: "Escuchar",
     translating_content: "Traduciendo y creando tu contenido de aprendizaje...",
-    listen: "▶ Escuchar",
+    listen: "Escuchar",
     save_btn: "+ Guardar",
     word_by_word: "Palabra por palabra",
     grammar_usage: "Gramática y uso",
     compared_to: "Comparado con",
-    more_examples: "Más ejemplos en contexto — toca ▶ para escuchar",
+    more_examples: "Más ejemplos en contexto — toca para escuchar",
     session_expired: "Sesión expirada",
     please_refresh: "Actualiza la página y vuelve a iniciar sesión.",
     saved_words: "Palabras guardadas",
@@ -1394,7 +1398,7 @@ const UI_EXT = {
     voice_speed: "Velocidad",
     roadmap_title: "Hoja de ruta",
     your_account: "Tu cuenta",
-    free_plan_label: "🆓 Plan gratuito",
+    free_plan_label: "Plan gratuito",
     active_sub: "✓ Suscripción activa",
     about_code: "Sobre tu código de acceso",
     opening: "Abriendo...",
@@ -1404,12 +1408,12 @@ const UI_EXT = {
     upgrade_title: "Actualiza a Tongue Premium",
     upgrade_body: "Has usado tus 5 mensajes de IA gratuitos de hoy. Actualiza para coaching ilimitado, rachas, ejercicios y más.",
     maybe_later: "Quizás más tarde",
-    expires_today: "⚠️ Tu sesión expira hoy. Vuelve a introducir tu código.",
-    expires_tomorrow: "⚠️ Tu sesión expira mañana. Vuelve a introducir tu código.",
-    expires_days: "⚠️ Tu sesión expira en {n} días. Vuelve a introducir tu código.",
-    support_greeting: "¡Hola! 👋 Soy el asistente de soporte de Tongue. Pregúntame sobre la app, tu suscripción o tu código de acceso.",
+    expires_today: "Tu sesión expira hoy. Vuelve a introducir tu código.",
+    expires_tomorrow: "Tu sesión expira mañana. Vuelve a introducir tu código.",
+    expires_days: "Tu sesión expira en {n} días. Vuelve a introducir tu código.",
+    support_greeting: "¡Hola! Soy el asistente de soporte de Tongue. Pregúntame sobre la app, tu suscripción o tu código de acceso.",
     support_placeholder: "Haz una pregunta...",
-    support_title: "💬 Soporte",
+    support_title: "Soporte",
     support_subtitle: "Asistente IA · normalmente instantáneo",
     ob_welcome: "Bienvenido a Tongue",
     ob_subtitle: "Configuremos tu experiencia de aprendizaje",
@@ -1428,7 +1432,7 @@ const UI_EXT = {
   },
   pt: {
     already_saved: "Já está nos flashcards",
-    save_flashcard: "🃏 Salvar nos flashcards",
+    save_flashcard: "Salvar nos flashcards",
     saved_flashcard: "✓ Salvo nos flashcards",
     ex_word_label: "Aprender uma nova palavra",
     ex_word_desc: "Toque para obter uma palavra com pronúncia e exemplos",
@@ -1460,14 +1464,14 @@ const UI_EXT = {
     auto_translating: "Tradução automática...",
     start_typing: "Comece a escrever para traduzir",
     clear: "Limpar",
-    hear_it: "▶ Ouvir",
+    hear_it: "Ouvir",
     translating_content: "Traduzindo e criando seu conteúdo de aprendizagem...",
-    listen: "▶ Ouvir",
+    listen: "Ouvir",
     save_btn: "+ Salvar",
     word_by_word: "Palavra por palavra",
     grammar_usage: "Gramática e uso",
     compared_to: "Comparado com",
-    more_examples: "Mais exemplos em contexto — toque ▶ para ouvir",
+    more_examples: "Mais exemplos em contexto — toque para ouvir",
     session_expired: "Sessão expirada",
     please_refresh: "Atualize a página e faça login novamente.",
     saved_words: "Palavras salvas",
@@ -1491,7 +1495,7 @@ const UI_EXT = {
     voice_speed: "Velocidade",
     roadmap_title: "Roteiro de aprendizagem",
     your_account: "Sua conta",
-    free_plan_label: "🆓 Plano gratuito",
+    free_plan_label: "Plano gratuito",
     active_sub: "✓ Assinatura ativa",
     about_code: "Sobre seu código de acesso",
     opening: "Abrindo...",
@@ -1501,12 +1505,12 @@ const UI_EXT = {
     upgrade_title: "Upgrade para Tongue Premium",
     upgrade_body: "Você usou suas 5 mensagens de IA gratuitas de hoje. Faça upgrade para coaching ilimitado, sequências, exercícios e muito mais.",
     maybe_later: "Talvez depois",
-    expires_today: "⚠️ Sua sessão expira hoje. Digite seu código novamente.",
-    expires_tomorrow: "⚠️ Sua sessão expira amanhã. Digite seu código novamente.",
-    expires_days: "⚠️ Sua sessão expira em {n} dias. Digite seu código novamente.",
-    support_greeting: "Olá! 👋 Sou o assistente de suporte do Tongue. Pergunte-me sobre o app, sua assinatura ou seu código de acesso.",
+    expires_today: "Sua sessão expira hoje. Digite seu código novamente.",
+    expires_tomorrow: "Sua sessão expira amanhã. Digite seu código novamente.",
+    expires_days: "Sua sessão expira em {n} dias. Digite seu código novamente.",
+    support_greeting: "Olá! Sou o assistente de suporte do Tongue. Pergunte-me sobre o app, sua assinatura ou seu código de acesso.",
     support_placeholder: "Faça uma pergunta...",
-    support_title: "💬 Suporte",
+    support_title: "Suporte",
     support_subtitle: "Assistente IA · geralmente instantâneo",
     ob_welcome: "Bem-vindo ao Tongue",
     ob_subtitle: "Vamos configurar sua experiência de aprendizagem",
@@ -1525,7 +1529,7 @@ const UI_EXT = {
   },
   it: {
     already_saved: "Già nei flashcard",
-    save_flashcard: "🃏 Salva nei flashcard",
+    save_flashcard: "Salva nei flashcard",
     saved_flashcard: "✓ Salvato nei flashcard",
     ex_word_label: "Impara una nuova parola",
     ex_word_desc: "Tocca per ottenere una parola con pronuncia ed esempi",
@@ -1557,14 +1561,14 @@ const UI_EXT = {
     auto_translating: "Traduzione automatica...",
     start_typing: "Inizia a digitare per tradurre",
     clear: "Cancella",
-    hear_it: "▶ Ascolta",
+    hear_it: "Ascolta",
     translating_content: "Traduzione e creazione dei tuoi contenuti di apprendimento...",
-    listen: "▶ Ascolta",
+    listen: "Ascolta",
     save_btn: "+ Salva",
     word_by_word: "Parola per parola",
     grammar_usage: "Grammatica e uso",
     compared_to: "Rispetto a",
-    more_examples: "Altri esempi nel contesto — tocca ▶ per ascoltare",
+    more_examples: "Altri esempi nel contesto — tocca per ascoltare",
     session_expired: "Sessione scaduta",
     please_refresh: "Aggiorna la pagina e accedi di nuovo.",
     saved_words: "Parole salvate",
@@ -1588,7 +1592,7 @@ const UI_EXT = {
     voice_speed: "Velocità",
     roadmap_title: "Percorso di apprendimento",
     your_account: "Il tuo account",
-    free_plan_label: "🆓 Piano gratuito",
+    free_plan_label: "Piano gratuito",
     active_sub: "✓ Abbonamento attivo",
     about_code: "Il tuo codice di accesso",
     opening: "Apertura...",
@@ -1598,12 +1602,12 @@ const UI_EXT = {
     upgrade_title: "Passa a Tongue Premium",
     upgrade_body: "Hai usato i tuoi 5 messaggi IA gratuiti di oggi. Passa a Premium per coaching illimitato, serie, esercizi e altro.",
     maybe_later: "Forse più tardi",
-    expires_today: "⚠️ La tua sessione scade oggi. Reinserisci il codice.",
-    expires_tomorrow: "⚠️ La tua sessione scade domani. Reinserisci il codice.",
-    expires_days: "⚠️ La tua sessione scade tra {n} giorni. Reinserisci il codice.",
-    support_greeting: "Ciao! 👋 Sono l'assistente di supporto di Tongue. Chiedimi tutto sull'app, il tuo abbonamento o il tuo codice di accesso.",
+    expires_today: "La tua sessione scade oggi. Reinserisci il codice.",
+    expires_tomorrow: "La tua sessione scade domani. Reinserisci il codice.",
+    expires_days: "La tua sessione scade tra {n} giorni. Reinserisci il codice.",
+    support_greeting: "Ciao! Sono l'assistente di supporto di Tongue. Chiedimi tutto sull'app, il tuo abbonamento o il tuo codice di accesso.",
     support_placeholder: "Fai una domanda...",
-    support_title: "💬 Supporto",
+    support_title: "Supporto",
     support_subtitle: "Assistente IA · di solito istantaneo",
     ob_welcome: "Benvenuto su Tongue",
     ob_subtitle: "Configuriamo la tua esperienza di apprendimento",
@@ -1622,7 +1626,7 @@ const UI_EXT = {
   },
   de: {
     already_saved: "Bereits in Lernkarten",
-    save_flashcard: "🃏 In Lernkarten speichern",
+    save_flashcard: "In Lernkarten speichern",
     saved_flashcard: "✓ In Lernkarten gespeichert",
     ex_word_label: "Ein neues Wort lernen",
     ex_word_desc: "Tippe für ein Wort mit Aussprache und Beispielen",
@@ -1654,14 +1658,14 @@ const UI_EXT = {
     auto_translating: "Automatische Übersetzung...",
     start_typing: "Tippe um zu übersetzen",
     clear: "Löschen",
-    hear_it: "▶ Anhören",
+    hear_it: "Anhören",
     translating_content: "Übersetze und erstelle deinen Lerninhalt...",
-    listen: "▶ Anhören",
+    listen: "Anhören",
     save_btn: "+ Speichern",
     word_by_word: "Wort für Wort",
     grammar_usage: "Grammatik & Verwendung",
     compared_to: "Im Vergleich zu",
-    more_examples: "Mehr Beispiele im Kontext — tippe ▶ zum Anhören",
+    more_examples: "Mehr Beispiele im Kontext — tippe zum Anhören",
     session_expired: "Sitzung abgelaufen",
     please_refresh: "Bitte lade die Seite neu und melde dich wieder an.",
     saved_words: "Gespeicherte Wörter",
@@ -1685,7 +1689,7 @@ const UI_EXT = {
     voice_speed: "Geschwindigkeit",
     roadmap_title: "Lernpfad",
     your_account: "Dein Konto",
-    free_plan_label: "🆓 Kostenloser Plan",
+    free_plan_label: "Kostenloser Plan",
     active_sub: "✓ Aktives Abonnement",
     about_code: "Über deinen Zugangscode",
     opening: "Öffne...",
@@ -1695,12 +1699,12 @@ const UI_EXT = {
     upgrade_title: "Upgrade auf Tongue Premium",
     upgrade_body: "Du hast heute deine 5 kostenlosen KI-Nachrichten genutzt. Upgrade für unbegrenztes KI-Coaching, Serien, Übungen und mehr.",
     maybe_later: "Vielleicht später",
-    expires_today: "⚠️ Deine Sitzung läuft heute ab. Gib deinen Code erneut ein.",
-    expires_tomorrow: "⚠️ Deine Sitzung läuft morgen ab. Gib deinen Code erneut ein.",
-    expires_days: "⚠️ Deine Sitzung läuft in {n} Tagen ab. Gib deinen Code erneut ein.",
-    support_greeting: "Hallo! 👋 Ich bin der Tongue Support-Assistent. Frag mich alles über die App, dein Abonnement oder deinen Zugangscode.",
+    expires_today: "Deine Sitzung läuft heute ab. Gib deinen Code erneut ein.",
+    expires_tomorrow: "Deine Sitzung läuft morgen ab. Gib deinen Code erneut ein.",
+    expires_days: "Deine Sitzung läuft in {n} Tagen ab. Gib deinen Code erneut ein.",
+    support_greeting: "Hallo! Ich bin der Tongue Support-Assistent. Frag mich alles über die App, dein Abonnement oder deinen Zugangscode.",
     support_placeholder: "Frage stellen...",
-    support_title: "💬 Support",
+    support_title: "Support",
     support_subtitle: "KI-Assistent · normalerweise sofort",
     ob_welcome: "Willkommen bei Tongue",
     ob_subtitle: "Lass uns dein Lernerlebnis einrichten",
@@ -1719,7 +1723,7 @@ const UI_EXT = {
   },
   zh: {
     already_saved: "已在闪卡中",
-    save_flashcard: "🃏 保存到闪卡",
+    save_flashcard: "保存到闪卡",
     saved_flashcard: "✓ 已保存到闪卡",
     ex_word_label: "学习新单词",
     ex_word_desc: "点击获取带发音和示例的单词",
@@ -1751,14 +1755,14 @@ const UI_EXT = {
     auto_translating: "自动翻译...",
     start_typing: "开始输入以翻译",
     clear: "清除",
-    hear_it: "▶ 听一听",
+    hear_it: "听一听",
     translating_content: "翻译并构建学习内容...",
-    listen: "▶ 收听",
+    listen: "收听",
     save_btn: "+ 保存",
     word_by_word: "逐词",
     grammar_usage: "语法和用法",
     compared_to: "与...相比",
-    more_examples: "更多上下文示例 — 点击▶收听",
+    more_examples: "更多上下文示例 — 点击收听",
     session_expired: "会话已过期",
     please_refresh: "请刷新页面并重新登录。",
     saved_words: "已保存的单词",
@@ -1782,7 +1786,7 @@ const UI_EXT = {
     voice_speed: "速度",
     roadmap_title: "学习路线图",
     your_account: "你的账户",
-    free_plan_label: "🆓 免费计划",
+    free_plan_label: "免费计划",
     active_sub: "✓ 活跃订阅",
     about_code: "关于你的访问码",
     opening: "打开中...",
@@ -1792,12 +1796,12 @@ const UI_EXT = {
     upgrade_title: "升级到 Tongue 高级版",
     upgrade_body: "你今天已经用完了5条免费AI消息。升级以获得无限AI辅导、连续学习、练习等。",
     maybe_later: "稍后再说",
-    expires_today: "⚠️ 你的会话今天到期。重新输入你的代码以保持登录。",
-    expires_tomorrow: "⚠️ 你的会话明天到期。重新输入你的代码以保持登录。",
-    expires_days: "⚠️ 你的会话将在{n}天后到期。重新输入你的代码以保持登录。",
-    support_greeting: "你好！👋 我是Tongue的支持助手。请随时询问关于应用、订阅或访问码的问题。",
+    expires_today: "你的会话今天到期。重新输入你的代码以保持登录。",
+    expires_tomorrow: "你的会话明天到期。重新输入你的代码以保持登录。",
+    expires_days: "你的会话将在{n}天后到期。重新输入你的代码以保持登录。",
+    support_greeting: "你好！我是Tongue的支持助手。请随时询问关于应用、订阅或访问码的问题。",
     support_placeholder: "提问...",
-    support_title: "💬 支持",
+    support_title: "支持",
     support_subtitle: "AI助手 · 通常即时响应",
     ob_welcome: "欢迎来到Tongue",
     ob_subtitle: "让我们设置你的学习体验",
@@ -1816,7 +1820,7 @@ const UI_EXT = {
   },
   ja: {
     already_saved: "すでにフラッシュカードにあります",
-    save_flashcard: "🃏 フラッシュカードに保存",
+    save_flashcard: "フラッシュカードに保存",
     saved_flashcard: "✓ フラッシュカードに保存済み",
     ex_word_label: "新しい単語を学ぶ",
     ex_word_desc: "タップして発音と例文付きの単語を取得",
@@ -1848,14 +1852,14 @@ const UI_EXT = {
     auto_translating: "自動翻訳中...",
     start_typing: "翻訳するには入力を開始",
     clear: "クリア",
-    hear_it: "▶ 聞く",
+    hear_it: "聞く",
     translating_content: "翻訳と学習コンテンツの作成中...",
-    listen: "▶ 聞く",
+    listen: "聞く",
     save_btn: "+ 保存",
     word_by_word: "単語ごと",
     grammar_usage: "文法と用法",
     compared_to: "と比較",
-    more_examples: "文脈の中の例 — ▶をタップして聞く",
+    more_examples: "文脈の中の例 — をタップして聞く",
     session_expired: "セッションの有効期限切れ",
     please_refresh: "ページを更新してログインし直してください。",
     saved_words: "保存した単語",
@@ -1879,7 +1883,7 @@ const UI_EXT = {
     voice_speed: "速度",
     roadmap_title: "学習ロードマップ",
     your_account: "あなたのアカウント",
-    free_plan_label: "🆓 無料プラン",
+    free_plan_label: "無料プラン",
     active_sub: "✓ アクティブなサブスクリプション",
     about_code: "アクセスコードについて",
     opening: "開いています...",
@@ -1889,12 +1893,12 @@ const UI_EXT = {
     upgrade_title: "Tongue プレミアムにアップグレード",
     upgrade_body: "今日の5回の無料AIメッセージを使い切りました。無制限のAIコーチング、ストリーク、ドリルなどのためにアップグレード。",
     maybe_later: "後で",
-    expires_today: "⚠️ セッションが今日期限切れになります。コードを再入力してください。",
-    expires_tomorrow: "⚠️ セッションが明日期限切れになります。コードを再入力してください。",
-    expires_days: "⚠️ セッションが{n}日後に期限切れになります。コードを再入力してください。",
-    support_greeting: "こんにちは！👋 Tongueのサポートアシスタントです。アプリ、サブスクリプション、またはアクセスコードについて何でも聞いてください。",
+    expires_today: "セッションが今日期限切れになります。コードを再入力してください。",
+    expires_tomorrow: "セッションが明日期限切れになります。コードを再入力してください。",
+    expires_days: "セッションが{n}日後に期限切れになります。コードを再入力してください。",
+    support_greeting: "こんにちは！Tongueのサポートアシスタントです。アプリ、サブスクリプション、またはアクセスコードについて何でも聞いてください。",
     support_placeholder: "質問を入力...",
-    support_title: "💬 サポート",
+    support_title: "サポート",
     support_subtitle: "AIアシスタント · 通常は即時",
     ob_welcome: "Tongueへようこそ",
     ob_subtitle: "学習体験を設定しましょう",
@@ -1913,7 +1917,7 @@ const UI_EXT = {
   },
   ko: {
     already_saved: "이미 플래시카드에 있습니다",
-    save_flashcard: "🃏 플래시카드에 저장",
+    save_flashcard: "플래시카드에 저장",
     saved_flashcard: "✓ 플래시카드에 저장됨",
     ex_word_label: "새 단어 배우기",
     ex_word_desc: "탭하여 발음 및 예시가 있는 단어 받기",
@@ -1945,14 +1949,14 @@ const UI_EXT = {
     auto_translating: "자동 번역 중...",
     start_typing: "번역하려면 입력 시작",
     clear: "지우기",
-    hear_it: "▶ 듣기",
+    hear_it: "듣기",
     translating_content: "번역하고 학습 콘텐츠 생성 중...",
-    listen: "▶ 듣기",
+    listen: "듣기",
     save_btn: "+ 저장",
     word_by_word: "단어별",
     grammar_usage: "문법 및 용법",
     compared_to: "와 비교",
-    more_examples: "문맥 속 더 많은 예시 — ▶ 탭하여 듣기",
+    more_examples: "문맥 속 더 많은 예시 — 탭하여 듣기",
     session_expired: "세션 만료",
     please_refresh: "페이지를 새로고침하고 다시 로그인하세요.",
     saved_words: "저장된 단어",
@@ -1976,7 +1980,7 @@ const UI_EXT = {
     voice_speed: "속도",
     roadmap_title: "학습 로드맵",
     your_account: "내 계정",
-    free_plan_label: "🆓 무료 플랜",
+    free_plan_label: "무료 플랜",
     active_sub: "✓ 활성 구독",
     about_code: "액세스 코드 정보",
     opening: "열는 중...",
@@ -1986,12 +1990,12 @@ const UI_EXT = {
     upgrade_title: "Tongue 프리미엄으로 업그레이드",
     upgrade_body: "오늘의 무료 AI 메시지 5개를 모두 사용했습니다. 무제한 AI 코칭, 연속 학습, 연습 등을 위해 업그레이드하세요.",
     maybe_later: "나중에",
-    expires_today: "⚠️ 세션이 오늘 만료됩니다. 코드를 다시 입력하세요.",
-    expires_tomorrow: "⚠️ 세션이 내일 만료됩니다. 코드를 다시 입력하세요.",
-    expires_days: "⚠️ 세션이 {n}일 후 만료됩니다. 코드를 다시 입력하세요.",
-    support_greeting: "안녕하세요! 👋 저는 Tongue 지원 어시스턴트입니다. 앱, 구독 또는 액세스 코드에 대해 무엇이든 물어보세요.",
+    expires_today: "세션이 오늘 만료됩니다. 코드를 다시 입력하세요.",
+    expires_tomorrow: "세션이 내일 만료됩니다. 코드를 다시 입력하세요.",
+    expires_days: "세션이 {n}일 후 만료됩니다. 코드를 다시 입력하세요.",
+    support_greeting: "안녕하세요! 저는 Tongue 지원 어시스턴트입니다. 앱, 구독 또는 액세스 코드에 대해 무엇이든 물어보세요.",
     support_placeholder: "질문하기...",
-    support_title: "💬 지원",
+    support_title: "지원",
     support_subtitle: "AI 어시스턴트 · 보통 즉시 응답",
     ob_welcome: "Tongue에 오신 것을 환영합니다",
     ob_subtitle: "학습 경험을 설정해 보겠습니다",
@@ -2010,7 +2014,7 @@ const UI_EXT = {
   },
   ru: {
     already_saved: "Уже в карточках",
-    save_flashcard: "🃏 Сохранить в карточки",
+    save_flashcard: "Сохранить в карточки",
     saved_flashcard: "✓ Сохранено в карточки",
     ex_word_label: "Выучить новое слово",
     ex_word_desc: "Нажмите для слова с произношением и примерами",
@@ -2042,14 +2046,14 @@ const UI_EXT = {
     auto_translating: "Автоперевод...",
     start_typing: "Начните вводить для перевода",
     clear: "Очистить",
-    hear_it: "▶ Слушать",
+    hear_it: "Слушать",
     translating_content: "Перевожу и создаю контент для обучения...",
-    listen: "▶ Слушать",
+    listen: "Слушать",
     save_btn: "+ Сохранить",
     word_by_word: "Слово за словом",
     grammar_usage: "Грамматика и использование",
     compared_to: "По сравнению с",
-    more_examples: "Больше примеров в контексте — нажмите ▶ чтобы слушать",
+    more_examples: "Больше примеров в контексте — нажмите чтобы слушать",
     session_expired: "Сессия истекла",
     please_refresh: "Обновите страницу и войдите снова.",
     saved_words: "Сохранённые слова",
@@ -2073,7 +2077,7 @@ const UI_EXT = {
     voice_speed: "Скорость",
     roadmap_title: "Маршрутная карта",
     your_account: "Ваш аккаунт",
-    free_plan_label: "🆓 Бесплатный план",
+    free_plan_label: "Бесплатный план",
     active_sub: "✓ Активная подписка",
     about_code: "О вашем коде доступа",
     opening: "Открываю...",
@@ -2083,12 +2087,12 @@ const UI_EXT = {
     upgrade_title: "Обновить до Tongue Premium",
     upgrade_body: "Вы использовали 5 бесплатных AI-сообщений сегодня. Обновитесь для неограниченного AI-коучинга, серий, упражнений и многого другого.",
     maybe_later: "Может, потом",
-    expires_today: "⚠️ Ваша сессия истекает сегодня. Введите код повторно.",
-    expires_tomorrow: "⚠️ Ваша сессия истекает завтра. Введите код повторно.",
-    expires_days: "⚠️ Ваша сессия истекает через {n} дней. Введите код повторно.",
-    support_greeting: "Привет! 👋 Я помощник поддержки Tongue. Спрашивайте всё об app, подписке или коде доступа.",
+    expires_today: "Ваша сессия истекает сегодня. Введите код повторно.",
+    expires_tomorrow: "Ваша сессия истекает завтра. Введите код повторно.",
+    expires_days: "Ваша сессия истекает через {n} дней. Введите код повторно.",
+    support_greeting: "Привет! Я помощник поддержки Tongue. Спрашивайте всё об app, подписке или коде доступа.",
     support_placeholder: "Задайте вопрос...",
-    support_title: "💬 Поддержка",
+    support_title: "Поддержка",
     support_subtitle: "AI-помощник · обычно мгновенно",
     ob_welcome: "Добро пожаловать в Tongue",
     ob_subtitle: "Давайте настроим ваш опыт обучения",
@@ -2107,7 +2111,7 @@ const UI_EXT = {
   },
   ar: {
     already_saved: "موجود بالفعل في البطاقات",
-    save_flashcard: "🃏 حفظ في البطاقات",
+    save_flashcard: "حفظ في البطاقات",
     saved_flashcard: "✓ تم الحفظ في البطاقات",
     ex_word_label: "تعلم كلمة جديدة",
     ex_word_desc: "اضغط للحصول على كلمة مع النطق والأمثلة",
@@ -2139,14 +2143,14 @@ const UI_EXT = {
     auto_translating: "ترجمة تلقائية...",
     start_typing: "ابدأ الكتابة للترجمة",
     clear: "مسح",
-    hear_it: "▶ استمع",
+    hear_it: "استمع",
     translating_content: "جاري الترجمة وبناء محتوى التعلم...",
-    listen: "▶ استمع",
+    listen: "استمع",
     save_btn: "+ حفظ",
     word_by_word: "كلمة بكلمة",
     grammar_usage: "القواعد والاستخدام",
     compared_to: "مقارنةً بـ",
-    more_examples: "مزيد من الأمثلة في السياق — اضغط ▶ للاستماع",
+    more_examples: "مزيد من الأمثلة في السياق — اضغط للاستماع",
     session_expired: "انتهت الجلسة",
     please_refresh: "يرجى تحديث الصفحة وتسجيل الدخول مجدداً.",
     saved_words: "الكلمات المحفوظة",
@@ -2170,7 +2174,7 @@ const UI_EXT = {
     voice_speed: "السرعة",
     roadmap_title: "خارطة التعلم",
     your_account: "حسابك",
-    free_plan_label: "🆓 الخطة المجانية",
+    free_plan_label: "الخطة المجانية",
     active_sub: "✓ اشتراك نشط",
     about_code: "حول رمز الوصول الخاص بك",
     opening: "جاري الفتح...",
@@ -2180,12 +2184,12 @@ const UI_EXT = {
     upgrade_title: "الترقية إلى Tongue Premium",
     upgrade_body: "لقد استخدمت رسائل AI المجانية الـ5 اليوم. قم بالترقية للحصول على تدريب AI غير محدود والمزيد.",
     maybe_later: "ربما لاحقاً",
-    expires_today: "⚠️ تنتهي جلستك اليوم. أعد إدخال رمزك للبقاء مسجلاً.",
-    expires_tomorrow: "⚠️ تنتهي جلستك غداً. أعد إدخال رمزك للبقاء مسجلاً.",
-    expires_days: "⚠️ تنتهي جلستك خلال {n} أيام. أعد إدخال رمزك للبقاء مسجلاً.",
-    support_greeting: "مرحباً! 👋 أنا مساعد دعم Tongue. اسألني أي شيء عن التطبيق أو اشتراكك أو رمز الوصول.",
+    expires_today: "تنتهي جلستك اليوم. أعد إدخال رمزك للبقاء مسجلاً.",
+    expires_tomorrow: "تنتهي جلستك غداً. أعد إدخال رمزك للبقاء مسجلاً.",
+    expires_days: "تنتهي جلستك خلال {n} أيام. أعد إدخال رمزك للبقاء مسجلاً.",
+    support_greeting: "مرحباً! أنا مساعد دعم Tongue. اسألني أي شيء عن التطبيق أو اشتراكك أو رمز الوصول.",
     support_placeholder: "اطرح سؤالاً...",
-    support_title: "💬 الدعم",
+    support_title: "الدعم",
     support_subtitle: "مساعد ذكاء اصطناعي · عادةً فوري",
     ob_welcome: "مرحباً بك في Tongue",
     ob_subtitle: "لنقم بإعداد تجربة التعلم الخاصة بك",
@@ -2204,7 +2208,7 @@ const UI_EXT = {
   },
   hi: {
     already_saved: "पहले से फ्लैशकार्ड में है",
-    save_flashcard: "🃏 फ्लैशकार्ड में सेव करें",
+    save_flashcard: "फ्लैशकार्ड में सेव करें",
     saved_flashcard: "✓ फ्लैशकार्ड में सेव हुआ",
     ex_word_label: "नया शब्द सीखें",
     ex_word_desc: "उच्चारण और उदाहरणों के साथ शब्द पाने के लिए टैप करें",
@@ -2236,14 +2240,14 @@ const UI_EXT = {
     auto_translating: "स्वचालित अनुवाद...",
     start_typing: "अनुवाद के लिए टाइप करना शुरू करें",
     clear: "साफ करें",
-    hear_it: "▶ सुनें",
+    hear_it: "सुनें",
     translating_content: "अनुवाद हो रहा है और सीखने की सामग्री बन रही है...",
-    listen: "▶ सुनें",
+    listen: "सुनें",
     save_btn: "+ सेव करें",
     word_by_word: "शब्द दर शब्द",
     grammar_usage: "व्याकरण और उपयोग",
     compared_to: "की तुलना में",
-    more_examples: "संदर्भ में अधिक उदाहरण — सुनने के लिए ▶ टैप करें",
+    more_examples: "संदर्भ में अधिक उदाहरण — सुनने के लिए टैप करें",
     session_expired: "सत्र समाप्त हो गया",
     please_refresh: "कृपया पेज रिफ्रेश करें और फिर से लॉगिन करें।",
     saved_words: "सेव किए गए शब्द",
@@ -2267,7 +2271,7 @@ const UI_EXT = {
     voice_speed: "गति",
     roadmap_title: "सीखने का रोडमैप",
     your_account: "आपका खाता",
-    free_plan_label: "🆓 निःशुल्क योजना",
+    free_plan_label: "निःशुल्क योजना",
     active_sub: "✓ सक्रिय सदस्यता",
     about_code: "आपके एक्सेस कोड के बारे में",
     opening: "खुल रहा है...",
@@ -2277,12 +2281,12 @@ const UI_EXT = {
     upgrade_title: "Tongue Premium में अपग्रेड करें",
     upgrade_body: "आपने आज के 5 मुफ़्त AI संदेश इस्तेमाल कर लिए। असीमित AI कोचिंग, स्ट्रीक, अभ्यास और अधिक के लिए अपग्रेड करें।",
     maybe_later: "शायद बाद में",
-    expires_today: "⚠️ आपका सत्र आज समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
-    expires_tomorrow: "⚠️ आपका सत्र कल समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
-    expires_days: "⚠️ आपका सत्र {n} दिनों में समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
-    support_greeting: "नमस्ते! 👋 मैं Tongue का सपोर्ट असिस्टेंट हूँ। ऐप, आपकी सदस्यता, या एक्सेस कोड के बारे में कुछ भी पूछें।",
+    expires_today: "आपका सत्र आज समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
+    expires_tomorrow: "आपका सत्र कल समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
+    expires_days: "आपका सत्र {n} दिनों में समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
+    support_greeting: "नमस्ते! मैं Tongue का सपोर्ट असिस्टेंट हूँ। ऐप, आपकी सदस्यता, या एक्सेस कोड के बारे में कुछ भी पूछें।",
     support_placeholder: "सवाल पूछें...",
-    support_title: "💬 सपोर्ट",
+    support_title: "सपोर्ट",
     support_subtitle: "AI असिस्टेंट · आमतौर पर तुरंत",
     ob_welcome: "Tongue में आपका स्वागत है",
     ob_subtitle: "आपका सीखने का अनुभव सेट करते हैं",
@@ -2351,8 +2355,7 @@ function PlayBtn({ text, sm }) {
         padding: sm ? "2px 7px" : "3px 10px", color: "#fff",
         fontSize: sm ? 9 : 11, fontWeight: 700, flexShrink: 0,
       }}>
-      ▶
-    </button>
+          </button>
   );
 }
 
@@ -2519,13 +2522,13 @@ function SaveToFlashcardsBtn({ card }) {
 
 // ─── AI COACH ────────────────────────────────────────────────────────────────
 const EXERCISE_TYPES = [
-  { id: "word",    icon: "🔤", label: "Learn a New Word",  desc: "Tap to get a word with pronunciation & examples" },
-  { id: "fill",    icon: "✏️", label: "Fill the Gap",      desc: "Complete a sentence — tap to check your answer"  },
-  { id: "trans",   icon: "🔁", label: "Translate This",    desc: "Translate a sentence into your new language"      },
-  { id: "convo",   icon: "💬", label: "Role Play",         desc: "Have a real conversation — like ordering food"    },
-  { id: "quiz",    icon: "❓", label: "Quick Quiz",        desc: "4-choice question — grammar or vocabulary"        },
-  { id: "opinion", icon: "💭", label: "Express Yourself",  desc: "Say what you think about a topic"                },
-  { id: "write",   icon: "📄", label: "Free Writing",      desc: "Write anything — your coach fixes your mistakes"  },
+  { id: "word",    icon: "", label: "Learn a New Word",  desc: "Tap to get a word with pronunciation & examples" },
+  { id: "fill",    icon: "", label: "Fill the Gap",      desc: "Complete a sentence — tap to check your answer"  },
+  { id: "trans",   icon: "", label: "Translate This",    desc: "Translate a sentence into your new language"      },
+  { id: "convo",   icon: "", label: "Role Play",         desc: "Have a real conversation — like ordering food"    },
+  { id: "quiz",    icon: "", label: "Quick Quiz",        desc: "4-choice question — grammar or vocabulary"        },
+  { id: "opinion", icon: "", label: "Express Yourself",  desc: "Say what you think about a topic"                },
+  { id: "write",   icon: "", label: "Free Writing",      desc: "Write anything — your coach fixes your mistakes"  },
 ];
 
 // ── AUTH / SESSION MANAGEMENT ─────────────────────────────────────────────────
@@ -2702,7 +2705,7 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
 
         {/* Mode switcher */}
         <div style={{ display:"flex", background:"#f1f5f9", borderRadius:12, padding:4, marginBottom:20, gap:3 }}>
-          {[["free","🆓 Start Free"],["code","🔑 I Have a Code"]].map(([m,label]) => (
+          {[["free","Start Free"],["code","I Have a Code"]].map(([m,label]) => (
             <button key={m} onClick={()=>{setMode(m);setErr("");}} style={{
               flex:1, padding:"10px 0", borderRadius:9, border:"none", fontWeight:700, fontSize:13, cursor:"pointer",
               background: mode===m ? "#fff" : "transparent",
@@ -2714,13 +2717,13 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
 
         {checkoutSuccess && (
           <div style={{ background:"#dcfce7", border:"1px solid #86efac", borderRadius:10, padding:"12px 14px", marginBottom:16, textAlign:"center" }}>
-            <div style={{ fontWeight:700, color:"#16a34a", fontSize:13, marginBottom:3 }}>Payment successful! 🎉</div>
+            <div style={{ fontWeight:700, color:"#16a34a", fontSize:13, marginBottom:3 }}>Payment successful! </div>
             <div style={{ color:"#15803d", fontSize:12 }}>Check your email for your access code, then log in above.</div>
           </div>
         )}
         {renewedBanner && (
           <div style={{ background:"#fef9c3", border:"1px solid #f59e0b", borderRadius:10, padding:"12px 14px", marginBottom:16, textAlign:"center" }}>
-            <div style={{ fontWeight:700, color:"#92400e", fontSize:13, marginBottom:3 }}>🔄 Subscription renewed!</div>
+            <div style={{ fontWeight:700, color:"#92400e", fontSize:13, marginBottom:3 }}>Subscription renewed!</div>
             <div style={{ color:"#a16207", fontSize:12 }}>Check your email for your new access code.</div>
           </div>
         )}
@@ -2742,11 +2745,11 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
         ) : (
           <>
             <div style={{ background:"#fff0f4", border:"1px solid #ffb3c6", borderRadius:12, padding:"14px 16px", marginBottom:14, fontSize:13, color:"#A0122F", lineHeight:1.8 }}>
-              <div style={{ fontWeight:800, marginBottom:6 }}>✨ Free — no credit card needed</div>
-              <div>✅ All 12 languages</div>
-              <div>✅ Grammar, vocabulary &amp; reference guides</div>
-              <div>✅ 5 AI Coach messages every day</div>
-              <div>✅ Flashcards &amp; Word Space</div>
+              <div style={{ fontWeight:800, marginBottom:6 }}>Free — no credit card needed</div>
+              <div>All 12 languages</div>
+              <div>Grammar, vocabulary &amp; reference guides</div>
+              <div>5 AI Coach messages every day</div>
+              <div>Flashcards &amp; Word Space</div>
             </div>
             <input value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&signupFree()}
               placeholder="your@email.com" type="email" autoFocus
@@ -2761,7 +2764,7 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
 
         <div style={{ borderTop:"1px solid #f1f5f9", paddingTop:14, textAlign:"center" }}>
           <a href="/subscribe" style={{ display:"inline-block", padding:"9px 20px", background:"#dcfce7", border:"1px solid #86efac", borderRadius:9, color:"#16a34a", fontWeight:700, fontSize:13, textDecoration:"none" }}>
-            ✨ Upgrade to Premium — from $9/month
+            Upgrade to Premium — from $9/month
           </a>
         </div>
       </div>
@@ -2913,7 +2916,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
       {loading && (
         <Box>
           <div style={{ textAlign: "center", padding: "28px 0" }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>🤖</div>
+            <div style={{ fontSize: 32, marginBottom: 10 }}></div>
             <div style={{ fontWeight: 700, color: C.text, fontSize: 14, marginBottom: 4 }}>Your coach is preparing a fresh exercise…</div>
             <div style={{ color: C.muted, fontSize: 12 }}>This takes about 3 seconds</div>
           </div>
@@ -3461,7 +3464,7 @@ function AITabContent({ tLang, tabName, color }) {
                           <PlayBtn text={s.example_target_2} sm />
                         </div>
                       )}
-                      {s.example_ref && <div style={{ color:C.mid, fontSize:12, marginTop:3 }}>🌐 {s.example_ref}</div>}
+                      {s.example_ref && <div style={{ color:C.mid, fontSize:12, marginTop:3 }}>{s.example_ref}</div>}
                     </div>
                   )}
                   {s.note && <Info text={s.note} color={C.muted} />}
@@ -3501,8 +3504,8 @@ function AITabContent({ tLang, tabName, color }) {
                         <span style={{ fontWeight:800, color:C.blue, fontSize:14 }}>{item.target}</span>
                         <PlayBtn text={item.target} sm />
                       </div>
-                      <div style={{ color:C.mid, fontSize:12 }}>🌐 {item.ref}</div>
-                      {item.note && <div style={{ color:C.muted, fontSize:11, marginTop:4 }}>💡 {item.note}</div>}
+                      <div style={{ color:C.mid, fontSize:12 }}>{item.ref}</div>
+                      {item.note && <div style={{ color:C.muted, fontSize:11, marginTop:4 }}>{item.note}</div>}
                     </div>
                   ))}
                 </div>
@@ -3549,7 +3552,7 @@ function AITabContent({ tLang, tabName, color }) {
                         <span style={{ fontWeight:800, color:C.blue, fontSize:16 }}>{ex.t}</span>
                         <PlayBtn text={ex.t} />
                       </div>
-                      {ex.r && <div style={{ color:C.mid, fontSize:12 }}>🌐 {ex.r}</div>}
+                      {ex.r && <div style={{ color:C.mid, fontSize:12 }}>{ex.r}</div>}
                     </div>
                   ))}
                 </div>
@@ -3589,7 +3592,7 @@ function AITabContent({ tLang, tabName, color }) {
                         <PlayBtn text={w.t} sm />
                       </div>
                       {w.p && <div style={{ color:C.muted, fontSize:11, marginBottom:2, fontStyle:"italic" }}>{w.p}</div>}
-                      <div style={{ color:C.mid, fontSize:12 }}>🌐 {w.r}</div>
+                      <div style={{ color:C.mid, fontSize:12 }}>{w.r}</div>
                     </div>
                   ))}
                 </div>
@@ -3611,7 +3614,7 @@ function AITabContent({ tLang, tabName, color }) {
     return (
       <div>
         <Heading title={`${tName} Dialogues`} sub="Real conversations. Read aloud, cover English, then speak from memory." color={col} />
-        <Info text="Method: (1) Read with both columns open. (2) Cover the English and read again. (3) Speak from memory. (4) Tap ▶ to hear each line and shadow the pronunciation. Repeat daily until automatic." color={C.muted} />
+        <Info text="Method: (1) Read with both columns open. (2) Cover the English and read again. (3) Speak from memory. (4) Tap to hear each line and shadow the pronunciation. Repeat daily until automatic." color={C.muted} />
         <div style={{ display:"flex", gap:7, flexWrap:"wrap", marginBottom:14 }}>
           {dlgs.map((d2, i) => (
             <button key={i} onClick={() => setDIdx(i)} style={{
@@ -3669,7 +3672,7 @@ function AITabContent({ tLang, tabName, color }) {
           <button
             onClick={() => say(d.lines.map(l => l.target).join(". "))}
             style={{ width:"100%", marginTop:14, padding:10, background:col+"15", border:`2px solid ${col}`, borderRadius:9, color:col, fontWeight:800, fontSize:13, cursor:"pointer" }}>
-            ▶ Play Full Dialogue
+            Play Full Dialogue
           </button>
         </Box>
       </div>
@@ -3689,7 +3692,7 @@ function CheatSheet({ tLang, rLangs }) {
   return (
     <div>
       <Heading title="Quick Reference" sub="Tap any section to expand — full explanations, conjugations, and voiced examples." color={C.blue} />
-      <Info text="Each section has: the full table, why it works this way, how it compares to Spanish/Italian/Portuguese, and real example sentences with audio. Tap ▶ on any phrase to hear it spoken." color={C.muted} />
+      <Info text="Each section has: the full table, why it works this way, how it compares to Spanish/Italian/Portuguese, and real example sentences with audio. Tap on any phrase to hear it spoken." color={C.muted} />
 
       {QR_SECTIONS.map((sec, i) => {
         const isOpen = open === sec.id;
@@ -3740,7 +3743,7 @@ function CheatSheet({ tLang, rLangs }) {
                   </div>
                 </div>
                 {/* Examples */}
-                <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real-life examples — tap ▶ to hear</div>
+                <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real-life examples — tap to hear</div>
                 {sec.examples.map(([fr, en, es], j) => (
                   <div key={j} style={{ background: C.bg, border: `1px solid ${C.bdr}`, borderRadius: 10, padding: "10px 13px", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4, flexWrap: "wrap" }}>
@@ -3887,8 +3890,8 @@ const GRAMMAR_DATA = {
       { speak:"on parle", cells:["On","on parle","uno habla","ohn-PARL"] },
       { speak:"nous parlons", cells:["Nous","nous parlons","hablamos","par-LOHN — the only clearly different form"] },
       { speak:"vous parlez", cells:["Vous","vous parlez","habláis","par-LAY"] },
-      { speak:"ils parlent", cells:["Ils","ils parlent ⚠","hablan","parl — -ent is SILENT! Same as il parle"] },
-      { speak:"elles parlent", cells:["Elles","elles parlent ⚠","hablan","parl — SILENT -ent"] },
+      { speak:"ils parlent", cells:["Ils","ils parlent ","hablan","parl — -ent is SILENT! Same as il parle"] },
+      { speak:"elles parlent", cells:["Elles","elles parlent ","hablan","parl — SILENT -ent"] },
     ],
     examples:[
       ["Je parle français et espagnol — j'apprends aussi l'italien.","I speak French and Spanish — I'm also learning Italian.","Hablo francés y español — también aprendo italiano."],
@@ -3990,10 +3993,10 @@ const GRAMMAR_DATA = {
       { speak:"il finit", cells:["Il","il finit","termina (t silent)","il vend (d silent)"] },
       { speak:"elle finit", cells:["Elle","elle finit","termina","elle vend"] },
       { speak:"on finit", cells:["On","on finit","uno termina","on vend"] },
-      { speak:"nous finissons", cells:["Nous","nous finissons ★","terminamos","nous vendons"] },
-      { speak:"vous finissez", cells:["Vous","vous finissez ★","terminan","vous vendez"] },
-      { speak:"ils finissent", cells:["Ils","ils finissent ★ (ent silent)","terminan","ils vendent (ent silent)"] },
-      { speak:"elles finissent", cells:["Elles","elles finissent ★ (ent silent)","terminan","elles vendent"] },
+      { speak:"nous finissons", cells:["Nous","nous finissons ","terminamos","nous vendons"] },
+      { speak:"vous finissez", cells:["Vous","vous finissez ","terminan","vous vendez"] },
+      { speak:"ils finissent", cells:["Ils","ils finissent (ent silent)","terminan","ils vendent (ent silent)"] },
+      { speak:"elles finissent", cells:["Elles","elles finissent (ent silent)","terminan","elles vendent"] },
     ],
     examples:[
       ["Je finis mon travail et je rentre directement à la maison.","I finish my work and go straight home.","Termino mi trabajo y vuelvo directamente a casa."],
@@ -4017,7 +4020,7 @@ const GRAMMAR_DATA = {
       { speak:"elle va", cells:["Elle","elle va","elle fait","elle peut / elle veut"] },
       { speak:"on va", cells:["On","on va","on fait","on peut / on veut"] },
       { speak:"nous allons", cells:["Nous","nous allons","nous faisons","nous pouvons / nous voulons"] },
-      { speak:"vous allez", cells:["Vous","vous allez","vous faites ⚠","vous pouvez / vous voulez"] },
+      { speak:"vous allez", cells:["Vous","vous allez","vous faites ","vous pouvez / vous voulez"] },
       { speak:"ils vont", cells:["Ils","ils vont","ils font","ils peuvent / ils veulent"] },
     ],
     examples:[
@@ -4042,8 +4045,8 @@ const GRAMMAR_DATA = {
       { speak:"elle sait", cells:["Elle","elle sait","elle vient","elle dit / elle prend"] },
       { speak:"on sait", cells:["On","on sait","on vient","on dit / on prend"] },
       { speak:"nous savons", cells:["Nous","nous savons","nous venons","nous disons / nous prenons"] },
-      { speak:"vous savez", cells:["Vous","vous savez","vous venez","vous dites ⚠ / vous prenez"] },
-      { speak:"ils savent", cells:["Ils","ils savent (ent silent)","ils viennent ★","ils disent / ils prennent ★"] },
+      { speak:"vous savez", cells:["Vous","vous savez","vous venez","vous dites / vous prenez"] },
+      { speak:"ils savent", cells:["Ils","ils savent (ent silent)","ils viennent ","ils disent / ils prennent "] },
     ],
     examples:[
       ["Je sais qu'il a raison mais je ne veux pas l'admettre.","I know he's right but I don't want to admit it.","Sé que tiene razón pero no quiero admitirlo."],
@@ -4531,7 +4534,7 @@ function GrammarExpanded({ data }) {
 
       {/* Real-life examples — always visible */}
       <div style={{ fontWeight:700, color:C.muted, fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:9 }}>
-        Real-life examples — tap ▶ to hear
+        Real-life examples — tap to hear
       </div>
       {data.examples.map(([fr, en, es], i) => (
         <div key={i} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:10, padding:"10px 13px", marginBottom:8 }}>
@@ -4846,7 +4849,7 @@ function Structures({ tLang, rLangs }) {
                   <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.6 }}>{s.ref}</div>
                 </div>
                 {/* Examples */}
-                <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real-life examples — tap ▶ to hear each one</div>
+                <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real-life examples — tap to hear each one</div>
                 {s.examples.map(([fr, en, es], j) => (
                   <div key={j} style={{ background: C.bg, border: `1px solid ${C.bdr}`, borderRadius: 10, padding: "10px 13px", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 5, flexWrap: "wrap" }}>
@@ -5472,7 +5475,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
               )}
               {Array.isArray(data.examples) && data.examples.length > 0 && (
                 <div>
-                  <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real examples — tap ▶ to hear</div>
+                  <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Real examples — tap to hear</div>
                   {data.examples.map((ex, i) => ex && ex.fr && (
                     <div key={i} style={{ background: C.bg, border: `1px solid ${C.bdr}`, borderRadius: 9, padding: "9px 12px", marginBottom: 7 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4, flexWrap: "wrap" }}>
@@ -5480,7 +5483,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
                         <PlayBtn text={ex.fr} />
                       </div>
                       {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 2 : 0 }}>🇬🇧 {ex.en}</div>}
-                      {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>🌐 {ex.ref}</div>}
+                      {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>{ex.ref}</div>}
                     </div>
                   ))}
                 </div>
@@ -5551,7 +5554,7 @@ function Vocab({ tLang, rLangs }) {
           placeholder="Search any word..."
           style={{ width:"100%", padding:"10px 14px 10px 36px", borderRadius:10, border:`2px solid ${C.bdr}`, fontSize:14, boxSizing:"border-box", background:C.card }}
         />
-        <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.muted, fontSize:14 }}>🔍</span>
+        <span style={{ position:"absolute", left:12, top:"50%", transform:"translateY(-50%)", color:C.muted, fontSize:14 }}></span>
         {search && <button onClick={() => setSearch("")} style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:16 }}>×</button>}
       </div>
 
@@ -5914,7 +5917,7 @@ const DRILL_DATA = {
     {q:"'I've been to Paris' vs 'I went to Paris'",a:"Been to = life experience. Went = specific past trip (usually with when)",hint:"Have you been to Tokyo? (experience) vs I went to Tokyo last year (specific trip with when)",type:"Translation"},
     {q:"'Make' or 'do': the homework?",a:"Do homework — do for activities. Make for creating things",hint:"do: exercise, homework, business, favor. make: a cake, a mistake, a decision, a call",type:"Translation"},
     {q:"'Since' vs 'for': '___2020' and '___3 years'",a:"Since 2020 (point in time). For 3 years (length of time)",hint:"Since = starting point. For = duration/length. I've lived here since 2020 / for 5 years.",type:"Translation"},
-    {q:"'Lend' vs 'borrow': 'Can you ___ me your pen?'",a:"Lend me — lend means give temporarily. Borrow means receive temporarily.",hint:"Lend (give) ↔ Borrow (take). Can I borrow your pen? Can you lend me your pen?",type:"Translation"},
+    {q:"'Lend' vs 'borrow': 'Can you ___ me your pen?'",a:"Lend me — lend means give temporarily. Borrow means receive temporarily.",hint:"Lend (give) Borrow (take). Can I borrow your pen? Can you lend me your pen?",type:"Translation"},
     {q:"Phrasal verb: 'call off', 'call back', 'call out'?",a:"Call off = cancel. Call back = return a call. Call out = criticize publicly",hint:"Phrasal verbs change meaning! Look up, look out, look into, look forward to — all different",type:"Translation"},
     {q:"'Get' in 'get up / get dressed / get tired'?",a:"get = become (tired), start (up), begin doing (dressed)",hint:"Most versatile word in English! get tired = become tired. Get it? = understand it?",type:"Translation"},
     {q:"'Bring' vs 'take': 'Can you ___ this to the office?'",a:"Take it to the office (moving away from here) — bring = move toward speaker",hint:"Bring = move here/toward listener. Take = move away. Bring me coffee. Take this to him.",type:"Translation"},
@@ -6107,7 +6110,7 @@ function Dialogues({ tLang }) {
   return (
     <div>
       <Heading title="Real Dialogues" sub="Read out loud. Cover English. Act from memory. Then shadow a native speaker." color={C.accent} />
-      <Info text="Method: (1) Read the dialogue with both columns open. (2) Cover English and read again. (3) Try to speak from memory. (4) Use ▶ to play phrases and shadow the pronunciation. Repeat daily until it feels automatic." color={C.muted} />
+      <Info text="Method: (1) Read the dialogue with both columns open. (2) Cover English and read again. (3) Try to speak from memory. (4) Use to play phrases and shadow the pronunciation. Repeat daily until it feels automatic." color={C.muted} />
       <div style={{ display: "flex", gap: 7, flexWrap: "wrap", marginBottom: 14 }}>
         {dlData.map((d2, i) => (
           <button key={i} onClick={() => setIdx(i)} style={{
@@ -6444,7 +6447,7 @@ function SettingsPanel({ onClose, onLogout, nativeLang, onSetNativeLang }) {
           </button>
         ) : (
           <div style={{background:C.red+"10",border:`1px solid ${C.red}30`,borderRadius:10,padding:"13px 14px"}}>
-            <div style={{fontWeight:700,color:C.red,fontSize:13,marginBottom:6}}>⚠️ Delete account permanently?</div>
+            <div style={{fontWeight:700,color:C.red,fontSize:13,marginBottom:6}}>Delete account permanently?</div>
             <div style={{color:C.mid,fontSize:12,marginBottom:12,lineHeight:1.6}}>
               This cancels your subscription, removes all your data, and cannot be undone.
             </div>
@@ -6541,7 +6544,7 @@ function VoicePanel({ tLang, onClose }) {
     <div className={`sheet-backdrop${mounted2 ? " open" : ""}`} onClick={onClose} style={{zIndex:100}}>
       <div className="sheet" onClick={e=>e.stopPropagation()} style={{ background:C.card, padding:22, maxWidth:520 }}>
         <div className="sheet-handle"/>
-        <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:5, marginTop:14 }}>🔊 Voice Settings</div>
+        <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:5, marginTop:14 }}>Voice Settings</div>
 
         {hasGoodVoice && (
           <div style={{ background:C.green+"12", border:`1px solid ${C.green}30`, borderRadius:10, padding:"10px 13px", marginBottom:14 }}>
@@ -6678,7 +6681,7 @@ function WordSpace({ tLang, rLangs }) {
                   <button onPointerDown={e => { e.preventDefault(); say(result.translation_fr); }} style={{ background: C.blue, border: "none", borderRadius: 7, padding: "4px 12px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>{t("listen")}</button>
                 </div>
                 {result.pronunciation && <div style={{ color: C.muted, fontSize: 14, fontStyle: "italic", marginBottom: 6 }}>{result.pronunciation}</div>}
-                {result.translation_ref && <div style={{ color: C.muted, fontSize: 14 }}>🌐 {refNames}: {result.translation_ref}</div>}
+                {result.translation_ref && <div style={{ color: C.muted, fontSize: 14 }}>{refNames}: {result.translation_ref}</div>}
               </div>
               <div style={{ display:"flex", flexDirection:"column", gap:6, flexShrink:0 }}>
                 <button onClick={saveEntry} style={{ background: C.accent + "15", border: `1px solid ${C.accent}30`, borderRadius: 9, padding: "7px 13px", color: C.accent, fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
@@ -6742,7 +6745,7 @@ function WordSpace({ tLang, rLangs }) {
                     <PlayBtn text={ex.fr} />
                   </div>
                   {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 3 : 0 }}>🇬🇧 {ex.en}</div>}
-                  {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>🌐 {ex.ref}</div>}
+                  {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>{ex.ref}</div>}
                 </div>
               ))}
             </div>
@@ -6887,7 +6890,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
 
       {/* View tabs */}
       <div style={{ display:"flex", gap:7, marginBottom:14 }}>
-        {[["review",t("fc_tab_review"),"🃏"],["browse",t("fc_tab_browse"),"📋"],["add",t("fc_tab_add"),"＋"]].map(([v,label,icon]) => (
+        {[["review",t("fc_tab_review"),""],["browse",t("fc_tab_browse"),""],["add",t("fc_tab_add"),"＋"]].map(([v,label,icon]) => (
           <button key={v} onClick={() => setView(v)} style={{
             padding:"6px 14px", borderRadius:20, border:`1px solid ${view===v?C.accent:C.bdr}`,
             background:view===v?C.muted:C.card, color:view===v?"#fff":C.muted,
@@ -6904,7 +6907,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
         <div>
           {dueCards.length === 0 ? (
             <div style={{ background:C.card, borderRadius:16, padding:"36px 20px", textAlign:"center", boxShadow:C.sh, border:`1px solid ${C.bdr}` }}>
-              <div style={{ fontSize:44, marginBottom:12 }}>{practiceAll ? "💪" : "🎉"}</div>
+              <div style={{ marginBottom:12, display:"flex", justifyContent:"center" }}><Icon name="trophy" size={40} color={C.green}/></div>
               <div style={{ fontWeight:900, fontSize:18, color:C.green, marginBottom:8 }}>
                 {practiceAll ? t("session_done") : t("all_caught_up")}
               </div>
@@ -7084,7 +7087,7 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
           {subtitle && <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{subtitle}</div>}
         </div>
       </div>
-      <div style={{flex:1,minHeight:0,overflowY:"auto",padding:noPad ? 0 : "12px 14px 24px"}}>
+      <div style={{flex:1,minHeight:0,overflowY:"auto",padding:noPad ? 0 : "16px 18px 28px"}}>
         {children}
       </div>
     </div>
@@ -7092,16 +7095,19 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
 }
 
 // ── EXPLORE HOME ──────────────────────────────────────────────────────────────
-function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak, isDesktop }) {
+function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak, isDesktop, userLevel }) {
   useLucide([L.id, factIdx, dark]);
   const fact = L.facts[factIdx % L.facts.length];
+  // Show the learner's own stored self-assessment when we have it, else the language's default CEFR band.
+  const LEVEL_LABEL = { "beginner-zero":"Just starting", beginner:"Beginner", intermediate:"Intermediate", advanced:"Advanced" };
+  const levelText = LEVEL_LABEL[userLevel] || `Level ${L.level}`;
 
   const AREAS = [
-    {id:"grammar",     title:"Grammar",            icon:"book-open",       sub:`Every rule, deeply · ${L.grammarCount} topics`},
-    {id:"vocab-full",  title:"Vocabulary",          icon:"type",            sub:`Words & phrases by theme`},
-    {id:"dialogues",   title:"Phrases & Dialogues", icon:"messages-square", sub:`Real conversations · ${L.phraseCount} scenarios`},
-    {id:"sounds",      title:"Sounds",              icon:"volume-2",        sub:`Pronunciation · ${L.soundCount} sounds`},
-    {id:"culture",     title:"Culture & Nuance",    icon:"compass",         sub:`How ${L.name} really works`},
+    {id:"grammar",     title:"Grammar",            icon:"book-open",       sub:`${L.grammarCount} rules, each explained simply with real examples`},
+    {id:"vocab-full",  title:"Vocabulary",          icon:"type",            sub:`Build your word bank by theme — every word voiced`},
+    {id:"dialogues",   title:"Phrases & Dialogues", icon:"messages-square", sub:`${L.phraseCount} real scenes: café, airport, meeting someone`},
+    {id:"sounds",      title:"Sounds",              icon:"volume-2",        sub:`Master every sound — ${L.soundCount} to hear and copy`},
+    {id:"culture",     title:"Culture & Nuance",    icon:"compass",         sub:`The unwritten rules — when to be formal, what not to say`},
   ];
   const TOOLS = [
     {id:"today",        title:"Today's Practice",   icon:"sun"},
@@ -7144,7 +7150,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
       )}
 
       {/* Scrollable body */}
-      <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "14px 16px 8px"}}>
+      <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "16px 18px 10px"}}>
         {/* Streak + level pills */}
         <div style={{display:"flex",gap:8,marginBottom:13}}>
           <div style={{flex:1,display:"flex",alignItems:"center",gap:6,background:C.surf,border:`1px solid ${C.line}`,borderRadius:999,padding:"7px 12px"}}>
@@ -7153,7 +7159,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           </div>
           <div style={{flex:1,display:"flex",alignItems:"center",gap:6,background:C.surf,border:`1px solid ${C.line}`,borderRadius:999,padding:"7px 12px"}}>
             <Icon name="trophy" size={14} color="#22A06B"/>
-            <span style={{fontWeight:600,fontSize:12,color:C.text}}>Level {L.level}</span>
+            <span style={{fontWeight:600,fontSize:12,color:C.text}}>{levelText}</span>
           </div>
         </div>
 
@@ -7839,7 +7845,7 @@ function UpgradeOverlay({ onClose }) {
 // 5-step wizard shown on first login. Saves prefs to /api/auth/onboarding.
 function OnboardingModal({ onDone, tLang, onSetTab }) {
   const tName = TARGETS[tLang]?.name || "French";
-  const tFlag = TARGETS[tLang]?.flag || "🌐";
+  const tFlag = TARGETS[tLang]?.flag || "";
 
   const [step, setStep]           = useState(0);
   const [level, setLevel]         = useState("");
@@ -7848,18 +7854,18 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
   const [saving, setSaving]       = useState(false);
 
   const LEVELS = [
-    { id:"beginner-zero", label:"Complete Beginner",    desc:"I know zero " + tName,             icon:"🌱" },
-    { id:"beginner",      label:"Basic",                desc:"I know a little — greetings etc.",  icon:"📗" },
-    { id:"intermediate",  label:"Intermediate",         desc:"I can hold simple conversations",   icon:"📘" },
-    { id:"advanced",      label:"Advanced",             desc:"I'm fluent and refining my skills", icon:"🏆" },
+    { id:"beginner-zero", label:"Complete Beginner",    desc:"I know zero " + tName,             icon:"" },
+    { id:"beginner",      label:"Basic",                desc:"I know a little — greetings etc.",  icon:"" },
+    { id:"intermediate",  label:"Intermediate",         desc:"I can hold simple conversations",   icon:"" },
+    { id:"advanced",      label:"Advanced",             desc:"I'm fluent and refining my skills", icon:"" },
   ];
   const GOALS = [
-    { id:"travel",       label:"Travel",        icon:"✈️",  desc:"Survive and enjoy trips abroad"      },
-    { id:"conversation", label:"Conversation",  icon:"💬",  desc:"Chat with native speakers"           },
-    { id:"work",         label:"Work / Business",icon:"💼", desc:"Professional meetings and emails"    },
-    { id:"school",       label:"School / Exams",icon:"🎓", desc:"Academic courses and certifications" },
-    { id:"family",       label:"Family",        icon:"👨‍👩‍👧",desc:"Connect with family members"          },
-    { id:"personal",     label:"Personal growth",icon:"✨", desc:"Enjoy culture, books, and media"    },
+    { id:"travel",       label:"Travel",        icon:"",  desc:"Survive and enjoy trips abroad"      },
+    { id:"conversation", label:"Conversation",  icon:"",  desc:"Chat with native speakers"           },
+    { id:"work",         label:"Work / Business",icon:"", desc:"Professional meetings and emails"    },
+    { id:"school",       label:"School / Exams",icon:"", desc:"Academic courses and certifications" },
+    { id:"family",       label:"Family",        icon:"‍‍",desc:"Connect with family members"          },
+    { id:"personal",     label:"Personal growth",icon:"", desc:"Enjoy culture, books, and media"    },
   ];
 
   const save = async () => {
@@ -7896,10 +7902,10 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
               {t("ob_subtitle")} — <strong>{tName}</strong>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20, textAlign:"left" }}>
-              {[["🤖","AI Coach","Personalized exercises, corrections & feedback"],
-                ["⚡","Drills & Dialogues","Speaking practice with real scenarios"],
-                ["📖","Grammar & Vocab","Full reference guides for "+tName],
-                ["🗺️","Learning Roadmap","5-phase path from beginner to fluent"]
+              {[["","AI Coach","Personalized exercises, corrections & feedback"],
+                ["","Drills & Dialogues","Speaking practice with real scenarios"],
+                ["","Grammar & Vocab","Full reference guides for "+tName],
+                ["","Learning Roadmap","5-phase path from beginner to fluent"]
               ].map(([icon,title,desc]) => (
                 <div key={title} style={{ display:"flex", gap:12, alignItems:"flex-start", background:"#f8fafc", borderRadius:10, padding:"10px 12px" }}>
                   <span style={{ fontSize:20, flexShrink:0 }}>{icon}</span>
@@ -8001,16 +8007,16 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
         {/* STEP 4: All set */}
         {step === 4 && (
           <div style={{ textAlign:"center" }}>
-            <div style={{ fontSize:52, marginBottom:10 }}>🎉</div>
+            <div style={{ marginBottom:12, display:"flex", justifyContent:"center" }}><Icon name="sparkles" size={46} color={C.accent}/></div>
             <div style={{ fontWeight:900, fontSize:21, color:"#0f172a", marginBottom:8 }}>You're all set!</div>
             <div style={{ color:"#64748b", fontSize:14, lineHeight:1.6, marginBottom:22 }}>
               Your {tName} journey starts now.<br/>
               <strong>Here's what to do first:</strong>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:22, textAlign:"left" }}>
-              {[["1","Open Quick Reference","Browse the grammar cheatsheet — pick up the 5 core patterns","📖"],
-                ["2","Try the AI Coach","Pick any exercise type — your coach will generate a personalized task","🤖"],
-                ["3","Save words to Flashcards","When you see a new word, tap 'Save to Flashcards' to review it later","🃏"],
+              {[["1","Open Quick Reference","Browse the grammar cheatsheet — pick up the 5 core patterns",""],
+                ["2","Try the AI Coach","Pick any exercise type — your coach will generate a personalized task",""],
+                ["3","Save words to Flashcards","When you see a new word, tap 'Save to Flashcards' to review it later",""],
               ].map(([n,title,desc,icon]) => (
                 <div key={n} style={{ display:"flex", gap:12, alignItems:"flex-start", background:"#f8fafc", borderRadius:10, padding:"11px 13px" }}>
                   <div style={{ width:24, height:24, borderRadius:"50%", background:"#C0153E", color:"#fff", display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, fontSize:11, flexShrink:0 }}>{n}</div>
@@ -8043,7 +8049,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
   const [section, setSection] = useState(0);
   const SECTIONS = [
     {
-      icon:"🤖", title:"AI Coach",
+      icon:"", title:"AI Coach",
       steps:[
         "Tap the <strong>AI Coach</strong> tab at the top.",
         "Choose an exercise type — <strong>New Word</strong>, <strong>Fill the Gap</strong>, <strong>Translate</strong>, <strong>Role Play</strong>, and more.",
@@ -8054,10 +8060,10 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       ]
     },
     {
-      icon:"📖", title:"Quick Reference & Grammar",
+      icon:"", title:"Quick Reference & Grammar",
       steps:[
         "Tap <strong>Quick Reference</strong> for an interactive cheatsheet — tap any section to expand it.",
-        "Use the <strong>▶ play button</strong> next to any word or phrase to hear it spoken aloud.",
+        "Use the <strong>play button</strong> next to any word or phrase to hear it spoken aloud.",
         "The <strong>Grammar</strong> tab has detailed guides on tenses, conjugation, gender, and syntax.",
         "The <strong>Structures</strong> tab shows sentence-building patterns and how they compare to your reference language.",
         "The <strong>Vocabulary</strong> tab has themed word groups — food, travel, numbers, and more.",
@@ -8065,7 +8071,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       ]
     },
     {
-      icon:"⚡", title:"Drills & Dialogues",
+      icon:"", title:"Drills & Dialogues",
       steps:[
         "Tap <strong>Drills</strong> for rapid-fire pronunciation and pattern exercises.",
         "Each drill builds speed and muscle memory for common phrases.",
@@ -8075,7 +8081,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       ]
     },
     {
-      icon:"🃏", title:"Flashcards",
+      icon:"", title:"Flashcards",
       steps:[
         "Tap <strong>Flashcards</strong> to review words you've saved.",
         "Words are shown on a card — tap to flip and reveal the meaning.",
@@ -8085,7 +8091,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       ]
     },
     {
-      icon:"💬", title:"Word Space",
+      icon:"", title:"Word Space",
       steps:[
         "Tap <strong>Word Space</strong> to translate or look up any word or phrase instantly.",
         "Type in "+tName+" or your language — get a full breakdown: meaning, pronunciation, examples, and grammar notes.",
@@ -8094,7 +8100,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       ]
     },
     {
-      icon:"🗺️", title:"Roadmap",
+      icon:"", title:"Roadmap",
       steps:[
         "Tap <strong>Roadmap</strong> to see the 5-phase path from beginner to fluent.",
         "Each phase has clear goals, estimated timelines, and what you should focus on.",
@@ -8155,18 +8161,18 @@ function TodaysPractice({ tLang, onGoToTab }) {
 
   // Rotating weekly schedule
   const SCHEDULE = [
-    { day:"Sunday",    theme:"Review Day",       desc:"Review your flashcards and revisit past exercises.",     tab:9, icon:"🃏", tabLabel:"Flashcards" },
-    { day:"Monday",    theme:"New Words",         desc:"Learn 3 new vocabulary words with the AI Coach.",       tab:1, icon:"🤖", tabLabel:"AI Coach" },
-    { day:"Tuesday",   theme:"Grammar Focus",     desc:"Study the key grammar patterns in Quick Reference.",    tab:0, icon:"📖", tabLabel:"Quick Reference" },
-    { day:"Wednesday", theme:"Translation Day",   desc:"Try Translate exercises in the AI Coach.",             tab:1, icon:"🤖", tabLabel:"AI Coach" },
-    { day:"Thursday",  theme:"Speaking Practice", desc:"Work through Drills to build pronunciation speed.",     tab:5, icon:"⚡", tabLabel:"Drills" },
-    { day:"Friday",    theme:"Conversation",      desc:"Try a Role Play or Dialogue exercise today.",           tab:6, icon:"💬", tabLabel:"Dialogues" },
-    { day:"Saturday",  theme:"Free Writing",      desc:"Write freely in "+tName+" — your coach will correct everything.", tab:1, icon:"✍️", tabLabel:"AI Coach" },
+    { day:"Sunday",    theme:"Review Day",       desc:"Review your flashcards and revisit past exercises.",     tab:9, icon:"", tabLabel:"Flashcards" },
+    { day:"Monday",    theme:"New Words",         desc:"Learn 3 new vocabulary words with the AI Coach.",       tab:1, icon:"", tabLabel:"AI Coach" },
+    { day:"Tuesday",   theme:"Grammar Focus",     desc:"Study the key grammar patterns in Quick Reference.",    tab:0, icon:"", tabLabel:"Quick Reference" },
+    { day:"Wednesday", theme:"Translation Day",   desc:"Try Translate exercises in the AI Coach.",             tab:1, icon:"", tabLabel:"AI Coach" },
+    { day:"Thursday",  theme:"Speaking Practice", desc:"Work through Drills to build pronunciation speed.",     tab:5, icon:"", tabLabel:"Drills" },
+    { day:"Friday",    theme:"Conversation",      desc:"Try a Role Play or Dialogue exercise today.",           tab:6, icon:"", tabLabel:"Dialogues" },
+    { day:"Saturday",  theme:"Free Writing",      desc:"Write freely in "+tName+" — your coach will correct everything.", tab:1, icon:"", tabLabel:"AI Coach" },
   ];
 
   const todayPlan = SCHEDULE[today];
   const streakMsg = streakData.count > 0
-    ? `🔥 ${streakData.count}-day streak — keep it going!`
+    ? `${streakData.count}-day streak — keep it going!`
     : "Start today and build your streak!";
 
   return (
@@ -8287,7 +8293,7 @@ function VoiceTutor({ tLang, rLangs, nativeLang }) {
       {/* Phase: idle */}
       {phase === "idle" && (
         <div style={{textAlign:"center",paddingTop:32}}>
-          <div style={{fontSize:56,marginBottom:12}}>{TARGETS[tLang]?.flag || "🗣️"}</div>
+          <div style={{fontSize:56,marginBottom:12}}>{TARGETS[tLang]?.flag || ""}</div>
           <div style={{fontWeight:800,fontSize:22,color:C.text,marginBottom:6}}>Talk to your {tName} tutor</div>
           <div style={{color:C.muted,fontSize:13,lineHeight:1.6,marginBottom:28,maxWidth:300,margin:"0 auto 28px"}}>Have a real conversation in {tName}. The AI corrects you naturally — no awkward interruptions. You'll get a full report at the end.</div>
           {errMsg && <div style={{background:C.red+"12",border:`1px solid ${C.red}30`,borderRadius:10,padding:"10px 14px",color:C.red,fontSize:12.5,marginBottom:20}}>{errMsg}</div>}
@@ -8536,7 +8542,7 @@ function TextAnalyzer({ tLang, rLangs, nativeLang }) {
 function ShareCardModal({ word, meaning, example, lang, onClose }) {
   const canvasRef = useRef(null);
   const tName = TARGETS[lang]?.name || "French";
-  const flag  = TARGETS[lang]?.flag  || "🌍";
+  const flag  = TARGETS[lang]?.flag  || "";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -8735,7 +8741,7 @@ function DesktopNav({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettin
           background:C.surf2, border:`1px solid ${C.line}`,
         }}>
           <span style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:16}}>{TARGETS[L.id]?.flag || "🌐"}</span>
+            <span style={{fontSize:16}}>{TARGETS[L.id]?.flag || ""}</span>
             <span style={{fontWeight:700,fontSize:13.5,color:C.text}}>{L.name}</span>
           </span>
           <span style={{fontSize:10,fontWeight:700,color:C.accent,display:"flex",alignItems:"center",gap:3}}>Switch <Icon name="chevron-down" size={11} color={C.accent}/></span>
@@ -8804,6 +8810,7 @@ function App() {
     return (days >= 0 && days <= 3) ? days : null;
   });
   const [streak, setStreak] = useState(() => _streak.get().count);
+  const [userLevel, setUserLevel] = useState(() => { try { return localStorage.getItem("user_level") || ""; } catch(e) { return ""; } });
 
   // ── event listeners (unchanged) ──────────────────────────────────────────
   useEffect(() => {
@@ -8835,10 +8842,27 @@ function App() {
           try { localStorage.setItem("auth_plan", d.plan); _userPlan = d.plan; } catch(_) {}
           setIsFree(d.plan === "free");
         }
+        // Restore the learner's stored profile so level + language follow the account.
+        if (d.userLevel) {
+          setUserLevel(d.userLevel);
+          try { localStorage.setItem("user_level", d.userLevel); } catch(_) {}
+        }
+        if (d.targetLang && TARGETS[d.targetLang] && d.targetLang !== tLang) {
+          setTLang(d.targetLang);
+          try { localStorage.setItem("target_lang", d.targetLang); } catch(_) {}
+        }
         if (d.needsRelogin) window.dispatchEvent(new CustomEvent("show-upgrade", { detail: { upgraded: true } }));
       })
       .catch(() => {});
   }, []);
+
+  // The bottom nav dock only renders on the mobile home screen; flag it on <body>
+  // so the support button lifts above it there and stays low everywhere else.
+  useEffect(() => {
+    const hasDock = view === "explore" && !isDesktop;
+    document.body.classList.toggle("has-bottom-dock", hasDock);
+    return () => document.body.classList.remove("has-bottom-dock");
+  }, [view, isDesktop]);
 
   useEffect(() => {
     loadVoices();
@@ -8942,7 +8966,7 @@ function App() {
         {view === "explore" && (
           <ExploreHome
             L={L} nav={nav} dark={dark} factIdx={factIdx} streak={streak}
-            isDesktop={isDesktop}
+            isDesktop={isDesktop} userLevel={userLevel}
             onNextFact={() => setFactIdx(i => i+1)}
             onOpenSettings={() => setOverlay("settings")}
             onOpenLang={() => setOverlay("lang")}
@@ -8951,13 +8975,13 @@ function App() {
         )}
 
         {/* ── AI COACH ── */}
-        {view === "coach" && wrap("AI Coach", `${L.name} · powered by Claude`, <AICoach tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
+        {view === "coach" && wrap("AI Coach", "Ask anything, practise out loud, get corrected on the spot", <AICoach tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
 
         {/* ── GRAMMAR (new index) ── */}
         {view === "grammar" && <GrammarScreen L={L} nav={nav} goBack={goBack}/>}
 
         {/* ── GRAMMAR FULL (old component, all langs) ── */}
-        {view === "grammar-full" && wrap("Grammar", `${L.name} · complete reference`, <Grammar tLang={tLang} rLangs={rLangs}/>)}
+        {view === "grammar-full" && wrap("Grammar", "Every conjugation and rule, laid out in full tables", <Grammar tLang={tLang} rLangs={rLangs}/>)}
 
         {/* ── CONCEPT DEEP DIVE ── */}
         {view === "concept" && <ConceptScreen L={L} nav={nav} goBack={goBack}/>}
@@ -8969,13 +8993,13 @@ function App() {
         {view === "vocabWords" && <VocabWordsScreen L={L} themeIdx={themeIdx} nav={nav} goBack={goBack}/>}
 
         {/* ── VOCAB FULL (old component, all langs) ── */}
-        {view === "vocab-full" && wrap("Vocabulary", `${L.name} · all words`, <Vocab tLang={tLang} rLangs={rLangs}/>)}
+        {view === "vocab-full" && wrap("Vocabulary", "Every word by theme — with audio and example sentences", <Vocab tLang={tLang} rLangs={rLangs}/>)}
 
         {/* ── PHRASES (new IA French-rich screen) ── */}
         {view === "phrases" && <PhrasesScreen L={L} nav={nav} goBack={goBack}/>}
 
         {/* ── DIALOGUES (old component, all langs) ── */}
-        {view === "dialogues" && wrap("Phrases & Dialogues", `${L.name} · real conversations`, <Dialogues tLang={tLang}/>)}
+        {view === "dialogues" && wrap("Phrases & Dialogues", "Full conversations you'll actually have — read, listen, role-play", <Dialogues tLang={tLang}/>)}
 
         {/* ── SOUNDS ── */}
         {view === "sounds" && <SoundsScreen L={L} goBack={goBack}/>}
@@ -8984,29 +9008,29 @@ function App() {
         {view === "culture" && <CultureScreen L={L} goBack={goBack}/>}
 
         {/* ── FLASHCARDS ── */}
-        {view === "cards" && wrap("Flashcards", "SM-2 spaced repetition",
+        {view === "cards" && wrap("Flashcards", "Reviews surface right before you'd forget — nothing wasted",
           <Flashcards tLang={tLang} onStreakUpdate={() => setStreak(_streak.get().count)}/>, true)}
 
         {/* ── DRILLS ── */}
-        {view === "drills" && wrap("Drills", `${L.name} · multiple-choice practice`, <Drills tLang={tLang}/>)}
+        {view === "drills" && wrap("Drills", "Fast reps that turn the rules into reflexes", <Drills tLang={tLang}/>)}
 
         {/* ── STRUCTURES ── */}
-        {view === "structures" && wrap("Sentence Patterns", `${L.name} · how sentences work`, <Structures tLang={tLang} rLangs={rLangs}/>)}
+        {view === "structures" && wrap("Sentence Patterns", "The skeletons of real sentences — swap in any words", <Structures tLang={tLang} rLangs={rLangs}/>)}
 
         {/* ── WORD SPACE ── */}
-        {view === "wordspace" && wrap("Word Space", `${L.name} · explore vocabulary`, <WordSpace tLang={tLang} rLangs={rLangs}/>, true)}
+        {view === "wordspace" && wrap("Word Space", "Type any word to see it translated, broken down, and voiced", <WordSpace tLang={tLang} rLangs={rLangs}/>, true)}
 
         {/* ── ROADMAP ── */}
-        {view === "roadmap" && wrap("Progress & Roadmap", `${L.name} · your learning path`, <Roadmap tLang={tLang}/>)}
+        {view === "roadmap" && wrap("Progress & Roadmap", "Where you are now — and exactly what to learn next", <Roadmap tLang={tLang}/>)}
 
         {/* ── VOICE TUTOR ── */}
-        {view === "voice-tutor" && wrap("Talk to Tutor", `${L.name} · speak & get corrected`, <VoiceTutor tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
+        {view === "voice-tutor" && wrap("Talk to Tutor", "A real spoken conversation — it replies and fixes your mistakes", <VoiceTutor tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
 
         {/* ── TEXT ANALYZER ── */}
-        {view === "analyzer" && wrap("Analyze Any Text", `${L.name} · paste anything`, <TextAnalyzer tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
+        {view === "analyzer" && wrap("Analyze Any Text", "Paste lyrics, a menu, a message — get it decoded word by word", <TextAnalyzer tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
 
         {/* ── TODAY'S PRACTICE ── */}
-        {view === "today" && wrap("Today's Practice", "Daily exercises & cheat sheet",
+        {view === "today" && wrap("Today's Practice", "Your quick daily rep — a little every day beats cramming",
           <div>
             <TodaysPractice tLang={tLang} onGoToTab={(i) => {
               // Map old tab indices to new views
@@ -9026,7 +9050,18 @@ function App() {
       {overlay === "lang" && (
         <LangSwitchOverlay
           current={tLang}
-          onPick={(code) => { setTLang(code); setView("explore"); setStack([]); }}
+          onPick={(code) => {
+            setTLang(code); setView("explore"); setStack([]);
+            try { localStorage.setItem("target_lang", code); } catch(_) {}
+            // Persist to the account so the choice follows the user across devices
+            if (isLoggedIn()) {
+              fetch("/api/auth/preferences", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+                body: JSON.stringify({ language: code }),
+              }).catch(() => {});
+            }
+          }}
           onClose={() => setOverlay(null)}
         />
       )}
@@ -9115,7 +9150,7 @@ function SupportChat() {
         onClick={() => { haptic(); setOpen(true); }}
         aria-label="Help"
         title="Help & Support"
-      >💬</button>
+      ></button>
 
       {/* Bottom sheet */}
       <div className={`sheet-backdrop${open ? " open" : ""}`} onClick={() => setOpen(false)}>

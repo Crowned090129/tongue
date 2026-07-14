@@ -124,19 +124,27 @@ router.post("/signup", async (req, res) => {
     const APP_URL = process.env.APP_URL || "http://localhost:3000";
     await sendEmail(
       normalized,
-      "Welcome to Tonge — you're in!",
-      `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-        <h1 style="color:#2563eb;font-size:22px;margin-bottom:8px">🌐 Welcome to Tonge!</h1>
-        <p style="color:#334155;font-size:14px;line-height:1.7;margin-bottom:16px">
-          Your free account is ready. You can access all 11 language reference guides and
-          try the AI Coach with <strong>5 free messages per day</strong>.
-        </p>
-        <p style="color:#64748b;font-size:13px;margin-bottom:20px">
-          When you're ready to go unlimited, upgrade to Tonge Premium — $9/month or $79/year.
-        </p>
-        <a href="${APP_URL}" style="display:inline-block;padding:12px 28px;background:#2563eb;color:#fff;border-radius:10px;text-decoration:none;font-weight:700">
-          Start learning →
-        </a>
+      "Welcome to Tongue — you're in!",
+      `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+        <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;text-align:center">
+          <div style="font-size:36px;margin-bottom:4px">👅</div>
+          <div style="color:#fff;font-size:20px;font-weight:900">TONGUE</div>
+          <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
+        </div>
+        <div style="padding:28px">
+          <h1 style="color:#0f172a;font-size:20px;margin:0 0 10px">Welcome! Your free account is ready.</h1>
+          <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 16px">
+            You can explore all 11 language reference guides and try the AI Coach with <strong>5 free messages per day</strong>.
+          </p>
+          <p style="color:#64748b;font-size:13px;margin:0 0 22px">
+            Ready to go unlimited? Upgrade to Tongue Premium — $9/month or $79/year.
+          </p>
+          <a href="${APP_URL}/app" style="display:inline-block;padding:13px 28px;background:#C0153E;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">
+            Start learning →
+          </a>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:22px 0">
+          <p style="color:#94a3b8;font-size:11px;text-align:center">© Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a></p>
+        </div>
       </div>`
     );
   } catch (_) { /* non-fatal */ }
@@ -180,18 +188,27 @@ router.post("/resend-code", async (req, res) => {
   const APP_URL = process.env.APP_URL || "http://localhost:3000";
   await sendEmail(
     normalized,
-    "Your Tonge Access Code",
-    `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h1 style="color:#2563eb;font-size:20px;margin-bottom:4px">🌐 Your access code</h1>
-      <p style="color:#334155;font-size:14px;margin-bottom:20px">You requested your access code. Here it is:</p>
-      <div style="background:#f1f5f9;border:2px solid #2563eb;border-radius:12px;padding:20px;text-align:center;margin:0 0 20px">
-        <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Access Code</div>
-        <div style="font-size:28px;font-weight:900;color:#2563eb;letter-spacing:4px">${row.code}</div>
+    "Your Tongue Access Code",
+    `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+      <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;text-align:center">
+        <div style="font-size:36px;margin-bottom:4px">👅</div>
+        <div style="color:#fff;font-size:20px;font-weight:900">TONGUE</div>
+        <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
       </div>
-      <p style="color:#64748b;font-size:13px">
-        Go to <a href="${APP_URL}" style="color:#2563eb">${APP_URL}</a> and enter this code to access the app.
-        If you didn't request this, you can ignore it.
-      </p>
+      <div style="padding:28px">
+        <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Here is your access code</h1>
+        <p style="color:#334155;font-size:14px;margin:0 0 20px">You requested your access code. Enter it on the login screen to access the app.</p>
+        <div style="background:#fff0f4;border:2px solid #C0153E;border-radius:12px;padding:22px;text-align:center;margin:0 0 20px">
+          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Access Code</div>
+          <div style="font-size:30px;font-weight:900;color:#C0153E;letter-spacing:4px">${row.code}</div>
+        </div>
+        <p style="color:#64748b;font-size:13px">
+          Go to <a href="${APP_URL}/app" style="color:#C0153E">${APP_URL}/app</a> and click <strong>"I Have a Code"</strong> to log in.
+          If you didn't request this, you can safely ignore it.
+        </p>
+        <hr style="border:none;border-top:1px solid #e2e8f0;margin:22px 0">
+        <p style="color:#94a3b8;font-size:11px;text-align:center">© Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a></p>
+      </div>
     </div>`
   );
 
@@ -205,7 +222,7 @@ router.get("/validate", requireAuth, async (req, res) => {
 
   // Always fetch current user state from DB (source of truth)
   const user = await db.get(
-    "SELECT status, email, plan, onboarding_completed, user_level, user_goal, daily_commitment FROM users WHERE id = $1",
+    "SELECT status, email, plan, onboarding_completed, user_level, user_goal, daily_commitment, target_lang FROM users WHERE id = $1",
     [userId]
   );
   if (!user || user.status === "deleted") {
@@ -223,6 +240,7 @@ router.get("/validate", requireAuth, async (req, res) => {
       userLevel: user.user_level,
       userGoal: user.user_goal,
       dailyCommitment: user.daily_commitment,
+      targetLang: user.target_lang,
     });
   }
 
@@ -259,7 +277,26 @@ router.get("/validate", requireAuth, async (req, res) => {
     userLevel: user.user_level,
     userGoal: user.user_goal,
     dailyCommitment: user.daily_commitment,
+    targetLang: user.target_lang,
   });
+});
+
+// ── POST /api/auth/preferences — persist target language / level mid-session ──
+// Lets language switches and level changes follow the account across devices,
+// not just localStorage.
+router.post("/preferences", requireAuth, async (req, res) => {
+  const { userId } = req.user;
+  const { language, level } = req.body || {};
+  const VALID_LEVELS = ["beginner-zero", "beginner", "intermediate", "advanced"];
+  if (level && !VALID_LEVELS.includes(level)) return res.status(400).json({ error: "Invalid level." });
+  if (language && !/^[a-z]{2}$/.test(language)) return res.status(400).json({ error: "Invalid language." });
+  if (!language && !level) return res.json({ saved: false });
+
+  await db.run(
+    "UPDATE users SET target_lang = COALESCE($1, target_lang), user_level = COALESCE($2, user_level) WHERE id = $3",
+    [language || null, level || null, userId]
+  );
+  res.json({ saved: true });
 });
 
 // ── POST /api/auth/onboarding — save onboarding preferences ──────────────────
@@ -280,9 +317,10 @@ router.post("/onboarding", requireAuth, async (req, res) => {
     SET user_level = COALESCE($1, user_level),
         user_goal  = COALESCE($2, user_goal),
         daily_commitment = COALESCE($3, daily_commitment),
+        target_lang = COALESCE($4, target_lang),
         onboarding_completed = TRUE
-    WHERE id = $4
-  `, [level || null, goal || null, dailyCommitment ? Number(dailyCommitment) : null, userId]);
+    WHERE id = $5
+  `, [level || null, goal || null, dailyCommitment ? Number(dailyCommitment) : null, language || null, userId]);
 
   // Track analytics
   db.trackEvent(userId, "onboarding_completed", { level, goal, dailyCommitment, language });
@@ -339,7 +377,7 @@ async function requirePaid(req, res, next) {
   const hasPaid = await db.hasActivePaidAccess(req.user.userId);
   if (!hasPaid) {
     return res.status(402).json({
-      error: "This feature requires a Tonge Premium subscription.",
+      error: "This feature requires a Tongue Premium subscription.",
       upgrade: true,
     });
   }
