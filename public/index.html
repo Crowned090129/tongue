@@ -103,6 +103,7 @@
     .lucide{stroke-width:2px}
     /* Screen transition */
     @keyframes rise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+    @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeFact{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:none}}
     @keyframes sheetSlide{0%{transform:translateY(102%)}100%{transform:translateY(0)}}
     .scr-anim{animation:rise .26s cubic-bezier(.22,1,.36,1)}
@@ -2642,9 +2643,12 @@ async function askClaude(prompt, maxTokens, lang, nativeLang) {
 
 // ── ACCESS CODE LOGIN ─────────────────────────────────────────────────────────
 function AccessCodeLogin({ onLogin, renewedBanner }) {
-  const [mode, setMode]   = useState("code"); // "code" | "free"
-  const [code, setCode]   = useState("");
-  const [email, setEmail] = useState("");
+  // Remember the last-used code/email so returning users never have to look it up.
+  const savedCode  = (() => { try { return localStorage.getItem("tongue_code")  || ""; } catch(e) { return ""; } })();
+  const savedEmail = (() => { try { return localStorage.getItem("auth_email")   || ""; } catch(e) { return ""; } })();
+  const [mode, setMode]   = useState(savedCode ? "code" : "free"); // "code" | "free"
+  const [code, setCode]   = useState(savedCode);
+  const [email, setEmail] = useState(savedEmail);
   const [err, setErr]     = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -2667,6 +2671,7 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
         setLoading(false); return;
       }
       saveSession(data.token, data.expiresAt, data.email, data.plan);
+      try { localStorage.setItem("tongue_code", code.trim().toUpperCase()); } catch(e){}
       try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
       if (onLogin) onLogin();
     } catch(e) { setErr("Connection error. Please try again."); }
@@ -8799,6 +8804,11 @@ function App() {
   const [nativeLang, setNativeLang] = useState(() => _nativeLang);
   const [overlay, setOverlay]       = useState(null); // "lang"|"settings"|"upgrade"|null
   const [loggedIn, setLoggedIn]     = useState(isLoggedIn());
+  // If the session lapsed but we remembered the code, silently sign back in
+  // instead of making the user look it up again.
+  const [authChecking, setAuthChecking] = useState(() => {
+    try { return !isLoggedIn() && !!localStorage.getItem("tongue_code"); } catch(e) { return false; }
+  });
   const [renewedBanner, setRenewedBanner] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     try { return localStorage.getItem("_new_login") === "1"; } catch(e) { return false; }
@@ -8830,6 +8840,34 @@ function App() {
     window.addEventListener("show-upgrade", handler);
     return () => window.removeEventListener("show-upgrade", handler);
   }, []);
+
+  // Silent auto-login: session lapsed but code remembered → sign back in
+  useEffect(() => {
+    if (!authChecking) return;
+    let cancelled = false;
+    (async () => {
+      let savedCode = "";
+      try { savedCode = localStorage.getItem("tongue_code") || ""; } catch(e) {}
+      if (!savedCode) { if (!cancelled) setAuthChecking(false); return; }
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: savedCode.trim().toUpperCase() }),
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          saveSession(data.token, data.expiresAt, data.email, data.plan);
+          if (!cancelled) setLoggedIn(true);
+        } else {
+          // Code no longer valid (renewed/revoked) — drop it and show login.
+          try { localStorage.removeItem("tongue_code"); } catch(e) {}
+        }
+      } catch(e) { /* offline — fall through to the login screen */ }
+      if (!cancelled) setAuthChecking(false);
+    })();
+    return () => { cancelled = true; };
+  }, [authChecking]);
 
   // Validate token on startup
   useEffect(() => {
@@ -8907,6 +8945,15 @@ function App() {
   // ── language data ─────────────────────────────────────────────────────────
   const L = LANGS_DATA[tLang] || LANGS_DATA.fr;
 
+  if (!loggedIn && authChecking) {
+    return (
+      <div style={{fontFamily:"system-ui,-apple-system,sans-serif",background:"#f1f5f9",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16}}>
+        <img src="/icon.svg" alt="Tongue" style={{width:64,height:64}}/>
+        <div style={{width:26,height:26,border:"3px solid #e2e8f0",borderTopColor:"#C0153E",borderRadius:"50%",animation:"spin .7s linear infinite"}}/>
+        <div style={{color:"#64748b",fontSize:13,fontWeight:600}}>Signing you in…</div>
+      </div>
+    );
+  }
   if (!loggedIn) return <AccessCodeLogin onLogin={() => setLoggedIn(true)} renewedBanner={renewedBanner} />;
 
   if (showOnboarding) {
@@ -9068,7 +9115,11 @@ function App() {
       {overlay === "settings" && (
         <SettingsOverlay
           onClose={() => setOverlay(null)}
-          onLogout={() => { setLoggedIn(false); setOverlay(null); }}
+          onLogout={() => {
+            try { logout(); } catch(e) {}
+            try { localStorage.removeItem("tongue_code"); } catch(e) {}
+            setAuthChecking(false); setLoggedIn(false); setOverlay(null);
+          }}
           nativeLang={nativeLang}
           onSetNativeLang={setNativeLangAndPersist}
           isFree={isFree}
