@@ -61,6 +61,12 @@ const GRAMMAR_TOPICS = {
     "Object pronouns: direct (lo/la/los/las) and indirect (le/les) — position before conjugated verb",
     "Present subjunctive: formation and use after querer que, esperar que, ojalá, cuando + future",
     "Future tense: regular (add -é/-ás/-á/-emos/-éis/-án to infinitive) + irregular stems (tener→tendr-)",
+    "Por vs Para: por (cause/duration/exchange/'through') vs para (purpose/destination/deadline/recipient) — gracias por, salgo para Madrid",
+    "Present perfect (pretérito perfecto): haber + participle — he hablado, has comido, ha vivido — recent/relevant past with hoy/ya/todavía",
+    "Conditional tense: infinitive + -ía/-ías/-ía/-íamos/-íais/-ían — hablaría, comería — hypotheticals, politeness (¿podrías?), same irregular stems as future",
+    "Imperative (commands): affirmative tú (habla, come), formal usted (hable, coma), negative uses subjunctive (no hables) — pronouns attach in affirmative (dímelo)",
+    "Comparatives & superlatives: más/menos + adjective + que (más alto que), irregulars (mejor/peor/mayor/menor), superlative el/la más... (el más rápido)",
+    "Gustar-type verbs: indirect object + verb agreeing with the thing — me gusta el café, me gustan los libros, te encanta, le molesta, nos falta (encantar/interesar/doler)",
   ],
   pt: [
     "Present tense: -ar/-er/-ir verbs (all 6 persons) — key differences from Spanish endings",
@@ -71,6 +77,12 @@ const GRAMMAR_TOPICS = {
     "Future with ir+infinitive: vou falar, vai comer, vamos partir — the main way to express near future",
     "Object pronouns: me/te/o/a/lhe + clitic placement rules (before verb in Brazil, after in Portugal)",
     "Diminutives: -inho/-inha suffix — cafezinho, beijinho, obrigadinho — very common in Brazilian Portuguese",
+    "Pretérito Imperfeito: habitual/ongoing past — falava, comia, era, tinha, ia — background actions and 'used to' + when to use vs Pretérito Perfeito",
+    "Present subjunctive (presente do subjuntivo): after que espero que, é importante que, talvez, quando (future) — que eu fale, que ele coma, que nós sejamos",
+    "Conditional (futuro do pretérito): infinitive + -ia/-ias/-ia/-íamos/-íeis/-iam — falaria, comeria — hypotheticals and politeness (gostaria, poderia)",
+    "Imperative (imperativo): affirmative tu (fala, come) and formal você via subjunctive (fale, coma); negatives use subjunctive (não fale, não fales)",
+    "Comparatives & superlatives: mais/menos + adjective + (do) que — mais alto que; irregulars melhor/pior/maior/menor; superlative o mais... / -íssimo (bonitíssimo)",
+    "Reflexive & pronominal verbs: me/te/se/nos/vos/se — levantar-se, chamar-se, sentir-se, lembrar-se de — enclisis/proclisis placement differs Brazil vs Portugal",
   ],
   it: [
     "Present tense: -are/-ere/-ire verbs (all 6 persons) + essere and avere conjugation",
@@ -81,6 +93,12 @@ const GRAMMAR_TOPICS = {
     "Ci and Ne: ci = there/it (c'è, ci sono, andarci); ne = of it/some (ne voglio due, ne parla sempre)",
     "Formal address: Lei (not tu) + 3rd person singular verb — used in professional/polite contexts",
     "Congiuntivo Presente: after penso che, spero che, è importante che — formation of all conjugation types",
+    "Futuro Semplice: -erò/-erai/-erà/-eremo/-erete/-eranno — parlerò, prenderò + irregular stems (essere→sarò, avere→avrò, fare→farò)",
+    "Condizionale: -erei/-eresti/-erebbe/-eremmo/-ereste/-erebbero — vorrei, potrei, mi piacerebbe — politeness and hypotheticals",
+    "Direct & indirect object pronouns combined: me lo, te la, glielo, ce ne — combined forms where mi/ti/ci/vi become me/te/ce/ve before lo/la/li/le/ne",
+    "Imperativo: informal tu (parla!, prendi!, finisci!, negative non parlare!) and formal Lei via congiuntivo (parli!, prenda!) — pronouns attach (dimmi!, fallo!)",
+    "Comparatives & superlatives: più/meno + adjective + di/che (più alto di); irregulars migliore/peggiore/maggiore/minore; relative superlative il più... (il più grande)",
+    "Passato Remoto: literary/southern completed past — parlai/parlò, fui, ebbi, feci, dissi — common in written narrative and formal storytelling",
   ],
   de: [
     "Grammatical gender: der (masculine) / die (feminine) / das (neuter) — must learn with each noun, not predictable",
@@ -91,6 +109,12 @@ const GRAMMAR_TOPICS = {
     "Perfekt: past tense in speech — haben/sein auxiliary + Partizip II (ge-+stem+-t for regular, ge-+stem+-en for strong verbs)",
     "Modal verbs: können/müssen/wollen/sollen/dürfen/mögen — conjugation + infinitive goes to END of sentence",
     "Separable verbs: anrufen/aufstehen/mitkommen/zurückgehen — prefix separates in main clause (Ich rufe dich an)",
+    "Genitive case: possession — des/der/des/der + masculine/neuter nouns add -s (das Auto des Mannes); prepositions wegen/während/trotz/statt",
+    "Adjective endings: strong (no article: guter Wein), weak (after der/die/das: der gute Wein), mixed (after ein/kein/mein: ein guter Wein) declension by gender/case",
+    "Word order in subordinate clauses: conjunctions weil/dass/wenn/obwohl send the conjugated verb to the END — Ich weiß, dass er heute kommt",
+    "Reflexive verbs & pronouns: sich freuen, sich waschen — accusative (mich/dich/sich) vs dative (mir/dir/sich) reflexive — Ich wasche mich / Ich wasche mir die Hände",
+    "Comparative & superlative: adjective + -er + als (größer als), am + -sten / der/die/das -ste (am schnellsten, der schnellste); irregulars gut→besser→best, viel→mehr→meist",
+    "Passive voice: werden + Partizip II — Das Haus wird gebaut (present), wurde gebaut (past), ist gebaut worden (perfect) — agent introduced with von",
   ],
   en: [
     "Present Simple vs Present Continuous: I work (habit/fact) vs I am working (now/temporary) — usage rules and state verbs that never use continuous",
@@ -101,6 +125,12 @@ const GRAMMAR_TOPICS = {
     "Articles: a/an (first mention, non-specific) vs the (known/unique/second mention) vs no article (plural generics, proper nouns, abstract nouns)",
     "Prepositions of time: at (clock times/holidays), in (months/years/seasons/parts of day), on (days/dates) — no logic, must be memorized",
     "Phrasal verbs: give up/look after/carry on/find out/put off — meaning is unpredictable from parts; most common 20 examples",
+    "Past Continuous & Past Perfect: was/were + -ing for interrupted past action (I was sleeping when...) vs had + past participle for the earlier of two past events (I had left before...)",
+    "Comparatives & superlatives: -er/-est for short adjectives (bigger, biggest), more/most for long ones (more useful, most useful); irregulars good→better→best, bad→worse→worst",
+    "Passive voice: be + past participle — The letter was written, English is spoken here, The bridge is being built — focus on action/object when agent is unknown or unimportant",
+    "Reported (indirect) speech: tense backshift — 'I am tired' → He said he was tired; will→would, can→could; changes to time/place words (now→then, here→there)",
+    "Gerunds vs infinitives: verb + -ing (enjoy swimming, avoid, finish) vs verb + to (want to go, decide, hope); after prepositions always -ing (good at cooking)",
+    "Third Conditional & mixed conditionals: If + past perfect + would have + past participle (If I had known, I would have come) — unreal past regret/hypotheticals",
   ],
   zh: [
     "No verb conjugation: Mandarin verbs never change form — time is shown by time words (昨天/明天) and aspect markers, not verb endings",
@@ -111,6 +141,12 @@ const GRAMMAR_TOPICS = {
     "把 construction: Subject + 把 + Object + Verb + Result — moves object before verb to emphasize result/disposal (把书放在桌子上)",
     "Comparison with 比: A + 比 + B + adjective — 他比我高 (He is taller than me) vs 没有 for negative comparison",
     "Question formation: add 吗 for yes/no (你去吗?), use question words 什么/哪里/谁/怎么/为什么/几 in normal word order",
+    "Possession & modification with 的 (de): noun + 的 + noun — 我的书 (wǒ de shū, my book), 老师的车 (lǎoshī de chē, the teacher's car), 红色的花 (red flower)",
+    "两 vs 二 (liǎng vs èr): 两 before measure words (两个 liǎng gè, two of them) but 二 in counting/numbers (十二 shí'èr, twelve; 第二 dì'èr, second)",
+    "Resultative complements: verb + result verb — 看见 (kànjiàn, see/perceive), 听懂 (tīngdǒng, understand by listening), 吃完 (chīwán, finish eating), 找到 (zhǎodào, find)",
+    "Directional complements: verb + 来/去 — 进来 (jìnlái, come in), 出去 (chūqù, go out), 回来 (huílái, come back), 上去 (shàngqù, go up) — motion relative to speaker",
+    "是...的 construction: emphasizes time/place/manner of a known past action — 我是昨天来的 (wǒ shì zuótiān lái de, It was yesterday that I came)",
+    "Potential complements with 得/不: verb + 得/不 + result — 听得懂 (tīng de dǒng, can understand) vs 听不懂 (tīng bu dǒng, can't understand), 吃得完/吃不完 (can/can't finish)",
   ],
   ja: [
     "Sentence order SOV: Subject + Object + Verb — verb ALWAYS at end — 私はりんごを食べます (I apple eat)",
@@ -121,6 +157,12 @@ const GRAMMAR_TOPICS = {
     "て form + います: ongoing action (食べています = is eating) vs habitual/resulting state (住んでいます = lives, 知っています = knows)",
     "Potential form: verb stem + られます (ichidan) or stem change + えます (godan) — 食べられます (can eat), 行けます (can go)",
     "Politeness levels: ます/です form (polite, default) vs plain/dictionary form (casual with friends) — context determines which to use",
+    "Counters: number + classifier — 一つ/二つ (hitotsu/futatsu, general things), 一人/二人 (hitori/futari, people), 一枚 (ichimai, flat objects), 一本 (ippon, long objects), 一匹 (ippiki, small animals)",
+    "Desire with たい and たがる: verb stem + たい for one's own wish (食べたい tabetai, I want to eat) vs 〜たがる for third person (彼は行きたがる, he wants to go)",
+    "Conditional forms: と (natural/automatic result: 押すと開く), ば (general hypothetical: 行けば), たら (if/when, most versatile: 食べたら), なら (given that: 行くなら) — four distinct 'if'",
+    "Giving & receiving: あげる (I give outward), くれる (someone gives to me/my side), もらう (I receive) — plus て-form for favors (手伝ってくれる, do me the favor of helping)",
+    "Causative & passive: causative させる/せる (make/let do: 食べさせる, make eat), passive れる/られる (先生に褒められた, was praised by the teacher), causative-passive (行かせられる, be made to go)",
+    "Keigo (honorific speech): 尊敬語 sonkeigo elevating others (いらっしゃる for 来る/行く/いる, なさる for する) vs 謙譲語 kenjōgo humbling oneself (参る, いたす, 申す) — used in formal/business settings",
   ],
   ko: [
     "Sentence order SOV + predicate always last: Subject + Object + Verb/Adjective — 나는 사과를 먹어요 (I apple eat)",
@@ -131,6 +173,12 @@ const GRAMMAR_TOPICS = {
     "Negation: 안 + verb (안 먹어요 don't eat) or verb stem + 지 않아요 (먹지 않아요) — both mean the same, 지 않아요 is more formal",
     "Descriptive verbs (형용사): adjectives conjugate like verbs — 크다 (to be big), 작아요 (is small) — no separate 'to be' for adjectives",
     "Honorific -시-: inserted into verb when subject is senior/respected — 선생님이 오세요 (The teacher is coming) vs 친구가 와요 (Friend is coming)",
+    "Connective endings: -고 (and/then: 먹고 자요 eat and sleep), -아/어서 (so/because/sequence: 배고파서 먹어요 hungry so I eat), -지만 (but: 비싸지만 좋아요 expensive but good)",
+    "Ability & desire: -(으)ㄹ 수 있다/없다 (can/cannot: 할 수 있어요 I can do it), -고 싶다 (want to: 가고 싶어요 I want to go)",
+    "Counters with native/Sino numbers: native 하나/둘/셋 + counter (사람 people: 한 명, 개 things: 두 개) vs Sino 일/이/삼 for dates, money, minutes (삼십 분 30 minutes)",
+    "Honorific & humble vocabulary: special words for respect — 잡수시다/드시다 (eat, for elders) vs 먹다, 주무시다 (sleep) vs 자다, 계시다 (be/exist) vs 있다; humble 저 (I) vs 나, 드리다 (give up) vs 주다",
+    "Irregular verb stems: ㅂ irregular (덥다→더워요 hot), ㄷ irregular (듣다→들어요 listen), 르 irregular (모르다→몰라요 not know), ㅅ irregular (짓다→지어요 build)",
+    "Quoting & reported speech: -다고/-라고 하다 — 간다고 했어요 (said [he] would go), 학생이라고 했어요 (said [he] is a student), question -냐고, command -(으)라고, suggestion -자고",
   ],
   ru: [
     "Nominative case: subject of sentence — Я читаю (I read), Кот спит (The cat sleeps) — no article in Russian",
@@ -141,6 +189,12 @@ const GRAMMAR_TOPICS = {
     "Prepositional case: location with в/на — Я живу в Москве (I live in Moscow), Книга на столе (The book is on the table)",
     "Verb aspects: imperfective (process/habit/repeated) vs perfective (completed single action) — читать/прочитать, писать/написать — must learn both forms",
     "Present tense conjugation: 1st conjugation читать→читаю/читаешь/читает/читаем/читаете/читают; 2nd conj говорить→говорю/говоришь/говорит; быть (to be) is absent in present tense",
+    "Past tense: verb + -л/-ла/-ло/-ли agreeing with subject GENDER and number, not person — он читал (he read), она читала (she read), они читали (they read)",
+    "Future tense: imperfective compound буду/будешь + infinitive (я буду читать, I will be reading) vs perfective simple future (я прочитаю, I will read [and finish])",
+    "Verbs of motion: идти/ходить (go on foot, one-way vs habitual), ехать/ездить (go by vehicle) + prefixes при-/у-/вы-/по- (прийти arrive, уйти leave, войти enter)",
+    "Numbers + case agreement: 1 + nominative (один стол), 2/3/4 + genitive singular (два стола, три книги), 5+ + genitive plural (пять столов, много книг)",
+    "Comparatives & superlatives: -ее/-ей ending (быстрее faster, красивее) or более + adjective; superlative самый + adjective (самый большой, the biggest); irregulars лучше (better), хуже (worse)",
+    "Reflexive verbs with -ся/-сь: учиться (to study/learn), заниматься (to be occupied with), нравиться (to be pleasing), встречаться (to meet) — -ся after consonants, -сь after vowels",
   ],
   ar: [
     "The definite article ال (al-): attaches directly to noun (الكتاب = the book); sun letters (ت ث د ذ ر ز س ش ص ض ط ظ ل ن) assimilate the lam (الشمس → ash-shams)",
@@ -151,6 +205,12 @@ const GRAMMAR_TOPICS = {
     "Broken plurals (جمع التكسير): irregular plurals that change the word pattern — كِتاب → كُتُب (book→books), بَيت → بُيوت (house→houses) — must learn individually",
     "Sentence structure: nominal sentences (الجملة الاسمية) have no 'is/are' — المعلم كبير = the teacher [is] big; verbal sentences begin with verb (VSO order)",
     "Root system (الجذر الثلاثي): three-letter roots carry core meaning — ك-ت-ب (writing): كَتَبَ (he wrote), كِتاب (book), كاتِب (writer), مَكتَبة (library), مَكتَب (desk/office)",
+    "Iḍāfa (الإضافة) possessive construct: noun + noun with no article on the first — كِتابُ الطالبِ (the student's book), بابُ البيتِ (the door of the house); only the last noun takes ال",
+    "Attached possessive pronouns: suffix on the noun — كِتابي (my book), كِتابُكَ (your [m] book), كِتابُكِ (your [f] book), كِتابُهُ (his book), كِتابُها (her book), كِتابُنا (our book)",
+    "Sound plurals: masculine ون/ين (مُعَلِّم → مُعَلِّمون/مُعَلِّمين, teachers) and feminine ات (مُعَلِّمة → مُعَلِّمات, female teachers) — regular, added to human nouns",
+    "Negation: لا + present (لا أعرف, I don't know), ما/لم + past (لم يذهب, he didn't go), لن + subjunctive for future (لن أذهب, I won't go), ليس for 'is not' (ليس كبيراً, he is not big)",
+    "Verb forms (الأوزان): derived patterns from the root add meaning — Form II فَعَّلَ (intensive/causative: دَرَّسَ taught), Form III فاعَلَ (reciprocal: كاتَبَ corresponded), Form X اِستَفعَلَ (seek: اِستَخدَمَ used)",
+    "Comparative & superlative (اسم التفضيل): أَفعَل pattern — أَكبَر (bigger/biggest), أَصغَر (smaller), أَجمَل (more beautiful) — هو أكبر من أخيه (he is older than his brother)",
   ],
   hi: [
     "SOV sentence order: Subject + Object + Verb — मैं हिंदी सीखता हूँ (Main Hindī sīkhtā hūn = I Hindi learn) — verb always comes last",
@@ -161,49 +221,55 @@ const GRAMMAR_TOPICS = {
     "Postpositions (not prepositions): markers come AFTER the noun — घर में (ghar meṃ = in the house), स्कूल से (skūl se = from school), मेरे लिए (mere lie = for me)",
     "को (ko) postposition: marks indirect objects and certain direct objects — मुझे हिंदी पसंद है (mujhe Hindī pasand hai = I like Hindi, lit. 'to-me Hindi pleasing is')",
     "Infinitive + चाहिए/सकना/पड़ना: obligation and ability — मुझे जाना है (I have to go), वह बोल सकता है (he can speak), मुझे पानी चाहिए (I need water)",
+    "Future tense: stem + ऊँगा/एगा/एँगे agreeing with gender — मैं जाऊँगा (main jāūṃgā, I will go, m.), वह करेगी (vah karegī, she will do), हम खाएँगे (ham khāeṃge, we will eat)",
+    "Ergative ने (ne) construction: with transitive verbs in perfective past, subject takes ने and verb agrees with the OBJECT — मैंने किताब पढ़ी (maiṃne kitāb paṛhī, I read the book — verb agrees with feminine किताब)",
+    "Oblique case: nouns change before postpositions — लड़का → लड़के (ladkā→ladke: लड़के को, to the boy), कमरा → कमरे में (kamre meṃ, in the room), plural masculine takes -ों (लड़कों को)",
+    "Continuous & perfect aspects: रहा/रही/रहे + है for progressive (मैं जा रहा हूँ, I am going), चुका/चुकी for completed (मैं खा चुका हूँ, I have already eaten)",
+    "Comparatives & superlatives: से (se) + ज़्यादा/कम for comparison — यह उससे बड़ा है (yah usse baṛā hai, this is bigger than that); सबसे (sabse) for superlative — सबसे अच्छा (sabse acchā, the best)",
+    "Respect levels with आप/तुम/तू: आप (āp, formal/respectful) + plural verb (आप जाते हैं), तुम (tum, familiar) + तुम जाते हो, तू (tū, intimate/rude) + तू जाता है — pronoun choice signals social relationship",
   ],
 };
 
 const CHEATSHEET_GROUPS = {
-  es: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: ser/estar/tener/ir/hacer/poder/querer/saber/venir/decir (10 verbs, conjugated in yo/tú/él)", "Question Words & Common Connectors (12 items)", "Survival Phrases: ordering, directions, emergencies (15 phrases)"],
-  pt: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: ser/estar/ter/ir/fazer/poder/querer/saber/vir/dizer (10 verbs, yo/tu/ele form)", "Question Words & Connectors (12 items)", "Survival Phrases: restaurant, transport, help (15 phrases)"],
-  it: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: essere/avere/fare/andare/potere/volere/sapere/venire/dire/stare (10 verbs, io/tu/lui form)", "Question Words & Connectors (12 items)", "Survival Phrases: café, shopping, getting around (15 phrases)"],
-  de: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: sein/haben/machen/gehen/können/wollen/müssen/wissen/kommen/sagen (10 verbs, ich/du/er form)", "Question Words & Connectors (12 items)", "Survival Phrases: shopping, transport, asking for help (15 phrases)"],
-  en: ["Greetings & Social Phrases (12 phrases)", "Numbers 1–20 (20 items)", "Days, Months & Time Expressions (19 items)", "Essential Verbs: be/have/do/go/get/make/know/think/come/say (10 verbs, I/you/he form)", "Question Words & Common Connectors (12 items)", "Survival Phrases: formal requests, phone, email (15 phrases)"],
-  zh: ["Greetings & Polite Phrases (12 phrases with pinyin)", "Numbers 1–20 plus 100/1000/10000 (23 items with pinyin)", "Days, Months & Time (19 items with pinyin)", "Essential Verbs: 是/有/在/去/来/做/说/要/可以/喜欢 (10 verbs with pinyin and tone marks)", "Question Words & Connectors (12 items with pinyin)", "Survival Phrases: ordering food, directions, shopping (15 phrases with pinyin)"],
-  ja: ["Greetings & Polite Expressions (12 phrases with hiragana and romaji)", "Numbers 1–20 plus 100/1000/10000 (23 items with hiragana and romaji)", "Days, Months & Time Expressions (19 items with hiragana and romaji)", "Essential Verbs in ます form: います/あります/します/いきます/きます/たべます/のみます/みます/ききます/かいます (10 verbs)", "Question Words & Connectors (12 items with hiragana and romaji)", "Survival Phrases: restaurant, transport, asking for help (15 phrases)"],
-  ko: ["Greetings & Polite Expressions (12 phrases with Hangul and romanization)", "Numbers: Native Korean 1–10 + Sino-Korean 1–10 + 20/30/100/1000 (24 items)", "Days, Months & Time Expressions (19 items with Hangul)", "Essential Verbs in -아/어요 form: 있어요/없어요/해요/가요/와요/먹어요/마셔요/봐요/들어요/사요 (10 verbs)", "Question Words & Connectors (12 items with Hangul)", "Survival Phrases: ordering, directions, polite requests (15 phrases)"],
-  ru: ["Greetings & Polite Phrases (12 phrases with Cyrillic)", "Numbers 1–20 plus 100/1000 (22 items with Cyrillic)", "Days, Months & Time Expressions (19 items with Cyrillic)", "Essential Verbs: быть/иметь/делать/идти/мочь/хотеть/знать/говорить/думать/любить — present tense я/ты/он form", "Question Words & Connectors (12 items with Cyrillic)", "Survival Phrases: shopping, directions, emergencies (15 phrases with Cyrillic)"],
-  ar: ["Greetings & Polite Phrases (12 phrases in Arabic script with transliteration)", "Numbers 1–20 in Arabic script and numerals (20 items)", "Days, Months & Time Expressions (19 items in Arabic script)", "Essential Verbs in past/present: ذهب/يذهب, أكل/يأكل, شرب/يشرب, قال/يقول, كتب/يكتب, عمل/يعمل, أراد/يريد, عرف/يعرف, جاء/يجيء, نام/ينام", "Question Words & Common Connectors (12 items in Arabic)", "Survival Phrases: greetings, ordering, directions (15 phrases in Arabic)"],
-  hi: ["अभिवादन और विदाई (Greetings & Farewells — 12 phrases in Devanagari with transliteration)", "गिनती (Numbers 1–20 + 50/100/1000 in Devanagari with transliteration)", "दिन, महीने और समय (Days, Months & Time — 19 items in Devanagari)", "ज़रूरी क्रियाएँ (Essential Verbs): होना/करना/जाना/आना/खाना/पीना/देखना/बोलना/समझना/चाहना — present tense मैं/तुम/वह forms with transliteration", "प्रश्नवाचक शब्द (Question Words & Connectors — 12 items: क्या/कहाँ/कब/कौन/क्यों/कैसे etc.)", "उत्तरजीविता वाक्यांश (Survival Phrases — 15 phrases: restaurant, transport, help, numbers in Devanagari)"],
+  es: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: ser/estar/tener/ir/hacer/poder/querer/saber/venir/decir (10 verbs, conjugated in yo/tú/él)", "Question Words & Common Connectors (12 items)", "Survival Phrases: ordering, directions, emergencies (15 phrases)", "Time & Telling the Clock (12 expressions)", "Common Adjectives & Opposites (16 items)", "Food & Restaurant Phrases (15 phrases)"],
+  pt: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: ser/estar/ter/ir/fazer/poder/querer/saber/vir/dizer (10 verbs, yo/tu/ele form)", "Question Words & Connectors (12 items)", "Survival Phrases: restaurant, transport, help (15 phrases)", "Time & Telling the Clock (12 expressions)", "Common Adjectives & Opposites (16 items)", "Food & Restaurant Phrases (15 phrases)"],
+  it: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: essere/avere/fare/andare/potere/volere/sapere/venire/dire/stare (10 verbs, io/tu/lui form)", "Question Words & Connectors (12 items)", "Survival Phrases: café, shopping, getting around (15 phrases)", "Time & Telling the Clock (12 expressions)", "Common Adjectives & Opposites (16 items)", "Food & Restaurant Phrases (15 phrases)"],
+  de: ["Greetings & Farewells (12 phrases)", "Numbers 1–20 (20 items)", "Days & Months (19 items)", "Essential Verbs: sein/haben/machen/gehen/können/wollen/müssen/wissen/kommen/sagen (10 verbs, ich/du/er form)", "Question Words & Connectors (12 items)", "Survival Phrases: shopping, transport, asking for help (15 phrases)", "Time & Telling the Clock (12 expressions)", "Common Adjectives & Opposites (16 items)", "Food & Restaurant Phrases (15 phrases)"],
+  en: ["Greetings & Social Phrases (12 phrases)", "Numbers 1–20 (20 items)", "Days, Months & Time Expressions (19 items)", "Essential Verbs: be/have/do/go/get/make/know/think/come/say (10 verbs, I/you/he form)", "Question Words & Common Connectors (12 items)", "Survival Phrases: formal requests, phone, email (15 phrases)", "Time & Telling the Clock (12 expressions)", "Common Adjectives & Opposites (16 items)", "Food & Restaurant Phrases (15 phrases)"],
+  zh: ["Greetings & Polite Phrases (12 phrases with pinyin)", "Numbers 1–20 plus 100/1000/10000 (23 items with pinyin)", "Days, Months & Time (19 items with pinyin)", "Essential Verbs: 是/有/在/去/来/做/说/要/可以/喜欢 (10 verbs with pinyin and tone marks)", "Question Words & Connectors (12 items with pinyin)", "Survival Phrases: ordering food, directions, shopping (15 phrases with pinyin)", "Time & Telling the Clock (12 expressions with pinyin)", "Common Adjectives & Opposites (16 items with pinyin)", "Food & Restaurant Phrases (15 phrases with pinyin)"],
+  ja: ["Greetings & Polite Expressions (12 phrases with hiragana and romaji)", "Numbers 1–20 plus 100/1000/10000 (23 items with hiragana and romaji)", "Days, Months & Time Expressions (19 items with hiragana and romaji)", "Essential Verbs in ます form: います/あります/します/いきます/きます/たべます/のみます/みます/ききます/かいます (10 verbs)", "Question Words & Connectors (12 items with hiragana and romaji)", "Survival Phrases: restaurant, transport, asking for help (15 phrases)", "Time & Telling the Clock (12 expressions with hiragana and romaji)", "Common Adjectives & Opposites (16 items with hiragana and romaji)", "Food & Restaurant Phrases (15 phrases with hiragana and romaji)"],
+  ko: ["Greetings & Polite Expressions (12 phrases with Hangul and romanization)", "Numbers: Native Korean 1–10 + Sino-Korean 1–10 + 20/30/100/1000 (24 items)", "Days, Months & Time Expressions (19 items with Hangul)", "Essential Verbs in -아/어요 form: 있어요/없어요/해요/가요/와요/먹어요/마셔요/봐요/들어요/사요 (10 verbs)", "Question Words & Connectors (12 items with Hangul)", "Survival Phrases: ordering, directions, polite requests (15 phrases)", "Time & Telling the Clock (12 expressions with Hangul and romanization)", "Common Adjectives & Opposites (16 items with Hangul and romanization)", "Food & Restaurant Phrases (15 phrases with Hangul and romanization)"],
+  ru: ["Greetings & Polite Phrases (12 phrases with Cyrillic)", "Numbers 1–20 plus 100/1000 (22 items with Cyrillic)", "Days, Months & Time Expressions (19 items with Cyrillic)", "Essential Verbs: быть/иметь/делать/идти/мочь/хотеть/знать/говорить/думать/любить — present tense я/ты/он form", "Question Words & Connectors (12 items with Cyrillic)", "Survival Phrases: shopping, directions, emergencies (15 phrases with Cyrillic)", "Time & Telling the Clock (12 expressions with Cyrillic)", "Common Adjectives & Opposites (16 items with Cyrillic)", "Food & Restaurant Phrases (15 phrases with Cyrillic)"],
+  ar: ["Greetings & Polite Phrases (12 phrases in Arabic script with transliteration)", "Numbers 1–20 in Arabic script and numerals (20 items)", "Days, Months & Time Expressions (19 items in Arabic script)", "Essential Verbs in past/present: ذهب/يذهب, أكل/يأكل, شرب/يشرب, قال/يقول, كتب/يكتب, عمل/يعمل, أراد/يريد, عرف/يعرف, جاء/يجيء, نام/ينام", "Question Words & Common Connectors (12 items in Arabic)", "Survival Phrases: greetings, ordering, directions (15 phrases in Arabic)", "Time & Telling the Clock (12 expressions in Arabic script with transliteration)", "Common Adjectives & Opposites (16 items in Arabic script with transliteration)", "Food & Restaurant Phrases (15 phrases in Arabic script with transliteration)"],
+  hi: ["अभिवादन और विदाई (Greetings & Farewells — 12 phrases in Devanagari with transliteration)", "गिनती (Numbers 1–20 + 50/100/1000 in Devanagari with transliteration)", "दिन, महीने और समय (Days, Months & Time — 19 items in Devanagari)", "ज़रूरी क्रियाएँ (Essential Verbs): होना/करना/जाना/आना/खाना/पीना/देखना/बोलना/समझना/चाहना — present tense मैं/तुम/वह forms with transliteration", "प्रश्नवाचक शब्द (Question Words & Connectors — 12 items: क्या/कहाँ/कब/कौन/क्यों/कैसे etc.)", "उत्तरजीविता वाक्यांश (Survival Phrases — 15 phrases: restaurant, transport, help, numbers in Devanagari)", "समय बताना (Time & Telling the Clock — 12 expressions in Devanagari with transliteration)", "सामान्य विशेषण और विलोम (Common Adjectives & Opposites — 16 items in Devanagari with transliteration)", "खाना और रेस्तरां वाक्यांश (Food & Restaurant Phrases — 15 phrases in Devanagari with transliteration)"],
 };
 
 const STRUCTURE_TOPICS = {
-  es: ["Subject + Verb + Object (SVO basic statement)", "Question with ¿...? (inversion optional, intonation often enough)", "Negation: no + verb (double negation: no...nada/nadie/nunca)", "Ir a + infinitive: near future (Voy a comer = I'm going to eat)", "Estar + gerundio: present progressive (Estoy comiendo = I am eating)", "Me gusta / Me gustan: expressing likes (indirect object + gustar)", "Hay: there is / there are (¿Hay + noun? for questions)", "Si + present, future: first conditional (Si tengo tiempo, voy al gym)"],
-  pt: ["Subject + Verb + Object (SVO basic statement)", "Question formation: intonation or inversion (Você fala inglês? / Fala você inglês?)", "Negation: não before verb (Não falo japonês; não...nada/ninguém for double negation)", "Ir a + infinitive: near future (Vou falar = I'm going to speak)", "Estar + gerúndio: present progressive (Estou comendo = I am eating) — Brazil", "Gostar de: expressing likes (Gosto de música = I like music)", "Ter que + infinitive: obligation (Tenho que estudar = I have to study)", "Se + present, future: first conditional (Se tiver tempo, vou ao ginásio)"],
-  it: ["Subject + Verb + Object (SVO, subject pronoun often dropped — pro-drop language)", "Question with rising intonation or inversion (Parli italiano? / Stai bene?)", "Negation: non before verb (Non mangio carne; non...niente/nessuno for double negation)", "Stare + gerundio: present progressive (Sto mangiando = I am eating)", "Dovere + infinitive: must/have to (Devo studiare = I must study)", "Mi piace / Mi piacciono: expressing likes (mi piace + singular, mi piacciono + plural)", "Ecco: here is/are, there you go (Ecco il conto! / Ecco a te!)", "Se + present, future: first conditional (Se ho tempo, vengo)"],
-  de: ["Statement word order: Subject + Verb (position 2) + rest (Ich esse heute Pizza)", "Question: verb moves to position 1 (Isst du Pizza? / Was isst du?)", "Negation: nicht after verb/before adjective (Ich esse nicht. / Das ist nicht gut.)", "Kein/keine: negation of nouns (Ich habe kein Geld / keine Zeit)", "Modal + infinitive at end: Ich kann heute nicht kommen (modal verb 2nd, infinitive last)", "Separable verb: prefix at end (Ich rufe dich morgen an / Wann fährst du ab?)", "Weil/dass: subordinate clause — verb goes to END (Ich bleibe zu Hause, weil ich krank bin)", "Wenn + past tense, würde: second conditional (Wenn ich Zeit hätte, würde ich kommen)"],
-  en: ["Affirmative: Subject + Verb + Object (I eat pizza every day)", "Question with do/does/did: Do you speak English? / Where does she live?", "Negation with don't/doesn't/didn't: I don't like coffee / She doesn't work here", "Present Perfect: Subject + have/has + past participle (I have visited Paris three times)", "Passive voice: Subject + be + past participle (The book was written in 1984)", "Reporting speech: She said (that) she was tired / He asked if I could help", "Purpose clause with to/in order to/so that: I study English to get a better job", "Concessive clause with although/even though/despite: Although it was raining, we went out"],
-  zh: ["Basic SVO: Subject + Verb + Object (我喝茶. Wǒ hē chá. I drink tea.)", "Time-place before verb: Subject + Time + Place + Verb + Object (我今天在家工作)", "Question with 吗: statement + 吗? (你吃饭了吗? Did you eat?)", "Question with 呢: X + 呢? for 'what about X?' (我很好，你呢? I'm fine, and you?)", "了 for completed action: Verb + 了 (我吃了. I ate. / 他来了. He came.)", "想/要/可以 + verb: want to / need to / can (我想去北京. I want to go to Beijing.)", "比 comparison: A + 比 + B + Adj (苹果比橙子贵. Apples are more expensive than oranges.)", "是...的 emphasis: 是 + circumstance + 的 (他是昨天来的. It was yesterday that he came.)"],
-  ja: ["Basic SOV: Topic + Object + Verb (私はすしが好きです. I like sushi.)", "Verb + ます: polite present/future (食べます = eat/will eat; 行きます = go/will go)", "Verb + ました: polite past (食べました = ate; 行きました = went)", "Verb + ません: polite negative (食べません = don't eat; 行きません = don't go)", "Noun + です: polite nominal sentence (これはりんごです. This is an apple.)", "Verb て-form + ください: polite request (ゆっくり話してください. Please speak slowly.)", "Verb て-form + います: ongoing action or habitual (今、食べています. I am eating now.)", "〜たいです: want to do (日本語を勉強したいです. I want to study Japanese.)"],
-  ko: ["Basic SOV: Subject + Object + Predicate (나는 사과를 먹어요. I eat an apple.)", "Verb stem + 아/어요: polite present (먹어요 = eat, 가요 = go, 있어요 = there is/have)", "Verb stem + 았/었어요: past tense (먹었어요 = ate, 갔어요 = went, 했어요 = did)", "-(으)ㄹ 거예요: future intention (먹을 거예요 = will eat, 갈 거예요 = will go)", "이에요/예요: 'to be' with nouns (학생이에요 = am/is/are a student, 한국이에요 = is Korea)", "안 + verb / verb + 지 않아요: negation (안 먹어요 / 먹지 않아요 = don't eat)", "Noun + 이/가 있어요 (없어요): existence (시간이 있어요 = I have time, 돈이 없어요 = no money)", "-(으)세요: honorific request/statement (앉으세요 = please sit, 천천히 말씀해 주세요 = please speak slowly)"],
-  ru: ["Simple sentence: Subject (Nominative) + Verb + Object (Accusative) — Я читаю книгу. I read a book.", "Question by intonation: same word order, rising intonation — Ты читаешь книгу? / Где ты живёшь?", "Negation: не before verb — Я не говорю по-русски. I don't speak Russian.", "У меня есть: 'I have' — У + genitive + есть + nominative (У меня есть кошка. I have a cat.)", "Нет + genitive: 'there is no' or negating possession — У меня нет кошки. / Нет времени.", "Я хочу/могу/должен + infinitive: want/can/must (Я хочу поехать в Москву.)", "В/На + Prepositional: location (Я живу в России. / Книга лежит на столе.)", "Если + present, future: first conditional (Если у меня будет время, я позвоню.)"],
-  ar: ["Nominal sentence (الجملة الاسمية): Subject + Predicate, no verb 'to be' in present (الطقس جميل = The weather [is] beautiful)", "Verbal sentence (الجملة الفعلية): Verb + Subject + Object, VSO order (ذهب الولد إلى المدرسة = The boy went to school)", "Question with هل/أ: هل + statement for yes/no question (هل تتكلم العربية؟ = Do you speak Arabic?)", "Negation: لا + present verb, لم + jussive for past (لا أعرف = I don't know, لم أذهب = I didn't go)", "Definite/Indefinite: كتاب (a book) vs الكتاب (the book) — adjective agrees: كتاب كبير / الكتاب الكبير", "كان + adjective/noun: past 'to be' (كان الطقس جميلاً = The weather was beautiful)", "إضافة (Idafa): noun + noun possession without of (بيت الرجل = the man's house, lit. house-the man)", "ليس: 'is not' for present negation of nominal sentences (ليس الطقس جميلاً = The weather is not beautiful)"],
-  hi: ["Basic SOV: Subject + Object + Verb (मैं पानी पीता हूँ. Main pānī pītā hūn. I drink water.)", "Postposition से (se): from/by/with — दिल्ली से (from Delhi), मुझसे बात करो (talk with me)", "Postposition को (ko): to/for/at — उसको (to him/her), मुझको (to me), रात को (at night)", "में/पर for location: में = inside (घर में = in the house), पर = on/at surface (मेज़ पर = on the table)", "चाहना/पसंद होना for wants and likes: मुझे चाय चाहिए (I want tea), मुझे हिंदी पसंद है (I like Hindi)", "क्या + sentence = yes/no question: क्या आप हिंदी बोलते हैं? (Do you speak Hindi?)", "ने construction for perfective past: transitive verbs — मैंने खाना खाया (I ate food) — subject takes ने, object takes nothing", "नहीं for negation: before verb — मैं नहीं जाता (I don't go) / जाना नहीं है (don't have to go)"],
+  es: ["Subject + Verb + Object (SVO basic statement)", "Question with ¿...? (inversion optional, intonation often enough)", "Negation: no + verb (double negation: no...nada/nadie/nunca)", "Ir a + infinitive: near future (Voy a comer = I'm going to eat)", "Estar + gerundio: present progressive (Estoy comiendo = I am eating)", "Me gusta / Me gustan: expressing likes (indirect object + gustar)", "Hay: there is / there are (¿Hay + noun? for questions)", "Si + present, future: first conditional (Si tengo tiempo, voy al gym)", "Comparative: más/menos + adjective + que (Ella es más alta que yo. She is taller than I am.)", "Tener que + infinitive: obligation (Tengo que trabajar. I have to work.)", "Relative clause with que: el hombre que vive aquí (the man who lives here)", "Querer que + subjunctive: Quiero que vengas. (I want you to come.)"],
+  pt: ["Subject + Verb + Object (SVO basic statement)", "Question formation: intonation or inversion (Você fala inglês? / Fala você inglês?)", "Negation: não before verb (Não falo japonês; não...nada/ninguém for double negation)", "Ir a + infinitive: near future (Vou falar = I'm going to speak)", "Estar + gerúndio: present progressive (Estou comendo = I am eating) — Brazil", "Gostar de: expressing likes (Gosto de música = I like music)", "Ter que + infinitive: obligation (Tenho que estudar = I have to study)", "Se + present, future: first conditional (Se tiver tempo, vou ao ginásio)", "Comparative: mais/menos + adjective + (do) que (Ela é mais alta do que eu. She is taller than I am.)", "Relative clause with que: o homem que mora aqui (the man who lives here)", "Querer que + subjunctive: Quero que você venha. (I want you to come.)", "Purpose with para + infinitive: Estudo para aprender. (I study in order to learn.)"],
+  it: ["Subject + Verb + Object (SVO, subject pronoun often dropped — pro-drop language)", "Question with rising intonation or inversion (Parli italiano? / Stai bene?)", "Negation: non before verb (Non mangio carne; non...niente/nessuno for double negation)", "Stare + gerundio: present progressive (Sto mangiando = I am eating)", "Dovere + infinitive: must/have to (Devo studiare = I must study)", "Mi piace / Mi piacciono: expressing likes (mi piace + singular, mi piacciono + plural)", "Ecco: here is/are, there you go (Ecco il conto! / Ecco a te!)", "Se + present, future: first conditional (Se ho tempo, vengo)", "Comparative: più/meno + adjective + di/che (Marco è più alto di me. Marco is taller than I am.)", "Relative clause with che: l'uomo che abita qui (the man who lives here)", "Volere che + congiuntivo: Voglio che tu venga. (I want you to come.)", "C'è / ci sono: there is / there are (C'è un problema. / Ci sono molte persone. There is a problem. / There are many people.)"],
+  de: ["Statement word order: Subject + Verb (position 2) + rest (Ich esse heute Pizza)", "Question: verb moves to position 1 (Isst du Pizza? / Was isst du?)", "Negation: nicht after verb/before adjective (Ich esse nicht. / Das ist nicht gut.)", "Kein/keine: negation of nouns (Ich habe kein Geld / keine Zeit)", "Modal + infinitive at end: Ich kann heute nicht kommen (modal verb 2nd, infinitive last)", "Separable verb: prefix at end (Ich rufe dich morgen an / Wann fährst du ab?)", "Weil/dass: subordinate clause — verb goes to END (Ich bleibe zu Hause, weil ich krank bin)", "Wenn + past tense, würde: second conditional (Wenn ich Zeit hätte, würde ich kommen)", "Comparative: Adjective + -er + als (Er ist größer als ich. He is taller than I am.)", "Relative clause with der/die/das — verb to END (Der Mann, der dort wohnt. The man who lives there.)", "Es gibt + accusative: there is / there are (Es gibt einen Park. There is a park. / Es gibt viele Leute. There are many people.)", "Um...zu + infinitive: in order to (Ich lerne Deutsch, um in Berlin zu arbeiten. I study German in order to work in Berlin.)"],
+  en: ["Affirmative: Subject + Verb + Object (I eat pizza every day)", "Question with do/does/did: Do you speak English? / Where does she live?", "Negation with don't/doesn't/didn't: I don't like coffee / She doesn't work here", "Present Perfect: Subject + have/has + past participle (I have visited Paris three times)", "Passive voice: Subject + be + past participle (The book was written in 1984)", "Reporting speech: She said (that) she was tired / He asked if I could help", "Purpose clause with to/in order to/so that: I study English to get a better job", "Concessive clause with although/even though/despite: Although it was raining, we went out", "Comparative: adjective + -er/more + than (She is taller than her brother. This is more expensive than that.)", "Relative clause with who/which/that: The woman who called you is my sister.", "Second conditional: If + past, would + verb (If I had more time, I would travel more.)", "There is / there are: existential statement (There is a problem. / There are two options.)"],
+  zh: ["Basic SVO: Subject + Verb + Object (我喝茶. Wǒ hē chá. I drink tea.)", "Time-place before verb: Subject + Time + Place + Verb + Object (我今天在家工作)", "Question with 吗: statement + 吗? (你吃饭了吗? Did you eat?)", "Question with 呢: X + 呢? for 'what about X?' (我很好，你呢? I'm fine, and you?)", "了 for completed action: Verb + 了 (我吃了. I ate. / 他来了. He came.)", "想/要/可以 + verb: want to / need to / can (我想去北京. I want to go to Beijing.)", "比 comparison: A + 比 + B + Adj (苹果比橙子贵. Apples are more expensive than oranges.)", "是...的 emphasis: 是 + circumstance + 的 (他是昨天来的. It was yesterday that he came.)", "有 for existence: 有 + noun (桌子上有一本书. Zhuōzi shàng yǒu yì běn shū. There is a book on the table.)", "的 relative clause: modifier + 的 + noun (住在这里的人. Zhù zài zhèlǐ de rén. The person who lives here.)", "因为...所以: because...so (因为下雨，所以我不去. Yīnwèi xià yǔ, suǒyǐ wǒ bú qù. Because it's raining, I'm not going.)", "要/得 for obligation: 你得走了. Nǐ děi zǒu le. (You have to go now.)"],
+  ja: ["Basic SOV: Topic + Object + Verb (私はすしが好きです. I like sushi.)", "Verb + ます: polite present/future (食べます = eat/will eat; 行きます = go/will go)", "Verb + ました: polite past (食べました = ate; 行きました = went)", "Verb + ません: polite negative (食べません = don't eat; 行きません = don't go)", "Noun + です: polite nominal sentence (これはりんごです. This is an apple.)", "Verb て-form + ください: polite request (ゆっくり話してください. Please speak slowly.)", "Verb て-form + います: ongoing action or habitual (今、食べています. I am eating now.)", "〜たいです: want to do (日本語を勉強したいです. I want to study Japanese.)", "〜より〜のほうが: comparison (犬より猫のほうが好きです. Inu yori neko no hō ga suki desu. I like cats more than dogs.)", "があります/います: existence — inanimate/animate (机の上に本があります. Tsukue no ue ni hon ga arimasu. There is a book on the desk.)", "Plain verb + 名詞: relative clause (ここに住んでいる人. Koko ni sunde iru hito. The person who lives here.)", "〜から: because/reason clause (雨が降っているから、行きません. Ame ga futte iru kara, ikimasen. Because it's raining, I won't go.)"],
+  ko: ["Basic SOV: Subject + Object + Predicate (나는 사과를 먹어요. I eat an apple.)", "Verb stem + 아/어요: polite present (먹어요 = eat, 가요 = go, 있어요 = there is/have)", "Verb stem + 았/었어요: past tense (먹었어요 = ate, 갔어요 = went, 했어요 = did)", "-(으)ㄹ 거예요: future intention (먹을 거예요 = will eat, 갈 거예요 = will go)", "이에요/예요: 'to be' with nouns (학생이에요 = am/is/are a student, 한국이에요 = is Korea)", "안 + verb / verb + 지 않아요: negation (안 먹어요 / 먹지 않아요 = don't eat)", "Noun + 이/가 있어요 (없어요): existence (시간이 있어요 = I have time, 돈이 없어요 = no money)", "-(으)세요: honorific request/statement (앉으세요 = please sit, 천천히 말씀해 주세요 = please speak slowly)", "보다 + 더: comparison (사과가 오렌지보다 더 비싸요. Sagwaga orenjiboda deo bissayo. Apples are more expensive than oranges.)", "-아/어야 해요: obligation (지금 가야 해요. Jigeum gaya haeyo. I have to go now.)", "Verb + 는 + noun: relative clause (여기 사는 사람. Yeogi saneun saram. The person who lives here.)", "-고 싶어요: want to do (한국어를 공부하고 싶어요. Hangugeoreul gongbuhago sipeoyo. I want to study Korean.)"],
+  ru: ["Simple sentence: Subject (Nominative) + Verb + Object (Accusative) — Я читаю книгу. I read a book.", "Question by intonation: same word order, rising intonation — Ты читаешь книгу? / Где ты живёшь?", "Negation: не before verb — Я не говорю по-русски. I don't speak Russian.", "У меня есть: 'I have' — У + genitive + есть + nominative (У меня есть кошка. I have a cat.)", "Нет + genitive: 'there is no' or negating possession — У меня нет кошки. / Нет времени.", "Я хочу/могу/должен + infinitive: want/can/must (Я хочу поехать в Москву.)", "В/На + Prepositional: location (Я живу в России. / Книга лежит на столе.)", "Если + present, future: first conditional (Если у меня будет время, я позвоню.)", "Comparative: adjective + -ее / больше, чем — Она выше, чем я. (Ona výše, chem ya. She is taller than I am.)", "Который relative clause: Человек, который живёт здесь. (Chelovék, kotóryy zhivyót zdes. The man who lives here.)", "Мне надо/нужно + infinitive: necessity — Мне надо идти. (Mne nado idtí. I need to go.)", "Потому что: because — Я остаюсь дома, потому что я болен. (Ya ostayús doma, potomú chto ya bólen. I'm staying home because I'm sick.)"],
+  ar: ["Nominal sentence (الجملة الاسمية): Subject + Predicate, no verb 'to be' in present (الطقس جميل = The weather [is] beautiful)", "Verbal sentence (الجملة الفعلية): Verb + Subject + Object, VSO order (ذهب الولد إلى المدرسة = The boy went to school)", "Question with هل/أ: هل + statement for yes/no question (هل تتكلم العربية؟ = Do you speak Arabic?)", "Negation: لا + present verb, لم + jussive for past (لا أعرف = I don't know, لم أذهب = I didn't go)", "Definite/Indefinite: كتاب (a book) vs الكتاب (the book) — adjective agrees: كتاب كبير / الكتاب الكبير", "كان + adjective/noun: past 'to be' (كان الطقس جميلاً = The weather was beautiful)", "إضافة (Idafa): noun + noun possession without of (بيت الرجل = the man's house, lit. house-the man)", "ليس: 'is not' for present negation of nominal sentences (ليس الطقس جميلاً = The weather is not beautiful)", "Comparative with أَفْعَل + مِن: الكتاب أكبر من القلم (al-kitāb akbar min al-qalam = The book is bigger than the pen)", "أريد أن + subjunctive: 'I want to' (أريد أن أتعلم العربية = urīdu an ataʿallama al-ʿarabiyya = I want to learn Arabic)", "يجب أن + subjunctive: obligation (يجب أن أذهب الآن = yajib an adhhaba al-ān = I must go now)", "لأن: because — أبقى في البيت لأنني مريض (abqā fī al-bayt li-annanī marīḍ = I stay home because I am sick)"],
+  hi: ["Basic SOV: Subject + Object + Verb (मैं पानी पीता हूँ. Main pānī pītā hūn. I drink water.)", "Postposition से (se): from/by/with — दिल्ली से (from Delhi), मुझसे बात करो (talk with me)", "Postposition को (ko): to/for/at — उसको (to him/her), मुझको (to me), रात को (at night)", "में/पर for location: में = inside (घर में = in the house), पर = on/at surface (मेज़ पर = on the table)", "चाहना/पसंद होना for wants and likes: मुझे चाय चाहिए (I want tea), मुझे हिंदी पसंद है (I like Hindi)", "क्या + sentence = yes/no question: क्या आप हिंदी बोलते हैं? (Do you speak Hindi?)", "ने construction for perfective past: transitive verbs — मैंने खाना खाया (I ate food) — subject takes ने, object takes nothing", "नहीं for negation: before verb — मैं नहीं जाता (I don't go) / जाना नहीं है (don't have to go)", "Comparison with से ज़्यादा: A + B से ज़्यादा + adjective (सेब संतरे से ज़्यादा महँगा है. Seb santare se zyādā mahngā hai. The apple is more expensive than the orange.)", "जो relative clause: जो आदमी यहाँ रहता है (jo ādmī yahān rahtā hai = the man who lives here)", "को + चाहिए / पड़ना for obligation: मुझे जाना है (mujhe jānā hai = I have to go), मुझे काम करना पड़ता है (I have to work)", "क्योंकि / इसलिए for cause: मैं घर पर हूँ क्योंकि मैं बीमार हूँ (Main ghar par hūn kyunki main bīmār hūn. I am at home because I am sick.)"],
 };
 
 const VOCAB_CATEGORIES = {
-  es: ["Los Números (Numbers) — 0 to 30 + 40/50/60/70/80/90/100/1000", "Los Colores y Formas (Colors & Shapes)", "La Familia y las Relaciones (Family & Relationships)", "La Comida y Bebida (Food & Drink) — 20 common items", "Viajes y Transporte (Travel & Transport)", "El Tiempo y las Estaciones (Weather & Seasons)", "El Cuerpo Humano (The Human Body)", "Adjetivos Esenciales (Essential Adjectives) — opposites pairs"],
-  pt: ["Os Números (Numbers) — 0 to 30 + 40/50/100/1000", "As Cores e Formas (Colors & Shapes)", "A Família e Relações (Family & Relationships)", "Comida e Bebida (Food & Drink) — Brazilian favorites included", "Viagens e Transporte (Travel & Transport)", "O Tempo e as Estações (Weather & Seasons)", "O Corpo Humano (The Human Body)", "Adjetivos Essenciais (Essential Adjectives) — opposite pairs"],
-  it: ["I Numeri (Numbers) — 0 to 30 + 40/50/100/1000", "I Colori e le Forme (Colors & Shapes)", "La Famiglia e le Relazioni (Family & Relationships)", "Il Cibo e le Bevande (Food & Drink) — Italian specialties included", "Viaggi e Trasporti (Travel & Transport)", "Il Tempo e le Stagioni (Weather & Seasons)", "Il Corpo Umano (The Human Body)", "Aggettivi Essenziali (Essential Adjectives) — opposite pairs"],
-  de: ["Die Zahlen (Numbers) — 0 to 30 + 40/50/100/1000", "Die Farben und Formen (Colors & Shapes)", "Die Familie und Beziehungen (Family & Relationships)", "Essen und Trinken (Food & Drink) — German classics included", "Reisen und Verkehr (Travel & Transport)", "Das Wetter und Jahreszeiten (Weather & Seasons)", "Der menschliche Körper (The Human Body)", "Wichtige Adjektive (Essential Adjectives) — opposite pairs, with gender note"],
-  en: ["Numbers & Quantities (0 to 30 + fractions + ordinals)", "Colors, Shapes & Sizes", "Family & Social Relationships", "Food, Drink & Cooking Verbs", "Travel, Transport & Directions", "Work & Daily Routine Verbs", "Emotions & Mental States", "Essential Adjectives & Their Opposites"],
-  zh: ["数字 Shùzì (Numbers) — 0–20 + 百/千/万 + phone/price reading patterns, with pinyin + tones", "颜色和形状 (Colors & Shapes) — all with pinyin and tones", "家人和关系 (Family & Relationships) — including different terms for maternal/paternal relatives", "食物和饮料 (Food & Drink) — Chinese cuisine focus, all with pinyin", "出行和交通 (Travel & Transport) — all with pinyin", "时间和天气 (Time & Weather) — all with pinyin", "身体部位 (Body Parts) — all with pinyin", "常用形容词 (Common Adjectives) — opposite pairs, all with pinyin"],
-  ja: ["数字 Sūji (Numbers) — 1–20 + 100/1000/10000 + Japanese counter 〜つ, in hiragana and romaji", "色と形 (Colors & Shapes) — in hiragana/kanji with romaji", "家族と関係 (Family & Relationships) — in-group (uchi) vs out-group (soto) terms both listed", "食べ物と飲み物 (Food & Drink) — Japanese cuisine focus, hiragana/kanji and romaji", "旅行と交通 (Travel & Transport) — in hiragana/kanji with romaji", "時間と天気 (Time & Weather) — in hiragana/kanji with romaji", "体の部位 (Body Parts) — in hiragana/kanji with romaji", "基本形容詞 (Basic Adjectives) — い-adj and な-adj labeled, opposite pairs"],
-  ko: ["숫자 (Numbers) — native Korean 1–10 + sino-Korean 1–10 + 20/30/100/1000, with romanization", "색깔과 모양 (Colors & Shapes) — with romanization", "가족과 관계 (Family & Relationships) — formal and informal terms", "음식과 음료 (Food & Drink) — Korean cuisine focus, with romanization", "여행과 교통 (Travel & Transport) — with romanization", "시간과 날씨 (Time & Weather) — with romanization", "신체 부위 (Body Parts) — with romanization", "기본 형용사 (Basic Adjectives) — descriptive verb form listed, opposites paired"],
-  ru: ["Числа (Numbers) — 1–20 + 30/40/50/100/1000 in Cyrillic + genitive rule for 2/3/4 vs 5+", "Цвета и Формы (Colors & Shapes) — in Cyrillic with stress marks", "Семья и Отношения (Family & Relationships) — in Cyrillic", "Еда и Напитки (Food & Drink) — Russian cuisine included, Cyrillic + stress", "Путешествия и Транспорт (Travel & Transport) — in Cyrillic", "Погода и Времена года (Weather & Seasons) — in Cyrillic", "Части Тела (Body Parts) — in Cyrillic", "Основные Прилагательные (Essential Adjectives) — short and long form noted, opposite pairs"],
-  ar: ["الأرقام (Numbers) — 1–20 in Arabic script + numerals + how Arabic numbers are written right-to-left", "الألوان والأشكال (Colors & Shapes) — in Arabic script with transliteration, masculine and feminine forms", "العائلة والعلاقات (Family & Relationships) — in Arabic with transliteration", "الطعام والشراب (Food & Drink) — Middle Eastern cuisine, Arabic script + transliteration", "السفر والمواصلات (Travel & Transport) — Arabic script + transliteration", "الطقس والفصول (Weather & Seasons) — Arabic script + transliteration", "أجزاء الجسم (Body Parts) — Arabic script + transliteration", "الصفات الأساسية (Essential Adjectives) — masculine and feminine forms, opposite pairs"],
-  hi: ["गिनती (Numbers) — 0–30 + 40/50/100/1000 in Devanagari with transliteration", "रंग और आकार (Colors & Shapes) — in Devanagari with transliteration and gender notes", "परिवार और रिश्ते (Family & Relationships) — in Devanagari, different terms for maternal/paternal relatives", "खाना और पेय (Food & Drink) — Indian cuisine and street food, Devanagari + transliteration", "यात्रा और परिवहन (Travel & Transport) — Devanagari + transliteration", "मौसम और ऋतुएँ (Weather & Seasons) — Devanagari + transliteration, all 6 Indian seasons", "शरीर के अंग (Body Parts) — Devanagari + transliteration", "ज़रूरी विशेषण (Essential Adjectives) — masculine and feminine forms, opposite pairs, Devanagari"],
+  es: ["Los Números (Numbers) — 0 to 30 + 40/50/60/70/80/90/100/1000", "Los Colores y Formas (Colors & Shapes)", "La Familia y las Relaciones (Family & Relationships)", "La Comida y Bebida (Food & Drink) — 20 common items", "Viajes y Transporte (Travel & Transport)", "El Tiempo y las Estaciones (Weather & Seasons)", "El Cuerpo Humano (The Human Body)", "Adjetivos Esenciales (Essential Adjectives) — opposites pairs", "Los Días, Meses y el Tiempo (Days, Months & Time words)", "Verbos Comunes (Common Verbs) — daily actions", "La Casa y los Muebles (House & Furniture)", "La Ropa (Clothing)"],
+  pt: ["Os Números (Numbers) — 0 to 30 + 40/50/100/1000", "As Cores e Formas (Colors & Shapes)", "A Família e Relações (Family & Relationships)", "Comida e Bebida (Food & Drink) — Brazilian favorites included", "Viagens e Transporte (Travel & Transport)", "O Tempo e as Estações (Weather & Seasons)", "O Corpo Humano (The Human Body)", "Adjetivos Essenciais (Essential Adjectives) — opposite pairs", "Dias, Meses e Palavras de Tempo (Days, Months & Time words)", "Verbos Comuns (Common Verbs) — daily actions", "A Casa e os Móveis (House & Furniture)", "As Roupas (Clothing)"],
+  it: ["I Numeri (Numbers) — 0 to 30 + 40/50/100/1000", "I Colori e le Forme (Colors & Shapes)", "La Famiglia e le Relazioni (Family & Relationships)", "Il Cibo e le Bevande (Food & Drink) — Italian specialties included", "Viaggi e Trasporti (Travel & Transport)", "Il Tempo e le Stagioni (Weather & Seasons)", "Il Corpo Umano (The Human Body)", "Aggettivi Essenziali (Essential Adjectives) — opposite pairs", "I Giorni, i Mesi e le Parole del Tempo (Days, Months & Time words)", "Verbi Comuni (Common Verbs) — daily actions", "La Casa e i Mobili (House & Furniture)", "I Vestiti (Clothing)"],
+  de: ["Die Zahlen (Numbers) — 0 to 30 + 40/50/100/1000", "Die Farben und Formen (Colors & Shapes)", "Die Familie und Beziehungen (Family & Relationships)", "Essen und Trinken (Food & Drink) — German classics included", "Reisen und Verkehr (Travel & Transport)", "Das Wetter und Jahreszeiten (Weather & Seasons)", "Der menschliche Körper (The Human Body)", "Wichtige Adjektive (Essential Adjectives) — opposite pairs, with gender note", "Tage, Monate und Zeitwörter (Days, Months & Time words)", "Häufige Verben (Common Verbs) — daily actions", "Haus und Möbel (House & Furniture) — with gender note", "Kleidung (Clothing) — with gender note"],
+  en: ["Numbers & Quantities (0 to 30 + fractions + ordinals)", "Colors, Shapes & Sizes", "Family & Social Relationships", "Food, Drink & Cooking Verbs", "Travel, Transport & Directions", "Work & Daily Routine Verbs", "Emotions & Mental States", "Essential Adjectives & Their Opposites", "Days, Months & Time Words", "House & Furniture", "Clothing & Accessories", "Jobs & Professions"],
+  zh: ["数字 Shùzì (Numbers) — 0–20 + 百/千/万 + phone/price reading patterns, with pinyin + tones", "颜色和形状 (Colors & Shapes) — all with pinyin and tones", "家人和关系 (Family & Relationships) — including different terms for maternal/paternal relatives", "食物和饮料 (Food & Drink) — Chinese cuisine focus, all with pinyin", "出行和交通 (Travel & Transport) — all with pinyin", "时间和天气 (Time & Weather) — all with pinyin", "身体部位 (Body Parts) — all with pinyin", "常用形容词 (Common Adjectives) — opposite pairs, all with pinyin", "星期、月份和时间词 (Days, Months & Time words) — all with pinyin", "常用动词 (Common Verbs) — daily actions, all with pinyin", "衣服 (Clothing) — all with pinyin", "职业 (Jobs & Professions) — all with pinyin"],
+  ja: ["数字 Sūji (Numbers) — 1–20 + 100/1000/10000 + Japanese counter 〜つ, in hiragana and romaji", "色と形 (Colors & Shapes) — in hiragana/kanji with romaji", "家族と関係 (Family & Relationships) — in-group (uchi) vs out-group (soto) terms both listed", "食べ物と飲み物 (Food & Drink) — Japanese cuisine focus, hiragana/kanji and romaji", "旅行と交通 (Travel & Transport) — in hiragana/kanji with romaji", "時間と天気 (Time & Weather) — in hiragana/kanji with romaji", "体の部位 (Body Parts) — in hiragana/kanji with romaji", "基本形容詞 (Basic Adjectives) — い-adj and な-adj labeled, opposite pairs", "曜日・月・時間の言葉 (Days, Months & Time words) — in hiragana/kanji with romaji", "よく使う動詞 (Common Verbs) — daily actions, dictionary form with romaji", "衣類 (Clothing) — in hiragana/kanji with romaji", "職業 (Jobs & Professions) — in hiragana/kanji with romaji"],
+  ko: ["숫자 (Numbers) — native Korean 1–10 + sino-Korean 1–10 + 20/30/100/1000, with romanization", "색깔과 모양 (Colors & Shapes) — with romanization", "가족과 관계 (Family & Relationships) — formal and informal terms", "음식과 음료 (Food & Drink) — Korean cuisine focus, with romanization", "여행과 교통 (Travel & Transport) — with romanization", "시간과 날씨 (Time & Weather) — with romanization", "신체 부위 (Body Parts) — with romanization", "기본 형용사 (Basic Adjectives) — descriptive verb form listed, opposites paired", "요일, 월, 시간 표현 (Days, Months & Time words) — with romanization", "자주 쓰는 동사 (Common Verbs) — daily actions, with romanization", "옷 (Clothing) — with romanization", "직업 (Jobs & Professions) — with romanization"],
+  ru: ["Числа (Numbers) — 1–20 + 30/40/50/100/1000 in Cyrillic + genitive rule for 2/3/4 vs 5+", "Цвета и Формы (Colors & Shapes) — in Cyrillic with stress marks", "Семья и Отношения (Family & Relationships) — in Cyrillic", "Еда и Напитки (Food & Drink) — Russian cuisine included, Cyrillic + stress", "Путешествия и Транспорт (Travel & Transport) — in Cyrillic", "Погода и Времена года (Weather & Seasons) — in Cyrillic", "Части Тела (Body Parts) — in Cyrillic", "Основные Прилагательные (Essential Adjectives) — short and long form noted, opposite pairs", "Дни, Месяцы и Слова о Времени (Days, Months & Time words) — in Cyrillic with stress", "Обычные Глаголы (Common Verbs) — daily actions, in Cyrillic with stress", "Одежда (Clothing) — in Cyrillic with stress", "Профессии (Jobs & Professions) — in Cyrillic with stress"],
+  ar: ["الأرقام (Numbers) — 1–20 in Arabic script + numerals + how Arabic numbers are written right-to-left", "الألوان والأشكال (Colors & Shapes) — in Arabic script with transliteration, masculine and feminine forms", "العائلة والعلاقات (Family & Relationships) — in Arabic with transliteration", "الطعام والشراب (Food & Drink) — Middle Eastern cuisine, Arabic script + transliteration", "السفر والمواصلات (Travel & Transport) — Arabic script + transliteration", "الطقس والفصول (Weather & Seasons) — Arabic script + transliteration", "أجزاء الجسم (Body Parts) — Arabic script + transliteration", "الصفات الأساسية (Essential Adjectives) — masculine and feminine forms, opposite pairs", "الأيام والشهور وكلمات الوقت (Days, Months & Time words) — Arabic script + transliteration", "الأفعال الشائعة (Common Verbs) — daily actions, Arabic script + transliteration", "الملابس (Clothing) — Arabic script + transliteration", "المهن (Jobs & Professions) — Arabic script + transliteration"],
+  hi: ["गिनती (Numbers) — 0–30 + 40/50/100/1000 in Devanagari with transliteration", "रंग और आकार (Colors & Shapes) — in Devanagari with transliteration and gender notes", "परिवार और रिश्ते (Family & Relationships) — in Devanagari, different terms for maternal/paternal relatives", "खाना और पेय (Food & Drink) — Indian cuisine and street food, Devanagari + transliteration", "यात्रा और परिवहन (Travel & Transport) — Devanagari + transliteration", "मौसम और ऋतुएँ (Weather & Seasons) — Devanagari + transliteration, all 6 Indian seasons", "शरीर के अंग (Body Parts) — Devanagari + transliteration", "ज़रूरी विशेषण (Essential Adjectives) — masculine and feminine forms, opposite pairs, Devanagari", "दिन, महीने और समय के शब्द (Days, Months & Time words) — Devanagari + transliteration", "रोज़मर्रा की क्रियाएँ (Common Verbs) — daily actions, Devanagari + transliteration", "कपड़े (Clothing) — Devanagari + transliteration", "पेशे (Jobs & Professions) — Devanagari + transliteration"],
 };
 
 // ── Dialogue scenarios — 5 real-life scenes per language ─────────────────────
@@ -226,7 +292,7 @@ const DIALOGUE_SCENARIOS = {
 function buildGrammarPrompt(lang) {
   const name   = LANG_NAMES[lang];
   const topics = GRAMMAR_TOPICS[lang];
-  return `You are an expert ${name} language teacher creating a grammar reference for adult learners. Generate exactly 8 grammar sections covering these topics IN THIS ORDER:
+  return `You are an expert ${name} language teacher creating a grammar reference for adult learners. Generate exactly 14 grammar sections covering these topics IN THIS ORDER:
 
 ${topics.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
@@ -236,7 +302,7 @@ Return ONLY a valid JSON object — no markdown, no code fences, no explanation 
 ACCURACY RULES — violations are unacceptable:
 - Every sentence in example_target and example_target_2 MUST be in ${name}, not English
 - All ${name} text must be grammatically correct — double-check every form
-- level: sections 1–3 = "Beginner", 4–6 = "Intermediate", 7–8 = "Advanced"
+- level: sections 1–4 = "Beginner", 5–9 = "Intermediate", 10–14 = "Advanced"
 - rule must state the actual grammatical rule, not just describe what the section is about
 - note must give practical advice (common error or memory trick), not restate the rule
 - For non-Latin script languages (Chinese/Japanese/Korean/Russian/Arabic): ALWAYS include native script — do not romanize only`;
@@ -245,7 +311,7 @@ ACCURACY RULES — violations are unacceptable:
 function buildCheatsheetPrompt(lang) {
   const name   = LANG_NAMES[lang];
   const groups = CHEATSHEET_GROUPS[lang];
-  return `You are an expert ${name} language teacher creating a quick-reference cheat sheet. Generate exactly 6 categories:
+  return `You are an expert ${name} language teacher creating a quick-reference cheat sheet. Generate exactly 9 categories:
 
 ${groups.map((g, i) => `${i + 1}. ${g}`).join("\n")}
 
@@ -264,7 +330,7 @@ ACCURACY RULES:
 function buildStructuresPrompt(lang) {
   const name   = LANG_NAMES[lang];
   const topics = STRUCTURE_TOPICS[lang];
-  return `You are an expert ${name} language teacher creating a sentence-structure guide for adult learners. Generate exactly 8 patterns IN THIS ORDER:
+  return `You are an expert ${name} language teacher creating a sentence-structure guide for adult learners. Generate exactly 12 patterns IN THIS ORDER:
 
 ${topics.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
@@ -282,7 +348,7 @@ ACCURACY RULES:
 function buildVocabPrompt(lang) {
   const name       = LANG_NAMES[lang];
   const categories = VOCAB_CATEGORIES[lang];
-  return `You are an expert ${name} language teacher creating a vocabulary reference. Generate exactly 8 categories IN THIS ORDER:
+  return `You are an expert ${name} language teacher creating a vocabulary reference. Generate exactly 12 categories IN THIS ORDER:
 
 ${categories.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
@@ -339,7 +405,7 @@ function validateContent(lang, tab, data) {
 
   if (tab === "grammar") {
     if (!Array.isArray(data.sections))         return "missing sections array";
-    if (data.sections.length < 6)              return `only ${data.sections.length} sections (need ≥6)`;
+    if (data.sections.length < 10)             return `only ${data.sections.length} sections (need ≥10)`;
     for (const [i, s] of data.sections.entries()) {
       if (!s.title)          return `section ${i} missing title`;
       if (!s.rule)           return `section ${i} missing rule`;
@@ -353,7 +419,7 @@ function validateContent(lang, tab, data) {
 
   if (tab === "cheatsheet") {
     if (!Array.isArray(data.categories))       return "missing categories array";
-    if (data.categories.length < 5)            return `only ${data.categories.length} categories (need ≥5)`;
+    if (data.categories.length < 7)            return `only ${data.categories.length} categories (need ≥7)`;
     for (const [i, c] of data.categories.entries()) {
       if (!c.name)                             return `category ${i} missing name`;
       if (!Array.isArray(c.items) || c.items.length < 5) return `category ${i} has too few items`;
@@ -365,7 +431,7 @@ function validateContent(lang, tab, data) {
 
   if (tab === "structures") {
     if (!Array.isArray(data.structures))       return "missing structures array";
-    if (data.structures.length < 6)            return `only ${data.structures.length} structures (need ≥6)`;
+    if (data.structures.length < 9)            return `only ${data.structures.length} structures (need ≥9)`;
     for (const [i, s] of data.structures.entries()) {
       if (!s.pattern)     return `structure ${i} missing pattern`;
       if (!s.explanation) return `structure ${i} missing explanation`;
@@ -379,7 +445,7 @@ function validateContent(lang, tab, data) {
 
   if (tab === "vocab") {
     if (!Array.isArray(data.categories))       return "missing categories array";
-    if (data.categories.length < 6)            return `only ${data.categories.length} categories (need ≥6)`;
+    if (data.categories.length < 9)            return `only ${data.categories.length} categories (need ≥9)`;
     for (const [i, c] of data.categories.entries()) {
       if (!c.name)                             return `category ${i} missing name`;
       if (!Array.isArray(c.words) || c.words.length < 5) return `category ${i} has too few words`;
@@ -421,7 +487,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model: "claude-opus-4-5",   // Best accuracy for language content
-      max_tokens: 6000,
+      max_tokens: 8000,
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -501,8 +567,16 @@ async function generateMissingContent() {
   const needed = [];
   for (const lang of VALID_LANGS) {
     for (const tab of VALID_TABS) {
-      const row = await db.get("SELECT 1 FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
-      if (!row) needed.push([lang, tab]);
+      const row = await db.get("SELECT content_json FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
+      if (!row) { needed.push([lang, tab]); continue; }
+      // Re-validate cached rows against current (stricter) minimums so that
+      // content generated under an older, shallower spec is upgraded on deploy.
+      try {
+        const parsed = JSON.parse(row.content_json);
+        if (validateContent(lang, tab, parsed)) needed.push([lang, tab]); // stale/too-short → regenerate
+      } catch {
+        needed.push([lang, tab]); // corrupt JSON → regenerate
+      }
     }
   }
 
@@ -511,7 +585,7 @@ async function generateMissingContent() {
     return;
   }
 
-  console.log(`[Content] Background generation: ${needed.length} missing items`);
+  console.log(`[Content] Background generation: ${needed.length} items missing or stale (re-deepening)`);
 
   for (const [lang, tab] of needed) {
     try {

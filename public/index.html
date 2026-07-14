@@ -150,6 +150,37 @@
       .grid-2-xs{grid-template-columns:1fr 1fr!important}
       .stack-xs{flex-direction:column!important}
     }
+    /* ── Desktop presentation ─────────────────────────────────────────────
+       On wide screens the app is a reading-width column, so instead of
+       leaving it stranded in a void we frame it on a branded stage. */
+    @media(min-width:820px){
+      body{
+        background:
+          radial-gradient(1100px 620px at 8% -12%, var(--accentSoft), transparent 58%),
+          radial-gradient(1000px 700px at 112% 0%, var(--accentSoft), transparent 55%),
+          var(--stage);
+        min-height:100dvh;
+      }
+      #root{
+        min-height:100dvh;
+        display:flex;align-items:center;justify-content:center;
+        padding:32px 24px;
+      }
+      .app-shell{
+        max-width:600px!important;
+        width:100%;
+        height:min(920px,calc(100dvh - 64px))!important;
+        border-radius:30px!important;
+        border:1px solid var(--bezel);
+        box-shadow:0 50px 110px -34px rgba(0,0,0,.42),0 14px 34px -16px rgba(0,0,0,.22);
+        overflow:hidden!important;
+      }
+      /* Desktop hover affordance — the app is now clearly a discrete surface */
+      .app-shell ::-webkit-scrollbar{width:8px;height:8px}
+    }
+    @media(min-width:1200px){
+      .app-shell{max-width:640px!important}
+    }
     /* Support chat widget */
     .support-fab{
       position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));right:18px;
@@ -3327,7 +3358,7 @@ function AITabContent({ tLang, tabName, color }) {
   if (tabName === "grammar") {
     return (
       <div>
-        <Heading title={`${tName} Grammar Guide`} sub={`8 essential topics — tap any to expand.${genAt ? ` Updated ${new Date(genAt).toLocaleDateString()}.` : ""}`} color={col} />
+        <Heading title={`${tName} Grammar Guide`} sub={`${(content.sections || []).length} essential topics — tap any to expand.${genAt ? ` Updated ${new Date(genAt).toLocaleDateString()}.` : ""}`} color={col} />
         {(content.sections || []).map((s, i) => {
           const isOpen = open === i;
           const levelColor = s.level === "Beginner" ? C.green : s.level === "Advanced" ? C.red : C.accent;
@@ -3379,7 +3410,7 @@ function AITabContent({ tLang, tabName, color }) {
     const catColors = [C.text, C.text, C.text, C.text, C.text, C.text];
     return (
       <div>
-        <Heading title={`${tName} Quick Reference`} sub={`6 categories — greetings, numbers, verbs, phrases and more. Tap to expand.`} color={col} />
+        <Heading title={`${tName} Quick Reference`} sub={`${(content.categories || []).length} categories — greetings, numbers, verbs, phrases and more. Tap to expand.`} color={col} />
         {(content.categories || []).map((cat, i) => {
           const isOpen = open === i;
           const catCol  = catColors[i % catColors.length];
@@ -3418,7 +3449,7 @@ function AITabContent({ tLang, tabName, color }) {
     const sColors = [C.text, C.text, C.text, C.text, C.text, C.text, C.text, C.text];
     return (
       <div>
-        <Heading title={`${tName} Sentence Structures`} sub={`8 core patterns — learn these as whole units, not grammar rules. Tap to expand.`} color={col} />
+        <Heading title={`${tName} Sentence Structures`} sub={`${(content.structures || []).length} core patterns — learn these as whole units, not grammar rules. Tap to expand.`} color={col} />
         <Info text="Learn these patterns as whole units — the same way you absorbed patterns in your native language, without thinking about grammar rules." color={C.muted} />
         {(content.structures || []).map((s, i) => {
           const isOpen = open === i;
@@ -3464,7 +3495,7 @@ function AITabContent({ tLang, tabName, color }) {
     const catColors = [C.text, C.text, C.text, C.text, C.text, C.text];
     return (
       <div>
-        <Heading title={`${tName} Vocabulary`} sub={`8 essential categories — numbers, colors, family, food, travel and more. Tap to expand.`} color={C.green} />
+        <Heading title={`${tName} Vocabulary`} sub={`${(content.categories || []).length} essential categories — numbers, colors, family, food, travel and more. Tap to expand.`} color={C.green} />
         {(content.categories || []).map((cat, i) => {
           const isOpen = open === i;
           const catCol = catColors[i % catColors.length];
@@ -8694,7 +8725,7 @@ function App() {
   );
 
   return (
-    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className="safe-bottom">
+    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className="safe-bottom app-shell">
 
       {/* ── EXPIRY BANNER ── */}
       {expiryWarning !== null && (
