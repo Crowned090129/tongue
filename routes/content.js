@@ -136,7 +136,7 @@ const GRAMMAR_TOPICS = {
     "No verb conjugation: Mandarin verbs never change form — time is shown by time words (昨天/明天) and aspect markers, not verb endings",
     "Measure words (量词): one classifier for every noun — 一本书 (yī běn shū), 三个人 (sān gè rén), 两条鱼 (liǎng tiáo yú) — 个 is the default",
     "Aspect marker 了 (le): marks completed action or change of state — 我吃了 (I ate) vs 我吃 (I eat) — NOT a past tense marker",
-    "Aspect markers 过 and 着: 过 = prior experience (我去过北京 I've been to Beijing), 着 = ongoing state (他睡着了 He fell asleep)",
+    "Aspect markers 过 and 着: 过 = prior experience (我去过北京 I've been to Beijing), 着 = ongoing/durative state (他站着 tā zhàn zhe, He is standing / 门开着 mén kāi zhe, The door is open)",
     "Sentence time word order: Subject + Time + Place + Verb + Object — 我今天在家吃饭 (I today at home eat rice)",
     "把 construction: Subject + 把 + Object + Verb + Result — moves object before verb to emphasize result/disposal (把书放在桌子上)",
     "Comparison with 比: A + 比 + B + adjective — 他比我高 (He is taller than me) vs 没有 for negative comparison",
@@ -176,7 +176,7 @@ const GRAMMAR_TOPICS = {
     "Connective endings: -고 (and/then: 먹고 자요 eat and sleep), -아/어서 (so/because/sequence: 배고파서 먹어요 hungry so I eat), -지만 (but: 비싸지만 좋아요 expensive but good)",
     "Ability & desire: -(으)ㄹ 수 있다/없다 (can/cannot: 할 수 있어요 I can do it), -고 싶다 (want to: 가고 싶어요 I want to go)",
     "Counters with native/Sino numbers: native 하나/둘/셋 + counter (사람 people: 한 명, 개 things: 두 개) vs Sino 일/이/삼 for dates, money, minutes (삼십 분 30 minutes)",
-    "Honorific & humble vocabulary: special words for respect — 잡수시다/드시다 (eat, for elders) vs 먹다, 주무시다 (sleep) vs 자다, 계시다 (be/exist) vs 있다; humble 저 (I) vs 나, 드리다 (give up) vs 주다",
+    "Honorific & humble vocabulary: special words for respect — 잡수시다/드시다 (eat, for elders) vs 먹다, 주무시다 (sleep) vs 자다, 계시다 (be/exist) vs 있다; humble 저 (I) vs 나, 드리다 (give, humble form) vs 주다",
     "Irregular verb stems: ㅂ irregular (덥다→더워요 hot), ㄷ irregular (듣다→들어요 listen), 르 irregular (모르다→몰라요 not know), ㅅ irregular (짓다→지어요 build)",
     "Quoting & reported speech: -다고/-라고 하다 — 간다고 했어요 (said [he] would go), 학생이라고 했어요 (said [he] is a student), question -냐고, command -(으)라고, suggestion -자고",
   ],
@@ -209,7 +209,7 @@ const GRAMMAR_TOPICS = {
     "Attached possessive pronouns: suffix on the noun — كِتابي (my book), كِتابُكَ (your [m] book), كِتابُكِ (your [f] book), كِتابُهُ (his book), كِتابُها (her book), كِتابُنا (our book)",
     "Sound plurals: masculine ون/ين (مُعَلِّم → مُعَلِّمون/مُعَلِّمين, teachers) and feminine ات (مُعَلِّمة → مُعَلِّمات, female teachers) — regular, added to human nouns",
     "Negation: لا + present (لا أعرف, I don't know), ما/لم + past (لم يذهب, he didn't go), لن + subjunctive for future (لن أذهب, I won't go), ليس for 'is not' (ليس كبيراً, he is not big)",
-    "Verb forms (الأوزان): derived patterns from the root add meaning — Form II فَعَّلَ (intensive/causative: دَرَّسَ taught), Form III فاعَلَ (reciprocal: كاتَبَ corresponded), Form X اِستَفعَلَ (seek: اِستَخدَمَ used)",
+    "Verb forms (الأوزان): derived patterns from the root add meaning — Form II فَعَّلَ (intensive/causative: دَرَّسَ taught), Form III فاعَلَ (reciprocal: كاتَبَ corresponded), Form X اِستَفعَلَ (اِستَخدَمَ istakhdama = used; often 'seek/request' as in اِستَغفَرَ = seek forgiveness)",
     "Comparative & superlative (اسم التفضيل): أَفعَل pattern — أَكبَر (bigger/biggest), أَصغَر (smaller), أَجمَل (more beautiful) — هو أكبر من أخيه (he is older than his brother)",
   ],
   hi: [
@@ -587,7 +587,19 @@ async function generateMissingContent() {
 
   console.log(`[Content] Background generation: ${needed.length} items missing or stale (re-deepening)`);
 
+  let skipped = 0;
   for (const [lang, tab] of needed) {
+    // Re-check right before generating: on multi-machine deploys another instance
+    // may have already produced a valid version, so we avoid duplicate Opus calls.
+    try {
+      const fresh = await db.get("SELECT content_json FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
+      if (fresh) {
+        try {
+          if (!validateContent(lang, tab, JSON.parse(fresh.content_json))) { skipped++; continue; }
+        } catch { /* fall through and regenerate */ }
+      }
+    } catch { /* if the check fails, just attempt generation */ }
+
     try {
       await generateContent(lang, tab);
     } catch (e) {
@@ -596,7 +608,7 @@ async function generateMissingContent() {
     await new Promise(r => setTimeout(r, 2000)); // 2s between calls
   }
 
-  console.log("[Content] Background generation complete ✓");
+  console.log(`[Content] Background generation complete ✓${skipped ? ` (skipped ${skipped} already filled by peer)` : ""}`);
 }
 
 // ── API routes ────────────────────────────────────────────────────────────────
@@ -680,6 +692,34 @@ router.post("/regenerate/:lang/:tab", requireAdmin, async (req, res) => {
   } catch (e) {
     console.error(`[Content] Admin regen failed ${lang}/${tab}:`, e.message);
   }
+});
+
+// POST /api/content/report — a learner flags a content accuracy problem
+router.post("/report", requireAuth, async (req, res) => {
+  const { lang, tab, note } = req.body || {};
+  if (!VALID_LANGS.includes(lang)) return res.status(400).json({ error: "Unknown language" });
+  if (!VALID_TABS.includes(tab))   return res.status(400).json({ error: "Unknown tab" });
+
+  const userId = req.user?.userId || null;
+  try {
+    await db.run(
+      "INSERT INTO content_reports (user_id, lang, tab, note) VALUES ($1, $2, $3, $4)",
+      [userId, lang, tab, (note || "").toString().slice(0, 500)]
+    );
+    db.trackEvent(userId, "content_error_reported", { lang, tab });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error("[Content] report failed:", e.message);
+    res.status(500).json({ error: "Could not submit report." });
+  }
+});
+
+// GET /api/content/reports — admin: open content reports, newest first
+router.get("/reports", requireAdmin, async (req, res) => {
+  const rows = await db.all(
+    "SELECT id, user_id, lang, tab, note, resolved, created_at FROM content_reports ORDER BY created_at DESC LIMIT 200"
+  );
+  res.json({ reports: rows, names: LANG_NAMES });
 });
 
 module.exports = router;

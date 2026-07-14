@@ -12,7 +12,7 @@
 
 const { Pool } = require("pg");
 
-const connStr = process.env.DATABASE_URL || "postgresql://localhost/tonge_dev";
+const connStr = process.env.DATABASE_URL || "postgresql://localhost/tongue_dev";
 const isLocal = connStr.includes("localhost") || connStr.includes("127.0.0.1");
 const pool = new Pool({
   connectionString: connStr,
@@ -151,6 +151,17 @@ async function initialize() {
       platform   TEXT    NOT NULL,   -- 'ios' | 'android' | 'web'
       created_at TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(user_id, token)
+    );
+
+    -- User-reported content errors (grammar/vocab accuracy feedback loop)
+    CREATE TABLE IF NOT EXISTS content_reports (
+      id         SERIAL PRIMARY KEY,
+      user_id    INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      lang       TEXT NOT NULL,
+      tab        TEXT NOT NULL,
+      note       TEXT,
+      resolved   BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
 

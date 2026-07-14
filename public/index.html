@@ -3327,6 +3327,35 @@ const QR_SECTIONS = [
   },
 ];
 
+// ─── REPORT-AN-ERROR (content accuracy feedback loop) ────────────────────────
+function ReportError({ tLang, tabName }) {
+  const [state, setState] = useState("idle"); // idle | sending | done
+  const submit = async () => {
+    if (state !== "idle") return;
+    if (!isLoggedIn()) { window.dispatchEvent(new CustomEvent("show-upgrade")); return; }
+    setState("sending");
+    try {
+      const r = await fetch("/api/content/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+        body: JSON.stringify({ lang: tLang, tab: tabName }),
+      });
+      setState(r.ok ? "done" : "idle");
+    } catch(e) { setState("idle"); }
+  };
+  return (
+    <div style={{display:"flex",justifyContent:"center",marginTop:18,marginBottom:4}}>
+      {state === "done" ? (
+        <span style={{fontSize:11.5,color:C.green,fontWeight:600}}>✓ Thanks — flagged for review</span>
+      ) : (
+        <button onClick={submit} disabled={state==="sending"} style={{display:"inline-flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:C.faint,fontSize:11.5,fontFamily:"inherit",fontWeight:500,padding:"4px 8px"}}>
+          <Icon name="flag" size={12} color={C.faint}/> {state==="sending" ? "Sending…" : "Spot an error? Report it"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 // ─── AI TAB CONTENT (all non-built languages) ────────────────────────────────
 function AITabContent({ tLang, tabName, color }) {
   const col    = color || C.blue;
@@ -3441,6 +3470,7 @@ function AITabContent({ tLang, tabName, color }) {
             </div>
           );
         })}
+        <ReportError tLang={tLang} tabName={tabName}/>
       </div>
     );
   }
@@ -3480,6 +3510,7 @@ function AITabContent({ tLang, tabName, color }) {
             </div>
           );
         })}
+        <ReportError tLang={tLang} tabName={tabName}/>
       </div>
     );
   }
@@ -3526,6 +3557,7 @@ function AITabContent({ tLang, tabName, color }) {
             </div>
           );
         })}
+        <ReportError tLang={tLang} tabName={tabName}/>
       </div>
     );
   }
@@ -3565,6 +3597,7 @@ function AITabContent({ tLang, tabName, color }) {
             </div>
           );
         })}
+        <ReportError tLang={tLang} tabName={tabName}/>
       </div>
     );
   }
