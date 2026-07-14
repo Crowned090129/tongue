@@ -166,6 +166,7 @@
         display:flex;align-items:center;justify-content:center;
         padding:32px 24px;
       }
+      /* Tablet (820–899px): single framed card, no sidebar */
       .app-shell{
         max-width:600px!important;
         width:100%;
@@ -175,11 +176,37 @@
         box-shadow:0 50px 110px -34px rgba(0,0,0,.42),0 14px 34px -16px rgba(0,0,0,.22);
         overflow:hidden!important;
       }
-      /* Desktop hover affordance — the app is now clearly a discrete surface */
       .app-shell ::-webkit-scrollbar{width:8px;height:8px}
+      .desktop-stage ::-webkit-scrollbar{width:8px;height:8px}
+    }
+    /* Desktop (≥900px): two-pane stage — persistent sidebar + content share one frame */
+    @media(min-width:900px){
+      .desktop-stage{
+        display:flex;
+        width:100%;
+        max-width:1160px;
+        height:min(940px,calc(100dvh - 64px));
+        border-radius:26px;
+        overflow:hidden;
+        border:1px solid var(--bezel);
+        background:var(--surf);
+        box-shadow:0 50px 110px -34px rgba(0,0,0,.42),0 14px 34px -16px rgba(0,0,0,.22);
+      }
+      /* Content pane drops its standalone frame and fills the space beside the rail */
+      .app-shell.app-shell-in-stage{
+        max-width:none!important;
+        width:auto!important;
+        flex:1!important;
+        height:100%!important;
+        border:none!important;
+        border-radius:0!important;
+        box-shadow:none!important;
+        margin:0!important;
+      }
     }
     @media(min-width:1200px){
       .app-shell{max-width:640px!important}
+      .desktop-stage{max-width:1240px}
     }
     /* Support chat widget */
     .support-fab{
@@ -2299,6 +2326,19 @@ function useMobile() {
     return () => window.removeEventListener("resize", fn);
   }, []);
   return mobile;
+}
+
+// True on wide screens — drives the two-pane desktop layout with a persistent sidebar.
+function useDesktop() {
+  const [desktop, setDesktop] = React.useState(() => {
+    try { return window.innerWidth >= 900; } catch(e) { return false; }
+  });
+  React.useEffect(() => {
+    const fn = () => setDesktop(window.innerWidth >= 900);
+    window.addEventListener("resize", fn, { passive: true });
+    return () => window.removeEventListener("resize", fn);
+  }, []);
+  return desktop;
 }
 
 // ─── SMALL COMPONENTS ────────────────────────────────────────────────────────
@@ -7019,7 +7059,7 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
 }
 
 // ── EXPLORE HOME ──────────────────────────────────────────────────────────────
-function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak }) {
+function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak, isDesktop }) {
   useLucide([L.id, factIdx, dark]);
   const fact = L.facts[factIdx % L.facts.length];
 
@@ -7047,7 +7087,8 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
 
   return (
     <div style={{display:"flex",flexDirection:"column",flex:1,minHeight:0,background:C.bg,fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
-      {/* Header */}
+      {/* Header — hidden on desktop, where the sidebar owns brand/language/theme/settings */}
+      {!isDesktop && (
       <div style={{padding:"13px 16px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:`1px solid ${C.line}`,background:C.surf,flexShrink:0}}>
         <button onClick={onOpenLang} style={{display:"flex",alignItems:"center",gap:9,background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:0}}>
           <div style={{width:36,height:36,borderRadius:10,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
@@ -7067,9 +7108,10 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           </button>
         </div>
       </div>
+      )}
 
       {/* Scrollable body */}
-      <div style={{flex:1,overflowY:"auto",padding:"14px 16px 8px"}}>
+      <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "14px 16px 8px"}}>
         {/* Streak + level pills */}
         <div style={{display:"flex",gap:8,marginBottom:13}}>
           <div style={{flex:1,display:"flex",alignItems:"center",gap:6,background:C.surf,border:`1px solid ${C.line}`,borderRadius:999,padding:"7px 12px"}}>
@@ -7153,18 +7195,20 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
         </div>
       </div>
 
-      {/* Helper dock */}
-      <div style={{borderTop:`1px solid ${C.line}`,background:C.surf,padding:"8px 16px 14px",flexShrink:0}}>
-        <div style={{fontSize:8,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:C.faint,marginBottom:6}}>Helpers — bring to anything</div>
-        <div style={{display:"flex",gap:4}}>
-          {HELPERS.map(h => (
-            <button key={h.id} onClick={() => nav(h.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",padding:"4px 0",fontFamily:"inherit"}}>
-              <Icon name={h.icon} size={19} color={C.accent}/>
-              <span style={{fontSize:10,fontWeight:600,color:C.text}}>{h.label}</span>
-            </button>
-          ))}
+      {/* Helper dock — mobile bottom nav; on desktop the sidebar covers these */}
+      {!isDesktop && (
+        <div style={{borderTop:`1px solid ${C.line}`,background:C.surf,padding:"8px 16px 14px",flexShrink:0}}>
+          <div style={{fontSize:8,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:C.faint,marginBottom:6}}>Helpers — bring to anything</div>
+          <div style={{display:"flex",gap:4}}>
+            {HELPERS.map(h => (
+              <button key={h.id} onClick={() => nav(h.id)} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",padding:"4px 0",fontFamily:"inherit"}}>
+                <Icon name={h.icon} size={19} color={C.accent}/>
+                <span style={{fontSize:10,fontWeight:600,color:C.text}}>{h.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -8580,8 +8624,123 @@ function ShareCardModal({ word, meaning, example, lang, onClose }) {
   );
 }
 
+// ─── DESKTOP SIDEBAR ──────────────────────────────────────────────────────────
+// Persistent left-rail navigation shown only on wide screens. Reuses the same
+// nav(view) actions as the mobile bottom-nav / explore grid, so both layouts
+// drive one source of truth.
+function DesktopNav({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettings, isFree }) {
+  useLucide([L.id, view, dark]);
+  const PRIMARY = [
+    { id:"explore", label:"Home",     icon:"home" },
+    { id:"coach",   label:"AI Coach", icon:"sparkles" },
+    { id:"cards",   label:"Flashcards", icon:"layers" },
+    { id:"drills",  label:"Drills",   icon:"zap" },
+    { id:"review",  label:"Review",   icon:"graduation-cap" },
+  ];
+  const LEARN = [
+    { id:"grammar",    label:"Grammar",           icon:"book-open" },
+    { id:"vocab-full", label:"Vocabulary",        icon:"type" },
+    { id:"dialogues",  label:"Phrases & Dialogues", icon:"messages-square" },
+    { id:"structures", label:"Sentence Patterns", icon:"layout-list" },
+    { id:"sounds",     label:"Sounds",            icon:"volume-2" },
+    { id:"culture",    label:"Culture & Nuance",  icon:"compass" },
+  ];
+  const TOOLS = [
+    { id:"voice-tutor", label:"Talk to Tutor",   icon:"mic" },
+    { id:"analyzer",    label:"Analyze Any Text", icon:"scan-text" },
+    { id:"wordspace",   label:"Word Space",       icon:"search" },
+    { id:"roadmap",     label:"Progress & Roadmap", icon:"map" },
+    { id:"today",       label:"Today's Practice", icon:"sun" },
+  ];
+  // The grammar index and its full-tables view should both light up "Grammar", etc.
+  const activeFor = (id) => {
+    if (id === "grammar")    return view === "grammar" || view === "grammar-full" || view === "concept";
+    if (id === "vocab-full") return view === "vocab-full" || view === "vocabThemes" || view === "vocabWords";
+    if (id === "dialogues")  return view === "dialogues" || view === "phrases";
+    return view === id;
+  };
+
+  const Item = ({ item }) => {
+    const active = activeFor(item.id);
+    return (
+      <button onClick={() => nav(item.id)} style={{
+        display:"flex", alignItems:"center", gap:11, width:"100%",
+        padding:"9px 12px", borderRadius:10, cursor:"pointer", fontFamily:"inherit",
+        textAlign:"left", border:"none", marginBottom:2,
+        background: active ? C.accentSoft : "transparent",
+        color: active ? C.accent : C.text,
+        fontWeight: active ? 700 : 500, fontSize:13.5,
+        transition:"background .12s",
+      }}
+      onMouseEnter={e => { if (!active) e.currentTarget.style.background = C.surf2; }}
+      onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}>
+        <Icon name={item.icon} size={17} color={active ? C.accent : C.muted}/>
+        <span style={{lineHeight:1.2}}>{item.label}</span>
+      </button>
+    );
+  };
+  const SectionLabel = ({ children }) => (
+    <div style={{fontSize:9.5,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:C.faint,padding:"0 12px",margin:"14px 0 6px"}}>{children}</div>
+  );
+
+  return (
+    <aside style={{
+      width:250, flexShrink:0, height:"100%", display:"flex", flexDirection:"column",
+      borderRight:`1px solid ${C.line}`, background:C.surf,
+    }}>
+      {/* Brand + language */}
+      <div style={{padding:"16px 14px 10px", borderBottom:`1px solid ${C.line}`}}>
+        <div style={{display:"flex", alignItems:"center", gap:9, marginBottom:12}}>
+          <div style={{width:30,height:30,borderRadius:8,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Icon name="languages" size={16} color="#fff"/>
+          </div>
+          <div style={{fontWeight:800,fontSize:17,letterSpacing:"-.02em",color:C.text}}>Tongue</div>
+        </div>
+        <button onClick={onOpenLang} style={{
+          display:"flex", alignItems:"center", justifyContent:"space-between", width:"100%",
+          padding:"8px 11px", borderRadius:10, cursor:"pointer", fontFamily:"inherit",
+          background:C.surf2, border:`1px solid ${C.line}`,
+        }}>
+          <span style={{display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:16}}>{TARGETS[L.id]?.flag || "🌐"}</span>
+            <span style={{fontWeight:700,fontSize:13.5,color:C.text}}>{L.name}</span>
+          </span>
+          <span style={{fontSize:10,fontWeight:700,color:C.accent,display:"flex",alignItems:"center",gap:3}}>Switch <Icon name="chevron-down" size={11} color={C.accent}/></span>
+        </button>
+      </div>
+
+      {/* Nav groups */}
+      <div style={{flex:1, overflowY:"auto", padding:"8px 8px 12px"}}>
+        {PRIMARY.map(i => <Item key={i.id} item={i}/>)}
+        <SectionLabel>Explore</SectionLabel>
+        {LEARN.map(i => <Item key={i.id} item={i}/>)}
+        <SectionLabel>Tools</SectionLabel>
+        {TOOLS.map(i => <Item key={i.id} item={i}/>)}
+      </div>
+
+      {/* Footer controls */}
+      <div style={{borderTop:`1px solid ${C.line}`, padding:"10px 12px", display:"flex", flexDirection:"column", gap:8}}>
+        {isFree && (
+          <a href="/subscribe" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,background:GRAD,color:"#fff",borderRadius:10,padding:"9px 12px",fontWeight:700,fontSize:12.5,textDecoration:"none"}}>
+            <Icon name="crown" size={14} color="#fff"/> Upgrade to Premium
+          </a>
+        )}
+        <div style={{display:"flex", gap:8}}>
+          <button onClick={onToggleDark} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:7,padding:"8px 10px",borderRadius:9,border:`1px solid ${C.line}`,background:C.surf2,color:C.text,cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:12}}>
+            <Icon name={dark?"sun":"moon"} size={14}/> {dark ? "Light" : "Dark"}
+          </button>
+          <button onClick={onOpenSettings} style={{width:38,display:"flex",alignItems:"center",justifyContent:"center",padding:"8px",borderRadius:9,border:`1px solid ${C.line}`,background:C.surf2,color:C.text,cursor:"pointer"}}>
+            <Icon name="settings" size={14}/>
+          </button>
+        </div>
+      </div>
+    </aside>
+  );
+}
+
 function App() {
   const mobile = useMobile();
+  const isDesktop = useDesktop();
   // ── new IA navigation ──────────────────────────────────────────────────────
   const [view, setView]             = useState("explore");
   const [stack, setStack]           = useState([]);
@@ -8724,8 +8883,8 @@ function App() {
     </WrappedScreen>
   );
 
-  return (
-    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className="safe-bottom app-shell">
+  const appBody = (
+    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className={"safe-bottom app-shell" + (isDesktop ? " app-shell-in-stage" : "")}>
 
       {/* ── EXPIRY BANNER ── */}
       {expiryWarning !== null && (
@@ -8750,6 +8909,7 @@ function App() {
         {view === "explore" && (
           <ExploreHome
             L={L} nav={nav} dark={dark} factIdx={factIdx} streak={streak}
+            isDesktop={isDesktop}
             onNextFact={() => setFactIdx(i => i+1)}
             onOpenSettings={() => setOverlay("settings")}
             onOpenLang={() => setOverlay("lang")}
@@ -8855,6 +9015,22 @@ function App() {
       <SupportChat />
     </div>
   );
+
+  if (isDesktop) {
+    return (
+      <div className="desktop-stage">
+        <DesktopNav
+          L={L} view={view} nav={nav} dark={dark}
+          onToggleDark={toggleDark}
+          onOpenLang={() => setOverlay("lang")}
+          onOpenSettings={() => setOverlay("settings")}
+          isFree={isFree}
+        />
+        {appBody}
+      </div>
+    );
+  }
+  return appBody;
 }
 
 // ─── SUPPORT CHAT ─────────────────────────────────────────────────────────────
