@@ -17,4 +17,8 @@ enum PreviewStubs {
     static let coachService = CoachService(api: api)
     static let authService = AuthService(api: api)
     static let pushService = PushService(api: api)
+
+    /// Non-persisting flashcard store for building `@StateObject` VMs before the
+    /// view configures the real one; also handy for previews.
+    static let flashcardStore: FlashcardStoring = InMemoryFlashcardStore()
 }

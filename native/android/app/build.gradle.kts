@@ -119,6 +119,11 @@ dependencies {
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.datastore.preferences)
 
+    // Room — on-device flashcard storage + SM-2 scheduling
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
     // DI
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

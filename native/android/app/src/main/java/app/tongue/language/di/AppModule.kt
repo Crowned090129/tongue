@@ -1,7 +1,11 @@
 package app.tongue.language.di
 
+import android.content.Context
+import androidx.room.Room
 import app.tongue.language.BuildConfig
 import app.tongue.language.auth.SecureAuthStore
+import app.tongue.language.data.flashcards.FlashcardDao
+import app.tongue.language.data.flashcards.FlashcardDatabase
 import app.tongue.language.network.AuthInterceptor
 import app.tongue.language.network.TokenProvider
 import app.tongue.language.network.TongueApi
@@ -9,6 +13,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -74,4 +79,15 @@ object AppModule {
     @Singleton
     fun provideTongueApi(retrofit: Retrofit): TongueApi =
         retrofit.create(TongueApi::class.java)
+
+    // ── On-device flashcard storage (Room) ───────────────────────────────────
+    @Provides
+    @Singleton
+    fun provideFlashcardDatabase(@ApplicationContext context: Context): FlashcardDatabase =
+        Room.databaseBuilder(context, FlashcardDatabase::class.java, "tongue-flashcards.db")
+            .fallbackToDestructiveMigration()
+            .build()
+
+    @Provides
+    fun provideFlashcardDao(db: FlashcardDatabase): FlashcardDao = db.flashcardDao()
 }

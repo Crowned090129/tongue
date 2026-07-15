@@ -17,9 +17,19 @@ object Routes {
 
     // Top-level (bottom bar)
     const val HOME = "home"
-    const val LEARN = "learn"       // stubbed "Coming soon"
+    const val LEARN = "learn"       // tools hub (reference + analyzer + word space + flashcards)
     const val COACH = "coach"
     const val SETTINGS = "settings"
+
+    // Learn / tools sub-destinations
+    const val REFERENCE = "reference"           // reference/{tab}
+    const val ANALYZER = "analyzer"
+    const val WORD_SPACE = "word_space"
+    const val FLASHCARDS = "flashcards"
+
+    /** Reference route for a given content tab slug. */
+    fun reference(tabSlug: String) = "$REFERENCE/$tabSlug"
+    const val REFERENCE_PATTERN = "$REFERENCE/{tab}"
 
     // Graph roots
     const val AUTH_GRAPH = "auth_graph"

@@ -22,12 +22,19 @@ import androidx.navigation.compose.rememberNavController
 import app.tongue.language.data.model.AuthState
 import app.tongue.language.designsystem.LoadingState
 import app.tongue.language.designsystem.tongue
+import app.tongue.language.data.model.ContentTab
+import app.tongue.language.feature.analyzer.AnalyzerScreen
 import app.tongue.language.feature.coach.CoachScreen
+import app.tongue.language.feature.flashcards.FlashcardsScreen
 import app.tongue.language.feature.home.HomeScreen
+import app.tongue.language.feature.learn.LearnHubScreen
 import app.tongue.language.feature.login.LoginScreen
-import app.tongue.language.feature.placeholder.ComingSoonScreen
 import app.tongue.language.feature.placeholder.PaywallScreen
+import app.tongue.language.feature.reference.ReferenceScreen
 import app.tongue.language.feature.settings.SettingsScreen
+import app.tongue.language.feature.wordspace.WordSpaceScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Alignment
@@ -147,10 +154,7 @@ private fun MainShell(navController: NavHostController) {
                 )
             }
             composable(Routes.LEARN) {
-                ComingSoonScreen(
-                    title = "Learn",
-                    message = "Structured lessons and drills are coming to the app soon.",
-                )
+                LearnHubScreen(onOpen = { route -> navController.navigate(route) })
             }
             composable(Routes.COACH) {
                 CoachScreen(onUpgrade = { navController.navigate(Routes.PAYWALL) })
@@ -160,6 +164,31 @@ private fun MainShell(navController: NavHostController) {
             }
             composable(Routes.PAYWALL) {
                 PaywallScreen(onBack = { navController.popBackStack() })
+            }
+
+            // ── Learn / tools sub-destinations ────────────────────────────────
+            composable(
+                route = Routes.REFERENCE_PATTERN,
+                arguments = listOf(navArgument("tab") { type = NavType.StringType }),
+            ) { entry ->
+                val slug = entry.arguments?.getString("tab")
+                val tab = ContentTab.entries.firstOrNull { it.slug == slug } ?: ContentTab.GRAMMAR
+                ReferenceScreen(tab = tab, onBack = { navController.popBackStack() })
+            }
+            composable(Routes.ANALYZER) {
+                AnalyzerScreen(
+                    onBack = { navController.popBackStack() },
+                    onUpgrade = { navController.navigate(Routes.PAYWALL) },
+                )
+            }
+            composable(Routes.WORD_SPACE) {
+                WordSpaceScreen(
+                    onBack = { navController.popBackStack() },
+                    onUpgrade = { navController.navigate(Routes.PAYWALL) },
+                )
+            }
+            composable(Routes.FLASHCARDS) {
+                FlashcardsScreen(onBack = { navController.popBackStack() })
             }
         }
     }

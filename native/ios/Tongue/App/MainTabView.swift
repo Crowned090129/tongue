@@ -13,11 +13,8 @@ struct MainTabView: View {
             CoachView()
                 .tabItem { Label("Coach", systemImage: "bubble.left.and.bubble.right.fill") }
 
-            ComingSoonView(
-                title: "Learn",
-                subtitle: "Structured lessons, grammar drills, and spaced repetition are on the way."
-            )
-            .tabItem { Label("Learn", systemImage: "book.fill") }
+            LearnView()
+                .tabItem { Label("Learn", systemImage: "book.fill") }
 
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
