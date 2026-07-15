@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tongue</string>
+    <string name="default_notification_channel_id">tongue_default</string>
+    <string name="default_notification_channel_name">Reminders</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light brand background; overridden in values-night. Used by the window
+         chrome and splash so there's no flash before Compose paints. -->
+    <color name="brand_bg">#F5F2EC</color>
+</resources>

@@ -5,3 +5,6 @@ data/
 *.log
 .git
 .DS_Store
+
+# Native apps (iOS/Android) — not part of the web server image
+native/

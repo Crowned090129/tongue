@@ -5,3 +5,19 @@ data/
 *.db
 *.db-wal
 *.db-shm
+
+# ── Native app build artifacts ──────────────────────────────
+# iOS
+native/ios/Tongue.xcodeproj/
+native/ios/DerivedData/
+native/ios/**/xcuserdata/
+native/ios/.build/
+*.xcworkspace/xcuserdata/
+# Android
+native/android/.gradle/
+native/android/build/
+native/android/app/build/
+native/android/local.properties
+native/android/app/google-services.json
+native/android/.idea/
+*.iml

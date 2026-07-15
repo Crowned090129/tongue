@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- allowBackup is false, but we keep these files for completeness / clarity.
+     The encrypted auth store must never be backed up in plaintext. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="tongue_secure_auth.xml" />
+</full-backup-content>
