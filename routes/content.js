@@ -35,7 +35,7 @@ const LANG_NAMES = {
 };
 
 const VALID_LANGS = Object.keys(LANG_NAMES);
-const VALID_TABS  = ["grammar", "cheatsheet", "structures", "vocab", "dialogues"];
+const VALID_TABS  = ["grammar", "cheatsheet", "structures", "vocab", "dialogues", "drills", "roadmap"];
 
 // Unicode range helpers for script validation
 const HAS_CHINESE   = s => /[一-鿿㐀-䶿]/.test(s);
@@ -384,6 +384,35 @@ ACCURACY RULES:
 - For Hindi specifically: ALL target lines MUST contain Devanagari script (not just romanized Hindi)`;
 }
 
+function buildDrillsPrompt(lang) {
+  const name = LANG_NAMES[lang];
+  return `You are an expert ${name} language teacher creating quick active-recall drills — short prompt → short answer, like rapid flashcards for practice. Generate exactly 20 drills with a spread across these skill types IN A MIXED ORDER: verb conjugations (6), essential vocabulary (5), grammar forms such as gender/articles/cases/particles as relevant to ${name} (4), numbers or time (2), and common everyday phrases (3).
+
+Return ONLY a valid JSON object — no markdown, no code fences:
+{"drills":[{"q":"a short question, in English, that asks for a specific ${name} answer (e.g. \\"'I am' in ${name}?\\")","a":"the correct ${name} answer only","hint":"a short rule, pattern, or memory tip","type":"Conjugation|Vocab|Grammar|Numbers|Phrase"}]}
+
+ACCURACY RULES — violations are unacceptable:
+- Every "a" MUST be correct ${name} with correct spelling, script, accents, and diacritics
+- Questions must have a single clear correct answer
+- Vary difficulty from beginner to intermediate
+- hint must add real value (the rule or a memory aid), never just restate the answer
+- For non-Latin script languages (Chinese/Japanese/Korean/Russian/Arabic/Hindi): the "a" MUST be in native script (a romanization may follow in parentheses)`;
+}
+
+function buildRoadmapPrompt(lang) {
+  const name = LANG_NAMES[lang];
+  return `You are an expert ${name} language teacher creating a realistic 5-phase learning roadmap for an adult going from absolute beginner to advanced fluency in ${name}. Use these five phases IN THIS ORDER: 1 "Survival" (Weeks 1–2), 2 "Foundation" (Weeks 3–6), 3 "Core Structures" (Months 2–3), 4 "Fluency" (Months 3–6), 5 "Mastery" (Months 6+). Adjust the durations to be realistic for ${name}'s difficulty for an English speaker.
+
+Return ONLY a valid JSON object — no markdown, no code fences:
+{"phases":[{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"one-sentence goal for this phase","can":["6 concrete can-do milestones, ${name}-SPECIFIC — name real grammar features, tenses, cases, scripts, or skills"],"daily":"a concrete daily study plan with minutes per activity"}]}
+
+ACCURACY RULES:
+- Milestones in "can" must reference REAL ${name} grammar/features by name (e.g. specific tenses, cases, particles, the writing system) — never generic filler
+- Difficulty and durations must be realistic for ${name} (e.g. character/script-heavy languages take longer to read)
+- Exactly 5 phases; each "can" array has exactly 6 items
+- "goal" and "daily" must be specific and actionable, not vague`;
+}
+
 // ── Content validation ────────────────────────────────────────────────────────
 // Validates structure and quality before storing. Returns null if valid,
 // or a string describing the first problem found.
@@ -469,6 +498,30 @@ function validateContent(lang, tab, data) {
     return null;
   }
 
+  if (tab === "drills") {
+    if (!Array.isArray(data.drills))           return "missing drills array";
+    if (data.drills.length < 12)               return `only ${data.drills.length} drills (need ≥12)`;
+    for (const [i, d] of data.drills.entries()) {
+      if (!d.q) return `drill ${i} missing q`;
+      if (!d.a) return `drill ${i} missing a`;
+      const err = checkScriptInArray([d], "a");
+      if (err) return `drill ${i}: ${err}`;
+    }
+    return null;
+  }
+
+  if (tab === "roadmap") {
+    if (!Array.isArray(data.phases))           return "missing phases array";
+    if (data.phases.length < 5)                return `only ${data.phases.length} phases (need 5)`;
+    for (const [i, p] of data.phases.entries()) {
+      if (!p.title) return `phase ${i} missing title`;
+      if (!p.goal)  return `phase ${i} missing goal`;
+      if (!Array.isArray(p.can) || p.can.length < 4) return `phase ${i} has too few can-do items`;
+      if (!p.daily) return `phase ${i} missing daily plan`;
+    }
+    return null;
+  }
+
   return null; // unknown tab — skip validation
 }
 
@@ -521,6 +574,8 @@ async function generateContent(lang, tab) {
     structures: buildStructuresPrompt(lang),
     vocab:      buildVocabPrompt(lang),
     dialogues:  buildDialoguesPrompt(lang),
+    drills:     buildDrillsPrompt(lang),
+    roadmap:    buildRoadmapPrompt(lang),
   };
 
   if (!prompts[tab]) throw new Error(`Unknown tab: ${tab}`);
