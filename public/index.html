@@ -7092,7 +7092,7 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
           {subtitle && <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{subtitle}</div>}
         </div>
       </div>
-      <div style={{flex:1,minHeight:0,overflowY:"auto",padding:noPad ? 0 : "16px 18px 28px"}}>
+      <div style={{flex:1,minHeight:0,overflowY:"auto",padding:noPad ? 0 : "16px 18px calc(28px + env(safe-area-inset-bottom))"}}>
         {children}
       </div>
     </div>
@@ -7241,7 +7241,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
 
       {/* Helper dock — mobile bottom nav; on desktop the sidebar covers these */}
       {!isDesktop && (
-        <div style={{borderTop:`1px solid ${C.line}`,background:C.surf,padding:"8px 16px 14px",flexShrink:0}}>
+        <div style={{borderTop:`1px solid ${C.line}`,background:C.surf,padding:"8px 16px max(14px, env(safe-area-inset-bottom))",flexShrink:0}}>
           <div style={{fontSize:8,fontWeight:700,letterSpacing:".12em",textTransform:"uppercase",color:C.faint,marginBottom:6}}>Helpers — bring to anything</div>
           <div style={{display:"flex",gap:4}}>
             {HELPERS.map(h => (
@@ -8988,7 +8988,7 @@ function App() {
   );
 
   const appBody = (
-    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className={"safe-bottom app-shell" + (isDesktop ? " app-shell-in-stage" : "")}>
+    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className={"app-shell" + (isDesktop ? " app-shell-in-stage" : "")}>
 
       {/* ── EXPIRY BANNER ── */}
       {expiryWarning !== null && (
