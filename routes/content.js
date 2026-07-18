@@ -1410,7 +1410,9 @@ async function generateMissingContent() {
         const t = anchorTarget(lang, tab);
         if (t && t.count) {
           const have = Array.isArray(parsed[t.field]) ? parsed[t.field].length : 0;
-          if (have < t.count) needed.push([lang, tab]); // shallower than current standard → regenerate
+          // Regenerate only if MEANINGFULLY shallower than the standard (tolerate a
+          // 2-item shortfall so a model returning 20/22 doesn't loop every restart).
+          if (have < t.count - 2) needed.push([lang, tab]);
         }
       } catch {
         needed.push([lang, tab]); // corrupt JSON → regenerate
