@@ -443,7 +443,7 @@ let _nativeLang = (() => { try { return localStorage.getItem("native_lang") || "
 
 // ─── LANGUAGE CONFIG ─────────────────────────────────────────────────────────
 const TARGETS = {
-  fr: { name: "French",     flag: "🇫🇷", tts: "fr-FR", synergy: ["es","pt","it"], built: true  },
+  fr: { name: "French",     flag: "🇫🇷", tts: "fr-FR", synergy: ["es","pt","it"], built: false },
   es: { name: "Spanish",    flag: "🇪🇸", tts: "es-ES", synergy: ["pt","fr","it"], built: false },
   pt: { name: "Portuguese", flag: "🇧🇷", tts: "pt-BR", synergy: ["es","fr","it"], built: false },
   it: { name: "Italian",    flag: "🇮🇹", tts: "it-IT", synergy: ["es","fr","pt"], built: false },
@@ -3335,6 +3335,44 @@ const QR_SECTIONS = [
   },
 ];
 
+// ─── API CONTENT HOOK ────────────────────────────────────────────────────────
+// Fetches cached lesson content for any tab from the backend content store, so
+// Drills / Roadmap / Dialogues render from the API instead of hardcoded data.
+function useApiContent(tLang, tab) {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true); setErr(""); setContent(null);
+    fetch(`/api/content/${tLang}/${tab}`, { headers: { "Authorization": "Bearer " + getToken() } })
+      .then(r => {
+        if (!r.ok) throw new Error(r.status === 503 ? "Content is being prepared — check back in a moment." : "Could not load content.");
+        return r.json();
+      })
+      .then(d => { if (!cancelled) setContent(d.content); })
+      .catch(e => { if (!cancelled) setErr(e.message); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [tLang, tab]);
+  return { content, loading, err };
+}
+
+// Shared loading / error placeholder for API-backed screens.
+function ContentLoader({ tLang, loading, err, label }) {
+  return (
+    <div style={{ textAlign:"center", padding:"46px 20px" }}>
+      <div style={{ fontSize:44, marginBottom:12 }}>{TARGETS[tLang]?.flag}</div>
+      {loading
+        ? <>
+            <div style={{ width:26, height:26, margin:"0 auto 12px", border:"3px solid "+C.line, borderTopColor:C.accent, borderRadius:"50%", animation:"spin .7s linear infinite" }}/>
+            <div style={{ fontWeight:700, fontSize:15, color:C.text }}>Loading {label}…</div>
+          </>
+        : <div style={{ color:C.muted, fontSize:13, lineHeight:1.6, maxWidth:280, margin:"0 auto" }}>{err || "Content is being prepared. Please try again shortly."}</div>}
+    </div>
+  );
+}
+
 // ─── REPORT-AN-ERROR (content accuracy feedback loop) ────────────────────────
 function ReportError({ tLang, tabName }) {
   const [state, setState] = useState("idle"); // idle | sending | done
@@ -5944,12 +5982,15 @@ function Drills({ tLang }) {
   const [idx, setIdx]       = useState(0);
   const [show, setShow]     = useState(false);
   const [filter, setFilter] = useState("All");
+  const { content, loading, err } = useApiContent(tLang, "drills");
 
-  const types    = ["All","Conjugation","Translation","Vocab","Grammar"];
-  const langDrills = DRILL_DATA[tLang] || DRILL_DATA.fr;
-  const filtered = filter === "All" ? langDrills : langDrills.filter(d => d.type === filter);
+  const types      = ["All","Conjugation","Vocab","Grammar","Numbers","Phrase"];
+  const langDrills = content?.drills || [];
+  if (loading || !langDrills.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="drills"/>;
+  const f        = filter === "All" ? langDrills : langDrills.filter(d => d.type === filter);
+  const filtered = f.length ? f : langDrills;
   const cur      = filtered[idx % filtered.length];
-  const typeColor = { Conjugation: C.blue, Translation: C.green, Vocab: C.muted, Grammar: C.accent };
+  const typeColor = { Conjugation: C.blue, Vocab: C.muted, Grammar: C.accent, Numbers: C.green, Phrase: C.accent };
 
   return (
     <div>
@@ -6108,8 +6149,14 @@ const DIALOGUE_DATA = {
 
 function Dialogues({ tLang }) {
   const [idx, setIdx] = useState(0);
+  const { content, loading, err } = useApiContent(tLang, "dialogues");
 
-  const dlData = DIALOGUE_DATA[tLang] || DIALOGUE_DATA.fr;
+  // Adapt the API dialogue shape ({speaker,target,ref}) to this view's ({s,tl,en}).
+  const dlData = (content?.dialogues || []).map(dg => ({
+    title: dg.title, level: dg.level,
+    lines: (dg.lines || []).map(l => ({ s: l.speaker, tl: l.target, en: l.ref })),
+  }));
+  if (loading || !dlData.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="dialogues"/>;
   const safeIdx = Math.min(idx, dlData.length - 1);
   const d = dlData[safeIdx];
   return (
@@ -6256,7 +6303,10 @@ function Roadmap({ tLang }) {
     try { return new Set(JSON.parse(localStorage.getItem("roadmap_" + tLang) || "[]")); } catch(e) { return new Set(); }
   });
   const tName = TARGETS[tLang]?.name || "French";
-  const phaseData = (tLang === "fr") ? FRENCH_PHASE_DATA : (LANG_PHASE_DATA[tLang] || LANG_PHASE_DATA.en);
+  const { content, loading, err } = useApiContent(tLang, "roadmap");
+  const PHASE_COLORS = [C.blue, C.green, C.accent, C.muted, C.red];
+  const phaseData = (content?.phases || []).map((p, i) => ({ ...p, color: PHASE_COLORS[i % PHASE_COLORS.length] }));
+  if (loading || !phaseData.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="roadmap"/>;
 
   const toggle = (id) => {
     setDone(prev => {
