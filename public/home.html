@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tongue — Speak Every Tongue</title>
+  <meta name="description" content="Everything you need to actually speak a language — a live tutor, voice practice, deep grammar, smart flashcards, real dialogues, and a clear roadmap across 12 languages. Start free — no credit card."/>
+  <meta name="keywords" content="language learning app, speak a language, language tutor, voice practice, flashcards, grammar, learn French, learn Spanish, learn Japanese, Duolingo alternative"/>
+  <link rel="canonical" href="https://tonge-app.fly.dev/"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://tonge-app.fly.dev/"/>
+  <meta property="og:title" content="Tongue — Speak Every Tongue"/>
+  <meta property="og:description" content="Everything you need to actually speak a language: a live tutor, voice practice, deep grammar, flashcards, real dialogues, and a roadmap — across 12 languages. Start free."/>
+  <meta property="og:image" content="https://tonge-app.fly.dev/og-image.png"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Tongue — Speak Every Tongue"/>
+  <meta name="twitter:description" content="Speak 12 languages for real — live tutor, voice practice, grammar, flashcards, and real dialogues. Start free."/>
+  <meta name="theme-color" content="#C0153E"/>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+  <link rel="manifest" href="/manifest.json"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red:   #C0153E;
+      --pink:  #FF5F7E;
+      --grad:  linear-gradient(135deg, #FF5F7E 0%, #C0153E 100%);
+      --dark:  #0d1229;
+      --dark2: #131a35;
+      --ink:   #0f172a;
+      --slate: #334155;
+      --muted: #64748b;
+      --light: #94a3b8;
+      --bg:    #f8fafc;
+      --white: #ffffff;
+      --border:#e2e8f0;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--white);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1140px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; gap: 20px;
+    }
+    .nav-logo img { height: 36px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      color: var(--slate); font-size: 14px; font-weight: 600;
+      text-decoration: none; transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--red); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .nav-signin {
+      color: var(--slate); font-size: 14px; font-weight: 600;
+      text-decoration: none; padding: 8px 16px;
+    }
+    .nav-signin:hover { color: var(--ink); }
+    .btn-grad {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--grad); color: #fff;
+      font-size: 14px; font-weight: 700; text-decoration: none;
+      padding: 10px 20px; border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(192,21,62,.3);
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-grad:hover { opacity: .92; transform: translateY(-1px); }
+    .btn-grad:active { transform: translateY(0); opacity: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--dark);
+      min-height: 86vh;
+      display: flex; align-items: center;
+      overflow: hidden; position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute; top: -120px; right: -80px;
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,95,126,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; bottom: -80px; left: -60px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(192,21,62,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1140px; margin: 0 auto; padding: 80px 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,95,126,.12); border: 1px solid rgba(255,95,126,.25);
+      color: #FF8FA6; font-size: 13px; font-weight: 600;
+      padding: 6px 14px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: #FF5F7E; display: inline-block; }
+    .hero h1 {
+      font-size: clamp(46px, 6vw, 76px); font-weight: 900; line-height: 1.05;
+      color: #fff; letter-spacing: -1.5px; margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 19px); color: rgba(255,255,255,.65);
+      line-height: 1.7; margin-bottom: 40px; max-width: 480px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn-hero-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--grad); color: #fff; font-size: 16px; font-weight: 800;
+      padding: 16px 30px; border-radius: 14px; text-decoration: none;
+      box-shadow: 0 6px 24px rgba(192,21,62,.4);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(192,21,62,.5); }
+    .btn-hero-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.85); font-size: 16px; font-weight: 700;
+      padding: 16px 28px; border-radius: 14px; text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-hero-secondary:hover { background: rgba(255,255,255,.14); }
+    .hero-trust {
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,.45); font-size: 13px; font-weight: 500;
+    }
+    .trust-dot { width: 4px; height: 4px; background: rgba(255,255,255,.2); border-radius: 50%; }
+
+    /* Phone Mockup */
+    .hero-visual { display: flex; justify-content: center; align-items: center; }
+    .phone-wrap {
+      position: relative;
+      filter: drop-shadow(0 40px 80px rgba(0,0,0,.5));
+    }
+    .phone {
+      width: 280px; border-radius: 36px;
+      background: #1a1f2e;
+      border: 8px solid #2a3050;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+    .phone-status {
+      background: #0f1322; padding: 12px 20px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .phone-time { color: #fff; font-size: 12px; font-weight: 700; }
+    .phone-icons { color: rgba(255,255,255,.6); font-size: 11px; }
+    .phone-header {
+      background: var(--dark2); padding: 14px 16px 12px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .phone-lang-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--grad); display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .phone-lang-info { flex: 1; }
+    .phone-lang-name { color: #fff; font-size: 13px; font-weight: 700; }
+    .phone-lang-sub { color: rgba(255,255,255,.4); font-size: 10px; margin-top: 1px; }
+    .phone-body { padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble {
+      padding: 10px 12px; border-radius: 16px; font-size: 12px; line-height: 1.5; max-width: 86%;
+    }
+    .chat-user { background: rgba(255,255,255,.07); color: rgba(255,255,255,.7); align-self: flex-end; border-bottom-right-radius: 4px; }
+    .chat-ai {
+      background: rgba(255,95,126,.1); border: 1px solid rgba(255,95,126,.2);
+      color: rgba(255,255,255,.88); align-self: flex-start; border-bottom-left-radius: 4px;
+    }
+    .chat-ai strong { color: #FF8FA6; }
+    .phone-words {
+      display: flex; flex-direction: column; gap: 4px; margin-top: 4px;
+    }
+    .phone-word {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.04); border-radius: 8px;
+      padding: 7px 10px;
+    }
+    .word-flag { font-size: 13px; }
+    .word-text { flex: 1; }
+    .word-orig { color: #fff; font-size: 11px; font-weight: 700; }
+    .word-trans { color: rgba(255,255,255,.4); font-size: 10px; }
+    .word-save { font-size: 11px; cursor: pointer; }
+    .phone-tabs {
+      display: flex; border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .phone-tab {
+      flex: 1; padding: 12px 4px; text-align: center;
+      font-size: 9px; color: rgba(255,255,255,.3); font-weight: 600;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .phone-tab.active { color: #FF5F7E; }
+    .phone-tab-icon { font-size: 16px; }
+
+    /* Floating elements around the phone */
+    .float-card {
+      position: absolute;
+      background: white; border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .float-left {
+      left: -80px; top: 20%;
+      animation: float 3.4s ease-in-out infinite;
+    }
+    .float-right {
+      right: -72px; bottom: 22%;
+      animation: float 4s ease-in-out infinite reverse;
+    }
+    .float-icon { font-size: 24px; }
+    .float-text { font-size: 12px; }
+    .float-label { font-weight: 800; color: var(--ink); }
+    .float-sub { color: var(--muted); font-size: 11px; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 28px 24px;
+    }
+    .stats-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: 24px;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: clamp(28px, 4vw, 40px); font-weight: 900;
+      background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+    /* ── SECTIONS ── */
+    .section { padding: 90px 24px; }
+    .section-inner { max-width: 1060px; margin: 0 auto; }
+    .section-alt { background: var(--bg); }
+    .section-dark { background: var(--dark); }
+    .eyebrow {
+      display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--red); margin-bottom: 12px;
+    }
+    .section h2 {
+      font-size: clamp(30px, 4.5vw, 50px); font-weight: 900;
+      line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 18px;
+    }
+    .section-dark h2 { color: #fff; }
+    .section-sub {
+      font-size: clamp(16px, 2vw, 18px); color: var(--muted);
+      max-width: 560px; line-height: 1.7; margin-bottom: 56px;
+    }
+    .section-dark .section-sub { color: rgba(255,255,255,.5); }
+    .text-center { text-align: center; }
+    .text-center .section-sub { margin: 0 auto 56px; }
+
+    /* ── FEATURES SPLIT ── */
+    .feature-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+      align-items: center; margin-bottom: 80px;
+    }
+    .feature-split:last-child { margin-bottom: 0; }
+    .feature-split.flip { direction: rtl; }
+    .feature-split.flip > * { direction: ltr; }
+    .feature-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 700; color: var(--red);
+      margin-bottom: 16px;
+    }
+    .feature-tag-icon { font-size: 20px; }
+    .feature-copy h3 {
+      font-size: clamp(24px, 3vw, 34px); font-weight: 900;
+      line-height: 1.15; margin-bottom: 16px;
+    }
+    .feature-copy p {
+      font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+    }
+    .feature-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feature-bullets li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--slate);
+    }
+    .feature-bullets li::before {
+      content: "✓"; color: var(--red); font-weight: 900;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* Feature UI Mockups */
+    .feature-ui {
+      background: var(--dark); border-radius: 20px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15); border: 1px solid rgba(255,255,255,.06);
+    }
+    .ui-titlebar {
+      background: #1a1f2e; padding: 14px 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ui-dots { display: flex; gap: 5px; }
+    .ui-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.12); }
+    .ui-title { color: rgba(255,255,255,.4); font-size: 12px; margin-left: 6px; }
+    .ui-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .ui-msg {
+      padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5;
+    }
+    .ui-msg.user {
+      background: rgba(255,255,255,.06); color: rgba(255,255,255,.65);
+      align-self: flex-end; max-width: 85%;
+    }
+    .ui-msg.ai {
+      background: rgba(255,95,126,.08); border: 1px solid rgba(255,95,126,.15);
+      color: rgba(255,255,255,.82); max-width: 88%;
+    }
+    .ui-msg.ai b { color: #FF8FA6; }
+    .ui-tag {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      background: rgba(255,95,126,.15); color: #FF8FA6;
+      border-radius: 4px; padding: 2px 7px; margin-bottom: 5px;
+    }
+
+    /* Flashcard mockup */
+    .fc-wrap { perspective: 800px; margin: 0 auto; }
+    .fc {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px; padding: 32px 24px; text-align: center;
+    }
+    .fc-lang { font-size: 13px; color: rgba(255,255,255,.3); margin-bottom: 16px; }
+    .fc-word { font-size: 36px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .fc-phonetic { font-size: 14px; color: rgba(255,255,255,.4); margin-bottom: 20px; }
+    .fc-trans { font-size: 18px; color: #FF8FA6; font-weight: 700; margin-bottom: 24px; }
+    .fc-buttons { display: flex; gap: 10px; justify-content: center; }
+    .fc-btn {
+      flex: 1; padding: 12px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; text-align: center;
+    }
+    .fc-btn.hard { background: rgba(239,68,68,.15); color: #f87171; }
+    .fc-btn.good { background: rgba(34,197,94,.15); color: #4ade80; }
+    .fc-btn.easy { background: rgba(99,102,241,.15); color: #a5b4fc; }
+    .fc-progress { display: flex; gap: 4px; margin-top: 16px; }
+    .fc-pip { height: 3px; flex: 1; border-radius: 3px; background: rgba(255,255,255,.1); }
+    .fc-pip.done { background: var(--pink); }
+
+    /* Grammar mockup */
+    .gram-ui { padding: 20px; }
+    .gram-rule {
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px; padding: 16px; margin-bottom: 10px;
+    }
+    .gram-title { color: #fff; font-size: 13px; font-weight: 800; margin-bottom: 8px; }
+    .gram-row { display: flex; gap: 8px; margin-bottom: 6px; }
+    .gram-cell {
+      flex: 1; background: rgba(255,255,255,.04); border-radius: 8px;
+      padding: 8px 10px; font-size: 11px; color: rgba(255,255,255,.6);
+    }
+    .gram-cell.head { color: #FF8FA6; font-weight: 700; background: rgba(255,95,126,.08); }
+    .gram-cell b { color: rgba(255,255,255,.85); display: block; font-size: 13px; font-weight: 700; }
+
+    /* ── LANGUAGES ── */
+    .langs-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .lang-card {
+      background: var(--white); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px 16px; text-align: center; text-decoration: none; color: var(--ink);
+      transition: border-color .15s, transform .15s, box-shadow .15s;
+    }
+    .lang-card:hover {
+      border-color: var(--red); transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(192,21,62,.1);
+    }
+    .lang-flag { font-size: 36px; margin-bottom: 8px; }
+    .lang-name { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+    .lang-speakers { font-size: 11px; color: var(--muted); }
+
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 28px;
+    }
+    .step-card { text-align: center; }
+    .step-num-wrap { margin: 0 auto 20px; position: relative; display: inline-block; }
+    .step-circle {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--grad); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900;
+      box-shadow: 0 4px 16px rgba(192,21,62,.35);
+    }
+    .step-card h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; }
+    .step-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+    .steps-connector {
+      display: flex; align-items: center; justify-content: center;
+      padding-top: 28px;
+    }
+    .connector-line { flex: 1; height: 2px; background: var(--border); }
+    .connector-arrow { font-size: 18px; color: var(--light); padding: 0 8px; }
+
+    /* ── COMPARISON ── */
+    .compare-table {
+      width: 100%; border-collapse: separate; border-spacing: 0 0;
+      border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,.06);
+    }
+    .compare-table th, .compare-table td {
+      padding: 16px 20px; text-align: left; background: var(--white); border-bottom: 1px solid var(--border);
+    }
+    .compare-table th { font-size: 13px; font-weight: 800; color: var(--muted); }
+    .compare-table td { font-size: 14px; color: var(--slate); }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .col-us { background: rgba(192,21,62,.03) !important; }
+    .col-us-head { background: rgba(192,21,62,.06) !important; color: var(--red) !important; font-weight: 900 !important; font-size: 15px !important; }
+    .check-yes { color: #16a34a; font-size: 16px; font-weight: 900; }
+    .check-no { color: #94a3b8; font-size: 14px; }
+    .check-partial { color: #d97706; font-size: 14px; }
+    .compare-table th:first-child { border-radius: 16px 0 0 0; }
+    .compare-table th:last-child { border-radius: 0 16px 0 0; }
+
+    /* ── PRICING ── */
+    .pricing-toggle {
+      display: inline-flex; align-items: center; gap: 0;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: 44px; overflow: hidden;
+    }
+    .pricing-toggle button {
+      padding: 10px 24px; font-size: 14px; font-weight: 700;
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      transition: all .2s;
+    }
+    .pricing-toggle button.active {
+      background: var(--white); color: var(--ink);
+      box-shadow: 0 1px 4px rgba(0,0,0,.1); border-radius: 10px; margin: 3px;
+    }
+    .save-badge {
+      display: inline-block; font-size: 10px; font-weight: 800;
+      background: #dcfce7; color: #16a34a;
+      border-radius: 20px; padding: 2px 8px; margin-left: 6px;
+    }
+    .pricing-cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px; max-width: 900px; margin: 0 auto;
+    }
+    .price-card {
+      background: var(--white); border: 2px solid var(--border);
+      border-radius: 20px; padding: 32px; position: relative;
+    }
+    .price-card.featured {
+      border-color: var(--red); background: var(--white);
+      box-shadow: 0 8px 32px rgba(192,21,62,.12);
+    }
+    .popular-badge {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--grad); color: #fff;
+      font-size: 11px; font-weight: 800; padding: 4px 16px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .price-tier { font-size: 14px; font-weight: 800; color: var(--muted); margin-bottom: 12px; }
+    .price-amount { font-size: 54px; font-weight: 900; color: var(--ink); line-height: 1; }
+    .price-amount sup { font-size: 24px; font-weight: 700; vertical-align: top; margin-top: 12px; }
+    .price-period { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .price-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .price-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--slate);
+    }
+    .price-features li .pf-icon { font-size: 16px; flex-shrink: 0; }
+    .btn-price {
+      display: block; text-align: center; padding: 15px;
+      border-radius: 12px; font-size: 15px; font-weight: 800; text-decoration: none;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-price:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-price.primary { background: var(--grad); color: #fff; box-shadow: 0 4px 16px rgba(192,21,62,.3); }
+    .btn-price.outline { border: 2px solid var(--border); color: var(--slate); }
+    .btn-price.outline:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+    .faq-item {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+    }
+    .faq-q {
+      width: 100%; padding: 20px 24px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      font-size: 15px; font-weight: 700; color: var(--ink);
+      transition: background .1s;
+    }
+    .faq-q:hover { background: var(--bg); }
+    .faq-arrow { color: var(--muted); transition: transform .25s; font-size: 18px; flex-shrink: 0; }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); color: var(--red); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+    }
+    .faq-a-inner {
+      padding: 0 24px 20px; font-size: 14px; color: var(--muted); line-height: 1.75;
+    }
+    .faq-a-inner a { color: var(--red); text-decoration: none; }
+    .faq-a-inner a:hover { text-decoration: underline; }
+
+    /* ── FINAL CTA ── */
+    .cta-section {
+      padding: 100px 24px;
+      background: var(--dark); text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: "";
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 600px; height: 400px; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255,95,126,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 {
+      font-size: clamp(34px, 5vw, 62px); font-weight: 900;
+      color: #fff; letter-spacing: -1px; margin-bottom: 18px; position: relative;
+    }
+    .cta-section p {
+      font-size: 18px; color: rgba(255,255,255,.55); margin-bottom: 40px; position: relative;
+    }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .btn-cta-large {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--grad); color: #fff; font-size: 17px; font-weight: 800;
+      padding: 18px 36px; border-radius: 16px; text-decoration: none;
+      box-shadow: 0 8px 32px rgba(192,21,62,.45);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .btn-cta-large:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(192,21,62,.55); }
+    .btn-cta-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.8); font-size: 17px; font-weight: 700;
+      padding: 18px 32px; border-radius: 16px; text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-cta-ghost:hover { background: rgba(255,255,255,.14); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #08091a; padding: 48px 24px 32px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-inner {
+      max-width: 1060px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand img { height: 34px; margin-bottom: 14px; }
+    .footer-brand p { font-size: 13px; color: rgba(255,255,255,.35); line-height: 1.7; max-width: 280px; }
+    .footer-col h4 { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 14px; }
+    .footer-col a {
+      display: block; font-size: 13px; color: rgba(255,255,255,.45);
+      text-decoration: none; margin-bottom: 10px; transition: color .15s;
+    }
+    .footer-col a:hover { color: rgba(255,255,255,.8); }
+    .footer-bottom {
+      max-width: 1060px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+      padding-top: 28px; border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,.25); }
+    .footer-langs {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .footer-lang {
+      font-size: 12px; color: rgba(255,255,255,.25); text-decoration: none; transition: color .15s;
+    }
+    .footer-lang:hover { color: rgba(255,255,255,.6); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+      .hero-sub { margin: 0 auto 40px; }
+      .hero-ctas { justify-content: center; }
+      .hero-trust { justify-content: center; }
+      .hero-visual { display: none; }
+      .feature-split { grid-template-columns: 1fr; }
+      .feature-split.flip { direction: ltr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .section { padding: 60px 20px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+      .compare-table { font-size: 12px; }
+      .compare-table th, .compare-table td { padding: 12px 10px; }
+      .pricing-cards { grid-template-columns: 1fr; }
+      .stats-inner { gap: 32px; }
+    }
+  </style>
+
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tongue",
+    "applicationCategory": "EducationalApplication",
+    "description": "AI-powered language learning app for 12 languages. Personal AI tutor, smart flashcards, and grammar on demand.",
+    "offers": [
+      { "@type": "Offer", "price": "0", "priceCurrency": "USD", "name": "Free Plan" },
+      { "@type": "Offer", "price": "9", "priceCurrency": "USD", "priceSpecification": { "billingDuration": "P1M" }, "name": "Monthly Premium" },
+      { "@type": "Offer", "price": "79", "priceCurrency": "USD", "priceSpecification": { "billingDuration": "P1Y" }, "name": "Yearly Premium" }
+    ],
+    "url": "https://tonge-app.fly.dev"
+  }
+  </script>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><img src="/logo.svg" alt="Tongue"/></a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#languages">Languages</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <a href="/app" class="nav-signin">Sign in</a>
+      <a href="/app" class="btn-grad">Start free →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-badge"><span></span> AI-Powered · 12 Languages · No credit card</div>
+      <h1>Speak every<br><em>tongue.</em></h1>
+      <p class="hero-sub">Your personal AI language tutor. Personalised exercises, smart flashcards, native audio, and real grammar — whenever you want.</p>
+      <div class="hero-ctas">
+        <a href="/app" class="btn-hero-primary">Start for free →</a>
+        <a href="#pricing" class="btn-hero-secondary">See pricing</a>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item">✓ Free plan, no credit card</div>
+        <div class="trust-dot"></div>
+        <div class="trust-item">✓ Works in any browser</div>
+        <div class="trust-dot"></div>
+        <div class="trust-item">✓ Cancel anytime</div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone-wrap">
+        <!-- Floating card: left -->
+        <div class="float-card float-left">
+          <div class="float-icon">🔥</div>
+          <div class="float-text">
+            <div class="float-label">14-day streak</div>
+            <div class="float-sub">Keep it up!</div>
+          </div>
+        </div>
+
+        <div class="phone">
+          <div class="phone-status">
+            <div class="phone-time">9:41</div>
+            <div class="phone-icons">▲ ⬡ 🔋</div>
+          </div>
+          <div class="phone-header">
+            <div class="phone-lang-icon">🇫🇷</div>
+            <div class="phone-lang-info">
+              <div class="phone-lang-name">AI Coach · French</div>
+              <div class="phone-lang-sub">● Online now</div>
+            </div>
+          </div>
+          <div class="phone-body">
+            <div class="chat-bubble chat-user">How do you say "where is the train station?"</div>
+            <div class="chat-bubble chat-ai">
+              <strong>Où est la gare ?</strong><br>
+              <span style="font-size:11px;opacity:.7">lit. "Where is the station?"</span>
+            </div>
+            <div class="phone-words">
+              <div class="phone-word">
+                <span class="word-flag">📍</span>
+                <span class="word-text">
+                  <div class="word-orig">Où</div>
+                  <div class="word-trans">where</div>
+                </span>
+                <span class="word-save">💾</span>
+              </div>
+              <div class="phone-word">
+                <span class="word-flag">🚉</span>
+                <span class="word-text">
+                  <div class="word-orig">la gare</div>
+                  <div class="word-trans">the station</div>
+                </span>
+                <span class="word-save">💾</span>
+              </div>
+            </div>
+          </div>
+          <div class="phone-tabs">
+            <div class="phone-tab active">
+              <div class="phone-tab-icon">🤖</div>
+              AI Coach
+            </div>
+            <div class="phone-tab">
+              <div class="phone-tab-icon">🃏</div>
+              Cards
+            </div>
+            <div class="phone-tab">
+              <div class="phone-tab-icon">📖</div>
+              Grammar
+            </div>
+            <div class="phone-tab">
+              <div class="phone-tab-icon">🌍</div>
+              Langs
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating card: right -->
+        <div class="float-card float-right">
+          <div class="float-icon">🃏</div>
+          <div class="float-text">
+            <div class="float-label">47 cards due</div>
+            <div class="float-sub">Review now</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS BAR ─────────────────────────────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat"><div class="stat-num">12</div><div class="stat-label">Languages</div></div>
+    <div class="stat"><div class="stat-num">AI</div><div class="stat-label">Powered Tutor</div></div>
+    <div class="stat"><div class="stat-num">SRS</div><div class="stat-label">Smart Flashcards</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always available</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-label">To start</div></div>
+  </div>
+</div>
+
+<!-- ── FEATURES ──────────────────────────────────────────────────────────────── -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="eyebrow">Features</div>
+    <h2>Everything you need<br>to reach fluency</h2>
+    <p class="section-sub">No filler exercises, no gamification tricks. Just the tools that actually build language skills.</p>
+
+    <!-- Feature 1: AI Coach -->
+    <div class="feature-split">
+      <div class="feature-copy">
+        <div class="feature-tag"><span class="feature-tag-icon">🤖</span> AI Language Coach</div>
+        <h3>Your personal tutor,<br>available 24/7</h3>
+        <p>Practice conversations, get instant corrections, ask grammar questions, or request custom exercises — all in a chat that adapts to your level and learning style.</p>
+        <ul class="feature-bullets">
+          <li>Personalised exercises tailored to your weaknesses</li>
+          <li>Real-time corrections with explanations</li>
+          <li>Role-play scenarios: café, airport, job interview</li>
+          <li>Switches between teaching and conversation mode</li>
+          <li>Never the same lesson twice</li>
+        </ul>
+      </div>
+      <div class="feature-ui">
+        <div class="ui-titlebar">
+          <div class="ui-dots"><div class="ui-dot"></div><div class="ui-dot"></div><div class="ui-dot"></div></div>
+          <div class="ui-title">🇯🇵 AI Coach · Japanese</div>
+        </div>
+        <div class="ui-body">
+          <div class="ui-msg user">Give me a fill-in-the-blank about directions</div>
+          <div class="ui-msg ai">
+            <div class="ui-tag">Exercise</div>
+            <b>駅はどこ___ありますか？</b><br>
+            <span style="font-size:12px;opacity:.65">Eki wa doko ___ arimasu ka?<br>"Where ___ the station?"</span>
+          </div>
+          <div class="ui-msg user">に</div>
+          <div class="ui-msg ai">
+            <div class="ui-tag">✓ Correct</div>
+            <b>に (ni)</b> marks location! Perfect.<br>
+            <span style="font-size:12px;opacity:.65">駅はどこ<b style="color:#4ade80">に</b>ありますか？<br>Let's try another...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: Flashcards -->
+    <div class="feature-split flip">
+      <div class="feature-copy">
+        <div class="feature-tag"><span class="feature-tag-icon">🃏</span> Smart Flashcards</div>
+        <h3>Never forget<br>a word again</h3>
+        <p>Save any word or phrase directly from conversations. The SM-2 spaced repetition algorithm reviews each card at exactly the right moment — just before you'd forget it.</p>
+        <ul class="feature-bullets">
+          <li>One tap to save any word from the AI Coach</li>
+          <li>Proven SM-2 algorithm, same as Anki</li>
+          <li>Native audio on every card</li>
+          <li>Review sessions take 5–15 minutes per day</li>
+          <li>Track your retention rate over time</li>
+        </ul>
+      </div>
+      <div class="feature-ui">
+        <div class="ui-titlebar">
+          <div class="ui-dots"><div class="ui-dot"></div><div class="ui-dot"></div><div class="ui-dot"></div></div>
+          <div class="ui-title">🃏 Flashcard Review · Spanish</div>
+        </div>
+        <div class="ui-body">
+          <div class="fc-wrap">
+            <div class="fc">
+              <div class="fc-lang">🇪🇸 Spanish</div>
+              <div class="fc-word">madrugada</div>
+              <div class="fc-phonetic">mah-droo-GAH-dah</div>
+              <div class="fc-trans">the small hours (after midnight)</div>
+              <div class="fc-buttons">
+                <div class="fc-btn hard">Hard<br><small>1d</small></div>
+                <div class="fc-btn good">Good<br><small>4d</small></div>
+                <div class="fc-btn easy">Easy<br><small>10d</small></div>
+              </div>
+              <div class="fc-progress">
+                <div class="fc-pip done"></div><div class="fc-pip done"></div>
+                <div class="fc-pip done"></div><div class="fc-pip done"></div>
+                <div class="fc-pip done"></div><div class="fc-pip done"></div>
+                <div class="fc-pip"></div><div class="fc-pip"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Grammar -->
+    <div class="feature-split">
+      <div class="feature-copy">
+        <div class="feature-tag"><span class="feature-tag-icon">📖</span> Grammar Reference</div>
+        <h3>Deep grammar,<br>explained your way</h3>
+        <p>Comprehensive AI-generated grammar guides for every language. Explained in your native language, with interactive tables, examples, and audio. Not the dry textbook version.</p>
+        <ul class="feature-bullets">
+          <li>Complete coverage: verbs, nouns, articles, syntax</li>
+          <li>Explained in relation to YOUR native language</li>
+          <li>Examples you can tap to hear spoken</li>
+          <li>Quick-reference cheat sheets</li>
+          <li>All 12 language pairs covered</li>
+        </ul>
+      </div>
+      <div class="feature-ui">
+        <div class="ui-titlebar">
+          <div class="ui-dots"><div class="ui-dot"></div><div class="ui-dot"></div><div class="ui-dot"></div></div>
+          <div class="ui-title">📖 Grammar · German Articles</div>
+        </div>
+        <div class="gram-ui">
+          <div class="gram-rule">
+            <div class="gram-title">Definite Articles (der/die/das)</div>
+            <div class="gram-row">
+              <div class="gram-cell head">Gender</div>
+              <div class="gram-cell head">Nominative</div>
+              <div class="gram-cell head">Accusative</div>
+            </div>
+            <div class="gram-row">
+              <div class="gram-cell"><b>Masculine</b>der Mann</div>
+              <div class="gram-cell">der</div>
+              <div class="gram-cell" style="color:#FF8FA6">den</div>
+            </div>
+            <div class="gram-row">
+              <div class="gram-cell"><b>Feminine</b>die Frau</div>
+              <div class="gram-cell">die</div>
+              <div class="gram-cell">die</div>
+            </div>
+            <div class="gram-row">
+              <div class="gram-cell"><b>Neuter</b>das Kind</div>
+              <div class="gram-cell">das</div>
+              <div class="gram-cell">das</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LANGUAGES ─────────────────────────────────────────────────────────────── -->
+<section class="section section-alt" id="languages">
+  <div class="section-inner text-center">
+    <div class="eyebrow">12 Languages</div>
+    <h2>One subscription.<br>Every tongue.</h2>
+    <p class="section-sub">Switch between languages anytime. Study French this week, dip into Japanese next month — no extra charge.</p>
+    <div class="langs-grid">
+      <a href="/learn-french" class="lang-card"><div class="lang-flag">🇫🇷</div><div class="lang-name">French</div><div class="lang-speakers">300M speakers</div></a>
+      <a href="/learn-spanish" class="lang-card"><div class="lang-flag">🇪🇸</div><div class="lang-name">Spanish</div><div class="lang-speakers">500M+ speakers</div></a>
+      <a href="/learn-portuguese" class="lang-card"><div class="lang-flag">🇧🇷</div><div class="lang-name">Portuguese</div><div class="lang-speakers">260M speakers</div></a>
+      <a href="/learn-italian" class="lang-card"><div class="lang-flag">🇮🇹</div><div class="lang-name">Italian</div><div class="lang-speakers">85M speakers</div></a>
+      <a href="/learn-german" class="lang-card"><div class="lang-flag">🇩🇪</div><div class="lang-name">German</div><div class="lang-speakers">130M speakers</div></a>
+      <a href="/learn-english" class="lang-card"><div class="lang-flag">🇺🇸</div><div class="lang-name">English</div><div class="lang-speakers">1.5B speakers</div></a>
+      <a href="/learn-chinese" class="lang-card"><div class="lang-flag">🇨🇳</div><div class="lang-name">Chinese</div><div class="lang-speakers">1.3B speakers</div></a>
+      <a href="/learn-japanese" class="lang-card"><div class="lang-flag">🇯🇵</div><div class="lang-name">Japanese</div><div class="lang-speakers">125M speakers</div></a>
+      <a href="/learn-korean" class="lang-card"><div class="lang-flag">🇰🇷</div><div class="lang-name">Korean</div><div class="lang-speakers">80M speakers</div></a>
+      <a href="/learn-russian" class="lang-card"><div class="lang-flag">🇷🇺</div><div class="lang-name">Russian</div><div class="lang-speakers">260M speakers</div></a>
+      <a href="/learn-arabic" class="lang-card"><div class="lang-flag">🇸🇦</div><div class="lang-name">Arabic</div><div class="lang-speakers">420M speakers</div></a>
+      <a href="/learn-hindi" class="lang-card"><div class="lang-flag">🇮🇳</div><div class="lang-name">Hindi</div><div class="lang-speakers">600M+ speakers</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="section-inner text-center">
+    <div class="eyebrow">How it works</div>
+    <h2>Zero to speaking<br>in three steps</h2>
+    <p class="section-sub">No downloads required. Works in your browser on any device — phone, tablet, or laptop.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num-wrap"><div class="step-circle">1</div></div>
+        <h3>Create your free account</h3>
+        <p>Sign up with your email for the free plan. Upgrade to Premium anytime — your access code arrives instantly by email.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num-wrap"><div class="step-circle">2</div></div>
+        <h3>Pick your language</h3>
+        <p>Choose from 12 languages. Tell the AI your native language and current level — it adjusts from day one.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num-wrap"><div class="step-circle">3</div></div>
+        <h3>Practice 20 minutes daily</h3>
+        <p>AI Coach + Flashcard reviews + Grammar. Consistent daily practice beats long weekend sessions. You'll feel progress within a week.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPARISON ─────────────────────────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="section-inner text-center">
+    <div class="eyebrow">Why Tongue</div>
+    <h2>Not another<br>flashcard app</h2>
+    <p class="section-sub">Duolingo is for streaks. Private tutors cost $60/hr. Tongue gives you a real AI tutor for $9 a month.</p>
+    <div style="overflow-x:auto">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Duolingo</th>
+            <th>Private Tutor</th>
+            <th class="col-us-head">Tongue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Price</strong></td>
+            <td>Free / $7/mo</td>
+            <td>$40–80/hr</td>
+            <td class="col-us"><strong>$9/mo or free</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Personalised lessons</strong></td>
+            <td class="check-no">✗ Fixed paths</td>
+            <td class="check-yes">✓ Yes</td>
+            <td class="col-us check-yes">✓ AI-personalised</td>
+          </tr>
+          <tr>
+            <td><strong>Available 24/7</strong></td>
+            <td class="check-yes">✓ Yes</td>
+            <td class="check-no">✗ Scheduled only</td>
+            <td class="col-us check-yes">✓ Always on</td>
+          </tr>
+          <tr>
+            <td><strong>Grammar depth</strong></td>
+            <td class="check-partial">⚡ Basic</td>
+            <td class="check-yes">✓ High</td>
+            <td class="col-us check-yes">✓ Complete reference</td>
+          </tr>
+          <tr>
+            <td><strong>Smart flashcards (SRS)</strong></td>
+            <td class="check-partial">⚡ Basic</td>
+            <td class="check-no">✗ No</td>
+            <td class="col-us check-yes">✓ SM-2 algorithm</td>
+          </tr>
+          <tr>
+            <td><strong>Real conversation practice</strong></td>
+            <td class="check-no">✗ No</td>
+            <td class="check-yes">✓ Yes</td>
+            <td class="col-us check-yes">✓ AI conversations</td>
+          </tr>
+          <tr>
+            <td><strong>All 12 languages</strong></td>
+            <td class="check-partial">⚡ Fewer</td>
+            <td class="check-partial">⚡ One at a time</td>
+            <td class="col-us check-yes">✓ All included</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ────────────────────────────────────────────────────────────────── -->
+<section class="section" id="pricing">
+  <div class="section-inner text-center">
+    <div class="eyebrow">Pricing</div>
+    <h2>Start free.<br>Go Premium when ready.</h2>
+    <p class="section-sub">No hidden fees. One subscription covers all 12 languages. Cancel anytime in one click.</p>
+
+    <div class="pricing-toggle">
+      <button class="active" id="toggle-monthly">Monthly</button>
+      <button id="toggle-yearly">Yearly <span class="save-badge">Save 27%</span></button>
+    </div>
+
+    <div class="pricing-cards">
+      <!-- Free -->
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount"><sup>$</sup>0</div>
+        <div class="price-period">forever free</div>
+        <div class="price-desc">Start learning today. No credit card required.</div>
+        <ul class="price-features">
+          <li><span class="pf-icon">🤖</span> 5 AI Coach messages per day</li>
+          <li><span class="pf-icon">📖</span> Full grammar &amp; vocabulary reference</li>
+          <li><span class="pf-icon">🌍</span> All 12 languages</li>
+          <li><span class="pf-icon">🃏</span> Flashcards (browser-based, SM-2)</li>
+          <li><span class="pf-icon">💬</span> Drills, Dialogues &amp; Word Space</li>
+          <li><span class="pf-icon" style="opacity:.35">🔥</span> <span style="opacity:.5">Streak sync (Premium)</span></li>
+          <li><span class="pf-icon" style="opacity:.35">⚡</span> <span style="opacity:.5">300 AI messages/day (Premium)</span></li>
+        </ul>
+        <a href="/app" class="btn-price outline">Start free →</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="price-card featured">
+        <div class="popular-badge">Most popular</div>
+        <div class="price-tier">Premium</div>
+        <div class="price-amount" id="price-display"><sup>$</sup>9</div>
+        <div class="price-period" id="period-display">per month</div>
+        <div class="price-desc">Everything you need for real fluency, at a fraction of tutor prices.</div>
+        <ul class="price-features">
+          <li><span class="pf-icon">🤖</span> <strong>300 AI Coach messages</strong> per day</li>
+          <li><span class="pf-icon">🔥</span> Streak tracking &amp; sync across devices</li>
+          <li><span class="pf-icon">🌍</span> All 12 languages</li>
+          <li><span class="pf-icon">📖</span> Full grammar reference</li>
+          <li><span class="pf-icon">🃏</span> Flashcards, Drills, Dialogues, Word Space</li>
+          <li><span class="pf-icon">🌐</span> Set your native language for AI explanations</li>
+          <li><span class="pf-icon">💻</span> Use on up to 2 devices simultaneously</li>
+        </ul>
+        <a href="/subscribe" class="btn-price primary" id="price-cta">Get Premium — $9/month →</a>
+      </div>
+    </div>
+
+    <p style="margin-top:24px;font-size:13px;color:var(--light)">
+      All plans include a 7-day money-back guarantee. No questions asked.
+    </p>
+  </div>
+</section>
+
+<!-- ── FAQ ───────────────────────────────────────────────────────────────────── -->
+<section class="section section-alt">
+  <div class="section-inner">
+    <div class="text-center">
+      <div class="eyebrow">FAQ</div>
+      <h2>Common questions</h2>
+      <p class="section-sub">Can't find your answer? <a href="/faq" style="color:var(--red);text-decoration:none">Visit the full FAQ →</a></p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q">
+          What is included in the free plan?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">The free plan gives you 5 AI Coach messages per day, full grammar and vocabulary reference for all 12 languages, browser-based flashcards (SM-2), drills, dialogues, and Word Space. Premium upgrades your AI Coach to 300 messages per day and adds streak sync across devices.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          How does access work? Do I need to download an app?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">No download needed. Tongue runs entirely in your browser on any device — iPhone, Android, tablet, or laptop. When you subscribe, you receive an access code (format TG-XXXXXXXX) by email. Enter it on the login screen and you're in. Free users sign up with just their email address.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Can I use one subscription for multiple languages?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Yes. One subscription gives you unlimited access to all 12 languages. Switch between them anytime from the Languages tab inside the app. Your flashcards and progress are saved per language.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Can I use Tongue on multiple devices?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Yes, your access code works on up to 2 devices at the same time. If you need to transfer it to a new device, simply sign out of one and sign in on the other. Forgot your code? Use the "Resend Code" option on the login page — we'll email it to you instantly.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          How do I cancel? Is there a refund policy?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Cancel anytime from Account → Manage Billing inside the app. Your access remains active until the end of the billing period. We offer a full refund within 7 days of any purchase — no questions asked. Just reply to any email you've received from us.</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          How is Tongue different from Duolingo?
+          <span class="faq-arrow">▾</span>
+        </button>
+        <div class="faq-a">
+          <div class="faq-a-inner">Duolingo is great for beginners and habit-building, but it follows fixed lesson paths that don't adapt to you. Tongue uses a real AI tutor that adapts every session to your level, answers your actual questions, explains grammar in depth, and gives you personalised exercises. Think of it as a private tutor at $9/month rather than $60/hour.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ──────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <h2>Ready to start speaking?</h2>
+  <p>Join thousands of learners. Start free today — no credit card required.</p>
+  <div class="cta-btns">
+    <a href="/app" class="btn-cta-large">Start for free →</a>
+    <a href="/subscribe" class="btn-cta-ghost">See Premium plans</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="/logo-white.svg" alt="Tongue"/>
+      <p>An AI-powered language learning platform built for people who are serious about becoming fluent. Start free, upgrade when you're ready.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="/app">Open App</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="/subscribe">Subscribe</a>
+    </div>
+    <div class="footer-col">
+      <h4>Languages</h4>
+      <a href="/learn-french">French</a>
+      <a href="/learn-spanish">Spanish</a>
+      <a href="/learn-japanese">Japanese</a>
+      <a href="/learn-german">German</a>
+      <a href="/learn-arabic">Arabic</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="/faq">FAQ &amp; Help</a>
+      <a href="/app">Resend Access Code</a>
+      <a href="/terms">Terms of Service</a>
+      <a href="/privacy">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Tongue. AI-powered language learning. All rights reserved.</div>
+    <div class="footer-langs">
+      <a href="/learn-french" class="footer-lang">🇫🇷 French</a>
+      <a href="/learn-spanish" class="footer-lang">🇪🇸 Spanish</a>
+      <a href="/learn-portuguese" class="footer-lang">🇧🇷 Portuguese</a>
+      <a href="/learn-italian" class="footer-lang">🇮🇹 Italian</a>
+      <a href="/learn-german" class="footer-lang">🇩🇪 German</a>
+      <a href="/learn-english" class="footer-lang">🇺🇸 English</a>
+      <a href="/learn-chinese" class="footer-lang">🇨🇳 Chinese</a>
+      <a href="/learn-japanese" class="footer-lang">🇯🇵 Japanese</a>
+      <a href="/learn-korean" class="footer-lang">🇰🇷 Korean</a>
+      <a href="/learn-russian" class="footer-lang">🇷🇺 Russian</a>
+      <a href="/learn-arabic" class="footer-lang">🇸🇦 Arabic</a>
+      <a href="/learn-hindi" class="footer-lang">🇮🇳 Hindi</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Pricing toggle ──────────────────────────────────────────────────────────
+  const btnM = document.getElementById("toggle-monthly");
+  const btnY = document.getElementById("toggle-yearly");
+  const priceDisplay = document.getElementById("price-display");
+  const periodDisplay = document.getElementById("period-display");
+  const priceCta = document.getElementById("price-cta");
+
+  btnM.addEventListener("click", () => {
+    btnM.classList.add("active"); btnY.classList.remove("active");
+    priceDisplay.innerHTML = "<sup>$</sup>9";
+    periodDisplay.textContent = "per month";
+    priceCta.textContent = "Get Premium — $9/month →";
+  });
+  btnY.addEventListener("click", () => {
+    btnY.classList.add("active"); btnM.classList.remove("active");
+    priceDisplay.innerHTML = "<sup>$</sup>79";
+    periodDisplay.textContent = "per year · save $29";
+    priceCta.textContent = "Get Premium — $79/year →";
+  });
+
+  // ── FAQ accordion ───────────────────────────────────────────────────────────
+  document.querySelectorAll(".faq-q").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const item = btn.parentElement;
+      const ans  = item.querySelector(".faq-a");
+      const isOpen = item.classList.contains("open");
+
+      // Close all
+      document.querySelectorAll(".faq-item").forEach(i => {
+        i.classList.remove("open");
+        i.querySelector(".faq-a").style.maxHeight = "0";
+      });
+
+      // Open this one if it was closed
+      if (!isOpen) {
+        item.classList.add("open");
+        ans.style.maxHeight = ans.scrollHeight + "px";
+      }
+    });
+  });
+
+  // ── Smooth nav active link ──────────────────────────────────────────────────
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".nav-links a[href^='#']");
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.style.color = "");
+        const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+        if (link) link.style.color = "#C0153E";
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

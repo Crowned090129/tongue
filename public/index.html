@@ -439,7 +439,16 @@ function makeBackState(currentStack) {
 }
 
 // Native language preference (module-level so askClaude can read it without prop drilling)
-let _nativeLang = (() => { try { return localStorage.getItem("native_lang") || "en"; } catch(e) { return "en"; } })();
+let _nativeLang = (() => {
+  const SUPPORTED = ["en","fr","es","pt","it","de","zh","ja","ko","ru","ar","hi"];
+  try {
+    const saved = localStorage.getItem("native_lang");
+    if (saved && SUPPORTED.includes(saved)) return saved;
+    // Default to the device/browser language when the user hasn't chosen one.
+    const dev = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").slice(0,2).toLowerCase();
+    return SUPPORTED.includes(dev) ? dev : "en";
+  } catch(e) { return "en"; }
+})();
 
 // ─── LANGUAGE CONFIG ─────────────────────────────────────────────────────────
 const TARGETS = {
