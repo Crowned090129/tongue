@@ -1,21 +1,61 @@
 const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM = `${process.env.EMAIL_FROM_NAME || "Tonge"} <${process.env.EMAIL_FROM || "noreply@example.com"}>`;
+// SMTP transport (e.g. Gmail). Set SMTP_HOST + SMTP_USER + SMTP_PASS to enable.
+// For Gmail: SMTP_HOST=smtp.gmail.com, SMTP_PORT=465, SMTP_USER=you@gmail.com,
+// SMTP_PASS=<16-char Google App Password> (requires 2-Step Verification on).
+const smtpTransport = (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || "465", 10),
+      secure: (process.env.SMTP_PORT || "465") === "465",
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    })
+  : null;
+
+// Sender: falls back to the SMTP user (Gmail address) so Gmail doesn't reject it.
+const FROM = `${process.env.EMAIL_FROM_NAME || "Tongue"} <${process.env.EMAIL_FROM || process.env.SMTP_USER || "noreply@example.com"}>`;
 const APP_URL = process.env.APP_URL || "http://localhost:3000";
 
+const emailHeader = `
+  <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;border-radius:12px 12px 0 0;text-align:center">
+    <div style="font-size:36px;margin-bottom:4px">👅</div>
+    <div style="color:#fff;font-size:20px;font-weight:900;letter-spacing:0.5px">TONGUE</div>
+    <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
+  </div>`;
+
+const emailFooter = `
+  <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
+  <p style="color:#94a3b8;font-size:11px;text-align:center">
+    © Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a><br>
+    Questions? Reply to this email.
+  </p>`;
+
 async function sendEmail(to, subject, html) {
-  if (!resend) {
-    console.log(`[EMAIL] To: ${to}\nSubject: ${subject}\n${html.replace(/<[^>]+>/g, "")}\n`);
-    return;
+  // Prefer SMTP (Gmail) when configured, then Resend, then log to console.
+  if (smtpTransport) {
+    try {
+      await smtpTransport.sendMail({ from: FROM, to, subject, html });
+      return;
+    } catch (e) {
+      console.error("[EMAIL] SMTP send failed:", e.message);
+      // fall through to Resend if available
+    }
   }
-  try {
-    await resend.emails.send({ from: FROM, to, subject, html });
-  } catch (e) {
-    console.error("Email send failed:", e.message);
+  if (resend) {
+    try {
+      await resend.emails.send({ from: FROM, to, subject, html });
+      return;
+    } catch (e) {
+      console.error("[EMAIL] Resend send failed:", e.message);
+    }
+  }
+  if (!smtpTransport && !resend) {
+    console.log(`[EMAIL] (no transport configured) To: ${to}\nSubject: ${subject}\n${html.replace(/<[^>]+>/g, "")}\n`);
   }
 }
 
@@ -23,35 +63,33 @@ function welcomeEmail(email, code, plan) {
   const planLabel = plan === "yearly" ? "Annual ($79/year)" : "Monthly ($9/month)";
   return sendEmail(
     email,
-    "Your Tonge Access Code",
+    "Your Tongue Access Code 👅",
     `
-    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h1 style="color:#2563eb;font-size:24px;margin-bottom:4px">🌐 Welcome to Tonge!</h1>
-      <p style="color:#334155;font-size:15px">Your subscription is active. Here is your access code:</p>
+    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+      ${emailHeader}
+      <div style="padding:28px">
+        <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Welcome! Your subscription is active.</h1>
+        <p style="color:#334155;font-size:14px;margin:0 0 20px">Here is your personal access code. Keep it safe — you'll need it to log in on any device.</p>
 
-      <div style="background:#f1f5f9;border:2px solid #2563eb;border-radius:12px;padding:20px;text-align:center;margin:20px 0">
-        <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Your Access Code</div>
-        <div style="font-size:28px;font-weight:900;color:#2563eb;letter-spacing:4px">${code}</div>
+        <div style="background:#fff0f4;border:2px solid #C0153E;border-radius:12px;padding:22px;text-align:center;margin-bottom:22px">
+          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Your Access Code</div>
+          <div style="font-size:30px;font-weight:900;color:#C0153E;letter-spacing:4px">${code}</div>
+        </div>
+
+        <p style="color:#334155;font-size:14px;font-weight:700;margin:0 0 8px">How to use it:</p>
+        <ol style="color:#334155;font-size:14px;line-height:2;margin:0 0 20px;padding-left:18px">
+          <li>Go to <a href="${APP_URL}" style="color:#C0153E">${APP_URL}</a></li>
+          <li>Click <strong>"I Have a Code"</strong></li>
+          <li>Enter the code above and tap <strong>Access App</strong></li>
+        </ol>
+
+        <div style="background:#f8fafc;border-radius:10px;padding:14px;font-size:13px;color:#64748b">
+          <strong>Plan:</strong> ${planLabel}<br>
+          Your code renews automatically each billing cycle — we'll email you the new one.
+        </div>
+
+        ${emailFooter}
       </div>
-
-      <p style="color:#334155;font-size:14px"><strong>How to use it:</strong></p>
-      <ol style="color:#334155;font-size:14px;line-height:1.8">
-        <li>Go to <a href="${APP_URL}" style="color:#2563eb">${APP_URL}</a></li>
-        <li>Enter your access code when prompted</li>
-        <li>Start learning!</li>
-      </ol>
-
-      <p style="color:#64748b;font-size:13px;margin-top:20px">
-        <strong>Plan:</strong> ${planLabel}<br>
-        Your code renews automatically each billing cycle — we'll email you the new one.
-      </p>
-
-      <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
-      <p style="color:#94a3b8;font-size:12px">
-        Questions? Reply to this email.<br>
-        To cancel, open the app at <a href="${APP_URL}" style="color:#2563eb">${APP_URL}</a>
-        and go to <strong>Account → Manage Billing</strong>.
-      </p>
     </div>
     `
   );
@@ -61,23 +99,23 @@ function renewalEmail(email, code, plan) {
   const planLabel = plan === "yearly" ? "Annual" : "Monthly";
   return sendEmail(
     email,
-    "Your New Tonge Access Code",
+    "Your New Tongue Access Code 🔄",
     `
-    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h1 style="color:#2563eb;font-size:22px">🌐 Your subscription renewed!</h1>
-      <p style="color:#334155;font-size:15px">Your ${planLabel} subscription has renewed. Here is your new access code:</p>
+    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+      ${emailHeader}
+      <div style="padding:28px">
+        <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Your ${planLabel} subscription renewed!</h1>
+        <p style="color:#334155;font-size:14px;margin:0 0 20px">Here is your new access code. Your old code has been deactivated.</p>
 
-      <div style="background:#f1f5f9;border:2px solid #16a34a;border-radius:12px;padding:20px;text-align:center;margin:20px 0">
-        <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">New Access Code</div>
-        <div style="font-size:28px;font-weight:900;color:#16a34a;letter-spacing:4px">${code}</div>
+        <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:12px;padding:22px;text-align:center;margin-bottom:22px">
+          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">New Access Code</div>
+          <div style="font-size:30px;font-weight:900;color:#16a34a;letter-spacing:4px">${code}</div>
+        </div>
+
+        <p style="color:#64748b;font-size:13px">Sign in again at <a href="${APP_URL}" style="color:#C0153E">${APP_URL}</a> with the new code above.</p>
+
+        ${emailFooter}
       </div>
-
-      <p style="color:#64748b;font-size:13px">Your old code has been deactivated. Sign in again at <a href="${APP_URL}" style="color:#2563eb">${APP_URL}</a> with the new code above.</p>
-
-      <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
-      <p style="color:#94a3b8;font-size:12px">
-        To cancel future renewals, open the app and go to <strong>Account → Manage Billing</strong>.
-      </p>
     </div>
     `
   );
@@ -86,19 +124,23 @@ function renewalEmail(email, code, plan) {
 function cancellationEmail(email) {
   return sendEmail(
     email,
-    "Tonge Subscription Cancelled",
+    "Your Tongue subscription has been cancelled",
     `
-    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h1 style="color:#334155;font-size:22px">Your subscription has been cancelled</h1>
-      <p style="color:#334155;font-size:15px">
-        We're sorry to see you go. Your access code will remain active until the end of your current billing period.
-      </p>
-      <p style="color:#64748b;font-size:14px">
-        If this was a mistake, you can resubscribe anytime at
-        <a href="${APP_URL}/subscribe" style="color:#2563eb">${APP_URL}/subscribe</a>
-      </p>
-      <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
-      <p style="color:#94a3b8;font-size:12px">Thank you for being a subscriber. Good luck with your language learning! 🌐</p>
+    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+      ${emailHeader}
+      <div style="padding:28px">
+        <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Subscription cancelled</h1>
+        <p style="color:#334155;font-size:15px;margin:0 0 14px">
+          We're sorry to see you go. Your access code will stay active until the end of your current billing period.
+        </p>
+        <p style="color:#64748b;font-size:14px;margin:0 0 20px">
+          Changed your mind? You can resubscribe anytime at
+          <a href="${APP_URL}/subscribe" style="color:#C0153E">${APP_URL}/subscribe</a>
+        </p>
+        <p style="color:#94a3b8;font-size:13px">Thank you for learning with Tongue. We hope to see you again. 👅</p>
+
+        ${emailFooter}
+      </div>
     </div>
     `
   );
@@ -107,30 +149,32 @@ function cancellationEmail(email) {
 function paymentFailedEmail(email) {
   return sendEmail(
     email,
-    "⚠️ Action required: payment failed for Tonge",
+    "⚠️ Action required — Tongue payment failed",
     `
-    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h1 style="color:#dc2626;font-size:20px;margin-bottom:8px">⚠️ Payment failed</h1>
-      <p style="color:#334155;font-size:15px;margin-bottom:16px">
-        We couldn't process your Tonge subscription payment. Please update your payment method to avoid losing access.
-      </p>
+    <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+      ${emailHeader}
+      <div style="padding:28px">
+        <h1 style="color:#dc2626;font-size:20px;margin:0 0 8px">⚠️ Payment failed</h1>
+        <p style="color:#334155;font-size:15px;margin:0 0 16px">
+          We couldn't process your Tongue subscription payment. Please update your payment method to keep your access.
+        </p>
 
-      <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:16px;margin-bottom:20px">
-        <p style="color:#dc2626;font-size:14px;margin:0 0 10px;font-weight:700">How to update your payment method:</p>
-        <ol style="color:#334155;font-size:14px;line-height:1.9;margin:0;padding-left:18px">
-          <li>Open the app at <a href="${APP_URL}" style="color:#2563eb">${APP_URL}</a></li>
-          <li>Tap <strong>Account</strong> → <strong>Manage Billing</strong></li>
-          <li>Update your card details in the Stripe portal</li>
-        </ol>
+        <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:10px;padding:16px;margin-bottom:20px">
+          <p style="color:#dc2626;font-size:14px;margin:0 0 10px;font-weight:700">How to update your payment method:</p>
+          <ol style="color:#334155;font-size:14px;line-height:1.9;margin:0;padding-left:18px">
+            <li>Open the app at <a href="${APP_URL}" style="color:#C0153E">${APP_URL}</a></li>
+            <li>Tap <strong>Account</strong> → <strong>Manage Billing</strong></li>
+            <li>Update your card details in the Stripe portal</li>
+          </ol>
+        </div>
+
+        <p style="color:#64748b;font-size:13px">
+          Stripe will retry your payment automatically over the next few days.
+          If all retries fail, your access will be deactivated.
+        </p>
+
+        ${emailFooter}
       </div>
-
-      <p style="color:#64748b;font-size:13px">
-        Stripe will retry your payment automatically over the next few days.
-        If all retries fail, your subscription will be cancelled and your access code deactivated.
-      </p>
-
-      <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
-      <p style="color:#94a3b8;font-size:12px">Questions? Reply to this email.</p>
     </div>
     `
   );

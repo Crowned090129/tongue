@@ -1,20 +1,20 @@
 {
-  "name": "tonge-app",
+  "name": "tongue-app",
   "version": "1.0.0",
-  "description": "Tonge — AI-powered language learning. Speak every tongue.",
+  "description": "Tongue — AI-powered language learning. Speak every tongue.",
   "main": "server.js",
   "scripts": {
-    "start":           "node server.js",
-    "dev":             "node --watch server.js",
-    "test":            "NODE_ENV=test node --test tests/smoke.test.js",
-    "icons":           "node assets/generate-icons.js",
-    "cap:init":        "npm install && npx cap add ios && npx cap add android",
-    "cap:sync":        "npx cap sync",
-    "cap:ios":         "npx cap open ios",
-    "cap:android":     "npx cap open android",
-    "cap:build":       "node assets/generate-icons.js && npx @capacitor/assets generate && npx cap sync",
-    "prewarm":         "node scripts/prewarm-content.js",
-    "prewarm:force":   "node scripts/prewarm-content.js --force"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "NODE_ENV=test node --test tests/smoke.test.js",
+    "icons": "node assets/generate-icons.js",
+    "cap:init": "npm install && npx cap add ios && npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:ios": "npx cap open ios",
+    "cap:android": "npx cap open android",
+    "cap:build": "node assets/generate-icons.js && npx @capacitor/assets generate && npx cap sync",
+    "prewarm": "node scripts/prewarm-content.js",
+    "prewarm:force": "node scripts/prewarm-content.js --force"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -26,13 +26,16 @@
     "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
+    "nodemailer": "^9.0.3",
     "pg": "^8.21.0",
     "resend": "^3.2.0",
     "stripe": "^14.21.0"
   },
   "devDependencies": {
+    "@babel/standalone": "^7.29.7",
     "@capacitor/assets": "^3.0.5",
-    "@capacitor/cli": "^6.2.0"
+    "@capacitor/cli": "^6.2.0",
+    "sharp": "^0.35.2"
   },
   "capacitorDependencies": {
     "@capacitor/android": "^6.2.0",
