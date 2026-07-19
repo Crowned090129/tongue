@@ -1,7 +1,7 @@
 // Language Immersion — Service Worker
 // Strategy: Cache-first for static assets, network-first for API calls
 
-const CACHE_NAME = "tongue-v1";
+const CACHE_NAME = "tongue-v2";
 const STATIC_ASSETS = [
   "/",
   "/subscribe",

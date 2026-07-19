@@ -405,13 +405,22 @@ const C = {
 function Icon({ name, size = 18, color, style: extraStyle }) {
   const ref = React.useRef(null);
   React.useEffect(() => {
-    if (!ref.current || !window.lucide) return;
-    ref.current.innerHTML = "";
-    const el = document.createElement("i");
-    el.dataset.lucide = name;
-    el.style.display = "block";
-    ref.current.appendChild(el);
-    try { window.lucide.createIcons({ nodes: [el] }); } catch(e) {}
+    if (!ref.current) return;
+    let cancelled = false, tries = 0;
+    const render = () => {
+      if (cancelled || !ref.current) return;
+      // lucide loads from a CDN; if it isn't ready yet, retry briefly instead of
+      // giving up forever (this is why always-mounted icons like the FAB were blank).
+      if (!window.lucide) { if (tries++ < 40) setTimeout(render, 75); return; }
+      ref.current.innerHTML = "";
+      const el = document.createElement("i");
+      el.dataset.lucide = name;
+      el.style.display = "block";
+      ref.current.appendChild(el);
+      try { window.lucide.createIcons({ nodes: [el] }); } catch(e) {}
+    };
+    render();
+    return () => { cancelled = true; };
   }, [name, size, color]);
   const s = { display:"inline-flex", alignItems:"center", justifyContent:"center", width:size, height:size, flexShrink:0, color: color || "currentColor", ...extraStyle };
   return <span ref={ref} style={s} />;
@@ -6556,8 +6565,10 @@ function App() {
   const [factIdx, setFactIdx]       = useState(0);
   // ── auth / plan ────────────────────────────────────────────────────────────
   const [tLang, setTLang]           = useState(() => { try { return localStorage.getItem("target_lang") || "fr"; } catch(e) { return "fr"; } });
-  const [rLangs, setRLangs]         = useState(["en"]);
   const [nativeLang, setNativeLang] = useState(() => _nativeLang);
+  // Explanations/comparisons are given in the learner's own language — keep the
+  // reference language in lockstep with nativeLang (was hardcoded to English).
+  const [rLangs, setRLangs]         = useState(() => [_nativeLang]);
   const [overlay, setOverlay]       = useState(null); // "lang"|"settings"|"upgrade"|null
   const [loggedIn, setLoggedIn]     = useState(isLoggedIn());
   // If the session lapsed but we remembered the code, silently sign back in
@@ -6673,6 +6684,7 @@ function App() {
   useEffect(() => {
     _nativeLang = nativeLang;
     try { localStorage.setItem("native_lang", nativeLang); } catch(e) {}
+    setRLangs([nativeLang]);
   }, [nativeLang]);
 
   useEffect(() => {
@@ -6916,6 +6928,7 @@ function SupportChat() {
   ]);
   const [input, setInput]     = useState("");
   const [loading, setLoading] = useState(false);
+  const [dismissed, setDismissed] = useState(() => { try { return sessionStorage.getItem("support_hidden") === "1"; } catch(e) { return false; } });
   const bottomRef             = React.useRef(null);
 
   useEffect(() => {
@@ -6951,13 +6964,23 @@ function SupportChat() {
 
   return (
     <>
-      {/* Floating button */}
-      <button
-        className="support-fab"
-        onClick={() => { haptic(); setOpen(true); }}
-        aria-label="Help"
-        title="Help & Support"
-      ><Icon name="message-circle" size={22} color="#fff" /></button>
+      {/* Floating button (dismissible so it never blocks the flow) */}
+      {!dismissed && !open && (
+        <div
+          className="support-fab"
+          onClick={() => { haptic(); setOpen(true); }}
+          role="button"
+          aria-label="Help"
+          title="Help & Support"
+        >
+          <Icon name="message-circle" size={22} color="#fff" />
+          <span
+            onClick={(e) => { e.stopPropagation(); setDismissed(true); try { sessionStorage.setItem("support_hidden", "1"); } catch(_) {} }}
+            aria-label="Hide"
+            style={{ position:"absolute", top:-5, right:-5, width:20, height:20, borderRadius:"50%", background:C.surf, color:C.text, border:`1px solid ${C.line}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, lineHeight:1, boxShadow:"0 1px 5px rgba(0,0,0,.25)" }}
+          >×</span>
+        </div>
+      )}
 
       {/* Bottom sheet */}
       <div className={`sheet-backdrop${open ? " open" : ""}`} onClick={() => setOpen(false)}>
