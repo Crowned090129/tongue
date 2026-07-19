@@ -1305,7 +1305,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model: "claude-opus-4-5",   // Best accuracy for language content
-      max_tokens: 8000,
+      max_tokens: 16000,   // headroom so the deepest tabs (22 grammar topics, etc.) aren't truncated
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -1410,9 +1410,10 @@ async function generateMissingContent() {
         const t = anchorTarget(lang, tab);
         if (t && t.count) {
           const have = Array.isArray(parsed[t.field]) ? parsed[t.field].length : 0;
-          // Regenerate only if MEANINGFULLY shallower than the standard (tolerate a
-          // 2-item shortfall so a model returning 20/22 doesn't loop every restart).
-          if (have < t.count - 2) needed.push([lang, tab]);
+          // Regenerate only if DRAMATICALLY shallower than the standard (below 70%),
+          // so this acts as a one-time upgrade for old shallow content — not a
+          // permanent gate that re-flags every slightly-short generation each cron.
+          if (have < Math.floor(t.count * 0.7)) needed.push([lang, tab]);
         }
       } catch {
         needed.push([lang, tab]); // corrupt JSON → regenerate
