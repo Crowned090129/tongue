@@ -4817,26 +4817,30 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
   const LEVEL_LABEL = { "beginner-zero":"Just starting", beginner:"Beginner", intermediate:"Intermediate", advanced:"Advanced" };
   const levelText = LEVEL_LABEL[userLevel] || `Level ${L.level}`;
 
-  const AREAS = [
-    {id:"grammar",     title:"Grammar",            icon:"book-open",       sub:`${L.grammarCount} rules, each explained simply with real examples`},
-    {id:"vocab-full",  title:"Vocabulary",          icon:"type",            sub:`Build your word bank by theme — every word voiced`},
-    {id:"dialogues",   title:"Phrases & Dialogues", icon:"messages-square", sub:`${L.phraseCount} real scenes: café, airport, meeting someone`},
-    {id:"sounds",      title:"Sounds",              icon:"volume-2",        sub:`Master every sound — ${L.soundCount} to hear and copy`},
-    {id:"culture",     title:"Culture & Nuance",    icon:"compass",         sub:`The unwritten rules — when to be formal, what not to say`},
-  ];
-  const TOOLS = [
-    {id:"today",        title:"Today's Practice",   icon:"sun"},
-    {id:"structures",   title:"Sentence Patterns",  icon:"layout-list"},
-    {id:"wordspace",    title:"Word Space",          icon:"search"},
-    {id:"roadmap",      title:"Progress & Roadmap",  icon:"map"},
-    {id:"voice-tutor",  title:"Talk to Tutor",       icon:"mic"},
-    {id:"analyzer",     title:"Analyze Any Text",    icon:"scan-text"},
-  ];
   const HELPERS = [
     {id:"coach",  label:"Coach",  icon:"sparkles"},
     {id:"cards",  label:"Cards",  icon:"layers"},
     {id:"drills", label:"Drills", icon:"zap"},
     {id:"review", label:"Review", icon:"graduation-cap"},
+  ];
+  // Front door by INTENT (what the learner wants to do), not by tool name.
+  const INTENTS = [
+    {id:"voice-tutor", icon:"mic",             want:"Practise speaking out loud", why:"Talk to the tutor — it replies and fixes your mistakes"},
+    {id:"coach",       icon:"sparkles",        want:"Practise & get corrected",   why:"Quick exercises with instant feedback"},
+    {id:"dialogues",   icon:"messages-square", want:"Learn real conversations",   why:"Ready-made scenes: café, airport, meeting someone"},
+    {id:"analyzer",    icon:"scan-text",       want:"Understand something I saw", why:"Paste a menu, lyrics, or a message — get it decoded"},
+    {id:"wordspace",   icon:"search",          want:"Look up a word or phrase",   why:"Instant translation, breakdown, and audio"},
+    {id:"grammar",     icon:"book-open",       want:"Understand how it works",    why:"Every grammar rule, explained simply"},
+    {id:"vocab-full",  icon:"type",            want:"Build my vocabulary",        why:"Words by theme — each one voiced"},
+    {id:"today",       icon:"sun",             want:"Just my daily practice",     why:"A short, guided daily rep"},
+  ];
+  const MORE = [
+    {id:"roadmap",    title:"What to learn next", icon:"map"},
+    {id:"structures", title:"Sentence patterns",  icon:"layout-list"},
+    {id:"cards",      title:"Flashcards",          icon:"layers"},
+    {id:"sounds",     title:"Sounds",              icon:"volume-2"},
+    {id:"culture",    title:"Culture & nuance",    icon:"compass"},
+    {id:"drills",     title:"Quick drills",        icon:"zap"},
   ];
 
   return (
@@ -4918,32 +4922,32 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           </div>
         </button>
 
-        {/* Explore areas */}
-        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>Explore the language</div>
+        {/* What do you want to do? — intent-first navigation */}
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>What do you want to do?</div>
         <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:18}}>
-          {AREAS.map(a => (
-            <button key={a.id} onClick={() => nav(a.id)} style={{display:"flex",alignItems:"center",gap:12,background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"11px 13px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
+          {INTENTS.map(it => (
+            <button key={it.id} onClick={() => nav(it.id)} style={{display:"flex",alignItems:"center",gap:12,background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"11px 13px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
               <div style={{width:38,height:38,borderRadius:11,background:C.surf2,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <Icon name={a.icon} size={19} color={C.text}/>
+                <Icon name={it.icon} size={19} color={C.accent}/>
               </div>
-              <div style={{flex:1}}>
-                <div style={{fontWeight:600,fontSize:14,color:C.text}}>{a.title}</div>
-                <div style={{fontSize:11,fontWeight:500,color:C.muted}}>{a.sub}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontWeight:600,fontSize:14,color:C.text}}>{it.want}</div>
+                <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{it.why}</div>
               </div>
               <Icon name="arrow-up-right" size={14} color={C.faint}/>
             </button>
           ))}
         </div>
 
-        {/* Tools section */}
-        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>More tools</div>
+        {/* Browse everything — secondary, for when they know what they want */}
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>Or browse everything</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,paddingBottom:8}}>
-          {TOOLS.map(t => (
-            <button key={t.id} onClick={() => nav(t.id)} style={{display:"flex",flexDirection:"column",gap:9,background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"13px 13px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
-              <div style={{width:34,height:34,borderRadius:9,background:C.surf2,display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <Icon name={t.icon} size={17} color={C.text}/>
+          {MORE.map(t => (
+            <button key={t.id} onClick={() => nav(t.id)} style={{display:"flex",alignItems:"center",gap:9,background:C.surf,border:`1px solid ${C.line}`,borderRadius:12,padding:"11px 12px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
+              <div style={{width:30,height:30,borderRadius:8,background:C.surf2,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Icon name={t.icon} size={15} color={C.text}/>
               </div>
-              <div style={{fontWeight:600,fontSize:13,color:C.text,lineHeight:1.25}}>{t.title}</div>
+              <div style={{fontWeight:600,fontSize:12.5,color:C.text,lineHeight:1.25}}>{t.title}</div>
             </button>
           ))}
         </div>

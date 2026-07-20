@@ -1,12 +1,12 @@
-# Tonge — Employee Onboarding Guide
+# Tongue — Employee Onboarding Guide
 
-Welcome to the team. This document gives you a complete picture of how Tonge works — from the user's first click to the database and back.
+Welcome to the team. This document gives you a complete picture of how Tongue works — from the user's first click to the database and back.
 
 ---
 
-## 1. What Tonge Is
+## 1. What Tongue Is
 
-Tonge is a language learning SaaS. Users choose a language to learn (target) and up to 3 languages they already know (reference). The app then provides:
+Tongue is a language learning SaaS. Users choose a language to learn (target) and up to 3 languages they already know (reference). The app then provides:
 - AI-generated reference content (grammar, vocabulary, dialogues, etc.)
 - A live AI Coach (powered by Claude Sonnet)
 - Spaced-repetition flashcards
@@ -69,13 +69,13 @@ french-app/
 
 ## 4. How Authentication Works
 
-Tonge uses a **code-based auth system** — no passwords for end users.
+Tongue uses a **code-based auth system** — no passwords for end users.
 
 ### Free users
 1. User enters email → `POST /api/auth/signup`
 2. Server upserts a `users` row (plan = "free")
 3. Returns a JWT signed with `JWT_SECRET` (expires 90 days)
-4. JWT stored in browser localStorage as `tonge_token`
+4. JWT stored in browser localStorage as `tongue_token`
 
 ### Paid users
 1. Stripe webhook fires after payment → `POST /api/stripe/webhook`
@@ -193,19 +193,19 @@ The app runs on Fly.io using Docker.
 
 ```bash
 # Deploy
-flyctl deploy --app tonge-app
+flyctl deploy --app tongue-app
 
 # View logs
-flyctl logs --app tonge-app
+flyctl logs --app tongue-app
 
 # Set/update environment variable
-flyctl secrets set KEY=value --app tonge-app
+flyctl secrets set KEY=value --app tongue-app
 
 # SSH into running machine
-flyctl ssh console --app tonge-app
+flyctl ssh console --app tongue-app
 
 # Scale machines
-fly scale count 2 --app tonge-app
+fly scale count 2 --app tongue-app
 ```
 
 **fly.toml** controls: Dockerfile build, internal port (3001), health check path (`/health`), auto-stop/start behaviour.
@@ -222,7 +222,7 @@ fly scale count 2 --app tonge-app
 | Anthropic | Claude AI API | console.anthropic.com |
 | Stripe | Payments + billing | dashboard.stripe.com |
 | Resend | Transactional email | resend.com |
-| Fly.io | App hosting | fly.io/apps/tonge-app |
+| Fly.io | App hosting | fly.io/apps/tongue-app |
 
 ---
 
@@ -240,9 +240,9 @@ fly scale count 2 --app tonge-app
 ## 12. Operational Runbook
 
 ### App is down / not responding
-1. Check `https://tonge-app.fly.dev/health`
-2. If no response: `flyctl status --app tonge-app`
-3. If machines stopped: `flyctl deploy --app tonge-app`
+1. Check `https://tongue-app.fly.dev/health`
+2. If no response: `flyctl status --app tongue-app`
+3. If machines stopped: `flyctl deploy --app tongue-app`
 4. Check Fly.io billing — machines stop if account balance runs out
 
 ### Database connection errors
@@ -252,12 +252,12 @@ fly scale count 2 --app tonge-app
 
 ### Anthropic API errors / content not loading
 1. Check credits at console.anthropic.com — add credits if balance is zero
-2. Check API key is valid: `flyctl secrets list --app tonge-app`
+2. Check API key is valid: `flyctl secrets list --app tongue-app`
 3. AI content will fail silently and return an error to the user — the app does not crash
 
 ### Stripe webhook not firing
 1. Check Stripe dashboard → Developers → Webhooks → check for failed deliveries
-2. Confirm webhook URL is `https://tonge-app.fly.dev/api/stripe/webhook`
+2. Confirm webhook URL is `https://tongue-app.fly.dev/api/stripe/webhook`
 3. Confirm `STRIPE_WEBHOOK_SECRET` in Fly secrets matches the webhook signing secret in Stripe
 
 ### A user paid but didn't get their access code

@@ -2,23 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="/icon.svg"/>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Subscribe — Tonge</title>
+  <title>Subscribe — Tongue</title>
   <meta name="description" content="Start learning a new language today. 11 languages, AI tutor, spaced repetition. From $9/month."/>
   <link rel="stylesheet" href="/brand.css"/>
   <style>
     .hero {
       text-align: center;
-      padding: 48px 20px 32px;
+      padding: 56px 20px 44px;
+      background: linear-gradient(160deg, #fff0f4 0%, #fff 60%);
+      border-bottom: 1px solid #ffe4ec;
     }
+    .hero-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 18px;
+    }
+    .hero-icon img { width: 72px; height: 72px; }
     .hero h1 {
-      font-size: clamp(28px, 5vw, 42px);
+      font-size: clamp(30px, 5vw, 48px);
       font-weight: 900;
       color: var(--text);
-      line-height: 1.18;
-      margin-bottom: 12px;
+      line-height: 1.15;
+      margin-bottom: 14px;
     }
-    .hero h1 span { color: var(--blue); }
+    .hero h1 span { color: #C0153E; }
     .hero p {
       font-size: 16px;
       color: var(--text-dim);
@@ -150,17 +163,18 @@
 
 <nav class="t-nav">
   <div class="t-nav-inner">
-    <a href="/" class="t-nav-logo">
-      <img src="/logo.svg" alt="Tonge"/>
+    <a href="/app" class="t-nav-logo">
+      <img src="/logo.svg" alt="Tongue"/>
     </a>
     <div class="t-nav-links">
       <a href="/faq" class="t-nav-link">Help</a>
-      <a href="/" class="t-nav-link">← App</a>
+      <a href="/app" class="t-nav-link">← App</a>
     </div>
   </div>
 </nav>
 
 <div class="hero">
+  <div class="hero-icon"><img src="/icon.svg" alt="Tongue"/></div>
   <h1>Speak every <span>tongue.</span></h1>
   <p>AI tutor · 11 languages · Spaced repetition · Cancel anytime</p>
 </div>
@@ -192,7 +206,7 @@
   </div>
 
   <div style="margin-top:16px">
-    <a href="/" class="t-btn t-btn-ghost t-btn-full" style="font-size:14px">
+    <a href="/app" class="t-btn t-btn-ghost t-btn-full" style="font-size:14px">
       Start free — no credit card required →
     </a>
   </div>
@@ -236,21 +250,21 @@
     <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>
   </div>
 
-  <a href="/" class="back-link">← Back to app</a>
+  <a href="/app" class="back-link">← Back to app</a>
 
 </div>
 
 <footer class="t-footer">
   <div class="t-footer-inner">
-    <img src="/logo.svg" class="t-footer-logo" alt="Tonge"/>
+    <img src="/logo.svg" class="t-footer-logo" alt="Tongue"/>
     <div class="t-footer-links">
-      <a href="/">App</a>
+      <a href="/app">App</a>
       <a href="/faq">Help</a>
       <a href="/terms">Terms</a>
       <a href="/privacy">Privacy</a>
-      <a href="mailto:support@tonge.app">Contact</a>
+      <a href="mailto:support@tongue.app">Contact</a>
     </div>
-    <p class="t-footer-copy">© 2026 Tonge · AI-powered language learning</p>
+    <p class="t-footer-copy">© 2026 Tongue · AI-powered language learning</p>
   </div>
 </footer>
 

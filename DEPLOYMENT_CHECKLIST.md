@@ -1,4 +1,4 @@
-# Tonge — Deployment Checklist
+# Tongue — Deployment Checklist
 
 Use this checklist every time you deploy to production (new machines, env changes, code updates).
 
@@ -18,11 +18,11 @@ Set all of the following in Fly.io (`fly secrets set KEY=value`) or your hosting
 
 ### Required for email delivery
 - [ ] `RESEND_API_KEY` — From resend.com dashboard
-- [ ] `EMAIL_FROM` — Verified sender email (e.g. noreply@tonge.app)
-- [ ] `EMAIL_FROM_NAME` — Display name (e.g. Tonge)
+- [ ] `EMAIL_FROM` — Verified sender email (e.g. noreply@tongue.app)
+- [ ] `EMAIL_FROM_NAME` — Display name (e.g. Tongue)
 
 ### Required for correct URLs
-- [ ] `APP_URL` — Full URL of production app (e.g. https://tonge-app.fly.dev)
+- [ ] `APP_URL` — Full URL of production app (e.g. https://tongue-app.fly.dev)
 
 ### Recommended
 - [ ] `FRONTEND_URL` — If frontend has a separate domain, add here for CORS
@@ -34,7 +34,7 @@ Set all of the following in Fly.io (`fly secrets set KEY=value`) or your hosting
 
 ## 2. Stripe Setup
 
-- [ ] Create product "Tonge Premium" in Stripe Dashboard → Products
+- [ ] Create product "Tongue Premium" in Stripe Dashboard → Products
 - [ ] Create two prices: $9/month (recurring) and $79/year (recurring)
 - [ ] Copy the price IDs to `STRIPE_PRICE_MONTHLY` and `STRIPE_PRICE_YEARLY`
 - [ ] Create a webhook endpoint in Stripe → Webhooks pointing to `https://your-domain/api/stripe/webhook`
@@ -124,7 +124,7 @@ curl $BASE/health
 # Expected: {"status":"ok","db":"ok","ts":"..."}
 
 # Login page loads
-curl -s $BASE/ | grep -c "Tonge"
+curl -s $BASE/ | grep -c "Tongue"
 # Expected: ≥ 1
 
 # Prices endpoint
@@ -203,7 +203,7 @@ If a deploy breaks something:
 ```bash
 # Fly.io keeps the previous image — instant rollback
 fly releases          # list releases
-fly deploy --image registry.fly.io/tonge-app:v12  # redeploy previous image
+fly deploy --image registry.fly.io/tongue-app:v12  # redeploy previous image
 
 # Or scale down to 0 and back up (last resort)
 fly scale count 0

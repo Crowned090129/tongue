@@ -9,7 +9,7 @@
  */
 
 require("dns").setDefaultResultOrder("ipv4first"); // force IPv4 — Railway can't reach Supabase via IPv6
-require("dotenv").config();
+require("dotenv").config({ path: require("path").resolve(__dirname, ".env") });
 const cron = require("node-cron");
 const db   = require("./db");
 const app  = require("./app");
@@ -42,6 +42,16 @@ cron.schedule("0 20 * * *", async () => {
   }
 });
 
+// ── Cron: auto-repair missing content — every 6 hours ────────────────────────
+cron.schedule("0 */6 * * *", async () => {
+  try {
+    const { generateMissingContent } = require("./routes/content");
+    await generateMissingContent();
+  } catch (e) {
+    console.error("[Cron] Content repair error:", e.message);
+  }
+});
+
 // ── Cron: clean up expired sessions + stale rate-limit rows — 3 AM UTC daily ─
 cron.schedule("0 3 * * *", async () => {
   try {
@@ -62,7 +72,7 @@ async function start() {
   await db.initialize();
 
   app.listen(PORT, () => {
-    console.log(`\nTonge server running on port ${PORT}`);
+    console.log(`\nTongue server running on port ${PORT}`);
     console.log(`  App:       http://localhost:${PORT}`);
     console.log(`  Admin:     http://localhost:${PORT}/admin`);
     console.log(`  Subscribe: http://localhost:${PORT}/subscribe`);

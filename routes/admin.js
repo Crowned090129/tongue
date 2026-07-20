@@ -202,7 +202,7 @@ router.post("/api/email", adminAuth, async (req, res) => {
     subject,
     `
     <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;padding:24px">
-      <h2 style="color:#2563eb;font-size:18px;margin-bottom:16px">🌐 Tonge</h2>
+      <h2 style="color:#2563eb;font-size:18px;margin-bottom:16px">🌐 Tongue</h2>
       <div style="color:#334155;font-size:14px;line-height:1.8;white-space:pre-wrap">${safeMsg}</div>
       <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0"/>
       <p style="color:#94a3b8;font-size:12px">
@@ -228,7 +228,7 @@ function adminHTML() {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Admin — Tonge</title>
+  <title>Admin — Tongue</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:system-ui,sans-serif;background:#f1f5f9;color:#0f172a;min-height:100vh}
@@ -283,7 +283,7 @@ function adminHTML() {
 
   <div id="admin-view" class="hidden">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
-      <h1>🌐 Tonge Admin</h1>
+      <h1>🌐 Tongue Admin</h1>
       <button class="btn-neutral btn-sm" onclick="logout()">Log out</button>
     </div>
     <p class="subtitle">Subscriber management</p>

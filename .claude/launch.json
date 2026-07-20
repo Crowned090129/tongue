@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tongue-app",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--env-file=.env", "server.js"],
+      "port": 3001
+    }
+  ]
+}

@@ -5,7 +5,7 @@
 
 ## EXECUTIVE SUMMARY
 
-**Tonge** is an AI-powered language learning SaaS application that lets users learn any of 11 languages through personalized AI coaching, spaced-repetition flashcards, grammar references, pronunciation, and streak tracking — from any browser, no app download required.
+**Tongue** is an AI-powered language learning SaaS application that lets users learn any of 11 languages through personalized AI coaching, spaced-repetition flashcards, grammar references, pronunciation, and streak tracking — from any browser, no app download required.
 
 **Business model:** Freemium SaaS — free tier with 5 AI messages/day, paid at $9/month or $79/year unlocks unlimited AI + all premium features.
 
@@ -20,7 +20,7 @@
 ## 1. PRODUCT
 
 ### What it does
-Tonge is a complete AI language learning system — not a flashcard app, not a gamification app. It is the closest thing to having a real language tutor available 24/7 for $9/month.
+Tongue is a complete AI language learning system — not a flashcard app, not a gamification app. It is the closest thing to having a real language tutor available 24/7 for $9/month.
 
 ### Feature Matrix
 | Feature | Free | Paid ($9/mo) |
@@ -55,7 +55,7 @@ This means:
 - Only the AI Coach chat feature costs money per user (~$1.20/user/month)
 - 99.9% of content delivery is free at any scale
 
-Competitors (Babbel, Busuu) pay human editors millions to produce what Tonge generates for $40. That cost advantage compounds forever.
+Competitors (Babbel, Busuu) pay human editors millions to produce what Tongue generates for $40. That cost advantage compounds forever.
 
 ---
 
@@ -111,16 +111,16 @@ Competitors (Babbel, Busuu) pay human editors millions to produce what Tonge gen
 | Rosetta Stone | ~$180M ARR | ~3M users | $12/mo | Expensive, dated UX |
 | Busuu | ~$50M ARR | 120M total | $10/mo | Social features, not depth |
 | Human tutors | N/A | N/A | $50–150/hr | Expensive, inflexible schedule |
-| **Tonge** | **$0 (launching)** | **0 (launching)** | **$9/mo** | — |
+| **Tongue** | **$0 (launching)** | **0 (launching)** | **$9/mo** | — |
 
-### Tonge's Position
+### Tongue's Position
 Not fighting Duolingo for beginners. Targeting the **post-Duolingo intermediate learner** who:
 - Has tried Duolingo, hit the A2 wall, feels stuck
 - Wants real conversational ability, not gamified badges
 - Can't afford or schedule a human tutor
 - Is an adult with disposable income and real motivation
 
-**One-line pitch:** *"Tonge is what you use after Duolingo stops working."*
+**One-line pitch:** *"Tongue is what you use after Duolingo stops working."*
 
 This segment is **200 million people** with **zero dominant player**. It is the biggest open gap in language learning.
 
@@ -339,7 +339,7 @@ After capital gains tax (~20%): **$184–276M net**
 | Risk | Likelihood | What Happens | Mitigation |
 |---|---|---|---|
 | Claude API price 2× increase | Medium | API costs double → margins drop ~15% | Switch to open-source LLM (Llama 3.1), savings 70–90% on API |
-| Duolingo launches AI coach | High (2026–2027) | Competition increases | Tonge is cheaper + deeper. Duolingo's 500M users don't convert overnight. |
+| Duolingo launches AI coach | High (2026–2027) | Competition increases | Tongue is cheaper + deeper. Duolingo's 500M users don't convert overnight. |
 | Low conversion rate (<2%) | Medium | Free tier unprofitable | Tighten free limits. Add urgency ("5 of 5 used today"). Email nurture sequences. |
 | App Store 30% tax | Medium | Margin hit if iOS revenue | PWA + web checkout avoids Apple cut entirely. |
 | Anthropic API outage | Low | AI features down for hours | Cached content still works. Only AI Coach affected. Add retry + fallback message. |
@@ -352,7 +352,7 @@ After capital gains tax (~20%): **$184–276M net**
 As sole founder/developer:
 
 1. **All source code** — proprietary, not open source, you retain all IP
-2. **The "Tonge" brand** — register trademark at $1,000–3,000 when revenue justifies
+2. **The "Tongue" brand** — register trademark at $1,000–3,000 when revenue justifies
 3. **The user base** — email list of subscribers is the most valuable asset
 4. **40 cached language guides** — AI output you own (per Anthropic's ToS, output belongs to you)
 5. **11 SEO landing pages** — beginning organic ranking, compounds over time
@@ -365,15 +365,15 @@ As sole founder/developer:
 
 *Ask ChatGPT, an investor, or advisor these:*
 
-1. **Free tier limits:** Is 5 AI messages/day right? Duolingo gives unlimited but gamified. Should Tonge be 3 or 10?
+1. **Free tier limits:** Is 5 AI messages/day right? Duolingo gives unlimited but gamified. Should Tongue be 3 or 10?
 
 2. **Pricing:** Should the paid tier be $12–15 to signal premium positioning vs Duolingo's $7?
 
 3. **B2B timing:** Language schools and corporate training have higher ACV ($500–5,000/yr per account). Should this be pursued before or after 1,000 paying B2C users?
 
-4. **Geographic focus:** English learners = 1.5 billion market. Should Tonge deprioritise English-to-X languages and focus on X-to-English where the most willing-to-pay users are?
+4. **Geographic focus:** English learners = 1.5 billion market. Should Tongue deprioritise English-to-X languages and focus on X-to-English where the most willing-to-pay users are?
 
-5. **Defensibility:** Duolingo acquires Tonge for $50M vs builds similar feature. Which is more likely? How long before they ship an equivalent?
+5. **Defensibility:** Duolingo acquires Tongue for $50M vs builds similar feature. Which is more likely? How long before they ship an equivalent?
 
 6. **Content quality moat:** The language-specific prompts prevent hallucination and ensure accuracy. Is this 6 months ahead of a motivated competitor or 3 years?
 

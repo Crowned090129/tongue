@@ -59,7 +59,7 @@ async function sendPush(token, title, body, data = {}) {
       ),
       android: {
         priority: "normal",
-        notification: { channelId: "tonge_reminders", sound: "default" },
+        notification: { channelId: "tongue_reminders", sound: "default" },
       },
       apns: {
         payload: { aps: { sound: "default", badge: 1 } },
@@ -127,7 +127,7 @@ async function sendStreakReminders(db) {
   const messages = [
     { title: "Keep your streak alive! 🔥", body: "You haven't practiced today. Just 5 minutes keeps you on track." },
     { title: "Time to practice! 🌐",       body: "Your daily lesson is waiting. Don't break your streak." },
-    { title: "Don't forget Tonge today! 📚", body: "A few minutes of practice goes a long way. Tap to start." },
+    { title: "Don't forget Tongue today! 📚", body: "A few minutes of practice goes a long way. Tap to start." },
   ];
 
   for (const { user_id, token } of usersNeedingReminder) {

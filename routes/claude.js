@@ -19,17 +19,19 @@ const LANG_NOTES = {
   hi: "Always use Devanagari script in examples — never romanized-only Hindi. Note gender agreement for verbs and adjectives.",
 };
 
-function buildSystemPrompt(lang) {
-  const name = LANG_NAMES_COACH[lang] || lang;
+function buildSystemPrompt(lang, nativeLang) {
+  const name       = LANG_NAMES_COACH[lang]       || lang;
+  const nativeName = LANG_NAMES_COACH[nativeLang] || "English";
   const note = LANG_NOTES[lang] ? `\n\nScript rule: ${LANG_NOTES[lang]}` : "";
-  return `You are an expert ${name} language coach on the Tonge app. Your job is to help adult learners acquire ${name} through targeted exercises, honest feedback, and clear explanations.
+  return `You are an expert ${name} language coach on the Tongue app. Your job is to help adult learners acquire ${name} through targeted exercises, honest feedback, and clear explanations.
 
 Core principles:
 - Always respond with valid JSON only — never add prose, markdown, or code fences outside the JSON
 - Be accurate: every ${name} sentence you produce must be grammatically correct
 - Be encouraging: praise what the student did right before correcting errors
 - Be specific: cite the exact rule behind every correction
-- Be concise: learners need actionable feedback, not lectures${note}
+- Be concise: learners need actionable feedback, not lectures
+- INSTRUCTION LANGUAGE: Write ALL explanations, feedback, translations, grammar notes, and corrections in ${nativeName}. Use ${name} only for example sentences and exercise content itself.${note}
 
 You may ONLY discuss topics related to language learning, ${name} grammar, vocabulary, pronunciation, culture, or travel. Politely redirect any off-topic requests back to language practice.`;
 }
@@ -99,7 +101,7 @@ function validatePrompt(prompt) {
 // ── POST /api/claude ──────────────────────────────────────────────────────────
 router.post("/", requireAuth, async (req, res) => {
   const { userId, codeId, nonce, plan } = req.user;
-  const { prompt, maxTokens, language, featureType } = req.body || {};
+  const { prompt, maxTokens, language, featureType, nativeLang } = req.body || {};
 
   // Input validation
   const validationError = validatePrompt(prompt);
@@ -137,7 +139,7 @@ router.post("/", requireAuth, async (req, res) => {
   if (!allowed) {
     const isFree = plan === "free";
     const error = isFree
-      ? "You've used your 5 free AI messages today. Upgrade to Tonge Premium for unlimited access."
+      ? "You've used your 5 free AI messages today. Upgrade to Tongue Premium for unlimited access."
       : reason === "burst"
         ? "Too many requests. Please slow down."
         : "You've reached the daily AI limit (300 messages). Resets at midnight.";
@@ -164,7 +166,7 @@ router.post("/", requireAuth, async (req, res) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-5",
         max_tokens: Math.min(maxTokens || 1000, 2000), // hard cap at 2000
-        system: buildSystemPrompt(language || "fr"),
+        system: buildSystemPrompt(language || "fr", nativeLang || "en"),
         messages: [{ role: "user", content: String(prompt).slice(0, 6000) }],
       }),
     });

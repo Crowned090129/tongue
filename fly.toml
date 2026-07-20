@@ -1,4 +1,4 @@
-# fly.toml — Fly.io deployment config for Tonge
+# fly.toml — Fly.io deployment config for Tongue
 # Deploy with: fly deploy
 # Docs: https://fly.io/docs/reference/configuration/
 
@@ -10,14 +10,14 @@ primary_region = "iad"   # US East (Ashburn) — closest to most English-speakin
 
 [env]
   NODE_ENV = "production"
-  PORT     = "3000"
+  PORT     = "3001"
 
 [http_service]
-  internal_port        = 3000
+  internal_port        = 3001
   force_https          = true
-  auto_stop_machines   = "stop"
+  auto_stop_machines   = "off"
   auto_start_machines  = true
-  min_machines_running = 1         # always 1 warm machine → zero cold starts for users
+  min_machines_running = 1
 
   [http_service.concurrency]
     type       = "connections"

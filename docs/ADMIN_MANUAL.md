@@ -1,13 +1,13 @@
-# Tonge Admin Manual
+# Tongue Admin Manual
 
-**URL:** https://tonge-app.fly.dev/admin  
+**URL:** https://tongue-app.fly.dev/admin  
 **Password:** stored in `ADMIN_PASSWORD` environment variable
 
 ---
 
 ## 1. Accessing the Admin Panel
 
-1. Go to `https://tonge-app.fly.dev/admin`
+1. Go to `https://tongue-app.fly.dev/admin`
 2. Enter the admin password
 3. Click **Login**
 
@@ -105,7 +105,7 @@ Stripe is managed separately at **dashboard.stripe.com**. The admin panel does n
 - **Cancel subscription:** Stripe Dashboard → Customers → subscription → Cancel
 - **Update webhook:** Stripe Dashboard → Developers → Webhooks → update endpoint URL if the app URL changes
 
-**Webhook URL:** `https://tonge-app.fly.dev/api/stripe/webhook`
+**Webhook URL:** `https://tongue-app.fly.dev/api/stripe/webhook`
 
 ---
 
@@ -129,22 +129,22 @@ Stripe is managed separately at **dashboard.stripe.com**. The admin panel does n
 3. Optional: send a confirmation email via the Email button
 
 ### "I can't log in / forgot my code"
-Direct them to `https://tonge-app.fly.dev/resend-code.html` — they enter their email and receive their code automatically.
+Direct them to `https://tongue-app.fly.dev/resend-code.html` — they enter their email and receive their code automatically.
 
 ---
 
 ## 10. Monitoring & Health
 
-**Health check:** `https://tonge-app.fly.dev/health` — returns `{"status":"ok","db":"ok"}` when everything is running.
+**Health check:** `https://tongue-app.fly.dev/health` — returns `{"status":"ok","db":"ok"}` when everything is running.
 
-**App logs:** Run `flyctl logs --app tonge-app` in the terminal (requires Fly CLI installed and logged in).
+**App logs:** Run `flyctl logs --app tongue-app` in the terminal (requires Fly CLI installed and logged in).
 
 **Database:** Access via Supabase dashboard at supabase.com — project `fhtbxahbabesyjoantmo`.
 
 **If the app is down:**
-1. Check `https://tonge-app.fly.dev/health` — if no response, the machines are stopped
-2. Run `flyctl status --app tonge-app` to see machine state
-3. Run `flyctl deploy --app tonge-app` to restart
+1. Check `https://tongue-app.fly.dev/health` — if no response, the machines are stopped
+2. Run `flyctl status --app tongue-app` to see machine state
+3. Run `flyctl deploy --app tongue-app` to restart
 4. Check Fly.io billing — machines stop if the account has no payment method
 
 ---
@@ -164,4 +164,4 @@ Direct them to `https://tonge-app.fly.dev/resend-code.html` — they enter their
 | `RESEND_API_KEY` | Transactional email sending |
 | `APP_URL` | Public URL of the app (used in email links) |
 
-To update any variable: `flyctl secrets set KEY=value --app tonge-app`
+To update any variable: `flyctl secrets set KEY=value --app tongue-app`

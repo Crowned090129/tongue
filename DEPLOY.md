@@ -1,4 +1,4 @@
-# Tonge — Production Deployment Guide
+# Tongue — Production Deployment Guide
 ## Stack: Fly.io (Node.js) + Supabase (PostgreSQL) + Cloudflare (CDN)
 
 ---
@@ -6,7 +6,7 @@
 ## Step 1 — Create Supabase Database (free tier → scales to millions)
 
 1. Go to **https://supabase.com** → New project
-2. Choose a name (e.g. `tonge-prod`), set a strong password, pick a region
+2. Choose a name (e.g. `tongue-prod`), set a strong password, pick a region
 3. Once created: **Settings → Database → Connection string → URI**
 4. Copy the connection string — looks like:
    ```
@@ -49,8 +49,8 @@ fly secrets set STRIPE_PRICE_MONTHLY="price_..."
 fly secrets set STRIPE_PRICE_YEARLY="price_..."
 fly secrets set RESEND_API_KEY="re_..."
 fly secrets set EMAIL_FROM="noreply@yourdomain.com"
-fly secrets set EMAIL_FROM_NAME="Tonge"
-fly secrets set APP_URL="https://tonge-app.fly.dev"
+fly secrets set EMAIL_FROM_NAME="Tongue"
+fly secrets set APP_URL="https://tongue-app.fly.dev"
 fly secrets set NODE_ENV="production"
 ```
 
@@ -69,14 +69,14 @@ Check logs:
 fly logs
 ```
 
-Your app is live at: **https://tonge-app.fly.dev**
+Your app is live at: **https://tongue-app.fly.dev**
 
 ---
 
 ## Step 5 — Configure Stripe webhooks
 
 1. Go to Stripe Dashboard → Developers → Webhooks
-2. Add endpoint: `https://tonge-app.fly.dev/api/stripe/webhook`
+2. Add endpoint: `https://tongue-app.fly.dev/api/stripe/webhook`
 3. Select events:
    - `checkout.session.completed`
    - `invoice.payment_succeeded`
@@ -96,7 +96,7 @@ fly certs add www.yourdomain.com
 
 Then in your DNS provider, add CNAME:
 ```
-yourdomain.com  →  tonge-app.fly.dev
+yourdomain.com  →  tongue-app.fly.dev
 ```
 
 Update `APP_URL`:
@@ -139,13 +139,13 @@ Put Cloudflare in front of your domain:
 
 **Health check:**
 ```bash
-curl https://tonge-app.fly.dev/health
+curl https://tongue-app.fly.dev/health
 # → {"status":"ok","ts":"2026-05-26T..."}
 ```
 
 **App logs:**
 ```bash
-fly logs --app tonge-app
+fly logs --app tongue-app
 ```
 
 **Database dashboard:**

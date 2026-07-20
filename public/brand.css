@@ -1,12 +1,12 @@
-/* ── Tonge brand system ───────────────────────────────────────────────────── */
+/* ── Tongue brand system ──────────────────────────────────────────────────── */
 /* Imported by all public pages (subscribe, faq, terms, privacy, 404, resend) */
 
 :root {
-  --blue:       #2563eb;
-  --blue-dark:  #1d4ed8;
-  --blue-dim:   #1e40af;
-  --blue-light: #eff6ff;
-  --blue-mid:   #bfdbfe;
+  --blue:       #C0153E;
+  --blue-dark:  #A0122F;
+  --blue-dim:   #7A0D24;
+  --blue-light: #fff0f4;
+  --blue-mid:   #ffb3c6;
   --text:       #0f172a;
   --text-mid:   #334155;
   --text-dim:   #64748b;
@@ -101,9 +101,9 @@ body {
 .t-btn:active { transform: scale(.97); }
 .t-btn-primary {
   background: var(--blue); color: #fff;
-  box-shadow: 0 2px 12px rgba(37,99,235,.35);
+  box-shadow: 0 2px 12px rgba(192,21,62,.35);
 }
-.t-btn-primary:hover { background: var(--blue-dark); box-shadow: 0 4px 20px rgba(37,99,235,.45); }
+.t-btn-primary:hover { background: var(--blue-dark); box-shadow: 0 4px 20px rgba(192,21,62,.45); }
 .t-btn-ghost {
   background: transparent; color: var(--blue);
   border: 2px solid var(--blue-mid);

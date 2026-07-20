@@ -1,7 +1,7 @@
 /**
  * tests/smoke.test.js
  *
- * Integration smoke tests for Tonge's critical paths.
+ * Integration smoke tests for Tongue's critical paths.
  * Requires a live DATABASE_URL (the same Supabase DB is fine — tests
  * create and clean up their own rows).
  *
@@ -74,7 +74,7 @@ const GET  = (path, headers)       => req("GET",    path, null, headers);
 const POST = (path, body, headers) => req("POST",   path, body, headers);
 
 // Unique email per test run to avoid conflicts
-const testEmail = () => `test_${Date.now()}_${Math.random().toString(36).slice(2)}@tonge-test.invalid`;
+const testEmail = () => `test_${Date.now()}_${Math.random().toString(36).slice(2)}@tongue-test.invalid`;
 
 // ── Suite 1: Infrastructure ───────────────────────────────────────────────────
 

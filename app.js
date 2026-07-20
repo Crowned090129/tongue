@@ -71,6 +71,7 @@ app.use("/api/stripe",  require("./routes/stripe"));
 app.use("/api/streaks", require("./routes/streaks"));
 app.use("/api/content", require("./routes/content"));
 app.use("/api/push",    require("./routes/push"));
+app.use("/api/support", require("./routes/support"));
 app.use("/admin",       require("./routes/admin"));
 
 // ── SEO landing pages ─────────────────────────────────────────────────────────
@@ -100,9 +101,9 @@ function landingPage(lang) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Learn ${lang.name} Online with AI — Tonge</title>
+  <title>Learn ${lang.name} Online with AI — Tongue</title>
   <meta name="description" content="Learn ${lang.name} faster with an AI tutor. Personalised exercises, grammar, vocabulary, pronunciation, and real conversation practice. ${lang.speakers} speakers worldwide."/>
-  <meta property="og:title" content="Learn ${lang.name} with AI — Tonge"/>
+  <meta property="og:title" content="Learn ${lang.name} with AI — Tongue"/>
   <meta property="og:description" content="${lang.desc}"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -110,15 +111,15 @@ function landingPage(lang) {
     .t-nav{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #e2e8f0;padding:0 20px}
     .t-nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
     .t-nav-logo img{height:32px;width:auto}
-    .t-nav-cta{padding:7px 16px;border-radius:8px;background:#2563eb;color:#fff;font-size:13px;font-weight:700;text-decoration:none}
-    .t-nav-cta:hover{background:#1d4ed8}
-    .hero{background:linear-gradient(135deg,#1e40af,#2563eb);color:#fff;padding:60px 20px;text-align:center}
+    .t-nav-cta{padding:7px 16px;border-radius:8px;background:#C0153E;color:#fff;font-size:13px;font-weight:700;text-decoration:none}
+    .t-nav-cta:hover{background:#A0122F}
+    .hero{background:linear-gradient(135deg,#FF5F7E,#C0153E);color:#fff;padding:60px 20px;text-align:center}
     .hero-flag{font-size:64px;margin-bottom:16px}
     .hero h1{font-size:clamp(26px,5vw,42px);font-weight:900;margin-bottom:12px;line-height:1.2}
     .hero p{font-size:16px;opacity:.88;max-width:520px;margin:0 auto 28px;line-height:1.6}
     .hero-meta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
     .meta-chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600}
-    .cta-btn{display:inline-block;padding:16px 36px;background:#fff;color:#2563eb;border-radius:12px;font-weight:800;font-size:17px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+    .cta-btn{display:inline-block;padding:16px 36px;background:#fff;color:#C0153E;border-radius:12px;font-weight:800;font-size:17px;text-decoration:none;box-shadow:0 4px 20px rgba(0,0,0,.2)}
     .section{padding:48px 20px;max-width:860px;margin:0 auto}
     h2{font-size:22px;font-weight:900;margin-bottom:8px}
     .sub{color:#64748b;margin-bottom:28px;font-size:14px}
@@ -129,35 +130,35 @@ function landingPage(lang) {
     .feat p{font-size:13px;color:#64748b;line-height:1.6}
     .steps{display:flex;flex-direction:column;gap:12px;margin-bottom:44px}
     .step{display:flex;gap:16px;align-items:flex-start;background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
-    .step-num{width:34px;height:34px;background:#2563eb;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0;margin-top:1px}
+    .step-num{width:34px;height:34px;background:#C0153E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex-shrink:0;margin-top:1px}
     .step h3{font-size:14px;font-weight:800;margin-bottom:3px}
     .step p{font-size:13px;color:#64748b;line-height:1.5}
     .pricing{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:480px;margin:0 auto 32px}
     .price-card{background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:22px;text-align:center}
-    .price-card.pop{border-color:#2563eb;background:#eff6ff}
+    .price-card.pop{border-color:#C0153E;background:#fff0f4}
     .price-amount{font-size:30px;font-weight:900;margin:6px 0 3px}
     .price-period{font-size:11px;color:#64748b}
     .price-label{font-size:13px;font-weight:700;color:#334155;margin-bottom:4px}
     .price-save{font-size:11px;color:#16a34a;font-weight:700;margin-top:4px}
     .langs{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:28px}
     .lang-chip{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:6px 13px;font-size:13px;color:#334155;font-weight:600;text-decoration:none}
-    .lang-chip:hover{border-color:#2563eb;color:#2563eb}
+    .lang-chip:hover{border-color:#C0153E;color:#C0153E}
     .cta-section{text-align:center;padding:48px 20px;background:#fff}
     .cta-section h2{font-size:26px;font-weight:900;margin-bottom:10px}
     .cta-section p{color:#64748b;margin-bottom:26px;font-size:14px}
-    .btn-primary{display:inline-block;padding:15px 36px;background:#2563eb;color:#fff;border-radius:12px;font-weight:800;font-size:16px;text-decoration:none}
+    .btn-primary{display:inline-block;padding:15px 36px;background:#C0153E;color:#fff;border-radius:12px;font-weight:800;font-size:16px;text-decoration:none}
     footer{text-align:center;padding:28px 20px;font-size:12px;color:#94a3b8;border-top:1px solid #e2e8f0}
     footer img{height:22px;opacity:.5;display:block;margin:0 auto 10px}
     footer a{color:#64748b;text-decoration:none;margin:0 8px}
-    footer a:hover{color:#2563eb}
+    footer a:hover{color:#C0153E}
     @media(max-width:480px){.pricing{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <nav class="t-nav">
     <div class="t-nav-inner">
-      <a href="/" class="t-nav-logo"><img src="/logo.svg" alt="Tonge"/></a>
-      <a href="${BASE}/subscribe" class="t-nav-cta">Get started →</a>
+      <a href="/" class="t-nav-logo"><img src="/logo.svg" alt="Tongue"/></a>
+      <a href="${BASE}/app" class="t-nav-cta">Open app →</a>
     </div>
   </nav>
   <div class="hero">
@@ -167,13 +168,13 @@ function landingPage(lang) {
     <div class="hero-meta">
       <span class="meta-chip">${lang.speakers} speakers worldwide</span>
       <span class="meta-chip">${lang.time} to fluency</span>
-      <span class="meta-chip">11 languages</span>
+      <span class="meta-chip">12 languages</span>
     </div>
-    <a href="${BASE}/subscribe" class="cta-btn">Start Learning ${lang.name} — from $9/mo</a>
+    <a href="${BASE}/app" class="cta-btn">Start Learning ${lang.name} — free →</a>
   </div>
   <div class="section">
     <h2>Everything you need to learn ${lang.name}</h2>
-    <p class="sub">Tonge is a complete AI-powered learning system — not just flashcards.</p>
+    <p class="sub">Tongue is a complete AI-powered learning system — not just flashcards.</p>
     <div class="features">
       <div class="feat"><div class="feat-icon">🤖</div><h3>AI Tutor &amp; Coach</h3><p>Personalised exercises: fill-in-the-blank, translation, role-play, free writing with corrections. Never the same lesson twice.</p></div>
       <div class="feat"><div class="feat-icon">📖</div><h3>Grammar &amp; Quick Reference</h3><p>AI-generated grammar guide for ${lang.name} — explained in your language, with examples and audio.</p></div>
@@ -190,25 +191,25 @@ function landingPage(lang) {
       <div class="step"><div class="step-num">3</div><div><h3>Practice 20–30 minutes daily</h3><p>AI Coach + Flashcards + Drills. Consistent daily practice beats marathon sessions. You'll see results in weeks.</p></div></div>
     </div>
     <h2>Pricing</h2>
-    <p class="sub">One subscription. All 11 languages. Cancel anytime.</p>
+    <p class="sub">One subscription. All 12 languages. Cancel anytime.</p>
     <div class="pricing">
       <div class="price-card"><div class="price-label">Monthly</div><div class="price-amount">$9</div><div class="price-period">per month</div></div>
       <div class="price-card pop"><div class="price-label">Yearly</div><div class="price-amount">$79</div><div class="price-period">per year</div><div class="price-save">Save 27%</div></div>
     </div>
     <h2>Also available for</h2>
-    <p class="sub">Switch between any of the 11 languages with one subscription.</p>
+    <p class="sub">Switch between any of the 12 languages with one subscription.</p>
     <div class="langs">${otherLangs}</div>
   </div>
   <div class="cta-section">
     <h2>Start learning ${lang.name} today</h2>
     <p>AI-powered. No downloads. Works on any device. Cancel anytime.</p>
-    <a href="${BASE}/subscribe" class="btn-primary">Get started — from $9/month →</a>
+    <a href="${BASE}/app" class="btn-primary">Start for free →</a>
   </div>
   <footer>
-    <img src="/logo.svg" alt="Tonge"/>
-    <p>© ${new Date().getFullYear()} Tonge · AI-powered language learning</p>
+    <img src="/logo.svg" alt="Tongue"/>
+    <p>© ${new Date().getFullYear()} Tongue · AI-powered language learning</p>
     <div style="margin-top:8px">
-      <a href="/faq">FAQ &amp; Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscribe">Subscribe</a><a href="/">App</a>
+      <a href="/faq">FAQ &amp; Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscribe">Subscribe</a><a href="/app">App</a>
     </div>
   </footer>
 </body>
@@ -223,6 +224,18 @@ Object.keys(LANG_SEO).forEach(slug => {
 });
 
 app.get("/help", (_req, res) => res.redirect(301, "/faq"));
+
+// ── Page routes ───────────────────────────────────────────────────────────────
+// Marketing homepage at / (SEO landing page)
+app.get("/", (_req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.sendFile(path.join(__dirname, "public", "home.html"));
+});
+
+// React app at /app
+app.get("/app", (_req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // ── Static frontend ───────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] }));

@@ -1,8 +1,8 @@
-# Tonge Customer Guide
+# Tongue Customer Guide
 
-**Welcome to Tonge — Speak Every Tongue.**
+**Welcome to Tongue — Speak Every Tongue.**
 
-Tonge is an AI-powered language learning platform. Learn French, Spanish, Portuguese, Italian, German, English, Chinese, Japanese, Korean, Russian, Arabic, or Hindi — with a personal AI coach, smart flashcards, grammar references, and more.
+Tongue is an AI-powered language learning platform. Learn French, Spanish, Portuguese, Italian, German, English, Chinese, Japanese, Korean, Russian, Arabic, or Hindi — with a personal AI coach, smart flashcards, grammar references, and more.
 
 ---
 
@@ -10,7 +10,7 @@ Tonge is an AI-powered language learning platform. Learn French, Spanish, Portug
 
 ### Creating a Free Account
 
-1. Go to **tonge-app.fly.dev**
+1. Go to **tongue-app.fly.dev**
 2. Click **Get Started Free**
 3. Enter your email address
 4. Click **Continue** — no password needed
@@ -143,7 +143,7 @@ Yes — just switch the "I am Learning" language at the top. Your flashcards, pr
 **Does the AI Coach remember previous conversations?**  
 No — each AI Coach session starts fresh. This is by design; it keeps responses focused and avoids confusion.
 
-**Can I use Tonge offline?**  
+**Can I use Tongue offline?**  
 The grammar, vocabulary, and dialogue content loads from a cache and may be available briefly offline. The AI Coach and audio require an internet connection.
 
 **My audio isn't working — what do I do?**  
@@ -163,6 +163,6 @@ We offer refunds within 7 days of purchase if you haven't found value in the pro
 ## Support
 
 If you need help with anything not covered here, contact us at:  
-**support@gettonge.com** *(update with your actual support email)*
+**support@gettongue.com** *(update with your actual support email)*
 
 Response time: within 24 hours on business days.

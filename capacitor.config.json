@@ -1,9 +1,9 @@
 {
-  "appId": "app.tonge.language",
-  "appName": "Tonge",
+  "appId": "app.tongue.language",
+  "appName": "Tongue",
   "webDir": "public",
   "server": {
-    "url": "https://tonge-app.fly.dev",
+    "url": "https://tongue-app.fly.dev",
     "cleartext": false
   },
   "plugins": {
@@ -30,12 +30,12 @@
     "contentInset": "automatic",
     "allowsLinkPreview": false,
     "limitsNavigationsToAppBoundDomains": true,
-    "appendUserAgent": "TongeApp/iOS"
+    "appendUserAgent": "TongueApp/iOS"
   },
   "android": {
     "allowMixedContent": false,
     "captureInput": true,
     "webContentsDebuggingEnabled": false,
-    "appendUserAgent": "TongeApp/Android"
+    "appendUserAgent": "TongueApp/Android"
   }
 }
