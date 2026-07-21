@@ -2661,6 +2661,34 @@ async function askClaude(prompt, maxTokens, lang, nativeLang) {
   return data;
 }
 
+// ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────────
+// Loads Google Identity Services once and resolves when window.google is ready.
+// Config (the public client id) comes from /api/config; the button only shows
+// when GOOGLE_CLIENT_ID is set on the server.
+let _gsiPromise = null;
+function loadGsi() {
+  if (window.google && window.google.accounts && window.google.accounts.id) return Promise.resolve();
+  if (_gsiPromise) return _gsiPromise;
+  _gsiPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true; s.defer = true;
+    s.onload = () => resolve();
+    s.onerror = () => { _gsiPromise = null; reject(new Error("GSI_LOAD_FAILED")); };
+    document.head.appendChild(s);
+  });
+  return _gsiPromise;
+}
+let _clientConfigPromise = null;
+function getClientConfig() {
+  if (!_clientConfigPromise) {
+    _clientConfigPromise = fetch("/api/config")
+      .then(r => r.ok ? r.json() : {})
+      .catch(() => ({}));
+  }
+  return _clientConfigPromise;
+}
+
 // ── ACCESS CODE LOGIN ─────────────────────────────────────────────────────────
 function AccessCodeLogin({ onLogin, renewedBanner }) {
   // Remember the last-used code/email so returning users never have to look it up.
@@ -2671,9 +2699,52 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
   const [email, setEmail] = useState(savedEmail);
   const [err, setErr]     = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleOn, setGoogleOn] = useState(false);
+  const googleBtnRef = useRef(null);
 
   const urlParams = new URLSearchParams(window.location.search);
   const checkoutSuccess = urlParams.get("checkout") === "success";
+
+  // Called by Google Identity Services with a verified ID token.
+  const onGoogleCredential = async (resp) => {
+    if (!resp || !resp.credential) return;
+    setLoading(true); setErr("");
+    try {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: resp.credential }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErr(data.error || "Google sign-in failed."); setLoading(false); return; }
+      saveSession(data.token, data.expiresAt, data.email, data.plan);
+      try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+      if (onLogin) onLogin();
+    } catch(e) { setErr("Connection error. Please try again."); }
+    setLoading(false);
+  };
+
+  // Set up the Google button only if the server has a client id configured.
+  useEffect(() => {
+    let cancelled = false;
+    getClientConfig().then(cfg => {
+      if (cancelled || !cfg || !cfg.googleClientId) return;
+      loadGsi().then(() => {
+        if (cancelled || !window.google || !googleBtnRef.current) return;
+        try {
+          window.google.accounts.id.initialize({
+            client_id: cfg.googleClientId,
+            callback: onGoogleCredential,
+          });
+          window.google.accounts.id.renderButton(googleBtnRef.current, {
+            theme: "outline", size: "large", width: 334, text: "continue_with", shape: "rectangular",
+          });
+          setGoogleOn(true);
+        } catch(e) { /* button stays hidden on failure */ }
+      }).catch(() => {});
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   const login = async () => {
     if (code.trim().length < 6) { setErr("Please enter your access code."); return; }
@@ -2727,6 +2798,18 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
           <div style={{ fontWeight:900, fontSize:22, color:"#0f172a", marginBottom:4 }}>Welcome to Tongue</div>
           <div style={{ color:"#64748b", fontSize:13 }}>Learn any language with your personal AI tutor</div>
         </div>
+
+        {/* Google sign-in — button container is always mounted (empty until GIS
+            fills it) so renderButton measures a visible element; the "or"
+            divider only appears once the button is live. */}
+        <div ref={googleBtnRef} style={{ display:"flex", justifyContent:"center", marginBottom: googleOn ? 14 : 0 }}/>
+        {googleOn && (
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
+            <div style={{ flex:1, height:1, background:"#e2e8f0" }}/>
+            <span style={{ fontSize:12, color:"#94a3b8", fontWeight:600 }}>or</span>
+            <div style={{ flex:1, height:1, background:"#e2e8f0" }}/>
+          </div>
+        )}
 
         {/* Mode switcher */}
         <div style={{ display:"flex", background:"#f1f5f9", borderRadius:12, padding:4, marginBottom:20, gap:3 }}>

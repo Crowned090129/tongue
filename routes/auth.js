@@ -2,9 +2,19 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const db = require("../db");
+const { OAuth2Client } = require("google-auth-library");
 
 const router = express.Router();
 const JWT_SECRET = () => process.env.JWT_SECRET || "dev-secret-change-in-production";
+
+// Google Sign-In. Dormant until GOOGLE_CLIENT_ID is set (the frontend hides the
+// button too). The client is created lazily so a missing env var never crashes boot.
+const GOOGLE_CLIENT_ID = () => process.env.GOOGLE_CLIENT_ID || "";
+let _googleClient = null;
+function googleClient() {
+  if (!_googleClient) _googleClient = new OAuth2Client(GOOGLE_CLIENT_ID());
+  return _googleClient;
+}
 
 // ── Brute-force rate limiters (DB-backed — survive restarts, shared across machines) ──
 // Login: 10 attempts per 15 minutes per IP
@@ -151,6 +161,99 @@ router.post("/signup", async (req, res) => {
 
   const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
   res.json({ token, email: normalized, plan: "free", expiresAt });
+});
+
+// ── POST /api/auth/google — sign in / sign up with a Google account ───────────
+// Frontend (Google Identity Services) sends the ID token as `credential`.
+// We verify it with Google, then log the user in at their REAL tier: paid if
+// they hold an active access code, otherwise free — mirroring /login + /signup.
+router.post("/google", async (req, res) => {
+  if (!GOOGLE_CLIENT_ID()) {
+    return res.status(503).json({ error: "Google sign-in is not enabled." });
+  }
+
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  if (process.env.NODE_ENV !== "test" && !await checkLoginRateLimit(ip)) {
+    return res.status(429).json({ error: "Too many attempts. Please wait 15 minutes and try again." });
+  }
+
+  const { credential } = req.body || {};
+  if (!credential || typeof credential !== "string") {
+    return res.status(400).json({ error: "Missing Google credential." });
+  }
+
+  // Verify the token's signature, audience, and expiry with Google.
+  let payload;
+  try {
+    const ticket = await googleClient().verifyIdToken({
+      idToken: credential,
+      audience: GOOGLE_CLIENT_ID(),
+    });
+    payload = ticket.getPayload();
+  } catch (e) {
+    console.error("[Auth] Google token verification failed:", e.message);
+    return res.status(401).json({ error: "Could not verify your Google account. Please try again." });
+  }
+
+  if (!payload || !payload.email || !payload.email_verified) {
+    return res.status(401).json({ error: "Your Google account has no verified email." });
+  }
+
+  const email = payload.email.trim().toLowerCase();
+  if (email.length > 254) return res.status(400).json({ error: "Invalid email address." });
+
+  // Find or create the user (free tier by default). Never downgrade an existing
+  // account — a paid user keeps their plan.
+  await db.run(`
+    INSERT INTO users (email, plan, status)
+    VALUES ($1, 'free', 'active')
+    ON CONFLICT(email) DO UPDATE SET status = 'active'
+  `, [email]);
+
+  const user = await db.get(
+    "SELECT id, email, plan, status FROM users WHERE email = $1", [email]
+  );
+  if (!user || user.status === "deleted") {
+    return res.status(401).json({ error: "Account not found." });
+  }
+
+  // Paid user with a live access code → issue a paid session (mirrors /login,
+  // including the 2-slot nonce rotation) so they land straight in Premium.
+  if (user.plan && user.plan !== "free") {
+    const codeRow = await db.get(`
+      SELECT id, expires_at, session_nonce
+      FROM access_codes
+      WHERE user_id = $1 AND is_active = 1 AND expires_at > NOW()
+      ORDER BY created_at DESC LIMIT 1
+    `, [user.id]);
+
+    if (codeRow) {
+      const nonce = crypto.randomBytes(16).toString("hex");
+      await db.run(
+        "UPDATE access_codes SET session_nonce = $1, session_nonce_2 = $2 WHERE id = $3",
+        [nonce, codeRow.session_nonce || null, codeRow.id]
+      );
+      const expiresAt = new Date(codeRow.expires_at).toISOString();
+      const token = jwt.sign(
+        { userId: user.id, codeId: codeRow.id, email: user.email, plan: user.plan, nonce },
+        JWT_SECRET(),
+        { expiresIn: "30d" }
+      );
+      db.trackEvent(user.id, "login_google", { plan: user.plan });
+      return res.json({ token, expiresAt, email: user.email, plan: user.plan });
+    }
+    // Paid on record but no live code (e.g. lapsed) → fall through to free session.
+  }
+
+  // Free session (mirrors /signup).
+  const token = jwt.sign(
+    { userId: user.id, email: user.email, plan: "free" },
+    JWT_SECRET(),
+    { expiresIn: "90d" }
+  );
+  const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+  db.trackEvent(user.id, "login_google", { plan: "free" });
+  res.json({ token, email: user.email, plan: "free", expiresAt });
 });
 
 // ── POST /api/auth/resend-code — email the current active code ────────────────

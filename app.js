@@ -64,6 +64,15 @@ app.get("/health", async (_req, res) => {
   });
 });
 
+// ── Public client config ──────────────────────────────────────────────────────
+// Only non-secret, browser-safe values. googleClientId is public by design
+// (Google requires it in the frontend); it's null until the secret is set,
+// which is how the frontend decides whether to show the Google button.
+app.get("/api/config", (_req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.json({ googleClientId: process.env.GOOGLE_CLIENT_ID || null });
+});
+
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use("/api/auth",    require("./routes/auth"));
 app.use("/api/claude",  require("./routes/claude"));
