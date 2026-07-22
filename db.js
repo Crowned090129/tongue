@@ -163,6 +163,17 @@ async function initialize() {
       resolved   BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
+
+    -- Passwordless "magic link" login tokens. Only the SHA-256 hash is stored,
+    -- so a DB leak can't be used to log in. Single-use, short-lived.
+    CREATE TABLE IF NOT EXISTS magic_links (
+      id         SERIAL PRIMARY KEY,
+      email      TEXT        NOT NULL,
+      token_hash TEXT        NOT NULL UNIQUE,
+      expires_at TIMESTAMPTZ NOT NULL,
+      used_at    TIMESTAMPTZ,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
   `);
 
   // Safe migrations (idempotent)
@@ -208,6 +219,8 @@ async function initialize() {
     "CREATE INDEX IF NOT EXISTS idx_analytics_user       ON analytics_events(user_id)",
     "CREATE INDEX IF NOT EXISTS idx_analytics_event      ON analytics_events(event_name, created_at)",
     "CREATE INDEX IF NOT EXISTS idx_push_tokens_user     ON push_tokens(user_id)",
+    "CREATE INDEX IF NOT EXISTS idx_magic_links_hash     ON magic_links(token_hash)",
+    "CREATE INDEX IF NOT EXISTS idx_magic_links_expires  ON magic_links(expires_at)",
   ];
   for (const idx of indexes) {
     await pool.query(idx).catch(() => {});

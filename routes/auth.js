@@ -16,6 +16,53 @@ function googleClient() {
   return _googleClient;
 }
 
+// Log a (verified) email in at its REAL tier — paid if the account holds a live
+// access code (with the same 2-slot nonce rotation as /login), otherwise free
+// (same upsert as /signup). Never downgrades an existing account. Shared by every
+// verified-identity path (Google, magic link). Returns a session or null.
+async function issueSessionForEmail(email) {
+  await db.run(`
+    INSERT INTO users (email, plan, status)
+    VALUES ($1, 'free', 'active')
+    ON CONFLICT(email) DO UPDATE SET status = 'active'
+  `, [email]);
+
+  const user = await db.get(
+    "SELECT id, email, plan, status FROM users WHERE email = $1", [email]
+  );
+  if (!user || user.status === "deleted") return null;
+
+  if (user.plan && user.plan !== "free") {
+    const codeRow = await db.get(`
+      SELECT id, expires_at, session_nonce
+      FROM access_codes
+      WHERE user_id = $1 AND is_active = 1 AND expires_at > NOW()
+      ORDER BY created_at DESC LIMIT 1
+    `, [user.id]);
+    if (codeRow) {
+      const nonce = crypto.randomBytes(16).toString("hex");
+      await db.run(
+        "UPDATE access_codes SET session_nonce = $1, session_nonce_2 = $2 WHERE id = $3",
+        [nonce, codeRow.session_nonce || null, codeRow.id]
+      );
+      const expiresAt = new Date(codeRow.expires_at).toISOString();
+      const token = jwt.sign(
+        { userId: user.id, codeId: codeRow.id, email: user.email, plan: user.plan, nonce },
+        JWT_SECRET(), { expiresIn: "30d" }
+      );
+      return { token, expiresAt, email: user.email, plan: user.plan, userId: user.id };
+    }
+    // Paid on record but no live code (lapsed) → fall through to a free session.
+  }
+
+  const token = jwt.sign(
+    { userId: user.id, email: user.email, plan: "free" },
+    JWT_SECRET(), { expiresIn: "90d" }
+  );
+  const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+  return { token, expiresAt, email: user.email, plan: "free", userId: user.id };
+}
+
 // ── Brute-force rate limiters (DB-backed — survive restarts, shared across machines) ──
 // Login: 10 attempts per 15 minutes per IP
 // Signup: 5 accounts per hour per IP
@@ -202,58 +249,99 @@ router.post("/google", async (req, res) => {
   const email = payload.email.trim().toLowerCase();
   if (email.length > 254) return res.status(400).json({ error: "Invalid email address." });
 
-  // Find or create the user (free tier by default). Never downgrade an existing
-  // account — a paid user keeps their plan.
-  await db.run(`
-    INSERT INTO users (email, plan, status)
-    VALUES ($1, 'free', 'active')
-    ON CONFLICT(email) DO UPDATE SET status = 'active'
-  `, [email]);
+  const sess = await issueSessionForEmail(email);
+  if (!sess) return res.status(401).json({ error: "Account not found." });
+  db.trackEvent(sess.userId, "login_google", { plan: sess.plan });
+  res.json({ token: sess.token, expiresAt: sess.expiresAt, email: sess.email, plan: sess.plan });
+});
 
-  const user = await db.get(
-    "SELECT id, email, plan, status FROM users WHERE email = $1", [email]
-  );
-  if (!user || user.status === "deleted") {
-    return res.status(401).json({ error: "Account not found." });
+// ── Magic-link (passwordless email) login ─────────────────────────────────────
+const MAGIC_TTL_MS = 15 * 60 * 1000; // link valid 15 minutes
+const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
+
+// POST /api/auth/magic-link/request — email the user a one-tap login link.
+// Always returns { sent:true } (never reveals whether the email exists).
+router.post("/magic-link/request", async (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  if (process.env.NODE_ENV !== "test") {
+    const { allowed } = await db.checkIpRateLimit(`magic_ip:${ip}`, 8, 60 * 60 * 1000);
+    if (!allowed) return res.status(429).json({ error: "Too many requests. Please try again later." });
   }
 
-  // Paid user with a live access code → issue a paid session (mirrors /login,
-  // including the 2-slot nonce rotation) so they land straight in Premium.
-  if (user.plan && user.plan !== "free") {
-    const codeRow = await db.get(`
-      SELECT id, expires_at, session_nonce
-      FROM access_codes
-      WHERE user_id = $1 AND is_active = 1 AND expires_at > NOW()
-      ORDER BY created_at DESC LIMIT 1
-    `, [user.id]);
+  const { email } = req.body || {};
+  if (!email || typeof email !== "string" || !email.includes("@") || email.length > 254) {
+    return res.status(400).json({ error: "A valid email address is required." });
+  }
+  const normalized = email.trim().toLowerCase();
 
-    if (codeRow) {
-      const nonce = crypto.randomBytes(16).toString("hex");
-      await db.run(
-        "UPDATE access_codes SET session_nonce = $1, session_nonce_2 = $2 WHERE id = $3",
-        [nonce, codeRow.session_nonce || null, codeRow.id]
-      );
-      const expiresAt = new Date(codeRow.expires_at).toISOString();
-      const token = jwt.sign(
-        { userId: user.id, codeId: codeRow.id, email: user.email, plan: user.plan, nonce },
-        JWT_SECRET(),
-        { expiresIn: "30d" }
-      );
-      db.trackEvent(user.id, "login_google", { plan: user.plan });
-      return res.json({ token, expiresAt, email: user.email, plan: user.plan });
-    }
-    // Paid on record but no live code (e.g. lapsed) → fall through to free session.
+  // Per-email throttle (independent of IP) — 4 links per hour.
+  if (process.env.NODE_ENV !== "test") {
+    const { allowed } = await db.checkIpRateLimit(`magic_email:${normalized}`, 4, 60 * 60 * 1000);
+    if (!allowed) return res.json({ sent: true }); // silent — no enumeration
   }
 
-  // Free session (mirrors /signup).
-  const token = jwt.sign(
-    { userId: user.id, email: user.email, plan: "free" },
-    JWT_SECRET(),
-    { expiresIn: "90d" }
+  const token = crypto.randomBytes(32).toString("base64url");
+  const tokenHash = sha256(token);
+  const expiresAt = new Date(Date.now() + MAGIC_TTL_MS).toISOString();
+
+  await db.run(
+    "INSERT INTO magic_links (email, token_hash, expires_at) VALUES ($1, $2, $3)",
+    [normalized, tokenHash, expiresAt]
   );
-  const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
-  db.trackEvent(user.id, "login_google", { plan: "free" });
-  res.json({ token, email: user.email, plan: "free", expiresAt });
+
+  const APP_URL = process.env.APP_URL || "http://localhost:3000";
+  const link = `${APP_URL}/app?magic=${token}`;
+  try {
+    const { sendEmail } = require("../utils/email");
+    await sendEmail(
+      normalized,
+      "Your Tongue login link",
+      `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+        <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;text-align:center">
+          <div style="color:#fff;font-size:20px;font-weight:900">TONGUE</div>
+          <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
+        </div>
+        <div style="padding:28px">
+          <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Log in to Tongue</h1>
+          <p style="color:#334155;font-size:14px;margin:0 0 22px">Tap the button below to sign in. This link works once and expires in 15 minutes.</p>
+          <a href="${link}" style="display:inline-block;padding:13px 30px;background:#C0153E;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">Log in to Tongue →</a>
+          <p style="color:#94a3b8;font-size:12px;margin:22px 0 0">If you didn't request this, you can safely ignore this email — no one can log in without this link.</p>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:22px 0">
+          <p style="color:#94a3b8;font-size:11px;text-align:center">© Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a></p>
+        </div>
+      </div>`
+    );
+  } catch (e) {
+    console.error("[Auth] Magic-link email failed:", e.message);
+  }
+
+  res.json({ sent: true });
+});
+
+// POST /api/auth/magic-link/verify — exchange the token for a session.
+router.post("/magic-link/verify", async (req, res) => {
+  const { token } = req.body || {};
+  if (!token || typeof token !== "string") {
+    return res.status(400).json({ error: "Missing login token." });
+  }
+  const tokenHash = sha256(token.trim());
+
+  // Single-use: atomically claim the token only if it's unused and unexpired.
+  const row = await db.get(
+    `UPDATE magic_links
+        SET used_at = NOW()
+      WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW()
+      RETURNING email`,
+    [tokenHash]
+  );
+  if (!row) {
+    return res.status(401).json({ error: "This login link is invalid or has expired. Please request a new one." });
+  }
+
+  const sess = await issueSessionForEmail(row.email);
+  if (!sess) return res.status(401).json({ error: "Account not found." });
+  db.trackEvent(sess.userId, "login_magic_link", { plan: sess.plan });
+  res.json({ token: sess.token, expiresAt: sess.expiresAt, email: sess.email, plan: sess.plan });
 });
 
 // ── POST /api/auth/resend-code — email the current active code ────────────────

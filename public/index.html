@@ -2690,7 +2690,7 @@ function getClientConfig() {
 }
 
 // ── ACCESS CODE LOGIN ─────────────────────────────────────────────────────────
-function AccessCodeLogin({ onLogin, renewedBanner }) {
+function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
   // Remember the last-used code/email so returning users never have to look it up.
   const savedCode  = (() => { try { return localStorage.getItem("tongue_code")  || ""; } catch(e) { return ""; } })();
   const savedEmail = (() => { try { return localStorage.getItem("auth_email")   || ""; } catch(e) { return ""; } })();
@@ -2701,9 +2701,28 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
   const [loading, setLoading] = useState(false);
   const [googleOn, setGoogleOn] = useState(false);
   const googleBtnRef = useRef(null);
+  const [magicSent, setMagicSent] = useState(false);
+  const [magicLoading, setMagicLoading] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const checkoutSuccess = urlParams.get("checkout") === "success";
+
+  // Passwordless: email the user a one-tap login link.
+  const requestMagicLink = async () => {
+    if (!email.includes("@")) { setErr("Enter a valid email address first."); return; }
+    setMagicLoading(true); setErr("");
+    try {
+      const res = await fetch("/api/auth/magic-link/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setErr(data.error || "Could not send the link."); setMagicLoading(false); return; }
+      setMagicSent(true);
+    } catch(e) { setErr("Connection error. Please try again."); }
+    setMagicLoading(false);
+  };
 
   // Called by Google Identity Services with a verified ID token.
   const onGoogleCredential = async (resp) => {
@@ -2835,6 +2854,11 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
             <div style={{ color:"#a16207", fontSize:12 }}>Check your email for your new access code.</div>
           </div>
         )}
+        {magicError && !magicSent && (
+          <div style={{ background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:10, padding:"12px 14px", marginBottom:16, textAlign:"center" }}>
+            <div style={{ color:"#dc2626", fontSize:13 }}>{magicError}</div>
+          </div>
+        )}
 
         {mode === "code" ? (
           <>
@@ -2850,6 +2874,19 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
               <a href="/resend-code" style={{ color:"#64748b", fontSize:12, textDecoration:"none" }}>Lost your code? Resend it →</a>
             </div>
           </>
+        ) : magicSent ? (
+          <div style={{ textAlign:"center", padding:"6px 0 8px" }}>
+            <div style={{ width:52, height:52, borderRadius:14, background:"#dcfce7", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 14px" }}>
+              <Icon name="mail-check" size={26} color="#16a34a"/>
+            </div>
+            <div style={{ fontWeight:800, fontSize:16, color:"#0f172a", marginBottom:6 }}>Check your email</div>
+            <div style={{ color:"#64748b", fontSize:13, lineHeight:1.6, marginBottom:16 }}>
+              We sent a one-tap login link to <strong style={{color:"#334155"}}>{email.trim()}</strong>. It expires in 15 minutes.
+            </div>
+            <button onClick={()=>{setMagicSent(false);setErr("");}} style={{ background:"none", border:"none", color:"#C0153E", fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit" }}>
+              ← Use a different email
+            </button>
+          </div>
         ) : (
           <>
             <div style={{ background:"#fff0f4", border:"1px solid #ffb3c6", borderRadius:12, padding:"14px 16px", marginBottom:14, fontSize:13, color:"#A0122F", lineHeight:1.8 }}>
@@ -2864,8 +2901,11 @@ function AccessCodeLogin({ onLogin, renewedBanner }) {
               style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`2px solid ${err?"#dc2626":"#e2e8f0"}`, fontSize:16, marginBottom:10, boxSizing:"border-box" }}
             />
             {err && <div style={{ color:"#dc2626", fontSize:13, marginBottom:10, textAlign:"center" }}>{err}</div>}
-            <button onClick={signupFree} disabled={loading} style={{ width:"100%", padding:13, background:"#C0153E", color:"#fff", border:"none", borderRadius:10, fontWeight:700, fontSize:15, cursor:loading?"default":"pointer", marginBottom:12 }}>
+            <button onClick={signupFree} disabled={loading||magicLoading} style={{ width:"100%", padding:13, background:"#C0153E", color:"#fff", border:"none", borderRadius:10, fontWeight:700, fontSize:15, cursor:loading?"default":"pointer", marginBottom:10 }}>
               {loading ? "Creating account..." : "Start for free →"}
+            </button>
+            <button onClick={requestMagicLink} disabled={loading||magicLoading} style={{ width:"100%", padding:0, background:"none", border:"none", color:"#64748b", fontSize:13, fontWeight:600, cursor:magicLoading?"default":"pointer", fontFamily:"inherit", marginBottom:2 }}>
+              {magicLoading ? "Sending link…" : "Already have an account? Email me a login link →"}
             </button>
           </>
         )}
@@ -6697,11 +6737,16 @@ function App() {
   const [rLangs, setRLangs]         = useState(() => [_nativeLang]);
   const [overlay, setOverlay]       = useState(null); // "lang"|"settings"|"upgrade"|null
   const [loggedIn, setLoggedIn]     = useState(isLoggedIn());
-  // If the session lapsed but we remembered the code, silently sign back in
-  // instead of making the user look it up again.
+  // If the session lapsed but we remembered the code — or the user arrived via a
+  // magic login link (?magic=…) — silently sign them in before showing the gate.
   const [authChecking, setAuthChecking] = useState(() => {
-    try { return !isLoggedIn() && !!localStorage.getItem("tongue_code"); } catch(e) { return false; }
+    try {
+      if (isLoggedIn()) return false;
+      const hasMagic = new URLSearchParams(window.location.search).has("magic");
+      return hasMagic || !!localStorage.getItem("tongue_code");
+    } catch(e) { return false; }
   });
+  const [magicError, setMagicError] = useState("");
   const [renewedBanner, setRenewedBanner] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(() => {
     try { return localStorage.getItem("_new_login") === "1"; } catch(e) { return false; }
@@ -6734,9 +6779,40 @@ function App() {
     return () => window.removeEventListener("show-upgrade", handler);
   }, []);
 
+  // Magic-link login: arrived via ?magic=TOKEN → exchange it for a session.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const magic = params.get("magic");
+    if (!magic || isLoggedIn()) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/magic-link/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: magic }),
+        });
+        const data = await res.json();
+        if (res.ok && data.token) {
+          saveSession(data.token, data.expiresAt, data.email, data.plan);
+          try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+          if (!cancelled) { setShowOnboarding((()=>{try{return localStorage.getItem("_new_login")==="1";}catch(e){return false;}})()); setLoggedIn(true); }
+        } else if (!cancelled) {
+          setMagicError(data.error || "This login link is invalid or has expired. Please request a new one.");
+        }
+      } catch(e) { if (!cancelled) setMagicError("Connection error. Please try again."); }
+      // Strip ?magic from the URL so a refresh can't replay a spent link.
+      try { params.delete("magic"); const q = params.toString(); window.history.replaceState({}, "", window.location.pathname + (q ? "?"+q : "")); } catch(e){}
+      if (!cancelled) setAuthChecking(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   // Silent auto-login: session lapsed but code remembered → sign back in
   useEffect(() => {
     if (!authChecking) return;
+    // A magic link is present → let the magic-link effect own the sign-in.
+    if (new URLSearchParams(window.location.search).has("magic")) return;
     let cancelled = false;
     (async () => {
       let savedCode = "";
@@ -6848,7 +6924,7 @@ function App() {
       </div>
     );
   }
-  if (!loggedIn) return <AccessCodeLogin onLogin={() => setLoggedIn(true)} renewedBanner={renewedBanner} />;
+  if (!loggedIn) return <AccessCodeLogin onLogin={() => setLoggedIn(true)} renewedBanner={renewedBanner} magicError={magicError} />;
 
   if (showOnboarding) {
     return (
