@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
   <title>Tongue</title>
-  <meta name="description" content="AI-powered language learning — French, Spanish, English, Japanese and 7 more. AI tutor, flashcards, grammar, streaks."/>
+  <meta name="description" content="Smart language learning — French, Spanish, English, Japanese and 7 more. tutor, flashcards, grammar, streaks."/>
   <meta name="theme-color" content="#C0153E"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
@@ -280,7 +280,7 @@
           PushNotifications.addListener("pushNotificationActionPerformed", (action) => {
             const screen = action.notification?.data?.screen;
             if (screen === "practice") {
-              // Scroll to the AI coach tab
+              // Scroll to the Coach tab
               setTimeout(() => {
                 const btn = document.querySelector('[data-tab="0"]');
                 if (btn) btn.click();
@@ -781,17 +781,17 @@ const UI_STRINGS = {
     guide_title:"New here? Here's where to start:",
     guide_step1:"Pick your language above",
     guide_step2:"Read Quick Reference first",
-    guide_step3:"Practice with AI Coach",
+    guide_step3:"Practice with Coach",
     guide_got_it:"Got it ✓",
-    free_plan:"Free plan · 5 AI messages/day",
+    free_plan:"Free plan · 5 coach messages/day",
     upgrade:"Upgrade →",
     native_lang_title:"My Native Language",
-    native_lang_desc:"The AI Coach will give explanations and corrections in this language.",
+    native_lang_desc:"The Coach will give explanations and corrections in this language.",
     manage_billing:"Manage Billing & Cancel",
     sign_out:"Sign Out", del_account:"Delete my account",
     tabs:[
       {icon:"",label:"Quick Reference",hint:"Start here — the basics"},
-      {icon:"",label:"AI Coach",       hint:"Practice with your tutor"},
+      {icon:"",label:"Coach",       hint:"Practice with your tutor"},
       {icon:"",label:"Grammar",        hint:"How the language works"},
       {icon:"",label:"Structures",     hint:"Common sentence patterns"},
       {icon:"",label:"Vocabulary",     hint:"Words by topic"},
@@ -843,17 +843,17 @@ const UI_STRINGS = {
     guide_title:"¿Nuevo? Por dónde empezar:",
     guide_step1:"Elige tu idioma arriba",
     guide_step2:"Lee Referencia rápida primero",
-    guide_step3:"Practica con el Tutor IA",
+    guide_step3:"Practica con el Tutor",
     guide_got_it:"Entendido ✓",
     free_plan:"Plan gratuito · 5 mensajes IA/día",
     upgrade:"Mejorar →",
     native_lang_title:"Mi idioma nativo",
-    native_lang_desc:"El Tutor IA dará explicaciones y correcciones en este idioma.",
+    native_lang_desc:"El Tutor dará explicaciones y correcciones en este idioma.",
     manage_billing:"Gestionar facturación y cancelar",
     sign_out:"Cerrar sesión", del_account:"Eliminar mi cuenta",
     tabs:[
       {icon:"",label:"Referencia",  hint:"Empieza aquí — lo básico"},
-      {icon:"",label:"Tutor IA",    hint:"Practica con tu tutor"},
+      {icon:"",label:"Tutor",    hint:"Practica con tu tutor"},
       {icon:"",label:"Gramática",   hint:"Cómo funciona el idioma"},
       {icon:"",label:"Estructuras", hint:"Patrones de frases comunes"},
       {icon:"",label:"Vocabulario", hint:"Palabras por tema"},
@@ -874,17 +874,17 @@ const UI_STRINGS = {
     guide_title:"Novo aqui? Por onde começar:",
     guide_step1:"Escolha seu idioma acima",
     guide_step2:"Leia Referência rápida primeiro",
-    guide_step3:"Pratique com o Tutor IA",
+    guide_step3:"Pratique com o Tutor",
     guide_got_it:"Entendi ✓",
     free_plan:"Plano gratuito · 5 mensagens IA/dia",
     upgrade:"Atualizar →",
     native_lang_title:"Meu idioma nativo",
-    native_lang_desc:"O Tutor IA dará explicações e correções neste idioma.",
+    native_lang_desc:"O Tutor dará explicações e correções neste idioma.",
     manage_billing:"Gerenciar cobrança e cancelar",
     sign_out:"Sair", del_account:"Excluir minha conta",
     tabs:[
       {icon:"",label:"Referência",  hint:"Comece aqui — o básico"},
-      {icon:"",label:"Tutor IA",    hint:"Pratique com seu tutor"},
+      {icon:"",label:"Tutor",    hint:"Pratique com seu tutor"},
       {icon:"",label:"Gramática",   hint:"Como o idioma funciona"},
       {icon:"",label:"Estruturas",  hint:"Padrões de frases comuns"},
       {icon:"",label:"Vocabulário", hint:"Palavras por tema"},
@@ -905,17 +905,17 @@ const UI_STRINGS = {
     guide_title:"Sei nuovo? Da dove iniziare:",
     guide_step1:"Scegli la tua lingua sopra",
     guide_step2:"Leggi prima Riferimento rapido",
-    guide_step3:"Esercitati con il Tutor IA",
+    guide_step3:"Esercitati con il Tutor",
     guide_got_it:"Capito ✓",
     free_plan:"Piano gratuito · 5 messaggi IA/giorno",
     upgrade:"Aggiorna →",
     native_lang_title:"La mia lingua madre",
-    native_lang_desc:"Il Tutor IA darà spiegazioni e correzioni in questa lingua.",
+    native_lang_desc:"Il Tutor darà spiegazioni e correzioni in questa lingua.",
     manage_billing:"Gestisci abbonamento e annulla",
     sign_out:"Esci", del_account:"Elimina il mio account",
     tabs:[
       {icon:"",label:"Riferimento", hint:"Inizia qui — le basi"},
-      {icon:"",label:"Tutor IA",   hint:"Esercitati con il tuo tutor"},
+      {icon:"",label:"Tutor",   hint:"Esercitati con il tuo tutor"},
       {icon:"",label:"Grammatica", hint:"Come funziona la lingua"},
       {icon:"",label:"Strutture",  hint:"Strutture di frasi comuni"},
       {icon:"",label:"Vocabolario",hint:"Parole per argomento"},
@@ -967,17 +967,17 @@ const UI_STRINGS = {
     guide_title:"新来的？从这里开始：",
     guide_step1:"在上方选择你的目标语言",
     guide_step2:"先阅读快速参考",
-    guide_step3:"和AI教练一起练习",
+    guide_step3:"和教练一起练习",
     guide_got_it:"明白了 ✓",
     free_plan:"免费计划 · 每天5条AI消息",
     upgrade:"升级 →",
     native_lang_title:"我的母语",
-    native_lang_desc:"AI教练将用这种语言给出解释和纠正。",
+    native_lang_desc:"教练将用这种语言给出解释和纠正。",
     manage_billing:"管理账单和取消订阅",
     sign_out:"退出登录", del_account:"删除我的账户",
     tabs:[
       {icon:"",label:"快速参考", hint:"从这里开始 — 基础知识"},
-      {icon:"",label:"AI教练",  hint:"与你的导师一起练习"},
+      {icon:"",label:"教练",  hint:"与你的导师一起练习"},
       {icon:"",label:"语法",    hint:"语言如何运作"},
       {icon:"",label:"句型",    hint:"常见句子结构"},
       {icon:"",label:"词汇",    hint:"按主题分类的单词"},
@@ -998,17 +998,17 @@ const UI_STRINGS = {
     guide_title:"初めての方へ：",
     guide_step1:"上で言語を選んでください",
     guide_step2:"まずクイックリファレンスを読む",
-    guide_step3:"AIコーチで練習する",
+    guide_step3:"コーチで練習する",
     guide_got_it:"わかりました ✓",
     free_plan:"無料プラン · 1日5件のAIメッセージ",
     upgrade:"アップグレード →",
     native_lang_title:"母国語",
-    native_lang_desc:"AIコーチはこの言語で説明と添削を行います。",
+    native_lang_desc:"コーチはこの言語で説明と添削を行います。",
     manage_billing:"請求を管理してキャンセル",
     sign_out:"サインアウト", del_account:"アカウントを削除",
     tabs:[
       {icon:"",label:"クイック参照",  hint:"基礎から始めましょう"},
-      {icon:"",label:"AIコーチ",     hint:"チューターと練習する"},
+      {icon:"",label:"コーチ",     hint:"チューターと練習する"},
       {icon:"",label:"文法",         hint:"言語の仕組み"},
       {icon:"",label:"文型",         hint:"一般的な文のパターン"},
       {icon:"",label:"語彙",         hint:"トピック別の単語"},
@@ -1029,17 +1029,17 @@ const UI_STRINGS = {
     guide_title:"처음 오셨나요? 시작하는 방법:",
     guide_step1:"위에서 언어 선택하기",
     guide_step2:"먼저 빠른 참조 읽기",
-    guide_step3:"AI 코치로 연습하기",
+    guide_step3:"코치로 연습하기",
     guide_got_it:"알겠습니다 ✓",
-    free_plan:"무료 플랜 · 하루 AI 5개 메시지",
+    free_plan:"무료 플랜 · 하루 5개 메시지",
     upgrade:"업그레이드 →",
     native_lang_title:"모국어",
-    native_lang_desc:"AI 코치가 이 언어로 설명과 교정을 제공합니다.",
+    native_lang_desc:"코치가 이 언어로 설명과 교정을 제공합니다.",
     manage_billing:"청구 관리 및 취소",
     sign_out:"로그아웃", del_account:"내 계정 삭제",
     tabs:[
       {icon:"",label:"빠른 참조",   hint:"기초부터 시작하세요"},
-      {icon:"",label:"AI 코치",     hint:"튜터와 연습하기"},
+      {icon:"",label:"코치",     hint:"튜터와 연습하기"},
       {icon:"",label:"문법",        hint:"언어가 작동하는 방식"},
       {icon:"",label:"문장 구조",   hint:"일반적인 문장 패턴"},
       {icon:"",label:"어휘",        hint:"주제별 단어"},
@@ -1122,17 +1122,17 @@ const UI_STRINGS = {
     guide_title:"नए हैं? यहाँ से शुरू करें:",
     guide_step1:"ऊपर अपनी भाषा चुनें",
     guide_step2:"पहले त्वरित संदर्भ पढ़ें",
-    guide_step3:"AI कोच के साथ अभ्यास करें",
+    guide_step3:"कोच के साथ अभ्यास करें",
     guide_got_it:"समझ गया ✓",
-    free_plan:"निःशुल्क योजना · 5 AI संदेश/दिन",
+    free_plan:"निःशुल्क योजना · 5 संदेश/दिन",
     upgrade:"अपग्रेड करें →",
     native_lang_title:"मेरी मातृभाषा",
-    native_lang_desc:"AI कोच इस भाषा में स्पष्टीकरण और सुधार देगा।",
+    native_lang_desc:"कोच इस भाषा में स्पष्टीकरण और सुधार देगा।",
     manage_billing:"बिलिंग प्रबंधित करें और रद्द करें",
     sign_out:"साइन आउट", del_account:"मेरा खाता हटाएँ",
     tabs:[
       {icon:"",label:"त्वरित संदर्भ", hint:"यहाँ से शुरू करें — मूल बातें"},
-      {icon:"",label:"AI कोच",        hint:"अपने ट्यूटर के साथ अभ्यास करें"},
+      {icon:"",label:"कोच",        hint:"अपने ट्यूटर के साथ अभ्यास करें"},
       {icon:"",label:"व्याकरण",       hint:"भाषा कैसे काम करती है"},
       {icon:"",label:"वाक्य संरचना",  hint:"सामान्य वाक्य पैटर्न"},
       {icon:"",label:"शब्द भंडार",    hint:"विषय के अनुसार शब्द"},
@@ -1229,7 +1229,7 @@ const UI_EXT = {
     cancel: "Cancel",
     // Upgrade modal
     upgrade_title: "Upgrade to Tongue Premium",
-    upgrade_body: "You've used your 5 free AI messages for today. Upgrade for unlimited AI coaching, streaks, drills, dialogues, and more.",
+    upgrade_body: "You've used your 5 free coach messages for today. Upgrade for unlimited coaching, streaks, drills, dialogues, and more.",
     maybe_later: "Maybe later",
     // Session expiry
     expires_today: "Your session expires today. Re-enter your code to stay logged in.",
@@ -1239,7 +1239,7 @@ const UI_EXT = {
     support_greeting: "Hi! I'm the Tongue support assistant. Ask me anything about the app, your subscription, or your access code.",
     support_placeholder: "Ask a question...",
     support_title: "Support Chat",
-    support_subtitle: "AI assistant · usually instant",
+    support_subtitle: "Helper · usually instant",
     // Onboarding
     ob_welcome: "Welcome to Tongue",
     ob_subtitle: "Let's set up your learning experience",
@@ -1717,7 +1717,7 @@ const UI_EXT = {
     yes_delete: "Ja, alles löschen",
     cancel: "Abbrechen",
     upgrade_title: "Upgrade auf Tongue Premium",
-    upgrade_body: "Du hast heute deine 5 kostenlosen KI-Nachrichten genutzt. Upgrade für unbegrenztes KI-Coaching, Serien, Übungen und mehr.",
+    upgrade_body: "Du hast heute deine 5 kostenlosen KI-Nachrichten genutzt. Upgrade für unbegrenztes Coaching, Serien, Übungen und mehr.",
     maybe_later: "Vielleicht später",
     expires_today: "Deine Sitzung läuft heute ab. Gib deinen Code erneut ein.",
     expires_tomorrow: "Deine Sitzung läuft morgen ab. Gib deinen Code erneut ein.",
@@ -1822,7 +1822,7 @@ const UI_EXT = {
     support_greeting: "你好！我是Tongue的支持助手。请随时询问关于应用、订阅或访问码的问题。",
     support_placeholder: "提问...",
     support_title: "支持",
-    support_subtitle: "AI助手 · 通常即时响应",
+    support_subtitle: "助手 · 通常即时响应",
     ob_welcome: "欢迎来到Tongue",
     ob_subtitle: "让我们设置你的学习体验",
     ob_choose_level: "你的水平是什么？",
@@ -1911,7 +1911,7 @@ const UI_EXT = {
     yes_delete: "はい、すべて削除",
     cancel: "キャンセル",
     upgrade_title: "Tongue プレミアムにアップグレード",
-    upgrade_body: "今日の5回の無料AIメッセージを使い切りました。無制限のAIコーチング、ストリーク、ドリルなどのためにアップグレード。",
+    upgrade_body: "今日の5回の無料AIメッセージを使い切りました。無制限のコーチング、ストリーク、ドリルなどのためにアップグレード。",
     maybe_later: "後で",
     expires_today: "セッションが今日期限切れになります。コードを再入力してください。",
     expires_tomorrow: "セッションが明日期限切れになります。コードを再入力してください。",
@@ -1919,7 +1919,7 @@ const UI_EXT = {
     support_greeting: "こんにちは！Tongueのサポートアシスタントです。アプリ、サブスクリプション、またはアクセスコードについて何でも聞いてください。",
     support_placeholder: "質問を入力...",
     support_title: "サポート",
-    support_subtitle: "AIアシスタント · 通常は即時",
+    support_subtitle: "アシスタント · 通常は即時",
     ob_welcome: "Tongueへようこそ",
     ob_subtitle: "学習体験を設定しましょう",
     ob_choose_level: "あなたのレベルは？",
@@ -2008,7 +2008,7 @@ const UI_EXT = {
     yes_delete: "네, 모두 삭제",
     cancel: "취소",
     upgrade_title: "Tongue 프리미엄으로 업그레이드",
-    upgrade_body: "오늘의 무료 AI 메시지 5개를 모두 사용했습니다. 무제한 AI 코칭, 연속 학습, 연습 등을 위해 업그레이드하세요.",
+    upgrade_body: "오늘의 무료 메시지 5개를 모두 사용했습니다. 무제한 코칭, 연속 학습, 연습 등을 위해 업그레이드하세요.",
     maybe_later: "나중에",
     expires_today: "세션이 오늘 만료됩니다. 코드를 다시 입력하세요.",
     expires_tomorrow: "세션이 내일 만료됩니다. 코드를 다시 입력하세요.",
@@ -2016,7 +2016,7 @@ const UI_EXT = {
     support_greeting: "안녕하세요! 저는 Tongue 지원 어시스턴트입니다. 앱, 구독 또는 액세스 코드에 대해 무엇이든 물어보세요.",
     support_placeholder: "질문하기...",
     support_title: "지원",
-    support_subtitle: "AI 어시스턴트 · 보통 즉시 응답",
+    support_subtitle: "어시스턴트 · 보통 즉시 응답",
     ob_welcome: "Tongue에 오신 것을 환영합니다",
     ob_subtitle: "학습 경험을 설정해 보겠습니다",
     ob_choose_level: "레벨이 어떻게 되나요?",
@@ -2105,7 +2105,7 @@ const UI_EXT = {
     yes_delete: "Да, удалить всё",
     cancel: "Отмена",
     upgrade_title: "Обновить до Tongue Premium",
-    upgrade_body: "Вы использовали 5 бесплатных AI-сообщений сегодня. Обновитесь для неограниченного AI-коучинга, серий, упражнений и многого другого.",
+    upgrade_body: "Вы использовали 5 бесплатных сообщений сегодня. Обновитесь для неограниченного коучинга, серий, упражнений и многого другого.",
     maybe_later: "Может, потом",
     expires_today: "Ваша сессия истекает сегодня. Введите код повторно.",
     expires_tomorrow: "Ваша сессия истекает завтра. Введите код повторно.",
@@ -2113,7 +2113,7 @@ const UI_EXT = {
     support_greeting: "Привет! Я помощник поддержки Tongue. Спрашивайте всё об app, подписке или коде доступа.",
     support_placeholder: "Задайте вопрос...",
     support_title: "Поддержка",
-    support_subtitle: "AI-помощник · обычно мгновенно",
+    support_subtitle: "Помощник · обычно мгновенно",
     ob_welcome: "Добро пожаловать в Tongue",
     ob_subtitle: "Давайте настроим ваш опыт обучения",
     ob_choose_level: "Каков ваш уровень?",
@@ -2202,7 +2202,7 @@ const UI_EXT = {
     yes_delete: "نعم، احذف كل شيء",
     cancel: "إلغاء",
     upgrade_title: "الترقية إلى Tongue Premium",
-    upgrade_body: "لقد استخدمت رسائل AI المجانية الـ5 اليوم. قم بالترقية للحصول على تدريب AI غير محدود والمزيد.",
+    upgrade_body: "لقد استخدمت رسائل المجانية الـ5 اليوم. قم بالترقية للحصول على تدريب غير محدود والمزيد.",
     maybe_later: "ربما لاحقاً",
     expires_today: "تنتهي جلستك اليوم. أعد إدخال رمزك للبقاء مسجلاً.",
     expires_tomorrow: "تنتهي جلستك غداً. أعد إدخال رمزك للبقاء مسجلاً.",
@@ -2299,7 +2299,7 @@ const UI_EXT = {
     yes_delete: "हाँ, सब कुछ हटा दें",
     cancel: "रद्द करें",
     upgrade_title: "Tongue Premium में अपग्रेड करें",
-    upgrade_body: "आपने आज के 5 मुफ़्त AI संदेश इस्तेमाल कर लिए। असीमित AI कोचिंग, स्ट्रीक, अभ्यास और अधिक के लिए अपग्रेड करें।",
+    upgrade_body: "आपने आज के 5 मुफ़्त संदेश इस्तेमाल कर लिए। असीमित कोचिंग, स्ट्रीक, अभ्यास और अधिक के लिए अपग्रेड करें।",
     maybe_later: "शायद बाद में",
     expires_today: "आपका सत्र आज समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
     expires_tomorrow: "आपका सत्र कल समाप्त होता है। लॉगिन बनाए रखने के लिए कोड फिर से दर्ज करें।",
@@ -2307,7 +2307,7 @@ const UI_EXT = {
     support_greeting: "नमस्ते! मैं Tongue का सपोर्ट असिस्टेंट हूँ। ऐप, आपकी सदस्यता, या एक्सेस कोड के बारे में कुछ भी पूछें।",
     support_placeholder: "सवाल पूछें...",
     support_title: "सपोर्ट",
-    support_subtitle: "AI असिस्टेंट · आमतौर पर तुरंत",
+    support_subtitle: "असिस्टेंट · आमतौर पर तुरंत",
     ob_welcome: "Tongue में आपका स्वागत है",
     ob_subtitle: "आपका सीखने का अनुभव सेट करते हैं",
     ob_choose_level: "आपका स्तर क्या है?",
@@ -2334,13 +2334,13 @@ Object.keys(UI_EXT).forEach(lang => {
 // English base; the other 11 languages are merged from UI_NAV_I18N just below.
 const UI_NAV = {
   en: {
-    nav_home:"Home", nav_coach:"AI Coach", nav_flashcards:"Flashcards", nav_drills:"Drills",
+    nav_home:"Home", nav_coach:"Coach", nav_flashcards:"Flashcards", nav_drills:"Drills",
     nav_review:"Review", nav_grammar:"Grammar", nav_vocab:"Vocabulary", nav_dialogues:"Phrases & Dialogues",
     nav_structures:"Sentence Patterns", nav_sounds:"Sounds", nav_culture:"Culture & Nuance",
     nav_conversation:"Conversation", nav_analyzer:"Analyze Text", nav_wordspace:"Word Space",
     nav_roadmap:"Roadmap", nav_today:"Today's Practice",
     sec_explore:"Explore", sec_tools:"Tools",
-    home_ask:"Ask anything — AI Coach", home_ask_sub:"Grammar, vocab, corrections, exercises…",
+    home_ask:"Ask anything — Coach", home_ask_sub:"Grammar, vocab, corrections, exercises…",
     home_resume_label:"Pick up where you left off", home_new_here:"New here?",
     home_start_essentials:"Start with the essentials", home_resume:"Resume", home_start:"Start",
     home_what:"What do you want to do?", home_browse:"Or browse everything",
@@ -2380,7 +2380,7 @@ function mergeUiNav(obj) {
   });
 }
 mergeUiNav(UI_NAV);
-const UI_NAV_I18N = {"es":{"nav_home":"Inicio","nav_coach":"Tutor IA","nav_flashcards":"Tarjetas","nav_drills":"Ejercicios","nav_review":"Repaso","nav_grammar":"Gramática","nav_vocab":"Vocabulario","nav_dialogues":"Frases y diálogos","nav_structures":"Estructuras","nav_sounds":"Sonidos","nav_culture":"Cultura y matices","nav_conversation":"Conversación","nav_analyzer":"Analizar texto","nav_wordspace":"Espacio de palabras","nav_roadmap":"Ruta","nav_today":"Práctica de hoy","sec_explore":"Explorar","sec_tools":"Herramientas","home_ask":"Pregunta lo que sea — Tutor IA","home_ask_sub":"Gramática, vocabulario, correcciones, ejercicios…","home_resume_label":"Continúa donde lo dejaste","home_new_here":"¿Nuevo por aquí?","home_start_essentials":"Empieza por lo esencial","home_resume":"Continuar","home_start":"Empezar","home_what":"¿Qué quieres hacer?","home_browse":"O explora todo","home_helpers":"Ayudas — úsalas en todo","home_did_you_know":"¿Sabías que?","home_new_fact":"Otro dato","home_start_streak":"Empieza tu racha","home_switch":"Cambiar","streak_days":"racha de {n} días","lvl_starting":"Recién empiezo","lvl_beginner":"Principiante","lvl_intermediate":"Intermedio","lvl_advanced":"Avanzado","intent_speak":"Practicar hablando en voz alta","intent_speak_why":"Habla con el tutor — responde y corrige tus errores","intent_corrected":"Practicar y que me corrijan","intent_corrected_why":"Ejercicios rápidos con feedback al instante","intent_conversations":"Aprender conversaciones reales","intent_conversations_why":"Escenas listas: café, aeropuerto, conocer a alguien","intent_understand":"Entender algo que vi","intent_understand_why":"Pega un menú, una letra o un mensaje — te lo descifra","intent_lookup":"Buscar una palabra o frase","intent_lookup_why":"Traducción, desglose y audio al instante","intent_how":"Entender cómo funciona","intent_how_why":"Cada regla de gramática, explicada con sencillez","intent_vocab":"Ampliar mi vocabulario","intent_vocab_why":"Palabras por tema — cada una con voz","intent_daily":"Solo mi práctica diaria","intent_daily_why":"Una sesión diaria breve y guiada","more_next":"Qué aprender ahora","more_patterns":"Estructuras","more_flashcards":"Tarjetas","more_sounds":"Sonidos","more_culture":"Cultura y matices","more_drills":"Ejercicios rápidos","free_banner":"Plan gratis · sesiones de tutor limitadas","upgrade":"Mejorar plan","wrap_coach_sub":"Pregunta lo que sea, practica en voz alta y recibe correcciones al momento","wrap_grammar_sub":"Cada conjugación y regla, en tablas completas","wrap_vocab_sub":"Cada palabra por tema — con audio y frases de ejemplo","wrap_dialogues_sub":"Conversaciones reales que tendrás — lee, escucha, practica roles","wrap_flashcards_sub":"Los repasos aparecen justo antes de que olvides — nada se pierde","wrap_drills_sub":"Repeticiones rápidas que convierten las reglas en reflejos","wrap_structures_sub":"El esqueleto de frases reales — cambia cualquier palabra","wrap_wordspace_sub":"Escribe cualquier palabra y mírala traducida, desglosada y con voz","wrap_roadmap_sub":"Dónde estás ahora — y exactamente qué aprender después","wrap_conversation_sub":"Habla con tu tutor — escribe o habla, responde en vivo y corrige tus errores","wrap_analyzer_sub":"Pega una letra, un menú o un mensaje — te lo descifra palabra por palabra","wrap_today_sub":"Tu repaso diario rápido — un poco cada día vale más que atracones"},"pt":{"nav_home":"Início","nav_coach":"Tutor IA","nav_flashcards":"Cartões","nav_drills":"Exercícios","nav_review":"Revisão","nav_grammar":"Gramática","nav_vocab":"Vocabulário","nav_dialogues":"Frases e diálogos","nav_structures":"Estruturas de frase","nav_sounds":"Sons","nav_culture":"Cultura e nuances","nav_conversation":"Conversação","nav_analyzer":"Analisar texto","nav_wordspace":"Espaço de palavras","nav_roadmap":"Trilha","nav_today":"Prática de hoje","sec_explore":"Explorar","sec_tools":"Ferramentas","home_ask":"Pergunte qualquer coisa — Tutor IA","home_ask_sub":"Gramática, vocabulário, correções, exercícios…","home_resume_label":"Continue de onde parou","home_new_here":"É novo por aqui?","home_start_essentials":"Comece pelo essencial","home_resume":"Continuar","home_start":"Começar","home_what":"O que você quer fazer?","home_browse":"Ou explore tudo","home_helpers":"Ajudantes — use em tudo","home_did_you_know":"Você sabia?","home_new_fact":"Outra curiosidade","home_start_streak":"Comece sua sequência","home_switch":"Trocar","streak_days":"sequência de {n} dias","lvl_starting":"Começando agora","lvl_beginner":"Iniciante","lvl_intermediate":"Intermediário","lvl_advanced":"Avançado","intent_speak":"Praticar falando em voz alta","intent_speak_why":"Fale com o tutor — ele responde e corrige seus erros","intent_corrected":"Praticar e ser corrigido","intent_corrected_why":"Exercícios rápidos com feedback na hora","intent_conversations":"Aprender conversas reais","intent_conversations_why":"Cenas prontas: café, aeroporto, conhecer alguém","intent_understand":"Entender algo que vi","intent_understand_why":"Cole um cardápio, uma letra ou uma mensagem — a gente decodifica","intent_lookup":"Buscar uma palavra ou frase","intent_lookup_why":"Tradução, análise e áudio na hora","intent_how":"Entender como funciona","intent_how_why":"Cada regra de gramática, explicada de forma simples","intent_vocab":"Ampliar meu vocabulário","intent_vocab_why":"Palavras por tema — cada uma com áudio","intent_daily":"Só a minha prática diária","intent_daily_why":"Uma sessão diária curta e guiada","more_next":"O que aprender agora","more_patterns":"Estruturas de frase","more_flashcards":"Cartões","more_sounds":"Sons","more_culture":"Cultura e nuances","more_drills":"Exercícios rápidos","free_banner":"Plano grátis · sessões de tutor limitadas","upgrade":"Fazer upgrade","wrap_coach_sub":"Pergunte qualquer coisa, pratique em voz alta e seja corrigido na hora","wrap_grammar_sub":"Cada conjugação e regra, em tabelas completas","wrap_vocab_sub":"Cada palavra por tema — com áudio e frases de exemplo","wrap_dialogues_sub":"Conversas reais que você vai ter — leia, ouça, encene","wrap_flashcards_sub":"As revisões aparecem bem antes de você esquecer — nada desperdiçado","wrap_drills_sub":"Repetições rápidas que transformam regras em reflexos","wrap_structures_sub":"O esqueleto de frases reais — troque qualquer palavra","wrap_wordspace_sub":"Digite qualquer palavra e veja traduzida, analisada e falada","wrap_roadmap_sub":"Onde você está agora — e exatamente o que aprender depois","wrap_conversation_sub":"Fale com seu tutor — digite ou fale, ele responde ao vivo e corrige seus erros","wrap_analyzer_sub":"Cole uma letra, um cardápio, uma mensagem — decodifique palavra por palavra","wrap_today_sub":"Sua revisão diária rápida — um pouco por dia vale mais que maratonar"},"it":{"nav_home":"Home","nav_coach":"Tutor IA","nav_flashcards":"Flashcard","nav_drills":"Esercizi","nav_review":"Ripasso","nav_grammar":"Grammatica","nav_vocab":"Vocabolario","nav_dialogues":"Frasi e dialoghi","nav_structures":"Strutture di frase","nav_sounds":"Suoni","nav_culture":"Cultura e sfumature","nav_conversation":"Conversazione","nav_analyzer":"Analizza testo","nav_wordspace":"Spazio parole","nav_roadmap":"Percorso","nav_today":"Pratica di oggi","sec_explore":"Esplora","sec_tools":"Strumenti","home_ask":"Chiedi qualsiasi cosa — Tutor IA","home_ask_sub":"Grammatica, vocabolario, correzioni, esercizi…","home_resume_label":"Riprendi da dove eri rimasto","home_new_here":"Nuovo qui?","home_start_essentials":"Inizia dalle basi","home_resume":"Riprendi","home_start":"Inizia","home_what":"Cosa vuoi fare?","home_browse":"Oppure esplora tutto","home_helpers":"Aiutanti — usali ovunque","home_did_you_know":"Lo sapevi?","home_new_fact":"Altra curiosità","home_start_streak":"Inizia la tua serie","home_switch":"Cambia","streak_days":"serie di {n} giorni","lvl_starting":"Sto iniziando","lvl_beginner":"Principiante","lvl_intermediate":"Intermedio","lvl_advanced":"Avanzato","intent_speak":"Esercitarmi a parlare ad alta voce","intent_speak_why":"Parla col tutor — risponde e corregge i tuoi errori","intent_corrected":"Esercitarmi e farmi correggere","intent_corrected_why":"Esercizi rapidi con feedback immediato","intent_conversations":"Imparare conversazioni reali","intent_conversations_why":"Scene pronte: bar, aeroporto, conoscere qualcuno","intent_understand":"Capire qualcosa che ho visto","intent_understand_why":"Incolla un menù, un testo o un messaggio — te lo decodifichiamo","intent_lookup":"Cercare una parola o frase","intent_lookup_why":"Traduzione, analisi e audio all'istante","intent_how":"Capire come funziona","intent_how_why":"Ogni regola di grammatica, spiegata in modo semplice","intent_vocab":"Ampliare il vocabolario","intent_vocab_why":"Parole per tema — ognuna con audio","intent_daily":"Solo la mia pratica quotidiana","intent_daily_why":"Una sessione quotidiana breve e guidata","more_next":"Cosa imparare adesso","more_patterns":"Strutture di frase","more_flashcards":"Flashcard","more_sounds":"Suoni","more_culture":"Cultura e sfumature","more_drills":"Esercizi rapidi","free_banner":"Piano gratis · sessioni col tutor limitate","upgrade":"Passa a Premium","wrap_coach_sub":"Chiedi qualsiasi cosa, esercitati ad alta voce e fatti correggere subito","wrap_grammar_sub":"Ogni coniugazione e regola, in tabelle complete","wrap_vocab_sub":"Ogni parola per tema — con audio e frasi di esempio","wrap_dialogues_sub":"Conversazioni vere che avrai davvero — leggi, ascolta, recita","wrap_flashcards_sub":"I ripassi arrivano poco prima che tu dimentichi — niente sprechi","wrap_drills_sub":"Ripetizioni veloci che trasformano le regole in riflessi","wrap_structures_sub":"Lo scheletro delle frasi reali — cambia qualsiasi parola","wrap_wordspace_sub":"Scrivi una parola e vedila tradotta, analizzata e pronunciata","wrap_roadmap_sub":"Dove sei ora — ed esattamente cosa imparare dopo","wrap_conversation_sub":"Parla col tutor — scrivi o parla, risponde dal vivo e corregge i tuoi errori","wrap_analyzer_sub":"Incolla un testo, un menù, un messaggio — decodificalo parola per parola","wrap_today_sub":"Il tuo ripasso quotidiano veloce — poco ogni giorno batte le sessioni intensive"},"de":{"nav_home":"Start","nav_coach":"KI-Coach","nav_flashcards":"Karteikarten","nav_drills":"Übungen","nav_review":"Wiederholen","nav_grammar":"Grammatik","nav_vocab":"Wortschatz","nav_dialogues":"Sätze & Dialoge","nav_structures":"Satzmuster","nav_sounds":"Laute","nav_culture":"Kultur & Nuancen","nav_conversation":"Gespräch","nav_analyzer":"Text analysieren","nav_wordspace":"Wortraum","nav_roadmap":"Lernpfad","nav_today":"Heutige Übung","sec_explore":"Entdecken","sec_tools":"Werkzeuge","home_ask":"Frag alles — KI-Coach","home_ask_sub":"Grammatik, Wortschatz, Korrekturen, Übungen…","home_resume_label":"Mach da weiter, wo du aufgehört hast","home_new_here":"Neu hier?","home_start_essentials":"Fang mit den Grundlagen an","home_resume":"Fortsetzen","home_start":"Starten","home_what":"Was möchtest du tun?","home_browse":"Oder alles durchstöbern","home_helpers":"Helfer — überall dabei","home_did_you_know":"Wusstest du?","home_new_fact":"Noch ein Fakt","home_start_streak":"Starte deine Serie","home_switch":"Wechseln","streak_days":"{n}-Tage-Serie","lvl_starting":"Ganz am Anfang","lvl_beginner":"Anfänger","lvl_intermediate":"Mittelstufe","lvl_advanced":"Fortgeschritten","intent_speak":"Laut sprechen üben","intent_speak_why":"Sprich mit dem Tutor — er antwortet und korrigiert deine Fehler","intent_corrected":"Üben und korrigiert werden","intent_corrected_why":"Kurze Übungen mit sofortigem Feedback","intent_conversations":"Echte Gespräche lernen","intent_conversations_why":"Fertige Szenen: Café, Flughafen, jemanden kennenlernen","intent_understand":"Etwas verstehen, das ich gesehen habe","intent_understand_why":"Füg eine Speisekarte, einen Songtext oder eine Nachricht ein — wird entschlüsselt","intent_lookup":"Ein Wort oder einen Satz nachschlagen","intent_lookup_why":"Sofort-Übersetzung, Aufschlüsselung und Audio","intent_how":"Verstehen, wie es funktioniert","intent_how_why":"Jede Grammatikregel, einfach erklärt","intent_vocab":"Meinen Wortschatz aufbauen","intent_vocab_why":"Wörter nach Thema — jedes vertont","intent_daily":"Nur meine tägliche Übung","intent_daily_why":"Eine kurze, geführte tägliche Einheit","more_next":"Was du als Nächstes lernst","more_patterns":"Satzmuster","more_flashcards":"Karteikarten","more_sounds":"Laute","more_culture":"Kultur & Nuancen","more_drills":"Kurze Übungen","free_banner":"Gratis-Plan · begrenzte Coach-Sitzungen","upgrade":"Upgraden","wrap_coach_sub":"Frag alles, üb laut und lass dich sofort korrigieren","wrap_grammar_sub":"Jede Konjugation und Regel, in vollständigen Tabellen","wrap_vocab_sub":"Jedes Wort nach Thema — mit Audio und Beispielsätzen","wrap_dialogues_sub":"Echte Gespräche, die du wirklich führst — lesen, hören, nachspielen","wrap_flashcards_sub":"Wiederholungen kommen kurz bevor du vergisst — nichts verschwendet","wrap_drills_sub":"Schnelle Wiederholungen, die Regeln zu Reflexen machen","wrap_structures_sub":"Das Gerüst echter Sätze — setz beliebige Wörter ein","wrap_wordspace_sub":"Gib ein Wort ein und sieh es übersetzt, aufgeschlüsselt und vertont","wrap_roadmap_sub":"Wo du jetzt stehst — und genau, was als Nächstes kommt","wrap_conversation_sub":"Sprich mit deinem Tutor — tippen oder sprechen, er antwortet live und korrigiert deine Fehler","wrap_analyzer_sub":"Füg Songtexte, eine Speisekarte, eine Nachricht ein — Wort für Wort entschlüsselt","wrap_today_sub":"Deine kurze tägliche Einheit — jeden Tag ein bisschen schlägt Pauken"},"zh":{"nav_home":"首页","nav_coach":"AI 教练","nav_flashcards":"闪卡","nav_drills":"练习","nav_review":"复习","nav_grammar":"语法","nav_vocab":"词汇","nav_dialogues":"短语与对话","nav_structures":"句型","nav_sounds":"发音","nav_culture":"文化与语感","nav_conversation":"对话练习","nav_analyzer":"分析文本","nav_wordspace":"单词空间","nav_roadmap":"学习路线","nav_today":"今日练习","sec_explore":"探索","sec_tools":"工具","home_ask":"什么都能问 — AI 教练","home_ask_sub":"语法、词汇、纠错、练习…","home_resume_label":"从上次的地方继续","home_new_here":"新来的？","home_start_essentials":"从基础开始","home_resume":"继续","home_start":"开始","home_what":"你想做什么？","home_browse":"或浏览全部","home_helpers":"助手 — 随处可用","home_did_you_know":"你知道吗","home_new_fact":"换一条","home_start_streak":"开启连续打卡","home_switch":"切换","streak_days":"连续 {n} 天","lvl_starting":"刚刚起步","lvl_beginner":"初级","lvl_intermediate":"中级","lvl_advanced":"高级","intent_speak":"练习大声开口说","intent_speak_why":"和导师对话 — 它会回应并纠正你的错误","intent_corrected":"练习并获得纠正","intent_corrected_why":"快速练习，即时反馈","intent_conversations":"学习真实对话","intent_conversations_why":"现成场景：咖啡馆、机场、初次见面","intent_understand":"看懂我看到的内容","intent_understand_why":"粘贴菜单、歌词或消息 — 帮你逐一解读","intent_lookup":"查一个单词或短语","intent_lookup_why":"即时翻译、拆解和发音","intent_how":"理解它是怎么运作的","intent_how_why":"每条语法规则，简单讲清","intent_vocab":"扩充我的词汇量","intent_vocab_why":"按主题分类的单词 — 每个都有发音","intent_daily":"只做每日练习","intent_daily_why":"简短的每日引导练习","more_next":"接下来学什么","more_patterns":"句型","more_flashcards":"闪卡","more_sounds":"发音","more_culture":"文化与语感","more_drills":"快速练习","free_banner":"免费版 · 教练次数有限","upgrade":"升级","wrap_coach_sub":"什么都能问，大声练习，当场获得纠正","wrap_grammar_sub":"每种变位和规则，完整列成表格","wrap_vocab_sub":"按主题分类的每个单词 — 配发音和例句","wrap_dialogues_sub":"你真会用到的完整对话 — 阅读、聆听、角色扮演","wrap_flashcards_sub":"在你快忘时恰好出现复习 — 毫不浪费","wrap_drills_sub":"快速反复练习，把规则变成本能","wrap_structures_sub":"真实句子的骨架 — 任意替换词语","wrap_wordspace_sub":"输入任何单词，即可看到翻译、拆解和发音","wrap_roadmap_sub":"你现在的位置 — 以及接下来该学什么","wrap_conversation_sub":"和你的导师对话 — 打字或开口，它实时回应并纠正你的错误","wrap_analyzer_sub":"粘贴歌词、菜单或消息 — 逐词为你解读","wrap_today_sub":"你的每日快速练习 — 每天一点胜过临时突击"},"ja":{"nav_home":"ホーム","nav_coach":"AIコーチ","nav_flashcards":"単語カード","nav_drills":"ドリル","nav_review":"復習","nav_grammar":"文法","nav_vocab":"語彙","nav_dialogues":"フレーズと会話","nav_structures":"文型","nav_sounds":"発音","nav_culture":"文化とニュアンス","nav_conversation":"会話","nav_analyzer":"テキスト解析","nav_wordspace":"ワードスペース","nav_roadmap":"ロードマップ","nav_today":"今日の練習","sec_explore":"さがす","sec_tools":"ツール","home_ask":"何でも質問 — AIコーチ","home_ask_sub":"文法、語彙、添削、練習問題…","home_resume_label":"続きから始める","home_new_here":"はじめて？","home_start_essentials":"基本から始めよう","home_resume":"再開","home_start":"はじめる","home_what":"何をする？","home_browse":"またはすべて見る","home_helpers":"お助けツール — どこでも使える","home_did_you_know":"豆知識","home_new_fact":"次の豆知識","home_start_streak":"連続記録を始めよう","home_switch":"切り替え","streak_days":"{n}日連続","lvl_starting":"始めたばかり","lvl_beginner":"初級","lvl_intermediate":"中級","lvl_advanced":"上級","intent_speak":"声に出して話す練習","intent_speak_why":"チューターと話そう — 返事をして間違いも直してくれる","intent_corrected":"練習して添削してもらう","intent_corrected_why":"その場でフィードバックがつく短い練習","intent_conversations":"リアルな会話を学ぶ","intent_conversations_why":"すぐ使えるシーン：カフェ、空港、初対面","intent_understand":"見かけたものを理解する","intent_understand_why":"メニューや歌詞、メッセージを貼るだけで解読","intent_lookup":"単語やフレーズを調べる","intent_lookup_why":"すぐに翻訳・分解・音声","intent_how":"仕組みを理解する","intent_how_why":"すべての文法ルールをわかりやすく解説","intent_vocab":"語彙を増やす","intent_vocab_why":"テーマ別の単語 — それぞれ音声つき","intent_daily":"毎日の練習だけ","intent_daily_why":"短くて導かれる毎日の一問","more_next":"次に学ぶこと","more_patterns":"文型","more_flashcards":"単語カード","more_sounds":"発音","more_culture":"文化とニュアンス","more_drills":"クイックドリル","free_banner":"無料プラン · コーチ利用は制限あり","upgrade":"アップグレード","wrap_coach_sub":"何でも質問、声に出して練習、その場で添削","wrap_grammar_sub":"すべての活用とルールを、フル表で整理","wrap_vocab_sub":"テーマ別のすべての単語 — 音声と例文つき","wrap_dialogues_sub":"実際に使う会話まるごと — 読む、聞く、ロールプレイ","wrap_flashcards_sub":"忘れる直前に復習が出る — 無駄がない","wrap_drills_sub":"ルールを反射にする素早い反復練習","wrap_structures_sub":"リアルな文の骨組み — どんな単語でも入れ替え自在","wrap_wordspace_sub":"どんな単語も入力すれば、翻訳・分解・音声で見られる","wrap_roadmap_sub":"今いる場所 — そして次に学ぶべきこと","wrap_conversation_sub":"チューターと話そう — 入力でも音声でも、その場で返事して間違いを直す","wrap_analyzer_sub":"歌詞やメニュー、メッセージを貼れば — 単語ごとに解読","wrap_today_sub":"毎日のクイック練習 — 毎日少しずつが一夜漬けに勝る"},"ko":{"nav_home":"홈","nav_coach":"AI 코치","nav_flashcards":"플래시카드","nav_drills":"연습 문제","nav_review":"복습","nav_grammar":"문법","nav_vocab":"어휘","nav_dialogues":"표현과 대화","nav_structures":"문장 패턴","nav_sounds":"발음","nav_culture":"문화와 뉘앙스","nav_conversation":"회화","nav_analyzer":"텍스트 분석","nav_wordspace":"단어 공간","nav_roadmap":"학습 로드맵","nav_today":"오늘의 연습","sec_explore":"둘러보기","sec_tools":"도구","home_ask":"무엇이든 물어보세요 — AI 코치","home_ask_sub":"문법, 어휘, 교정, 연습 문제…","home_resume_label":"멈춘 곳부터 이어서","home_new_here":"처음이신가요?","home_start_essentials":"기본부터 시작하기","home_resume":"이어하기","home_start":"시작","home_what":"무엇을 해볼까요?","home_browse":"또는 전체 둘러보기","home_helpers":"도우미 — 어디서나 활용","home_did_you_know":"알고 계셨나요?","home_new_fact":"다른 정보","home_start_streak":"연속 학습 시작하기","home_switch":"전환","streak_days":"{n}일 연속","lvl_starting":"이제 막 시작","lvl_beginner":"초급","lvl_intermediate":"중급","lvl_advanced":"고급","intent_speak":"소리 내어 말하기 연습","intent_speak_why":"튜터와 대화하세요 — 답하고 실수를 바로잡아 줍니다","intent_corrected":"연습하고 교정받기","intent_corrected_why":"즉각 피드백이 있는 빠른 연습","intent_conversations":"진짜 대화 배우기","intent_conversations_why":"바로 쓰는 상황: 카페, 공항, 첫 만남","intent_understand":"본 것을 이해하기","intent_understand_why":"메뉴, 가사, 메시지를 붙여넣으면 — 풀이해 드려요","intent_lookup":"단어나 표현 찾기","intent_lookup_why":"즉시 번역, 분석, 음성","intent_how":"작동 원리 이해하기","intent_how_why":"모든 문법 규칙을 쉽게 설명","intent_vocab":"어휘 늘리기","intent_vocab_why":"주제별 단어 — 하나하나 음성 지원","intent_daily":"매일 연습만 하기","intent_daily_why":"짧고 안내가 있는 매일 연습","more_next":"다음에 배울 것","more_patterns":"문장 패턴","more_flashcards":"플래시카드","more_sounds":"발음","more_culture":"문화와 뉘앙스","more_drills":"빠른 연습","free_banner":"무료 플랜 · 코치 세션 제한","upgrade":"업그레이드","wrap_coach_sub":"무엇이든 묻고, 소리 내어 연습하고, 그 자리에서 교정받으세요","wrap_grammar_sub":"모든 활용과 규칙을 완전한 표로 정리","wrap_vocab_sub":"주제별 모든 단어 — 음성과 예문 포함","wrap_dialogues_sub":"실제로 하게 될 온전한 대화 — 읽고, 듣고, 역할극","wrap_flashcards_sub":"잊기 직전에 딱 복습이 뜹니다 — 낭비 없이","wrap_drills_sub":"규칙을 반사로 만드는 빠른 반복 연습","wrap_structures_sub":"진짜 문장의 뼈대 — 어떤 단어든 바꿔 넣기","wrap_wordspace_sub":"아무 단어나 입력하면 번역, 분석, 음성으로 확인","wrap_roadmap_sub":"지금 위치 — 그리고 다음에 배울 것을 정확히","wrap_conversation_sub":"튜터와 대화하세요 — 입력하거나 말하면 실시간으로 답하고 실수를 바로잡아요","wrap_analyzer_sub":"가사, 메뉴, 메시지를 붙여넣으면 — 단어 하나하나 풀이","wrap_today_sub":"빠른 매일 연습 — 매일 조금씩이 벼락치기를 이깁니다"},"ru":{"nav_home":"Главная","nav_coach":"ИИ-коуч","nav_flashcards":"Карточки","nav_drills":"Упражнения","nav_review":"Повторение","nav_grammar":"Грамматика","nav_vocab":"Лексика","nav_dialogues":"Фразы и диалоги","nav_structures":"Модели предложений","nav_sounds":"Звуки","nav_culture":"Культура и нюансы","nav_conversation":"Разговор","nav_analyzer":"Разбор текста","nav_wordspace":"Пространство слов","nav_roadmap":"План обучения","nav_today":"Практика на сегодня","sec_explore":"Обзор","sec_tools":"Инструменты","home_ask":"Спросите что угодно — ИИ-коуч","home_ask_sub":"Грамматика, лексика, исправления, упражнения…","home_resume_label":"Продолжите с того места, где остановились","home_new_here":"Впервые здесь?","home_start_essentials":"Начните с основ","home_resume":"Продолжить","home_start":"Начать","home_what":"Что хотите сделать?","home_browse":"Или посмотрите всё","home_helpers":"Помощники — пригодятся везде","home_did_you_know":"А вы знали?","home_new_fact":"Ещё факт","home_start_streak":"Начните свою серию","home_switch":"Сменить","streak_days":"серия {n} дн.","lvl_starting":"Только начинаю","lvl_beginner":"Начальный","lvl_intermediate":"Средний","lvl_advanced":"Продвинутый","intent_speak":"Практиковаться говорить вслух","intent_speak_why":"Говорите с наставником — он отвечает и исправляет ошибки","intent_corrected":"Практиковаться и получать исправления","intent_corrected_why":"Быстрые упражнения с мгновенной обратной связью","intent_conversations":"Учить реальные разговоры","intent_conversations_why":"Готовые сцены: кафе, аэропорт, знакомство","intent_understand":"Понять то, что я увидел","intent_understand_why":"Вставьте меню, текст песни или сообщение — мы всё разберём","intent_lookup":"Найти слово или фразу","intent_lookup_why":"Мгновенный перевод, разбор и озвучка","intent_how":"Понять, как это работает","intent_how_why":"Каждое правило грамматики, объяснённое просто","intent_vocab":"Расширить словарный запас","intent_vocab_why":"Слова по темам — каждое озвучено","intent_daily":"Только ежедневная практика","intent_daily_why":"Короткое ежедневное занятие с подсказками","more_next":"Что учить дальше","more_patterns":"Модели предложений","more_flashcards":"Карточки","more_sounds":"Звуки","more_culture":"Культура и нюансы","more_drills":"Быстрые упражнения","free_banner":"Бесплатный план · сеансы с коучем ограничены","upgrade":"Улучшить","wrap_coach_sub":"Спрашивайте что угодно, практикуйтесь вслух и получайте исправления на месте","wrap_grammar_sub":"Каждое спряжение и правило, в полных таблицах","wrap_vocab_sub":"Каждое слово по темам — с озвучкой и примерами","wrap_dialogues_sub":"Настоящие разговоры, которые вам пригодятся — читайте, слушайте, разыгрывайте","wrap_flashcards_sub":"Повторения появляются прямо перед тем, как забудете — ничего впустую","wrap_drills_sub":"Быстрые повторы, превращающие правила в рефлексы","wrap_structures_sub":"Каркас настоящих предложений — подставляйте любые слова","wrap_wordspace_sub":"Введите любое слово и увидите перевод, разбор и озвучку","wrap_roadmap_sub":"Где вы сейчас — и что именно учить дальше","wrap_conversation_sub":"Говорите с наставником — печатайте или говорите, он отвечает вживую и исправляет ошибки","wrap_analyzer_sub":"Вставьте текст песни, меню, сообщение — разберём слово за словом","wrap_today_sub":"Ваше быстрое ежедневное занятие — понемногу каждый день лучше зубрёжки"},"ar":{"nav_home":"الرئيسية","nav_coach":"مدرّب الذكاء الاصطناعي","nav_flashcards":"بطاقات","nav_drills":"تمارين","nav_review":"مراجعة","nav_grammar":"القواعد","nav_vocab":"المفردات","nav_dialogues":"عبارات وحوارات","nav_structures":"أنماط الجمل","nav_sounds":"الأصوات","nav_culture":"الثقافة والدلالات","nav_conversation":"محادثة","nav_analyzer":"تحليل نص","nav_wordspace":"فضاء الكلمات","nav_roadmap":"خطة التعلّم","nav_today":"تمرين اليوم","sec_explore":"استكشاف","sec_tools":"أدوات","home_ask":"اسأل أي شيء — مدرّب الذكاء الاصطناعي","home_ask_sub":"قواعد، مفردات، تصحيحات، تمارين…","home_resume_label":"تابع من حيث توقّفت","home_new_here":"جديد هنا؟","home_start_essentials":"ابدأ بالأساسيات","home_resume":"متابعة","home_start":"ابدأ","home_what":"ماذا تريد أن تفعل؟","home_browse":"أو تصفّح كل شيء","home_helpers":"أدوات مساعدة — استخدمها في أي مكان","home_did_you_know":"هل تعلم؟","home_new_fact":"معلومة أخرى","home_start_streak":"ابدأ سلسلتك","home_switch":"تبديل","streak_days":"سلسلة {n} يوم","lvl_starting":"بدأت للتو","lvl_beginner":"مبتدئ","lvl_intermediate":"متوسط","lvl_advanced":"متقدّم","intent_speak":"التدرّب على النطق بصوت عالٍ","intent_speak_why":"تحدّث مع المعلّم — يردّ عليك ويصحّح أخطاءك","intent_corrected":"التدرّب والحصول على تصحيح","intent_corrected_why":"تمارين سريعة مع تغذية راجعة فورية","intent_conversations":"تعلّم محادثات حقيقية","intent_conversations_why":"مشاهد جاهزة: مقهى، مطار، لقاء شخص","intent_understand":"فهم شيء رأيته","intent_understand_why":"الصق قائمة طعام أو كلمات أغنية أو رسالة — ونفكّ لك رموزها","intent_lookup":"البحث عن كلمة أو عبارة","intent_lookup_why":"ترجمة فورية وتحليل وصوت","intent_how":"فهم كيف تعمل","intent_how_why":"كل قاعدة نحوية، مشروحة ببساطة","intent_vocab":"توسيع مفرداتي","intent_vocab_why":"كلمات حسب الموضوع — كل منها منطوقة","intent_daily":"تمريني اليومي فقط","intent_daily_why":"جلسة يومية قصيرة وموجّهة","more_next":"ماذا تتعلّم بعد ذلك","more_patterns":"أنماط الجمل","more_flashcards":"بطاقات","more_sounds":"الأصوات","more_culture":"الثقافة والدلالات","more_drills":"تمارين سريعة","free_banner":"الخطة المجانية · جلسات مدرّب محدودة","upgrade":"ترقية","wrap_coach_sub":"اسأل أي شيء، تدرّب بصوت عالٍ، واحصل على التصحيح فورًا","wrap_grammar_sub":"كل تصريف وقاعدة، منظّمة في جداول كاملة","wrap_vocab_sub":"كل كلمة حسب الموضوع — مع صوت وجمل أمثلة","wrap_dialogues_sub":"محادثات كاملة ستستخدمها فعلًا — اقرأ، استمع، وأدِّ الأدوار","wrap_flashcards_sub":"تظهر المراجعات قبل أن تنسى مباشرة — دون أي هدر","wrap_drills_sub":"تكرارات سريعة تحوّل القواعد إلى ردود فعل تلقائية","wrap_structures_sub":"هياكل الجمل الحقيقية — بدّل أي كلمات تشاء","wrap_wordspace_sub":"اكتب أي كلمة لتراها مترجمة ومحلّلة ومنطوقة","wrap_roadmap_sub":"أين أنت الآن — وما الذي تتعلّمه بعد ذلك بالضبط","wrap_conversation_sub":"تحدّث مع معلّمك — اكتب أو تكلّم، يردّ مباشرة ويصحّح أخطاءك","wrap_analyzer_sub":"الصق كلمات أغنية أو قائمة طعام أو رسالة — نفكّ رموزها كلمة بكلمة","wrap_today_sub":"تمرينك اليومي السريع — القليل كل يوم أفضل من الحشو المكثّف"},"hi":{"nav_home":"होम","nav_coach":"AI कोच","nav_flashcards":"फ़्लैशकार्ड","nav_drills":"अभ्यास","nav_review":"दोहराव","nav_grammar":"व्याकरण","nav_vocab":"शब्दावली","nav_dialogues":"वाक्य और संवाद","nav_structures":"वाक्य पैटर्न","nav_sounds":"ध्वनियाँ","nav_culture":"संस्कृति और बारीकियाँ","nav_conversation":"बातचीत","nav_analyzer":"टेक्स्ट विश्लेषण","nav_wordspace":"शब्द स्थान","nav_roadmap":"लर्निंग रोडमैप","nav_today":"आज का अभ्यास","sec_explore":"एक्सप्लोर करें","sec_tools":"टूल","home_ask":"कुछ भी पूछें — AI कोच","home_ask_sub":"व्याकरण, शब्दावली, सुधार, अभ्यास…","home_resume_label":"जहाँ छोड़ा था वहीं से शुरू करें","home_new_here":"यहाँ नए हैं?","home_start_essentials":"बुनियादी बातों से शुरू करें","home_resume":"जारी रखें","home_start":"शुरू करें","home_what":"आप क्या करना चाहते हैं?","home_browse":"या सब कुछ देखें","home_helpers":"सहायक — हर जगह काम आएँ","home_did_you_know":"क्या आप जानते हैं?","home_new_fact":"एक और तथ्य","home_start_streak":"अपनी लगातार शृंखला शुरू करें","home_switch":"बदलें","streak_days":"{n} दिन की शृंखला","lvl_starting":"अभी शुरुआत","lvl_beginner":"शुरुआती","lvl_intermediate":"मध्यम","lvl_advanced":"उन्नत","intent_speak":"ज़ोर से बोलने का अभ्यास","intent_speak_why":"ट्यूटर से बात करें — यह जवाब देता है और आपकी गलतियाँ सुधारता है","intent_corrected":"अभ्यास करें और सुधार पाएँ","intent_corrected_why":"तुरंत फ़ीडबैक के साथ छोटे अभ्यास","intent_conversations":"असली बातचीत सीखें","intent_conversations_why":"तैयार दृश्य: कैफ़े, हवाई अड्डा, किसी से मिलना","intent_understand":"जो देखा उसे समझें","intent_understand_why":"मेन्यू, गीत या संदेश पेस्ट करें — इसका मतलब समझ लें","intent_lookup":"कोई शब्द या वाक्यांश खोजें","intent_lookup_why":"तुरंत अनुवाद, विश्लेषण और ऑडियो","intent_how":"समझें यह कैसे काम करता है","intent_how_why":"हर व्याकरण नियम, सरलता से समझाया गया","intent_vocab":"अपनी शब्दावली बढ़ाएँ","intent_vocab_why":"विषय के अनुसार शब्द — हर एक की आवाज़ के साथ","intent_daily":"बस मेरा रोज़ का अभ्यास","intent_daily_why":"एक छोटा, निर्देशित रोज़ाना अभ्यास","more_next":"आगे क्या सीखें","more_patterns":"वाक्य पैटर्न","more_flashcards":"फ़्लैशकार्ड","more_sounds":"ध्वनियाँ","more_culture":"संस्कृति और बारीकियाँ","more_drills":"त्वरित अभ्यास","free_banner":"फ़्री प्लान · कोच सत्र सीमित","upgrade":"अपग्रेड करें","wrap_coach_sub":"कुछ भी पूछें, ज़ोर से अभ्यास करें, तुरंत सुधार पाएँ","wrap_grammar_sub":"हर रूप और नियम, पूरी तालिकाओं में सजाया गया","wrap_vocab_sub":"विषय के अनुसार हर शब्द — ऑडियो और उदाहरण वाक्यों के साथ","wrap_dialogues_sub":"असली बातचीत जो आप सच में करेंगे — पढ़ें, सुनें, भूमिका निभाएँ","wrap_flashcards_sub":"भूलने से ठीक पहले दोहराव सामने आता है — कुछ भी बर्बाद नहीं","wrap_drills_sub":"तेज़ अभ्यास जो नियमों को सजगता में बदल देते हैं","wrap_structures_sub":"असली वाक्यों का ढाँचा — कोई भी शब्द बदलकर डालें","wrap_wordspace_sub":"कोई भी शब्द टाइप करें और उसका अनुवाद, विश्लेषण और उच्चारण देखें","wrap_roadmap_sub":"आप अभी कहाँ हैं — और आगे ठीक क्या सीखना है","wrap_conversation_sub":"अपने ट्यूटर से बात करें — टाइप करें या बोलें, यह लाइव जवाब देता है और गलतियाँ सुधारता है","wrap_analyzer_sub":"गीत, मेन्यू या संदेश पेस्ट करें — इसे शब्द दर शब्द समझें","wrap_today_sub":"आपका त्वरित रोज़ाना अभ्यास — रोज़ थोड़ा-थोड़ा रटने से बेहतर है"},"fr":{"nav_home":"Accueil","nav_coach":"Coach IA","nav_flashcards":"Cartes","nav_drills":"Exercices","nav_review":"Révision","nav_grammar":"Grammaire","nav_vocab":"Vocabulaire","nav_dialogues":"Phrases et dialogues","nav_structures":"Modèles de phrases","nav_sounds":"Sons","nav_culture":"Culture et nuances","nav_conversation":"Conversation","nav_analyzer":"Analyser un texte","nav_wordspace":"Espace mots","nav_roadmap":"Parcours","nav_today":"Exercice du jour","sec_explore":"Explorer","sec_tools":"Outils","home_ask":"Demande n'importe quoi — Coach IA","home_ask_sub":"Grammaire, vocabulaire, corrections, exercices…","home_resume_label":"Reprends là où tu t'es arrêté","home_new_here":"Nouveau ici ?","home_start_essentials":"Commence par l'essentiel","home_resume":"Reprendre","home_start":"Commencer","home_what":"Que veux-tu faire ?","home_browse":"Ou parcours tout","home_helpers":"Aides — à utiliser partout","home_did_you_know":"Le savais-tu ?","home_new_fact":"Autre info","home_start_streak":"Lance ta série","home_switch":"Changer","streak_days":"série de {n} jours","lvl_starting":"Je débute tout juste","lvl_beginner":"Débutant","lvl_intermediate":"Intermédiaire","lvl_advanced":"Avancé","intent_speak":"M'entraîner à parler à voix haute","intent_speak_why":"Parle au tuteur — il répond et corrige tes erreurs","intent_corrected":"M'entraîner et être corrigé","intent_corrected_why":"Des exercices rapides avec retour immédiat","intent_conversations":"Apprendre de vraies conversations","intent_conversations_why":"Scènes toutes prêtes : café, aéroport, première rencontre","intent_understand":"Comprendre quelque chose que j'ai vu","intent_understand_why":"Colle un menu, des paroles ou un message — on te le décode","intent_lookup":"Chercher un mot ou une expression","intent_lookup_why":"Traduction, décomposition et audio instantanés","intent_how":"Comprendre comment ça marche","intent_how_why":"Chaque règle de grammaire, expliquée simplement","intent_vocab":"Enrichir mon vocabulaire","intent_vocab_why":"Des mots par thème — chacun prononcé","intent_daily":"Juste mon exercice quotidien","intent_daily_why":"Une courte séance quotidienne guidée","more_next":"Quoi apprendre ensuite","more_patterns":"Modèles de phrases","more_flashcards":"Cartes","more_sounds":"Sons","more_culture":"Culture et nuances","more_drills":"Exercices rapides","free_banner":"Forfait gratuit · séances de coach limitées","upgrade":"Passer au premium","wrap_coach_sub":"Demande n'importe quoi, entraîne-toi à voix haute, fais-toi corriger sur le champ","wrap_grammar_sub":"Chaque conjugaison et règle, présentées en tableaux complets","wrap_vocab_sub":"Chaque mot par thème — avec audio et phrases d'exemple","wrap_dialogues_sub":"De vraies conversations que tu auras vraiment — lis, écoute, joue les rôles","wrap_flashcards_sub":"Les révisions arrivent juste avant l'oubli — rien de gaspillé","wrap_drills_sub":"Des répétitions rapides qui transforment les règles en réflexes","wrap_structures_sub":"Le squelette de vraies phrases — remplace n'importe quel mot","wrap_wordspace_sub":"Tape n'importe quel mot pour le voir traduit, décomposé et prononcé","wrap_roadmap_sub":"Où tu en es maintenant — et exactement quoi apprendre ensuite","wrap_conversation_sub":"Parle avec ton tuteur — écris ou parle, il répond en direct et corrige tes erreurs","wrap_analyzer_sub":"Colle des paroles, un menu, un message — décode-le mot à mot","wrap_today_sub":"Ta séance quotidienne express — un peu chaque jour vaut mieux que le bachotage"}};
+const UI_NAV_I18N = {"es":{"nav_home":"Inicio","nav_coach":"Tutor","nav_flashcards":"Tarjetas","nav_drills":"Ejercicios","nav_review":"Repaso","nav_grammar":"Gramática","nav_vocab":"Vocabulario","nav_dialogues":"Frases y diálogos","nav_structures":"Estructuras","nav_sounds":"Sonidos","nav_culture":"Cultura y matices","nav_conversation":"Conversación","nav_analyzer":"Analizar texto","nav_wordspace":"Espacio de palabras","nav_roadmap":"Ruta","nav_today":"Práctica de hoy","sec_explore":"Explorar","sec_tools":"Herramientas","home_ask":"Pregunta lo que sea — Tutor","home_ask_sub":"Gramática, vocabulario, correcciones, ejercicios…","home_resume_label":"Continúa donde lo dejaste","home_new_here":"¿Nuevo por aquí?","home_start_essentials":"Empieza por lo esencial","home_resume":"Continuar","home_start":"Empezar","home_what":"¿Qué quieres hacer?","home_browse":"O explora todo","home_helpers":"Ayudas — úsalas en todo","home_did_you_know":"¿Sabías que?","home_new_fact":"Otro dato","home_start_streak":"Empieza tu racha","home_switch":"Cambiar","streak_days":"racha de {n} días","lvl_starting":"Recién empiezo","lvl_beginner":"Principiante","lvl_intermediate":"Intermedio","lvl_advanced":"Avanzado","intent_speak":"Practicar hablando en voz alta","intent_speak_why":"Habla con el tutor — responde y corrige tus errores","intent_corrected":"Practicar y que me corrijan","intent_corrected_why":"Ejercicios rápidos con feedback al instante","intent_conversations":"Aprender conversaciones reales","intent_conversations_why":"Escenas listas: café, aeropuerto, conocer a alguien","intent_understand":"Entender algo que vi","intent_understand_why":"Pega un menú, una letra o un mensaje — te lo descifra","intent_lookup":"Buscar una palabra o frase","intent_lookup_why":"Traducción, desglose y audio al instante","intent_how":"Entender cómo funciona","intent_how_why":"Cada regla de gramática, explicada con sencillez","intent_vocab":"Ampliar mi vocabulario","intent_vocab_why":"Palabras por tema — cada una con voz","intent_daily":"Solo mi práctica diaria","intent_daily_why":"Una sesión diaria breve y guiada","more_next":"Qué aprender ahora","more_patterns":"Estructuras","more_flashcards":"Tarjetas","more_sounds":"Sonidos","more_culture":"Cultura y matices","more_drills":"Ejercicios rápidos","free_banner":"Plan gratis · sesiones de tutor limitadas","upgrade":"Mejorar plan","wrap_coach_sub":"Pregunta lo que sea, practica en voz alta y recibe correcciones al momento","wrap_grammar_sub":"Cada conjugación y regla, en tablas completas","wrap_vocab_sub":"Cada palabra por tema — con audio y frases de ejemplo","wrap_dialogues_sub":"Conversaciones reales que tendrás — lee, escucha, practica roles","wrap_flashcards_sub":"Los repasos aparecen justo antes de que olvides — nada se pierde","wrap_drills_sub":"Repeticiones rápidas que convierten las reglas en reflejos","wrap_structures_sub":"El esqueleto de frases reales — cambia cualquier palabra","wrap_wordspace_sub":"Escribe cualquier palabra y mírala traducida, desglosada y con voz","wrap_roadmap_sub":"Dónde estás ahora — y exactamente qué aprender después","wrap_conversation_sub":"Habla con tu tutor — escribe o habla, responde en vivo y corrige tus errores","wrap_analyzer_sub":"Pega una letra, un menú o un mensaje — te lo descifra palabra por palabra","wrap_today_sub":"Tu repaso diario rápido — un poco cada día vale más que atracones"},"pt":{"nav_home":"Início","nav_coach":"Tutor","nav_flashcards":"Cartões","nav_drills":"Exercícios","nav_review":"Revisão","nav_grammar":"Gramática","nav_vocab":"Vocabulário","nav_dialogues":"Frases e diálogos","nav_structures":"Estruturas de frase","nav_sounds":"Sons","nav_culture":"Cultura e nuances","nav_conversation":"Conversação","nav_analyzer":"Analisar texto","nav_wordspace":"Espaço de palavras","nav_roadmap":"Trilha","nav_today":"Prática de hoje","sec_explore":"Explorar","sec_tools":"Ferramentas","home_ask":"Pergunte qualquer coisa — Tutor","home_ask_sub":"Gramática, vocabulário, correções, exercícios…","home_resume_label":"Continue de onde parou","home_new_here":"É novo por aqui?","home_start_essentials":"Comece pelo essencial","home_resume":"Continuar","home_start":"Começar","home_what":"O que você quer fazer?","home_browse":"Ou explore tudo","home_helpers":"Ajudantes — use em tudo","home_did_you_know":"Você sabia?","home_new_fact":"Outra curiosidade","home_start_streak":"Comece sua sequência","home_switch":"Trocar","streak_days":"sequência de {n} dias","lvl_starting":"Começando agora","lvl_beginner":"Iniciante","lvl_intermediate":"Intermediário","lvl_advanced":"Avançado","intent_speak":"Praticar falando em voz alta","intent_speak_why":"Fale com o tutor — ele responde e corrige seus erros","intent_corrected":"Praticar e ser corrigido","intent_corrected_why":"Exercícios rápidos com feedback na hora","intent_conversations":"Aprender conversas reais","intent_conversations_why":"Cenas prontas: café, aeroporto, conhecer alguém","intent_understand":"Entender algo que vi","intent_understand_why":"Cole um cardápio, uma letra ou uma mensagem — a gente decodifica","intent_lookup":"Buscar uma palavra ou frase","intent_lookup_why":"Tradução, análise e áudio na hora","intent_how":"Entender como funciona","intent_how_why":"Cada regra de gramática, explicada de forma simples","intent_vocab":"Ampliar meu vocabulário","intent_vocab_why":"Palavras por tema — cada uma com áudio","intent_daily":"Só a minha prática diária","intent_daily_why":"Uma sessão diária curta e guiada","more_next":"O que aprender agora","more_patterns":"Estruturas de frase","more_flashcards":"Cartões","more_sounds":"Sons","more_culture":"Cultura e nuances","more_drills":"Exercícios rápidos","free_banner":"Plano grátis · sessões de tutor limitadas","upgrade":"Fazer upgrade","wrap_coach_sub":"Pergunte qualquer coisa, pratique em voz alta e seja corrigido na hora","wrap_grammar_sub":"Cada conjugação e regra, em tabelas completas","wrap_vocab_sub":"Cada palavra por tema — com áudio e frases de exemplo","wrap_dialogues_sub":"Conversas reais que você vai ter — leia, ouça, encene","wrap_flashcards_sub":"As revisões aparecem bem antes de você esquecer — nada desperdiçado","wrap_drills_sub":"Repetições rápidas que transformam regras em reflexos","wrap_structures_sub":"O esqueleto de frases reais — troque qualquer palavra","wrap_wordspace_sub":"Digite qualquer palavra e veja traduzida, analisada e falada","wrap_roadmap_sub":"Onde você está agora — e exatamente o que aprender depois","wrap_conversation_sub":"Fale com seu tutor — digite ou fale, ele responde ao vivo e corrige seus erros","wrap_analyzer_sub":"Cole uma letra, um cardápio, uma mensagem — decodifique palavra por palavra","wrap_today_sub":"Sua revisão diária rápida — um pouco por dia vale mais que maratonar"},"it":{"nav_home":"Home","nav_coach":"Tutor","nav_flashcards":"Flashcard","nav_drills":"Esercizi","nav_review":"Ripasso","nav_grammar":"Grammatica","nav_vocab":"Vocabolario","nav_dialogues":"Frasi e dialoghi","nav_structures":"Strutture di frase","nav_sounds":"Suoni","nav_culture":"Cultura e sfumature","nav_conversation":"Conversazione","nav_analyzer":"Analizza testo","nav_wordspace":"Spazio parole","nav_roadmap":"Percorso","nav_today":"Pratica di oggi","sec_explore":"Esplora","sec_tools":"Strumenti","home_ask":"Chiedi qualsiasi cosa — Tutor","home_ask_sub":"Grammatica, vocabolario, correzioni, esercizi…","home_resume_label":"Riprendi da dove eri rimasto","home_new_here":"Nuovo qui?","home_start_essentials":"Inizia dalle basi","home_resume":"Riprendi","home_start":"Inizia","home_what":"Cosa vuoi fare?","home_browse":"Oppure esplora tutto","home_helpers":"Aiutanti — usali ovunque","home_did_you_know":"Lo sapevi?","home_new_fact":"Altra curiosità","home_start_streak":"Inizia la tua serie","home_switch":"Cambia","streak_days":"serie di {n} giorni","lvl_starting":"Sto iniziando","lvl_beginner":"Principiante","lvl_intermediate":"Intermedio","lvl_advanced":"Avanzato","intent_speak":"Esercitarmi a parlare ad alta voce","intent_speak_why":"Parla col tutor — risponde e corregge i tuoi errori","intent_corrected":"Esercitarmi e farmi correggere","intent_corrected_why":"Esercizi rapidi con feedback immediato","intent_conversations":"Imparare conversazioni reali","intent_conversations_why":"Scene pronte: bar, aeroporto, conoscere qualcuno","intent_understand":"Capire qualcosa che ho visto","intent_understand_why":"Incolla un menù, un testo o un messaggio — te lo decodifichiamo","intent_lookup":"Cercare una parola o frase","intent_lookup_why":"Traduzione, analisi e audio all'istante","intent_how":"Capire come funziona","intent_how_why":"Ogni regola di grammatica, spiegata in modo semplice","intent_vocab":"Ampliare il vocabolario","intent_vocab_why":"Parole per tema — ognuna con audio","intent_daily":"Solo la mia pratica quotidiana","intent_daily_why":"Una sessione quotidiana breve e guidata","more_next":"Cosa imparare adesso","more_patterns":"Strutture di frase","more_flashcards":"Flashcard","more_sounds":"Suoni","more_culture":"Cultura e sfumature","more_drills":"Esercizi rapidi","free_banner":"Piano gratis · sessioni col tutor limitate","upgrade":"Passa a Premium","wrap_coach_sub":"Chiedi qualsiasi cosa, esercitati ad alta voce e fatti correggere subito","wrap_grammar_sub":"Ogni coniugazione e regola, in tabelle complete","wrap_vocab_sub":"Ogni parola per tema — con audio e frasi di esempio","wrap_dialogues_sub":"Conversazioni vere che avrai davvero — leggi, ascolta, recita","wrap_flashcards_sub":"I ripassi arrivano poco prima che tu dimentichi — niente sprechi","wrap_drills_sub":"Ripetizioni veloci che trasformano le regole in riflessi","wrap_structures_sub":"Lo scheletro delle frasi reali — cambia qualsiasi parola","wrap_wordspace_sub":"Scrivi una parola e vedila tradotta, analizzata e pronunciata","wrap_roadmap_sub":"Dove sei ora — ed esattamente cosa imparare dopo","wrap_conversation_sub":"Parla col tutor — scrivi o parla, risponde dal vivo e corregge i tuoi errori","wrap_analyzer_sub":"Incolla un testo, un menù, un messaggio — decodificalo parola per parola","wrap_today_sub":"Il tuo ripasso quotidiano veloce — poco ogni giorno batte le sessioni intensive"},"de":{"nav_home":"Start","nav_coach":"Coach","nav_flashcards":"Karteikarten","nav_drills":"Übungen","nav_review":"Wiederholen","nav_grammar":"Grammatik","nav_vocab":"Wortschatz","nav_dialogues":"Sätze & Dialoge","nav_structures":"Satzmuster","nav_sounds":"Laute","nav_culture":"Kultur & Nuancen","nav_conversation":"Gespräch","nav_analyzer":"Text analysieren","nav_wordspace":"Wortraum","nav_roadmap":"Lernpfad","nav_today":"Heutige Übung","sec_explore":"Entdecken","sec_tools":"Werkzeuge","home_ask":"Frag alles — Coach","home_ask_sub":"Grammatik, Wortschatz, Korrekturen, Übungen…","home_resume_label":"Mach da weiter, wo du aufgehört hast","home_new_here":"Neu hier?","home_start_essentials":"Fang mit den Grundlagen an","home_resume":"Fortsetzen","home_start":"Starten","home_what":"Was möchtest du tun?","home_browse":"Oder alles durchstöbern","home_helpers":"Helfer — überall dabei","home_did_you_know":"Wusstest du?","home_new_fact":"Noch ein Fakt","home_start_streak":"Starte deine Serie","home_switch":"Wechseln","streak_days":"{n}-Tage-Serie","lvl_starting":"Ganz am Anfang","lvl_beginner":"Anfänger","lvl_intermediate":"Mittelstufe","lvl_advanced":"Fortgeschritten","intent_speak":"Laut sprechen üben","intent_speak_why":"Sprich mit dem Tutor — er antwortet und korrigiert deine Fehler","intent_corrected":"Üben und korrigiert werden","intent_corrected_why":"Kurze Übungen mit sofortigem Feedback","intent_conversations":"Echte Gespräche lernen","intent_conversations_why":"Fertige Szenen: Café, Flughafen, jemanden kennenlernen","intent_understand":"Etwas verstehen, das ich gesehen habe","intent_understand_why":"Füg eine Speisekarte, einen Songtext oder eine Nachricht ein — wird entschlüsselt","intent_lookup":"Ein Wort oder einen Satz nachschlagen","intent_lookup_why":"Sofort-Übersetzung, Aufschlüsselung und Audio","intent_how":"Verstehen, wie es funktioniert","intent_how_why":"Jede Grammatikregel, einfach erklärt","intent_vocab":"Meinen Wortschatz aufbauen","intent_vocab_why":"Wörter nach Thema — jedes vertont","intent_daily":"Nur meine tägliche Übung","intent_daily_why":"Eine kurze, geführte tägliche Einheit","more_next":"Was du als Nächstes lernst","more_patterns":"Satzmuster","more_flashcards":"Karteikarten","more_sounds":"Laute","more_culture":"Kultur & Nuancen","more_drills":"Kurze Übungen","free_banner":"Gratis-Plan · begrenzte Coach-Sitzungen","upgrade":"Upgraden","wrap_coach_sub":"Frag alles, üb laut und lass dich sofort korrigieren","wrap_grammar_sub":"Jede Konjugation und Regel, in vollständigen Tabellen","wrap_vocab_sub":"Jedes Wort nach Thema — mit Audio und Beispielsätzen","wrap_dialogues_sub":"Echte Gespräche, die du wirklich führst — lesen, hören, nachspielen","wrap_flashcards_sub":"Wiederholungen kommen kurz bevor du vergisst — nichts verschwendet","wrap_drills_sub":"Schnelle Wiederholungen, die Regeln zu Reflexen machen","wrap_structures_sub":"Das Gerüst echter Sätze — setz beliebige Wörter ein","wrap_wordspace_sub":"Gib ein Wort ein und sieh es übersetzt, aufgeschlüsselt und vertont","wrap_roadmap_sub":"Wo du jetzt stehst — und genau, was als Nächstes kommt","wrap_conversation_sub":"Sprich mit deinem Tutor — tippen oder sprechen, er antwortet live und korrigiert deine Fehler","wrap_analyzer_sub":"Füg Songtexte, eine Speisekarte, eine Nachricht ein — Wort für Wort entschlüsselt","wrap_today_sub":"Deine kurze tägliche Einheit — jeden Tag ein bisschen schlägt Pauken"},"zh":{"nav_home":"首页","nav_coach":"教练","nav_flashcards":"闪卡","nav_drills":"练习","nav_review":"复习","nav_grammar":"语法","nav_vocab":"词汇","nav_dialogues":"短语与对话","nav_structures":"句型","nav_sounds":"发音","nav_culture":"文化与语感","nav_conversation":"对话练习","nav_analyzer":"分析文本","nav_wordspace":"单词空间","nav_roadmap":"学习路线","nav_today":"今日练习","sec_explore":"探索","sec_tools":"工具","home_ask":"什么都能问 — 教练","home_ask_sub":"语法、词汇、纠错、练习…","home_resume_label":"从上次的地方继续","home_new_here":"新来的？","home_start_essentials":"从基础开始","home_resume":"继续","home_start":"开始","home_what":"你想做什么？","home_browse":"或浏览全部","home_helpers":"助手 — 随处可用","home_did_you_know":"你知道吗","home_new_fact":"换一条","home_start_streak":"开启连续打卡","home_switch":"切换","streak_days":"连续 {n} 天","lvl_starting":"刚刚起步","lvl_beginner":"初级","lvl_intermediate":"中级","lvl_advanced":"高级","intent_speak":"练习大声开口说","intent_speak_why":"和导师对话 — 它会回应并纠正你的错误","intent_corrected":"练习并获得纠正","intent_corrected_why":"快速练习，即时反馈","intent_conversations":"学习真实对话","intent_conversations_why":"现成场景：咖啡馆、机场、初次见面","intent_understand":"看懂我看到的内容","intent_understand_why":"粘贴菜单、歌词或消息 — 帮你逐一解读","intent_lookup":"查一个单词或短语","intent_lookup_why":"即时翻译、拆解和发音","intent_how":"理解它是怎么运作的","intent_how_why":"每条语法规则，简单讲清","intent_vocab":"扩充我的词汇量","intent_vocab_why":"按主题分类的单词 — 每个都有发音","intent_daily":"只做每日练习","intent_daily_why":"简短的每日引导练习","more_next":"接下来学什么","more_patterns":"句型","more_flashcards":"闪卡","more_sounds":"发音","more_culture":"文化与语感","more_drills":"快速练习","free_banner":"免费版 · 教练次数有限","upgrade":"升级","wrap_coach_sub":"什么都能问，大声练习，当场获得纠正","wrap_grammar_sub":"每种变位和规则，完整列成表格","wrap_vocab_sub":"按主题分类的每个单词 — 配发音和例句","wrap_dialogues_sub":"你真会用到的完整对话 — 阅读、聆听、角色扮演","wrap_flashcards_sub":"在你快忘时恰好出现复习 — 毫不浪费","wrap_drills_sub":"快速反复练习，把规则变成本能","wrap_structures_sub":"真实句子的骨架 — 任意替换词语","wrap_wordspace_sub":"输入任何单词，即可看到翻译、拆解和发音","wrap_roadmap_sub":"你现在的位置 — 以及接下来该学什么","wrap_conversation_sub":"和你的导师对话 — 打字或开口，它实时回应并纠正你的错误","wrap_analyzer_sub":"粘贴歌词、菜单或消息 — 逐词为你解读","wrap_today_sub":"你的每日快速练习 — 每天一点胜过临时突击"},"ja":{"nav_home":"ホーム","nav_coach":"コーチ","nav_flashcards":"単語カード","nav_drills":"ドリル","nav_review":"復習","nav_grammar":"文法","nav_vocab":"語彙","nav_dialogues":"フレーズと会話","nav_structures":"文型","nav_sounds":"発音","nav_culture":"文化とニュアンス","nav_conversation":"会話","nav_analyzer":"テキスト解析","nav_wordspace":"ワードスペース","nav_roadmap":"ロードマップ","nav_today":"今日の練習","sec_explore":"さがす","sec_tools":"ツール","home_ask":"何でも質問 — コーチ","home_ask_sub":"文法、語彙、添削、練習問題…","home_resume_label":"続きから始める","home_new_here":"はじめて？","home_start_essentials":"基本から始めよう","home_resume":"再開","home_start":"はじめる","home_what":"何をする？","home_browse":"またはすべて見る","home_helpers":"お助けツール — どこでも使える","home_did_you_know":"豆知識","home_new_fact":"次の豆知識","home_start_streak":"連続記録を始めよう","home_switch":"切り替え","streak_days":"{n}日連続","lvl_starting":"始めたばかり","lvl_beginner":"初級","lvl_intermediate":"中級","lvl_advanced":"上級","intent_speak":"声に出して話す練習","intent_speak_why":"チューターと話そう — 返事をして間違いも直してくれる","intent_corrected":"練習して添削してもらう","intent_corrected_why":"その場でフィードバックがつく短い練習","intent_conversations":"リアルな会話を学ぶ","intent_conversations_why":"すぐ使えるシーン：カフェ、空港、初対面","intent_understand":"見かけたものを理解する","intent_understand_why":"メニューや歌詞、メッセージを貼るだけで解読","intent_lookup":"単語やフレーズを調べる","intent_lookup_why":"すぐに翻訳・分解・音声","intent_how":"仕組みを理解する","intent_how_why":"すべての文法ルールをわかりやすく解説","intent_vocab":"語彙を増やす","intent_vocab_why":"テーマ別の単語 — それぞれ音声つき","intent_daily":"毎日の練習だけ","intent_daily_why":"短くて導かれる毎日の一問","more_next":"次に学ぶこと","more_patterns":"文型","more_flashcards":"単語カード","more_sounds":"発音","more_culture":"文化とニュアンス","more_drills":"クイックドリル","free_banner":"無料プラン · コーチ利用は制限あり","upgrade":"アップグレード","wrap_coach_sub":"何でも質問、声に出して練習、その場で添削","wrap_grammar_sub":"すべての活用とルールを、フル表で整理","wrap_vocab_sub":"テーマ別のすべての単語 — 音声と例文つき","wrap_dialogues_sub":"実際に使う会話まるごと — 読む、聞く、ロールプレイ","wrap_flashcards_sub":"忘れる直前に復習が出る — 無駄がない","wrap_drills_sub":"ルールを反射にする素早い反復練習","wrap_structures_sub":"リアルな文の骨組み — どんな単語でも入れ替え自在","wrap_wordspace_sub":"どんな単語も入力すれば、翻訳・分解・音声で見られる","wrap_roadmap_sub":"今いる場所 — そして次に学ぶべきこと","wrap_conversation_sub":"チューターと話そう — 入力でも音声でも、その場で返事して間違いを直す","wrap_analyzer_sub":"歌詞やメニュー、メッセージを貼れば — 単語ごとに解読","wrap_today_sub":"毎日のクイック練習 — 毎日少しずつが一夜漬けに勝る"},"ko":{"nav_home":"홈","nav_coach":"코치","nav_flashcards":"플래시카드","nav_drills":"연습 문제","nav_review":"복습","nav_grammar":"문법","nav_vocab":"어휘","nav_dialogues":"표현과 대화","nav_structures":"문장 패턴","nav_sounds":"발음","nav_culture":"문화와 뉘앙스","nav_conversation":"회화","nav_analyzer":"텍스트 분석","nav_wordspace":"단어 공간","nav_roadmap":"학습 로드맵","nav_today":"오늘의 연습","sec_explore":"둘러보기","sec_tools":"도구","home_ask":"무엇이든 물어보세요 — 코치","home_ask_sub":"문법, 어휘, 교정, 연습 문제…","home_resume_label":"멈춘 곳부터 이어서","home_new_here":"처음이신가요?","home_start_essentials":"기본부터 시작하기","home_resume":"이어하기","home_start":"시작","home_what":"무엇을 해볼까요?","home_browse":"또는 전체 둘러보기","home_helpers":"도우미 — 어디서나 활용","home_did_you_know":"알고 계셨나요?","home_new_fact":"다른 정보","home_start_streak":"연속 학습 시작하기","home_switch":"전환","streak_days":"{n}일 연속","lvl_starting":"이제 막 시작","lvl_beginner":"초급","lvl_intermediate":"중급","lvl_advanced":"고급","intent_speak":"소리 내어 말하기 연습","intent_speak_why":"튜터와 대화하세요 — 답하고 실수를 바로잡아 줍니다","intent_corrected":"연습하고 교정받기","intent_corrected_why":"즉각 피드백이 있는 빠른 연습","intent_conversations":"진짜 대화 배우기","intent_conversations_why":"바로 쓰는 상황: 카페, 공항, 첫 만남","intent_understand":"본 것을 이해하기","intent_understand_why":"메뉴, 가사, 메시지를 붙여넣으면 — 풀이해 드려요","intent_lookup":"단어나 표현 찾기","intent_lookup_why":"즉시 번역, 분석, 음성","intent_how":"작동 원리 이해하기","intent_how_why":"모든 문법 규칙을 쉽게 설명","intent_vocab":"어휘 늘리기","intent_vocab_why":"주제별 단어 — 하나하나 음성 지원","intent_daily":"매일 연습만 하기","intent_daily_why":"짧고 안내가 있는 매일 연습","more_next":"다음에 배울 것","more_patterns":"문장 패턴","more_flashcards":"플래시카드","more_sounds":"발음","more_culture":"문화와 뉘앙스","more_drills":"빠른 연습","free_banner":"무료 플랜 · 코치 세션 제한","upgrade":"업그레이드","wrap_coach_sub":"무엇이든 묻고, 소리 내어 연습하고, 그 자리에서 교정받으세요","wrap_grammar_sub":"모든 활용과 규칙을 완전한 표로 정리","wrap_vocab_sub":"주제별 모든 단어 — 음성과 예문 포함","wrap_dialogues_sub":"실제로 하게 될 온전한 대화 — 읽고, 듣고, 역할극","wrap_flashcards_sub":"잊기 직전에 딱 복습이 뜹니다 — 낭비 없이","wrap_drills_sub":"규칙을 반사로 만드는 빠른 반복 연습","wrap_structures_sub":"진짜 문장의 뼈대 — 어떤 단어든 바꿔 넣기","wrap_wordspace_sub":"아무 단어나 입력하면 번역, 분석, 음성으로 확인","wrap_roadmap_sub":"지금 위치 — 그리고 다음에 배울 것을 정확히","wrap_conversation_sub":"튜터와 대화하세요 — 입력하거나 말하면 실시간으로 답하고 실수를 바로잡아요","wrap_analyzer_sub":"가사, 메뉴, 메시지를 붙여넣으면 — 단어 하나하나 풀이","wrap_today_sub":"빠른 매일 연습 — 매일 조금씩이 벼락치기를 이깁니다"},"ru":{"nav_home":"Главная","nav_coach":"Коуч","nav_flashcards":"Карточки","nav_drills":"Упражнения","nav_review":"Повторение","nav_grammar":"Грамматика","nav_vocab":"Лексика","nav_dialogues":"Фразы и диалоги","nav_structures":"Модели предложений","nav_sounds":"Звуки","nav_culture":"Культура и нюансы","nav_conversation":"Разговор","nav_analyzer":"Разбор текста","nav_wordspace":"Пространство слов","nav_roadmap":"План обучения","nav_today":"Практика на сегодня","sec_explore":"Обзор","sec_tools":"Инструменты","home_ask":"Спросите что угодно — Коуч","home_ask_sub":"Грамматика, лексика, исправления, упражнения…","home_resume_label":"Продолжите с того места, где остановились","home_new_here":"Впервые здесь?","home_start_essentials":"Начните с основ","home_resume":"Продолжить","home_start":"Начать","home_what":"Что хотите сделать?","home_browse":"Или посмотрите всё","home_helpers":"Помощники — пригодятся везде","home_did_you_know":"А вы знали?","home_new_fact":"Ещё факт","home_start_streak":"Начните свою серию","home_switch":"Сменить","streak_days":"серия {n} дн.","lvl_starting":"Только начинаю","lvl_beginner":"Начальный","lvl_intermediate":"Средний","lvl_advanced":"Продвинутый","intent_speak":"Практиковаться говорить вслух","intent_speak_why":"Говорите с наставником — он отвечает и исправляет ошибки","intent_corrected":"Практиковаться и получать исправления","intent_corrected_why":"Быстрые упражнения с мгновенной обратной связью","intent_conversations":"Учить реальные разговоры","intent_conversations_why":"Готовые сцены: кафе, аэропорт, знакомство","intent_understand":"Понять то, что я увидел","intent_understand_why":"Вставьте меню, текст песни или сообщение — мы всё разберём","intent_lookup":"Найти слово или фразу","intent_lookup_why":"Мгновенный перевод, разбор и озвучка","intent_how":"Понять, как это работает","intent_how_why":"Каждое правило грамматики, объяснённое просто","intent_vocab":"Расширить словарный запас","intent_vocab_why":"Слова по темам — каждое озвучено","intent_daily":"Только ежедневная практика","intent_daily_why":"Короткое ежедневное занятие с подсказками","more_next":"Что учить дальше","more_patterns":"Модели предложений","more_flashcards":"Карточки","more_sounds":"Звуки","more_culture":"Культура и нюансы","more_drills":"Быстрые упражнения","free_banner":"Бесплатный план · сеансы с коучем ограничены","upgrade":"Улучшить","wrap_coach_sub":"Спрашивайте что угодно, практикуйтесь вслух и получайте исправления на месте","wrap_grammar_sub":"Каждое спряжение и правило, в полных таблицах","wrap_vocab_sub":"Каждое слово по темам — с озвучкой и примерами","wrap_dialogues_sub":"Настоящие разговоры, которые вам пригодятся — читайте, слушайте, разыгрывайте","wrap_flashcards_sub":"Повторения появляются прямо перед тем, как забудете — ничего впустую","wrap_drills_sub":"Быстрые повторы, превращающие правила в рефлексы","wrap_structures_sub":"Каркас настоящих предложений — подставляйте любые слова","wrap_wordspace_sub":"Введите любое слово и увидите перевод, разбор и озвучку","wrap_roadmap_sub":"Где вы сейчас — и что именно учить дальше","wrap_conversation_sub":"Говорите с наставником — печатайте или говорите, он отвечает вживую и исправляет ошибки","wrap_analyzer_sub":"Вставьте текст песни, меню, сообщение — разберём слово за словом","wrap_today_sub":"Ваше быстрое ежедневное занятие — понемногу каждый день лучше зубрёжки"},"ar":{"nav_home":"الرئيسية","nav_coach":"المدرّب","nav_flashcards":"بطاقات","nav_drills":"تمارين","nav_review":"مراجعة","nav_grammar":"القواعد","nav_vocab":"المفردات","nav_dialogues":"عبارات وحوارات","nav_structures":"أنماط الجمل","nav_sounds":"الأصوات","nav_culture":"الثقافة والدلالات","nav_conversation":"محادثة","nav_analyzer":"تحليل نص","nav_wordspace":"فضاء الكلمات","nav_roadmap":"خطة التعلّم","nav_today":"تمرين اليوم","sec_explore":"استكشاف","sec_tools":"أدوات","home_ask":"اسأل أي شيء — المدرّب","home_ask_sub":"قواعد، مفردات، تصحيحات، تمارين…","home_resume_label":"تابع من حيث توقّفت","home_new_here":"جديد هنا؟","home_start_essentials":"ابدأ بالأساسيات","home_resume":"متابعة","home_start":"ابدأ","home_what":"ماذا تريد أن تفعل؟","home_browse":"أو تصفّح كل شيء","home_helpers":"أدوات مساعدة — استخدمها في أي مكان","home_did_you_know":"هل تعلم؟","home_new_fact":"معلومة أخرى","home_start_streak":"ابدأ سلسلتك","home_switch":"تبديل","streak_days":"سلسلة {n} يوم","lvl_starting":"بدأت للتو","lvl_beginner":"مبتدئ","lvl_intermediate":"متوسط","lvl_advanced":"متقدّم","intent_speak":"التدرّب على النطق بصوت عالٍ","intent_speak_why":"تحدّث مع المعلّم — يردّ عليك ويصحّح أخطاءك","intent_corrected":"التدرّب والحصول على تصحيح","intent_corrected_why":"تمارين سريعة مع تغذية راجعة فورية","intent_conversations":"تعلّم محادثات حقيقية","intent_conversations_why":"مشاهد جاهزة: مقهى، مطار، لقاء شخص","intent_understand":"فهم شيء رأيته","intent_understand_why":"الصق قائمة طعام أو كلمات أغنية أو رسالة — ونفكّ لك رموزها","intent_lookup":"البحث عن كلمة أو عبارة","intent_lookup_why":"ترجمة فورية وتحليل وصوت","intent_how":"فهم كيف تعمل","intent_how_why":"كل قاعدة نحوية، مشروحة ببساطة","intent_vocab":"توسيع مفرداتي","intent_vocab_why":"كلمات حسب الموضوع — كل منها منطوقة","intent_daily":"تمريني اليومي فقط","intent_daily_why":"جلسة يومية قصيرة وموجّهة","more_next":"ماذا تتعلّم بعد ذلك","more_patterns":"أنماط الجمل","more_flashcards":"بطاقات","more_sounds":"الأصوات","more_culture":"الثقافة والدلالات","more_drills":"تمارين سريعة","free_banner":"الخطة المجانية · جلسات مدرّب محدودة","upgrade":"ترقية","wrap_coach_sub":"اسأل أي شيء، تدرّب بصوت عالٍ، واحصل على التصحيح فورًا","wrap_grammar_sub":"كل تصريف وقاعدة، منظّمة في جداول كاملة","wrap_vocab_sub":"كل كلمة حسب الموضوع — مع صوت وجمل أمثلة","wrap_dialogues_sub":"محادثات كاملة ستستخدمها فعلًا — اقرأ، استمع، وأدِّ الأدوار","wrap_flashcards_sub":"تظهر المراجعات قبل أن تنسى مباشرة — دون أي هدر","wrap_drills_sub":"تكرارات سريعة تحوّل القواعد إلى ردود فعل تلقائية","wrap_structures_sub":"هياكل الجمل الحقيقية — بدّل أي كلمات تشاء","wrap_wordspace_sub":"اكتب أي كلمة لتراها مترجمة ومحلّلة ومنطوقة","wrap_roadmap_sub":"أين أنت الآن — وما الذي تتعلّمه بعد ذلك بالضبط","wrap_conversation_sub":"تحدّث مع معلّمك — اكتب أو تكلّم، يردّ مباشرة ويصحّح أخطاءك","wrap_analyzer_sub":"الصق كلمات أغنية أو قائمة طعام أو رسالة — نفكّ رموزها كلمة بكلمة","wrap_today_sub":"تمرينك اليومي السريع — القليل كل يوم أفضل من الحشو المكثّف"},"hi":{"nav_home":"होम","nav_coach":"कोच","nav_flashcards":"फ़्लैशकार्ड","nav_drills":"अभ्यास","nav_review":"दोहराव","nav_grammar":"व्याकरण","nav_vocab":"शब्दावली","nav_dialogues":"वाक्य और संवाद","nav_structures":"वाक्य पैटर्न","nav_sounds":"ध्वनियाँ","nav_culture":"संस्कृति और बारीकियाँ","nav_conversation":"बातचीत","nav_analyzer":"टेक्स्ट विश्लेषण","nav_wordspace":"शब्द स्थान","nav_roadmap":"लर्निंग रोडमैप","nav_today":"आज का अभ्यास","sec_explore":"एक्सप्लोर करें","sec_tools":"टूल","home_ask":"कुछ भी पूछें — कोच","home_ask_sub":"व्याकरण, शब्दावली, सुधार, अभ्यास…","home_resume_label":"जहाँ छोड़ा था वहीं से शुरू करें","home_new_here":"यहाँ नए हैं?","home_start_essentials":"बुनियादी बातों से शुरू करें","home_resume":"जारी रखें","home_start":"शुरू करें","home_what":"आप क्या करना चाहते हैं?","home_browse":"या सब कुछ देखें","home_helpers":"सहायक — हर जगह काम आएँ","home_did_you_know":"क्या आप जानते हैं?","home_new_fact":"एक और तथ्य","home_start_streak":"अपनी लगातार शृंखला शुरू करें","home_switch":"बदलें","streak_days":"{n} दिन की शृंखला","lvl_starting":"अभी शुरुआत","lvl_beginner":"शुरुआती","lvl_intermediate":"मध्यम","lvl_advanced":"उन्नत","intent_speak":"ज़ोर से बोलने का अभ्यास","intent_speak_why":"ट्यूटर से बात करें — यह जवाब देता है और आपकी गलतियाँ सुधारता है","intent_corrected":"अभ्यास करें और सुधार पाएँ","intent_corrected_why":"तुरंत फ़ीडबैक के साथ छोटे अभ्यास","intent_conversations":"असली बातचीत सीखें","intent_conversations_why":"तैयार दृश्य: कैफ़े, हवाई अड्डा, किसी से मिलना","intent_understand":"जो देखा उसे समझें","intent_understand_why":"मेन्यू, गीत या संदेश पेस्ट करें — इसका मतलब समझ लें","intent_lookup":"कोई शब्द या वाक्यांश खोजें","intent_lookup_why":"तुरंत अनुवाद, विश्लेषण और ऑडियो","intent_how":"समझें यह कैसे काम करता है","intent_how_why":"हर व्याकरण नियम, सरलता से समझाया गया","intent_vocab":"अपनी शब्दावली बढ़ाएँ","intent_vocab_why":"विषय के अनुसार शब्द — हर एक की आवाज़ के साथ","intent_daily":"बस मेरा रोज़ का अभ्यास","intent_daily_why":"एक छोटा, निर्देशित रोज़ाना अभ्यास","more_next":"आगे क्या सीखें","more_patterns":"वाक्य पैटर्न","more_flashcards":"फ़्लैशकार्ड","more_sounds":"ध्वनियाँ","more_culture":"संस्कृति और बारीकियाँ","more_drills":"त्वरित अभ्यास","free_banner":"फ़्री प्लान · कोच सत्र सीमित","upgrade":"अपग्रेड करें","wrap_coach_sub":"कुछ भी पूछें, ज़ोर से अभ्यास करें, तुरंत सुधार पाएँ","wrap_grammar_sub":"हर रूप और नियम, पूरी तालिकाओं में सजाया गया","wrap_vocab_sub":"विषय के अनुसार हर शब्द — ऑडियो और उदाहरण वाक्यों के साथ","wrap_dialogues_sub":"असली बातचीत जो आप सच में करेंगे — पढ़ें, सुनें, भूमिका निभाएँ","wrap_flashcards_sub":"भूलने से ठीक पहले दोहराव सामने आता है — कुछ भी बर्बाद नहीं","wrap_drills_sub":"तेज़ अभ्यास जो नियमों को सजगता में बदल देते हैं","wrap_structures_sub":"असली वाक्यों का ढाँचा — कोई भी शब्द बदलकर डालें","wrap_wordspace_sub":"कोई भी शब्द टाइप करें और उसका अनुवाद, विश्लेषण और उच्चारण देखें","wrap_roadmap_sub":"आप अभी कहाँ हैं — और आगे ठीक क्या सीखना है","wrap_conversation_sub":"अपने ट्यूटर से बात करें — टाइप करें या बोलें, यह लाइव जवाब देता है और गलतियाँ सुधारता है","wrap_analyzer_sub":"गीत, मेन्यू या संदेश पेस्ट करें — इसे शब्द दर शब्द समझें","wrap_today_sub":"आपका त्वरित रोज़ाना अभ्यास — रोज़ थोड़ा-थोड़ा रटने से बेहतर है"},"fr":{"nav_home":"Accueil","nav_coach":"Coach","nav_flashcards":"Cartes","nav_drills":"Exercices","nav_review":"Révision","nav_grammar":"Grammaire","nav_vocab":"Vocabulaire","nav_dialogues":"Phrases et dialogues","nav_structures":"Modèles de phrases","nav_sounds":"Sons","nav_culture":"Culture et nuances","nav_conversation":"Conversation","nav_analyzer":"Analyser un texte","nav_wordspace":"Espace mots","nav_roadmap":"Parcours","nav_today":"Exercice du jour","sec_explore":"Explorer","sec_tools":"Outils","home_ask":"Demande n'importe quoi — Coach","home_ask_sub":"Grammaire, vocabulaire, corrections, exercices…","home_resume_label":"Reprends là où tu t'es arrêté","home_new_here":"Nouveau ici ?","home_start_essentials":"Commence par l'essentiel","home_resume":"Reprendre","home_start":"Commencer","home_what":"Que veux-tu faire ?","home_browse":"Ou parcours tout","home_helpers":"Aides — à utiliser partout","home_did_you_know":"Le savais-tu ?","home_new_fact":"Autre info","home_start_streak":"Lance ta série","home_switch":"Changer","streak_days":"série de {n} jours","lvl_starting":"Je débute tout juste","lvl_beginner":"Débutant","lvl_intermediate":"Intermédiaire","lvl_advanced":"Avancé","intent_speak":"M'entraîner à parler à voix haute","intent_speak_why":"Parle au tuteur — il répond et corrige tes erreurs","intent_corrected":"M'entraîner et être corrigé","intent_corrected_why":"Des exercices rapides avec retour immédiat","intent_conversations":"Apprendre de vraies conversations","intent_conversations_why":"Scènes toutes prêtes : café, aéroport, première rencontre","intent_understand":"Comprendre quelque chose que j'ai vu","intent_understand_why":"Colle un menu, des paroles ou un message — on te le décode","intent_lookup":"Chercher un mot ou une expression","intent_lookup_why":"Traduction, décomposition et audio instantanés","intent_how":"Comprendre comment ça marche","intent_how_why":"Chaque règle de grammaire, expliquée simplement","intent_vocab":"Enrichir mon vocabulaire","intent_vocab_why":"Des mots par thème — chacun prononcé","intent_daily":"Juste mon exercice quotidien","intent_daily_why":"Une courte séance quotidienne guidée","more_next":"Quoi apprendre ensuite","more_patterns":"Modèles de phrases","more_flashcards":"Cartes","more_sounds":"Sons","more_culture":"Culture et nuances","more_drills":"Exercices rapides","free_banner":"Forfait gratuit · séances de coach limitées","upgrade":"Passer au premium","wrap_coach_sub":"Demande n'importe quoi, entraîne-toi à voix haute, fais-toi corriger sur le champ","wrap_grammar_sub":"Chaque conjugaison et règle, présentées en tableaux complets","wrap_vocab_sub":"Chaque mot par thème — avec audio et phrases d'exemple","wrap_dialogues_sub":"De vraies conversations que tu auras vraiment — lis, écoute, joue les rôles","wrap_flashcards_sub":"Les révisions arrivent juste avant l'oubli — rien de gaspillé","wrap_drills_sub":"Des répétitions rapides qui transforment les règles en réflexes","wrap_structures_sub":"Le squelette de vraies phrases — remplace n'importe quel mot","wrap_wordspace_sub":"Tape n'importe quel mot pour le voir traduit, décomposé et prononcé","wrap_roadmap_sub":"Où tu en es maintenant — et exactement quoi apprendre ensuite","wrap_conversation_sub":"Parle avec ton tuteur — écris ou parle, il répond en direct et corrige tes erreurs","wrap_analyzer_sub":"Colle des paroles, un menu, un message — décode-le mot à mot","wrap_today_sub":"Ta séance quotidienne express — un peu chaque jour vaut mieux que le bachotage"}};
 mergeUiNav(UI_NAV_I18N);
 
 
@@ -2919,7 +2919,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
         <div style={{ textAlign:"center", marginBottom:22 }}>
           <img src="/icon.svg" alt="Tongue" style={{ width:64, height:64, marginBottom:10, display:"inline-block" }}/>
           <div style={{ fontWeight:900, fontSize:22, color:"#0f172a", marginBottom:4 }}>Welcome to Tongue</div>
-          <div style={{ color:"#64748b", fontSize:13 }}>Learn any language with your personal AI tutor</div>
+          <div style={{ color:"#64748b", fontSize:13 }}>Learn any language with your personal tutor</div>
         </div>
 
         {/* Google sign-in — button container is always mounted (empty until GIS
@@ -2997,7 +2997,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
               <div style={{ fontWeight:800, marginBottom:6 }}>Free — no credit card needed</div>
               <div>All 12 languages</div>
               <div>Grammar, vocabulary &amp; reference guides</div>
-              <div>5 AI Coach messages every day</div>
+              <div>5 Coach messages every day</div>
               <div>Flashcards &amp; Word Space</div>
             </div>
             <input value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&signupFree()}
@@ -3122,7 +3122,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
 
       {/* Contextual help */}
       <div style={{ background: C.accent + "08", border: `1px solid ${C.accent}20`, borderRadius: 10, padding: "10px 14px", marginBottom: 14, fontSize: 12, color: C.mid, lineHeight: 1.6 }}>
-        <strong style={{ color: C.accent }}>How it works:</strong> Pick an exercise below — the AI generates a fresh personalised task for {tName}. Type your answer, get instant feedback with grammar notes and corrections. For best results, practise a little every day rather than long sessions.
+        <strong style={{ color: C.accent }}>How it works:</strong> Pick an exercise below — your Coach builds a fresh personalised task for {tName}. Type your answer, get instant feedback with grammar notes and corrections. For best results, practise a little every day rather than long sessions.
       </div>
 
       {/* Quick-start prompts */}
@@ -3658,7 +3658,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
           </button>
         </div>
         <div style={{ marginTop:14 }}>
-          <Info text={`The AI Coach tab has live ${tName} exercises — fill-ins, translations, role-play, and vocabulary — ready right now.`} color={C.accent} />
+          <Info text={`The Coach tab has live ${tName} exercises — fill-ins, translations, role-play, and vocabulary — ready right now.`} color={C.accent} />
         </div>
       </div>
     );
@@ -4334,7 +4334,7 @@ function SettingsPanel({ onClose, onLogout, nativeLang, onSetNativeLang }) {
           <div style={{background:C.blue+"12",border:`1px solid ${C.blue}30`,borderRadius:12,padding:"14px 16px",marginBottom:14}}>
             <div style={{fontWeight:700,color:C.blue,fontSize:13,marginBottom:4}}>{t("free_plan_label")}</div>
             {email && <div style={{color:C.mid,fontSize:14,marginBottom:2}}>{email}</div>}
-            <div style={{color:C.blue,fontSize:12,marginBottom:10}}>5 AI messages per day · All 12 languages · Reference guides</div>
+            <div style={{color:C.blue,fontSize:12,marginBottom:10}}>5 coach messages per day · All 12 languages · Reference guides</div>
             <a href="/subscribe" style={{display:"block",textAlign:"center",padding:"9px 0",background:C.blue,color:"#fff",borderRadius:8,fontWeight:700,fontSize:13,textDecoration:"none"}}>
               Upgrade to Premium — from $9/month →
             </a>
@@ -4822,9 +4822,9 @@ function Flashcards({ tLang, onStreakUpdate }) {
     <div>
       <div style={{fontSize:12.5,color:C.muted,fontWeight:600,marginBottom:14}}>{dueCards.length} card{dueCards.length !== 1 ? "s" : ""} due now · spaced repetition (SM-2)</div>
       {cards.length === 0
-        ? <Info text="Your flashcard deck is empty. Save words while using the AI Coach (New Word exercise → Save to Flashcards) or the Vocabulary tab. Then come back here each day to review." color={C.muted} />
+        ? <Info text="Your flashcard deck is empty. Save words while using the Coach (New Word exercise → Save to Flashcards) or the Vocabulary tab. Then come back here each day to review." color={C.muted} />
         : dueCards.length === 0
-          ? <Info text="All caught up! No cards due right now. Come back later or add new words from the AI Coach." color={C.green} />
+          ? <Info text="All caught up! No cards due right now. Come back later or add new words from the Coach." color={C.green} />
           : <Info text="Rate each card honestly — 'Again' brings it back immediately; 'Easy' schedules it days away. The algorithm does the rest. Daily review beats long sessions." color={C.muted} />
       }
 
@@ -4868,7 +4868,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
               </div>
               <div style={{ color:C.muted, fontSize:13, marginBottom:16 }}>
                 {totalCards === 0
-                  ? "You have no flashcards yet. Add some using the AI Coach, Word Space, or the Add Card tab."
+                  ? "You have no flashcards yet. Add some using the Coach, Word Space, or the Add Card tab."
                   : practiceAll
                     ? `You went through all ${totalCards} cards. SM-2 scheduling updated.`
                     : `All ${totalCards} cards reviewed for today.`}
@@ -4954,7 +4954,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
       {view === "browse" && (
         <div>
           {cards.length === 0 ? (
-            <Info text={`No ${tName} flashcards yet. Add cards using the AI Coach New Word exercise, Word Space, or the Add Card tab.`} color={C.muted} />
+            <Info text={`No ${tName} flashcards yet. Add cards using the Coach New Word exercise, Word Space, or the Add Card tab.`} color={C.muted} />
           ) : (
             cards.map(c => {
               const isDue = c.next_review <= now;
@@ -5663,7 +5663,7 @@ function NewOnboarding({ onDone, onSetLang }) {
 
   const FEATURES = [
     {icon:"compass",title:"Explore freely",desc:"Grammar, words, phrases, sounds — every door open from day one"},
-    {icon:"sparkles",title:"AI Coach on tap",desc:"A coworking space for whatever you're curious about"},
+    {icon:"sparkles",title:"Coach on tap",desc:"A coworking space for whatever you're curious about"},
     {icon:"layers",title:"Helpers everywhere",desc:"Cards & drills attach to any topic instantly"},
     {icon:"globe",title:"12 languages",desc:"One subscription, all of them — switch anytime"},
   ];
@@ -5689,7 +5689,7 @@ function NewOnboarding({ onDone, onSetLang }) {
     onDone();
   };
   const START_STEPS = [
-    { icon:"sparkles",   title:"Talk to your AI Coach",  desc:"The fastest way in — ask anything or get a bite-size exercise." },
+    { icon:"sparkles",   title:"Talk to your Coach",  desc:"The fastest way in — ask anything or get a bite-size exercise." },
     { icon:"sun",        title:"Do Today's Practice",     desc:"A short daily rep. A little every day beats cramming." },
     { icon:"compass",    title:"Explore when you're ready", desc:"Grammar, vocab, dialogues, flashcards — all in the menu, no rush." },
   ];
@@ -5706,7 +5706,7 @@ function NewOnboarding({ onDone, onSetLang }) {
               <Icon name="languages" size={33} color="#fff"/>
             </div>
             <div style={{fontSize:27,fontWeight:700,letterSpacing:"-.02em",color:C.text,lineHeight:1.12}}>Open the whole language</div>
-            <div style={{fontSize:14,fontWeight:500,color:C.muted,margin:"8px 0 22px"}}>Tongue lets you explore any language freely — and brings AI helpers to whatever you're curious about. Learn your own way.</div>
+            <div style={{fontSize:14,fontWeight:500,color:C.muted,margin:"8px 0 22px"}}>Tongue lets you explore any language freely — and brings smart helpers to whatever you're curious about. Learn your own way.</div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
               {FEATURES.map((f,i)=>(
                 <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start"}}>
@@ -5959,7 +5959,7 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
               {t("ob_subtitle")} — <strong>{tName}</strong>
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:20, textAlign:"left" }}>
-              {[["","AI Coach","Personalized exercises, corrections & feedback"],
+              {[["","Coach","Personalized exercises, corrections & feedback"],
                 ["","Drills & Dialogues","Speaking practice with real scenarios"],
                 ["","Grammar & Vocab","Full reference guides for "+tName],
                 ["","Learning Roadmap","5-phase path from beginner to fluent"]
@@ -6010,7 +6010,7 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
         {step === 2 && (
           <div>
             <div style={{ fontWeight:900, fontSize:18, color:"#0f172a", marginBottom:4 }}>{t("ob_choose_goal")}</div>
-            <div style={{ color:"#64748b", fontSize:13, marginBottom:16 }}>Your AI Coach will focus on scenarios that matter most to you.</div>
+            <div style={{ color:"#64748b", fontSize:13, marginBottom:16 }}>Your Coach will focus on scenarios that matter most to you.</div>
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:20 }}>
               {GOALS.map(g => (
                 <button key={g.id} onClick={()=>setGoal(g.id)} style={{
@@ -6072,7 +6072,7 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
             </div>
             <div style={{ display:"flex", flexDirection:"column", gap:10, marginBottom:22, textAlign:"left" }}>
               {[["1","Open Quick Reference","Browse the grammar cheatsheet — pick up the 5 core patterns",""],
-                ["2","Try the AI Coach","Pick any exercise type — your coach will generate a personalized task",""],
+                ["2","Try the Coach","Pick any exercise type — your coach will generate a personalized task",""],
                 ["3","Save words to Flashcards","When you see a new word, tap 'Save to Flashcards' to review it later",""],
               ].map(([n,title,desc,icon]) => (
                 <div key={n} style={{ display:"flex", gap:12, alignItems:"flex-start", background:"#f8fafc", borderRadius:10, padding:"11px 13px" }}>
@@ -6106,11 +6106,11 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
   const [section, setSection] = useState(0);
   const SECTIONS = [
     {
-      icon:"", title:"AI Coach",
+      icon:"", title:"Coach",
       steps:[
-        "Tap the <strong>AI Coach</strong> tab at the top.",
+        "Tap the <strong>Coach</strong> tab at the top.",
         "Choose an exercise type — <strong>New Word</strong>, <strong>Fill the Gap</strong>, <strong>Translate</strong>, <strong>Role Play</strong>, and more.",
-        "The AI will generate a personalized exercise for you.",
+        "Your Coach will build a personalized exercise for you.",
         "Type your answer and tap <strong>Check Answer</strong> — you'll get instant feedback, corrections, and grammar notes.",
         "Tap <strong>Save to Flashcards</strong> on New Word exercises to review them later.",
         "<strong>Pro tip:</strong> Use Free Writing to write anything — your coach will correct every mistake.",
@@ -6132,8 +6132,8 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
       steps:[
         "Tap <strong>Drills</strong> for rapid-fire pronunciation and pattern exercises.",
         "Each drill builds speed and muscle memory for common phrases.",
-        "Tap <strong>Dialogues</strong> for immersive AI conversations — pick a scenario and chat in "+tName+".",
-        "The AI will respond naturally and correct your grammar inline.",
+        "Tap <strong>Dialogues</strong> for immersive conversations — pick a scenario and chat in "+tName+".",
+        "Your tutor responds naturally and corrects your grammar as you go.",
         "<strong>Pro tip:</strong> Do 5 minutes of Drills every morning — consistency beats marathon sessions.",
       ]
     },
@@ -6144,7 +6144,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
         "Words are shown on a card — tap to flip and reveal the meaning.",
         "Rate yourself: <strong>Again</strong>, <strong>Hard</strong>, <strong>Good</strong>, or <strong>Easy</strong> — the app uses spaced repetition to schedule the next review.",
         "Cards you mark <em>Easy</em> come back in days; cards you mark <em>Again</em> come back immediately.",
-        "<strong>Pro tip:</strong> Save 2-3 new words per day from the AI Coach and review all due cards — you'll memorize them permanently.",
+        "<strong>Pro tip:</strong> Save 2-3 new words per day from the Coach and review all due cards — you'll memorize them permanently.",
       ]
     },
     {
@@ -6219,12 +6219,12 @@ function TodaysPractice({ tLang, onGoToTab }) {
   // Rotating weekly schedule
   const SCHEDULE = [
     { day:"Sunday",    theme:"Review Day",       desc:"Review your flashcards and revisit past exercises.",     tab:9, icon:"", tabLabel:"Flashcards" },
-    { day:"Monday",    theme:"New Words",         desc:"Learn 3 new vocabulary words with the AI Coach.",       tab:1, icon:"", tabLabel:"AI Coach" },
+    { day:"Monday",    theme:"New Words",         desc:"Learn 3 new vocabulary words with the Coach.",       tab:1, icon:"", tabLabel:"Coach" },
     { day:"Tuesday",   theme:"Grammar Focus",     desc:"Study the key grammar patterns in Quick Reference.",    tab:0, icon:"", tabLabel:"Quick Reference" },
-    { day:"Wednesday", theme:"Translation Day",   desc:"Try Translate exercises in the AI Coach.",             tab:1, icon:"", tabLabel:"AI Coach" },
+    { day:"Wednesday", theme:"Translation Day",   desc:"Try Translate exercises in the Coach.",             tab:1, icon:"", tabLabel:"Coach" },
     { day:"Thursday",  theme:"Speaking Practice", desc:"Work through Drills to build pronunciation speed.",     tab:5, icon:"", tabLabel:"Drills" },
     { day:"Friday",    theme:"Conversation",      desc:"Try a Role Play or Dialogue exercise today.",           tab:6, icon:"", tabLabel:"Dialogues" },
-    { day:"Saturday",  theme:"Free Writing",      desc:"Write freely in "+tName+" — your coach will correct everything.", tab:1, icon:"", tabLabel:"AI Coach" },
+    { day:"Saturday",  theme:"Free Writing",      desc:"Write freely in "+tName+" — your coach will correct everything.", tab:1, icon:"", tabLabel:"Coach" },
   ];
 
   const todayPlan = SCHEDULE[today];
@@ -7122,7 +7122,7 @@ function App() {
   // ── navigation helpers ────────────────────────────────────────────────────
   // Views worth resuming, with the label shown on the Home "Continue" card.
   const RESUMABLE = {
-    grammar:"Grammar", "grammar-full":"Grammar reference", concept:"Grammar", coach:"AI Coach",
+    grammar:"Grammar", "grammar-full":"Grammar reference", concept:"Grammar", coach:"Coach",
     "voice-tutor":"Conversation", dialogues:"Dialogues", drills:"Drills", "vocab-full":"Vocabulary",
     structures:"Sentence patterns", sounds:"Sounds", culture:"Culture & nuance", roadmap:"Roadmap",
     wordspace:"Word Space", analyzer:"Text analyzer", cards:"Flashcards", review:"Review", today:"Today's practice",

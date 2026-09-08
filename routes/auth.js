@@ -191,7 +191,7 @@ router.post("/signup", async (req, res) => {
         <div style="padding:28px">
           <h1 style="color:#0f172a;font-size:20px;margin:0 0 10px">Welcome! Your free account is ready.</h1>
           <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 16px">
-            You can explore all 11 language reference guides and try the AI Coach with <strong>5 free messages per day</strong>.
+            You can explore all 11 language reference guides and try the Coach with <strong>5 free messages per day</strong>.
           </p>
           <p style="color:#64748b;font-size:13px;margin:0 0 22px">
             Ready to go unlimited? Upgrade to Tongue Premium — $9/month or $79/year.

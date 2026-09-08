@@ -186,10 +186,10 @@ router.post("/", requireAuth, async (req, res) => {
   if (!allowed) {
     const isFree = plan === "free";
     const error = isFree
-      ? "You've used your 5 free AI messages today. Upgrade to Tongue Premium for unlimited access."
+      ? "You've used your 5 free coach messages today. Upgrade to Tongue Premium for unlimited access."
       : reason === "burst"
         ? "Too many requests. Please slow down."
-        : "You've reached the daily AI limit (300 messages). Resets at midnight.";
+        : "You've reached the daily limit (300 messages). Resets at midnight.";
 
     db.trackEvent(userId, "free_limit_reached", { plan, reason });
     return res.status(429).json({ error, upgrade: isFree });
@@ -198,7 +198,7 @@ router.post("/", requireAuth, async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     console.error("[Claude] ANTHROPIC_API_KEY not set");
-    return res.status(500).json({ error: "AI service is not configured." });
+    return res.status(500).json({ error: "the tutor is not configured." });
   }
 
   const startTime = Date.now();
@@ -221,7 +221,7 @@ router.post("/", requireAuth, async (req, res) => {
     if (!anthropicRes.ok) {
       const errText = await anthropicRes.text();
       console.error(`[Claude] API error ${anthropicRes.status}:`, errText.slice(0, 200));
-      return res.status(502).json({ error: "AI service error. Please try again in a moment." });
+      return res.status(502).json({ error: "the tutor error. Please try again in a moment." });
     }
 
     const data = await anthropicRes.json();
@@ -243,7 +243,7 @@ router.post("/", requireAuth, async (req, res) => {
       parsed = JSON.parse(raw);
     } catch {
       console.error("[Claude] JSON parse failed:", raw.slice(0, 300));
-      return res.status(502).json({ error: "AI returned unexpected format. Please try again." });
+      return res.status(502).json({ error: "The tutor returned an unexpected response. Please try again." });
     }
 
     // Surface remaining free-tier quota
@@ -299,7 +299,7 @@ router.post("/chat", requireAuth, async (req, res) => {
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "AI service is not configured." });
+  if (!apiKey) return res.status(500).json({ error: "the tutor is not configured." });
 
   // Server-Sent Events
   res.setHeader("Content-Type", "text/event-stream");

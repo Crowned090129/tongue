@@ -110,9 +110,9 @@ function landingPage(lang) {
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Learn ${lang.name} Online with AI — Tongue</title>
-  <meta name="description" content="Learn ${lang.name} faster with an AI tutor. Personalised exercises, grammar, vocabulary, pronunciation, and real conversation practice. ${lang.speakers} speakers worldwide."/>
-  <meta property="og:title" content="Learn ${lang.name} with AI — Tongue"/>
+  <title>Learn ${lang.name} Online — Tongue</title>
+  <meta name="description" content="Learn ${lang.name} faster with a personal tutor. Personalised exercises, grammar, vocabulary, pronunciation, and real conversation practice. ${lang.speakers} speakers worldwide."/>
+  <meta property="og:title" content="Learn ${lang.name} — Tongue"/>
   <meta property="og:description" content="${lang.desc}"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -172,8 +172,8 @@ function landingPage(lang) {
   </nav>
   <div class="hero">
     <div class="hero-flag">${lang.flag}</div>
-    <h1>Learn ${lang.name} with AI</h1>
-    <p>${lang.desc} Start speaking from day one with your personal AI tutor.</p>
+    <h1>Learn ${lang.name}</h1>
+    <p>${lang.desc} Start speaking from day one with your personal tutor.</p>
     <div class="hero-meta">
       <span class="meta-chip">${lang.speakers} speakers worldwide</span>
       <span class="meta-chip">${lang.time} to fluency</span>
@@ -183,12 +183,12 @@ function landingPage(lang) {
   </div>
   <div class="section">
     <h2>Everything you need to learn ${lang.name}</h2>
-    <p class="sub">Tongue is a complete AI-powered learning system — not just flashcards.</p>
+    <p class="sub">Tongue is a complete Smart learning system — not just flashcards.</p>
     <div class="features">
-      <div class="feat"><div class="feat-icon">🤖</div><h3>AI Tutor &amp; Coach</h3><p>Personalised exercises: fill-in-the-blank, translation, role-play, free writing with corrections. Never the same lesson twice.</p></div>
-      <div class="feat"><div class="feat-icon">📖</div><h3>Grammar &amp; Quick Reference</h3><p>AI-generated grammar guide for ${lang.name} — explained in your language, with examples and audio.</p></div>
+      <div class="feat"><div class="feat-icon">🤖</div><h3>Tutor &amp; Coach</h3><p>Personalised exercises: fill-in-the-blank, translation, role-play, free writing with corrections. Never the same lesson twice.</p></div>
+      <div class="feat"><div class="feat-icon">📖</div><h3>Grammar &amp; Quick Reference</h3><p>Personalized grammar guide for ${lang.name} — explained in your language, with examples and audio.</p></div>
       <div class="feat"><div class="feat-icon">🃏</div><h3>Spaced Repetition Flashcards</h3><p>Save words as you learn. SM-2 algorithm schedules reviews exactly when you need them — proven to 2–3× retention.</p></div>
-      <div class="feat"><div class="feat-icon">💬</div><h3>Conversations &amp; Dialogues</h3><p>Practice real-life scenarios with instant corrections and follow-ups from your AI tutor.</p></div>
+      <div class="feat"><div class="feat-icon">💬</div><h3>Conversations &amp; Dialogues</h3><p>Practice real-life scenarios with instant corrections and follow-ups from your tutor.</p></div>
       <div class="feat"><div class="feat-icon">🔊</div><h3>Native Pronunciation</h3><p>Every word playable with native text-to-speech. Hear it, repeat it, remember it.</p></div>
       <div class="feat"><div class="feat-icon">🔥</div><h3>Streaks &amp; Progress</h3><p>Daily streaks keep you consistent. Consistency is the only thing that gets you to fluency.</p></div>
     </div>
@@ -197,7 +197,7 @@ function landingPage(lang) {
     <div class="steps">
       <div class="step"><div class="step-num">1</div><div><h3>Subscribe — get your access code by email</h3><p>Monthly ($9) or yearly ($79). Code arrives instantly. No app download needed — works in any browser.</p></div></div>
       <div class="step"><div class="step-num">2</div><div><h3>Select ${lang.flag} ${lang.name} as your target</h3><p>Open the app, tap Languages, select ${lang.name}. Add your native language for personalised comparisons.</p></div></div>
-      <div class="step"><div class="step-num">3</div><div><h3>Practice 20–30 minutes daily</h3><p>AI Coach + Flashcards + Drills. Consistent daily practice beats marathon sessions. You'll see results in weeks.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div><h3>Practice 20–30 minutes daily</h3><p>Coach + Flashcards + Drills. Consistent daily practice beats marathon sessions. You'll see results in weeks.</p></div></div>
     </div>
     <h2>Pricing</h2>
     <p class="sub">One subscription. All 12 languages. Cancel anytime.</p>
@@ -211,12 +211,12 @@ function landingPage(lang) {
   </div>
   <div class="cta-section">
     <h2>Start learning ${lang.name} today</h2>
-    <p>AI-powered. No downloads. Works on any device. Cancel anytime.</p>
+    <p>Smart. No downloads. Works on any device. Cancel anytime.</p>
     <a href="${BASE}/app" class="btn-primary">Start for free →</a>
   </div>
   <footer>
     <img src="/logo.svg" alt="Tongue"/>
-    <p>© ${new Date().getFullYear()} Tongue · AI-powered language learning</p>
+    <p>© ${new Date().getFullYear()} Tongue · Smart language learning</p>
     <div style="margin-top:8px">
       <a href="/faq">FAQ &amp; Help</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/subscribe">Subscribe</a><a href="/app">App</a>
     </div>

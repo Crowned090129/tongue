@@ -12,12 +12,12 @@ function checkLimit(ip) {
   return entry.count <= 10;
 }
 
-const SYSTEM = `You are the Tongue support assistant. Tongue is an AI-powered language learning app.
+const SYSTEM = `You are the Tongue support assistant. Tongue is a smart language learning app.
 
 Key facts about Tongue:
 - 12 languages: French, Spanish, Portuguese, Italian, German, English, Chinese, Japanese, Korean, Russian, Arabic, Hindi
-- Free plan: 5 AI Coach messages per day, all reference content (grammar, vocab, cheatsheets), flashcards (browser-based), drills, dialogues, roadmap, word space
-- Premium: $9/month or $79/year — up to 300 AI Coach messages/day, streak sync across devices
+- Free plan: 5 Coach messages per day, all reference content (grammar, vocab, cheatsheets), flashcards (browser-based), drills, dialogues, roadmap, word space
+- Premium: $9/month or $79/year — up to 300 Coach messages/day, streak sync across devices
 - Login: no password. Free users sign up with email. Paid users use an access code (format TG-XXXXXXXX)
 - Access codes: valid on 2 devices simultaneously. Lost codes can be retrieved at the Resend Code page.
 - Stripe billing: users can cancel, change plan, or update payment method via Account → Manage Billing
@@ -28,7 +28,7 @@ Key facts about Tongue:
 
 Answer in 2-4 sentences. Be warm, clear, and helpful. If you don't know the answer, say so honestly and suggest replying to any Tongue email for personal help. Never make up features or prices. Never ask for passwords or payment details.`;
 
-// POST /api/support — AI-powered support chat, no auth required
+// POST /api/support — Smart support chat, no auth required
 router.post("/", async (req, res) => {
   const ip = req.headers["x-forwarded-for"]?.split(",")[0]?.trim() || req.ip || "unknown";
   if (!checkLimit(ip)) {
