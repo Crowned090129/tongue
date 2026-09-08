@@ -1474,7 +1474,19 @@ router.get("/:lang/:tab", requireAuth, async (req, res) => {
     });
   }
 
-  // Should have been pre-generated at startup — generate now as fallback
+  // No cached row yet. Serve the curated seed immediately (works with zero AI credits),
+  // and persist it so subsequent reads are instant.
+  const seed = loadSeedFile(lang, tab);
+  if (seed) {
+    db.run(
+      `INSERT INTO content_cache (lang, tab, content_json, generated_at)
+       VALUES ($1,$2,$3,NOW()) ON CONFLICT(lang,tab) DO NOTHING`,
+      [lang, tab, JSON.stringify(seed)]
+    ).catch(() => {});
+    return res.json({ content: seed, cached: false, seeded: true });
+  }
+
+  // No seed either — try on-demand AI generation as a last resort.
   try {
     const content = await generateContent(lang, tab);
     res.json({ content, cached: false });
@@ -1563,8 +1575,57 @@ router.get("/reports", requireAdmin, async (req, res) => {
   res.json({ reports: rows, names: LANG_NAMES });
 });
 
+// ── Curated seed content ──────────────────────────────────────────────────────
+// Real, hand-curated reference content shipped in the repo at seed/content/<lang>/<tab>.json.
+// This is the app's baseline knowledge base: it guarantees every lesson screen shows
+// real content the moment the app is deployed, with ZERO dependency on the AI pipeline
+// or API credits. The AI layer only ENRICHES/refreshes this later. Served through the
+// same /api/content API — it is data, not frontend-hardcoded lessons.
+const _seedDir = require("path").join(__dirname, "..", "seed", "content");
+
+function loadSeedFile(lang, tab) {
+  try {
+    const fs = require("fs");
+    const file = require("path").join(_seedDir, lang, `${tab}.json`);
+    if (!fs.existsSync(file)) return null;
+    const content = JSON.parse(fs.readFileSync(file, "utf8"));
+    if (validateContent(lang, tab, content)) return null; // invalid → ignore
+    return content;
+  } catch (e) { return null; }
+}
+
+// Load seed files into content_cache for any (lang, tab) that has no row yet.
+// Idempotent: never overwrites AI-generated or already-seeded content.
+async function seedContent() {
+  const fs = require("fs");
+  if (!fs.existsSync(_seedDir)) return;
+  let inserted = 0, invalid = 0;
+  for (const lang of VALID_LANGS) {
+    for (const tab of VALID_TABS) {
+      const file = require("path").join(_seedDir, lang, `${tab}.json`);
+      if (!fs.existsSync(file)) continue;
+      const existing = await db.get("SELECT 1 FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
+      if (existing) continue;
+      let content;
+      try { content = JSON.parse(fs.readFileSync(file, "utf8")); }
+      catch (e) { console.warn(`[Seed] bad JSON ${lang}/${tab}: ${e.message}`); invalid++; continue; }
+      const verr = validateContent(lang, tab, content);
+      if (verr) { console.warn(`[Seed] invalid ${lang}/${tab}: ${verr}`); invalid++; continue; }
+      await db.run(
+        `INSERT INTO content_cache (lang, tab, content_json, generated_at)
+         VALUES ($1, $2, $3, NOW()) ON CONFLICT(lang, tab) DO NOTHING`,
+        [lang, tab, JSON.stringify(content)]
+      );
+      inserted++;
+    }
+  }
+  if (inserted || invalid) console.log(`[Seed] loaded ${inserted} curated content files${invalid ? `, ${invalid} skipped (invalid)` : ""}`);
+}
+
 module.exports = router;
 module.exports.generateMissingContent = generateMissingContent;
+module.exports.seedContent = seedContent;
+module.exports.validateContent = validateContent;
 module.exports.VALID_LANGS  = VALID_LANGS;
 module.exports.VALID_TABS   = VALID_TABS;
 module.exports.LANG_NAMES   = LANG_NAMES;

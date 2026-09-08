@@ -71,6 +71,17 @@ cron.schedule("0 3 * * *", async () => {
 async function start() {
   await db.initialize();
 
+  // Load the curated seed content into the cache (idempotent). This is what makes
+  // every lesson screen show real content immediately, with no AI credits required.
+  if (process.env.NODE_ENV !== "test") {
+    try {
+      const { seedContent } = require("./routes/content");
+      await seedContent();
+    } catch (e) {
+      console.error("[Seed] content seeding error:", e.message);
+    }
+  }
+
   app.listen(PORT, () => {
     console.log(`\nTongue server running on port ${PORT}`);
     console.log(`  App:       http://localhost:${PORT}`);
