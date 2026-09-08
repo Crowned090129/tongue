@@ -14,7 +14,7 @@
   <link rel="manifest" href="/manifest.json"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -45,7 +45,8 @@
       /* Lines */
       --line:        rgba(18,16,22,.1);
       /* Typography */
-      --font:        'Space Grotesk',system-ui,-apple-system,sans-serif;
+      --font:        'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+      --serif:       'Fraunces',Georgia,'Times New Roman',serif;
       --text:        #14121A;
       --text-mid:    #14121A;
       --text-muted:  rgba(20,18,26,.5);
@@ -2506,7 +2507,7 @@ function ConjTable({ rows }) {
 function Heading({ title, sub, color }) {
   return (
     <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: `1px solid ${C.line}` }}>
-      <div style={{ fontWeight: 700, fontSize: 18, color: C.text, letterSpacing: "-.01em" }}>{title}</div>
+      <div style={{ fontFamily:"var(--serif)", fontWeight: 600, fontSize: 22, color: C.text, letterSpacing: "-.015em" }}>{title}</div>
       {sub && <div style={{ color: C.muted, fontSize: 12, marginTop: 4 }}>{sub}</div>}
     </div>
   );
@@ -2918,7 +2919,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
       <div style={{ background:"#fff", borderRadius:16, padding:28, width:"100%", maxWidth:390, boxShadow:"0 4px 24px rgba(0,0,0,0.10)" }}>
         <div style={{ textAlign:"center", marginBottom:22 }}>
           <img src="/icon.svg" alt="Tongue" style={{ width:64, height:64, marginBottom:10, display:"inline-block" }}/>
-          <div style={{ fontWeight:900, fontSize:22, color:"#0f172a", marginBottom:4 }}>Welcome to Tongue</div>
+          <div style={{ fontFamily:"var(--serif)", fontWeight:600, fontSize:27, letterSpacing:"-.02em", color:"#231C16", marginBottom:4 }}>Welcome to Tongue</div>
           <div style={{ color:"#64748b", fontSize:13 }}>Learn any language with your personal tutor</div>
         </div>
 
@@ -5038,7 +5039,7 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
       <div style={{display:"flex",alignItems:"center",gap:10,padding:"12px 18px 10px",borderBottom:`1px solid ${C.line}`,background:C.surf,flexShrink:0}}>
         <BackBtn onClick={goBack}/>
         <div>
-          <div style={{fontWeight:700,fontSize:19,color:C.text}}>{title}</div>
+          <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:22,letterSpacing:"-.015em",color:C.text}}>{title}</div>
           {subtitle && <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{subtitle}</div>}
         </div>
       </div>
@@ -5084,7 +5085,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
   ];
 
   return (
-    <div style={{display:"flex",flexDirection:"column",flex:1,minHeight:0,background:C.bg,fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div style={{display:"flex",flexDirection:"column",flex:1,minHeight:0,background:C.bg,fontFamily:"var(--font)"}}>
       {/* Header — hidden on desktop, where the sidebar owns brand/language/theme/settings */}
       {!isDesktop && (
       <div style={{padding:"13px 16px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:`1px solid ${C.line}`,background:C.surf,flexShrink:0}}>
@@ -5093,7 +5094,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
             <Icon name="languages" size={18} color="#fff"/>
           </div>
           <div>
-            <div style={{fontWeight:700,fontSize:20,letterSpacing:"-.02em",color:C.text,lineHeight:1.1}}>{L.name}</div>
+            <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:22,letterSpacing:"-.02em",color:C.text,lineHeight:1.1}}>{L.name}</div>
             <div style={{fontSize:10,fontWeight:600,color:C.accent,display:"flex",alignItems:"center",gap:3}}>{t("home_switch")} <Icon name="chevron-down" size={10} color={C.accent}/></div>
           </div>
         </button>
@@ -5219,7 +5220,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
 function GrammarScreen({ L, nav, goBack }) {
   useLucide([L.id]);
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 16px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 16px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:13}}>
         <BackBtn onClick={goBack}/>
         <div style={{flex:1}}>
@@ -5268,7 +5269,7 @@ function ConceptScreen({ L, nav, goBack }) {
   useLucide([L.id]);
   const C2 = L.concept;
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
         <BackBtn onClick={goBack}/>
         <div style={{fontSize:11,fontWeight:600,color:C.muted}}>{C2.crumb}</div>
@@ -5346,7 +5347,7 @@ function ConceptScreen({ L, nav, goBack }) {
 function VocabThemesScreen({ L, nav, goBack, onThemePick }) {
   useLucide([L.id]);
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:14}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5381,7 +5382,7 @@ function VocabWordsScreen({ L, themeIdx, nav, goBack }) {
   const words = L.words.filter(w => filter === "all" || w.state === filter);
   const FILTERS = [{id:"all",label:"All"},{id:"learn",label:"Learning"},{id:"known",label:"Known"},{id:"weak",label:"Weak"}];
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:13}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5424,7 +5425,7 @@ function PhrasesScreen({ L, nav, goBack }) {
   useLucide([L.id]);
   const dlg = L.dialogue;
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:14}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5487,7 +5488,7 @@ function PhrasesScreen({ L, nav, goBack }) {
 function SoundsScreen({ L, goBack }) {
   useLucide([L.id]);
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:14}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5535,7 +5536,7 @@ function CultureScreen({ L, goBack }) {
   };
 
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 24px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 18px 24px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:14}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5613,7 +5614,7 @@ function ReviewScreen({ nav, goBack, tLang }) {
   ];
 
   return (
-    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 16px 22px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div className="scr-anim" style={{flex:1,overflowY:"auto",padding:"6px 16px 22px",fontFamily:"var(--font)"}}>
       <div style={{display:"flex",alignItems:"center",gap:11,marginBottom:15}}>
         <BackBtn onClick={goBack}/>
         <div>
@@ -5695,7 +5696,7 @@ function NewOnboarding({ onDone, onSetLang }) {
   ];
 
   return (
-    <div style={{position:"fixed",inset:0,background:C.bg,zIndex:200,display:"flex",flexDirection:"column",padding:"44px 22px 24px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+    <div style={{position:"fixed",inset:0,background:C.bg,zIndex:200,display:"flex",flexDirection:"column",padding:"44px 22px 24px",fontFamily:"var(--font)"}}>
       <div style={{height:5,background:C.surf2,borderRadius:99,overflow:"hidden",marginBottom:26}}>
         <div style={{height:"100%",width:prog,background:GRAD,borderRadius:99,transition:"width .3s"}}/>
       </div>
@@ -5801,7 +5802,7 @@ function LangSwitchOverlay({ current, onPick, onClose }) {
   const ALL_LANGS = Object.values(LANGS_DATA).slice(0,12);
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:80,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-      <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"80%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+      <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"80%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"var(--font)"}}>
         <div style={{width:38,height:4,borderRadius:99,background:C.surf2,margin:"0 auto 16px"}}/>
         <div style={{fontSize:19,fontWeight:700,color:C.text,marginBottom:4}}>Choose a language</div>
         <div style={{fontSize:12.5,fontWeight:500,color:C.muted,marginBottom:16}}>Everything adapts — grammar, vocab, sounds, culture.</div>
@@ -5828,7 +5829,7 @@ function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFre
   const NATIVES = [{code:"en",name:"English"},{code:"es",name:"Español"},{code:"fr",name:"Français"},{code:"de",name:"Deutsch"},{code:"ja",name:"日本語"},{code:"zh",name:"中文"},{code:"pt",name:"Português"},{code:"it",name:"Italiano"}];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:80,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-      <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"82%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+      <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"82%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"var(--font)"}}>
         <div style={{width:38,height:4,borderRadius:99,background:C.surf2,margin:"0 auto 16px"}}/>
         <div style={{fontSize:19,fontWeight:700,color:C.text,marginBottom:14}}>Your Account</div>
         <div style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:14,display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
@@ -5873,7 +5874,7 @@ function UpgradeOverlay({ onClose }) {
   const FEATS = [{icon:"infinity",title:"Unlimited coaching"},{icon:"globe",title:"All 12 languages"},{icon:"layers",title:"Unlimited cards"},{icon:"trending-up",title:"Deep analytics"}];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.65)",zIndex:90,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:C.bg,border:`1px solid ${C.line}`,borderRadius:22,padding:24,width:"100%",maxWidth:380,boxShadow:"0 30px 70px -20px rgba(0,0,0,.7)",fontFamily:"'Space Grotesk',system-ui,sans-serif"}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:C.bg,border:`1px solid ${C.line}`,borderRadius:22,padding:24,width:"100%",maxWidth:380,boxShadow:"0 30px 70px -20px rgba(0,0,0,.7)",fontFamily:"var(--font)"}}>
         <div style={{width:54,height:54,borderRadius:16,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px",boxShadow:"0 12px 30px -6px rgba(192,21,62,.55)"}}>
           <Icon name="rocket" size={27} color="#fff"/>
         </div>
@@ -5954,7 +5955,7 @@ function OnboardingModal({ onDone, tLang, onSetTab }) {
         {step === 0 && (
           <div style={{ textAlign:"center" }}>
             <div style={{ fontSize:52, marginBottom:10 }}>{tFlag}</div>
-            <div style={{ fontWeight:900, fontSize:22, color:"#0f172a", marginBottom:8 }}>{t("ob_welcome")}</div>
+            <div style={{ fontFamily:"var(--serif)", fontWeight:600, fontSize:27, letterSpacing:"-.02em", color:"#231C16", marginBottom:8 }}>{t("ob_welcome")}</div>
             <div style={{ color:"#64748b", fontSize:14, lineHeight:1.6, marginBottom:20 }}>
               {t("ob_subtitle")} — <strong>{tName}</strong>
             </div>
@@ -6438,7 +6439,7 @@ function Conversation({ tLang, rLangs, nativeLang }) {
     return (
       <div style={{padding:"16px 16px 28px",overflowY:"auto",flex:1}}>
         <div style={{marginBottom:16}}>
-          <div style={{fontWeight:800,fontSize:18,color:C.text,marginBottom:4}}>Have a real {tName} conversation</div>
+          <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:23,letterSpacing:"-.01em",color:C.text,marginBottom:4}}>Have a real {tName} conversation</div>
           <div style={{color:C.muted,fontSize:13,lineHeight:1.55}}>Pick a situation. Type or speak — your tutor replies live, stays in {tName}, and gently fixes your mistakes as you go.</div>
         </div>
         {errMsg && <div style={{background:C.red+"12",border:`1px solid ${C.red}30`,borderRadius:10,padding:"10px 13px",color:C.red,fontSize:12.5,marginBottom:14}}>{errMsg}</div>}
@@ -6720,19 +6721,19 @@ function ShareCardModal({ word, meaning, example, lang, onClose }) {
     // Top badge
     ctx.fillStyle = "rgba(255,255,255,0.15)";
     ctx.beginPath(); ctx.roundRect(60, 60, 240, 56, 28); ctx.fill();
-    ctx.fillStyle = "#fff"; ctx.font = "bold 26px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "#fff"; ctx.font = "bold 26px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("Tongue · Speak Every Tongue", 80, 97);
 
     // Flag
     ctx.font = "90px serif"; ctx.fillText(flag, 60, 260);
 
     // Language label
-    ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "600 32px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "600 32px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText(tName.toUpperCase(), 60, 310);
 
     // Word
     const wordText = (word || "").slice(0, 40);
-    ctx.fillStyle = "#fff"; ctx.font = "800 88px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "#fff"; ctx.font = "800 88px 'Instrument Sans', system-ui, sans-serif";
     const words = wordText.split(" ");
     let line = "", y = 440;
     for (const w of words) {
@@ -6744,12 +6745,12 @@ function ShareCardModal({ word, meaning, example, lang, onClose }) {
     if (line) ctx.fillText(line, 60, y);
 
     // Meaning
-    ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 44px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.font = "600 44px 'Instrument Sans', system-ui, sans-serif";
     y += 70; ctx.fillText((meaning || "").slice(0, 50), 60, y);
 
     // Example sentence
     if (example) {
-      ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "400 32px 'Space Grotesk', system-ui, sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,0.6)"; ctx.font = "400 32px 'Instrument Sans', system-ui, sans-serif";
       y += 70;
       const ex = example.slice(0, 60);
       const exWords = ex.split(" ");
@@ -6768,7 +6769,7 @@ function ShareCardModal({ word, meaning, example, lang, onClose }) {
     ctx.beginPath(); ctx.moveTo(60, 920); ctx.lineTo(W-60, 920); ctx.stroke();
 
     // URL
-    ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.font = "500 28px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.55)"; ctx.font = "500 28px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("tonge-app.fly.dev · free to use", 60, 970);
   }, [word, meaning, example, lang]);
 
@@ -6888,7 +6889,7 @@ function DesktopNav({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettin
           <div style={{width:30,height:30,borderRadius:8,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
             <Icon name="languages" size={16} color="#fff"/>
           </div>
-          <div style={{fontWeight:800,fontSize:17,letterSpacing:"-.02em",color:C.text}}>Tongue</div>
+          <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:20,letterSpacing:"-.02em",color:C.text}}>Tongue</div>
         </div>
         <button onClick={onOpenLang} style={{
           display:"flex", alignItems:"center", justifyContent:"space-between", width:"100%",
@@ -7187,7 +7188,7 @@ function App() {
   );
 
   const appBody = (
-    <div style={{fontFamily:"'Space Grotesk',system-ui,sans-serif",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className={"app-shell" + (isDesktop ? " app-shell-in-stage" : "")}>
+    <div style={{fontFamily:"var(--font)",background:C.bg,color:C.text,maxWidth:520,margin:"0 auto",display:"flex",flexDirection:"column",height:"100dvh",overflow:"hidden"}} className={"app-shell" + (isDesktop ? " app-shell-in-stage" : "")}>
 
       {/* ── EXPIRY BANNER ── */}
       {expiryWarning !== null && (
