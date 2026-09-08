@@ -2418,7 +2418,7 @@ function Row({ fr, en, tip, big }) {
         <span style={{ fontWeight: 800, color: C.blue, fontSize: big ? 21 : 15 }}>{fr}</span>
         <PlayBtn text={fr} sm={!big} />
       </div>
-      {en && <div style={{ color: C.mid, fontSize: 12 }}>🇬🇧 {en}</div>}
+      {en && <div style={{ color: C.mid, fontSize: 12 }}>{en}</div>}
       {tip && <div style={{ color: C.muted, fontSize: 11, marginTop: 5, paddingTop: 5, borderTop: `1px solid ${C.bdr}` }}>Note: {tip}</div>}
     </div>
   );
@@ -3137,7 +3137,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
                   Pronunciation: <strong>{ex.pronunciation_guide}</strong>
                 </div>
               )}
-              {ex.meaning_en && <Info text={`🇬🇧 ${ex.meaning_en}${ex.meaning_ref ? " · " + ex.meaning_ref : ""}`} color={C.blue} />}
+              {ex.meaning_en && <Info text={`${ex.meaning_en}${ex.meaning_ref ? " · " + ex.meaning_ref : ""}`} color={C.blue} />}
               {ex.example && (
                 <div style={{ background: C.bg, borderRadius: 10, padding: "10px 13px", marginBottom: 10 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -3470,33 +3470,47 @@ function useApiContent(tLang, tab) {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     let cancelled = false;
     setLoading(true); setErr(""); setContent(null);
     fetch(`/api/content/${tLang}/${tab}`, { headers: { "Authorization": "Bearer " + getToken() } })
       .then(r => {
-        if (!r.ok) throw new Error(r.status === 503 ? "Content is being prepared — check back in a moment." : "Could not load content.");
+        if (!r.ok) throw new Error(r.status === 503 ? "This is still being prepared — check back in a moment." : "Couldn't load this content.");
         return r.json();
       })
       .then(d => { if (!cancelled) setContent(d.content); })
       .catch(e => { if (!cancelled) setErr(e.message); })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
-  }, [tLang, tab]);
-  return { content, loading, err };
+  }, [tLang, tab, tick]);
+  return { content, loading, err, reload: () => setTick(t => t + 1) };
 }
 
-// Shared loading / error placeholder for API-backed screens.
-function ContentLoader({ tLang, loading, err, label }) {
+// Shared loading / error placeholder for API-backed screens. On failure it shows
+// a real, recoverable state with a Try-again button (not a dead-end apology).
+function ContentLoader({ loading, err, label, onRetry }) {
   return (
-    <div style={{ textAlign:"center", padding:"46px 20px" }}>
-      <div style={{ fontSize:44, marginBottom:12 }}>{TARGETS[tLang]?.flag}</div>
-      {loading
-        ? <>
-            <div style={{ width:26, height:26, margin:"0 auto 12px", border:"3px solid "+C.line, borderTopColor:C.accent, borderRadius:"50%", animation:"spin .7s linear infinite" }}/>
-            <div style={{ fontWeight:700, fontSize:15, color:C.text }}>Loading {label}…</div>
-          </>
-        : <div style={{ color:C.muted, fontSize:13, lineHeight:1.6, maxWidth:280, margin:"0 auto" }}>{err || "Content is being prepared. Please try again shortly."}</div>}
+    <div style={{ textAlign:"center", padding:"48px 24px" }}>
+      {loading ? (
+        <>
+          <div style={{ width:26, height:26, margin:"0 auto 14px", border:"3px solid "+C.line, borderTopColor:C.accent, borderRadius:"50%", animation:"spin .7s linear infinite" }}/>
+          <div style={{ fontWeight:700, fontSize:15, color:C.text }}>Loading {label}…</div>
+        </>
+      ) : (
+        <>
+          <div style={{ width:48, height:48, borderRadius:14, background:C.accentSoft, display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
+            <Icon name="cloud-off" size={22} color={C.accent}/>
+          </div>
+          <div style={{ fontWeight:800, fontSize:16, color:C.text, marginBottom:5 }}>{label} isn't ready yet</div>
+          <div style={{ color:C.muted, fontSize:13, lineHeight:1.6, maxWidth:300, margin:"0 auto 18px" }}>{err || "This is still being prepared. Please try again in a moment."}</div>
+          {onRetry && (
+            <button onClick={onRetry} style={{ display:"inline-flex", alignItems:"center", gap:7, padding:"10px 20px", background:C.accent, color:"#fff", border:"none", borderRadius:11, fontWeight:700, fontSize:13.5, cursor:"pointer", fontFamily:"inherit" }}>
+              <Icon name="refresh-cw" size={14} color="#fff"/> Try again
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -3567,10 +3581,9 @@ function AITabContent({ tLang, tabName, color }) {
 
   if (loading) {
     return (
-      <div style={{ textAlign:"center", padding:"50px 20px" }}>
-        <div style={{ fontSize:50, marginBottom:14 }}>{TARGETS[tLang]?.flag}</div>
-        <div style={{ fontWeight:800, fontSize:16, color:C.text, marginBottom:8 }}>Loading {tName} {tabLabel}…</div>
-        <div style={{ color:C.muted, fontSize:13 }}>Fetching from server cache</div>
+      <div style={{ textAlign:"center", padding:"50px 24px" }}>
+        <div style={{ width:28, height:28, margin:"0 auto 14px", border:"3px solid "+C.line, borderTopColor:C.accent, borderRadius:"50%", animation:"spin .7s linear infinite" }}/>
+        <div style={{ fontWeight:800, fontSize:16, color:C.text }}>Loading {tName} {tabLabel}…</div>
       </div>
     );
   }
@@ -3580,8 +3593,10 @@ function AITabContent({ tLang, tabName, color }) {
       <div>
         <Heading title={tabLabel} color={col} />
         <div style={{ background:C.card, borderRadius:16, padding:"28px 20px", textAlign:"center", boxShadow:C.sh, border:`1px solid ${C.bdr}` }}>
-          <div style={{ fontSize:48, marginBottom:12 }}>{TARGETS[tLang]?.flag}</div>
-          <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:8 }}>{tName} {tabLabel}</div>
+          <div style={{ width:48, height:48, borderRadius:14, background:C.accentSoft, display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
+            <Icon name="cloud-off" size={22} color={C.accent}/>
+          </div>
+          <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:8 }}>{tName} {tabLabel} isn't ready yet</div>
           <div style={{ color:C.muted, fontSize:13, lineHeight:1.7, marginBottom:20 }}>
             {err || "Content is being prepared. It will be ready shortly."}
           </div>
@@ -3968,7 +3983,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
                         <span style={{ fontWeight: 700, color: C.blue, fontSize: 15 }}>{ex.fr}</span>
                         <PlayBtn text={ex.fr} />
                       </div>
-                      {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 2 : 0 }}>🇬🇧 {ex.en}</div>}
+                      {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 2 : 0 }}>{ex.en}</div>}
                       {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>{ex.ref}</div>}
                     </div>
                   ))}
@@ -4000,11 +4015,11 @@ function Drills({ tLang }) {
   const [idx, setIdx]       = useState(0);
   const [show, setShow]     = useState(false);
   const [filter, setFilter] = useState("All");
-  const { content, loading, err } = useApiContent(tLang, "drills");
+  const { content, loading, err, reload } = useApiContent(tLang, "drills");
 
   const types      = ["All","Conjugation","Vocab","Grammar","Numbers","Phrase"];
   const langDrills = content?.drills || [];
-  if (loading || !langDrills.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="drills"/>;
+  if (loading || err || !langDrills.length) return <ContentLoader loading={loading} err={err} label="Drills" onRetry={reload}/>;
   const f        = filter === "All" ? langDrills : langDrills.filter(d => d.type === filter);
   const filtered = f.length ? f : langDrills;
   const cur      = filtered[idx % filtered.length];
@@ -4069,14 +4084,14 @@ function Drills({ tLang }) {
 
 function Dialogues({ tLang }) {
   const [idx, setIdx] = useState(0);
-  const { content, loading, err } = useApiContent(tLang, "dialogues");
+  const { content, loading, err, reload } = useApiContent(tLang, "dialogues");
 
   // Adapt the API dialogue shape ({speaker,target,ref}) to this view's ({s,tl,en}).
   const dlData = (content?.dialogues || []).map(dg => ({
     title: dg.title, level: dg.level,
     lines: (dg.lines || []).map(l => ({ s: l.speaker, tl: l.target, en: l.ref })),
   }));
-  if (loading || !dlData.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="dialogues"/>;
+  if (loading || err || !dlData.length) return <ContentLoader loading={loading} err={err} label="Dialogues" onRetry={reload}/>;
   const safeIdx = Math.min(idx, dlData.length - 1);
   const d = dlData[safeIdx];
   return (
@@ -4137,10 +4152,10 @@ function Roadmap({ tLang }) {
     try { return new Set(JSON.parse(localStorage.getItem("roadmap_" + tLang) || "[]")); } catch(e) { return new Set(); }
   });
   const tName = TARGETS[tLang]?.name || "French";
-  const { content, loading, err } = useApiContent(tLang, "roadmap");
+  const { content, loading, err, reload } = useApiContent(tLang, "roadmap");
   const PHASE_COLORS = [C.blue, C.green, C.accent, C.muted, C.red];
   const phaseData = (content?.phases || []).map((p, i) => ({ ...p, color: PHASE_COLORS[i % PHASE_COLORS.length] }));
-  if (loading || !phaseData.length) return <ContentLoader tLang={tLang} loading={loading} err={err} label="roadmap"/>;
+  if (loading || err || !phaseData.length) return <ContentLoader loading={loading} err={err} label="Roadmap" onRetry={reload}/>;
 
   const toggle = (id) => {
     setDone(prev => {
@@ -4632,7 +4647,7 @@ function WordSpace({ tLang, rLangs }) {
                     <span style={{ fontWeight: 800, color: C.blue, fontSize: 15 }}>{ex.fr}</span>
                     <PlayBtn text={ex.fr} />
                   </div>
-                  {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 3 : 0 }}>🇬🇧 {ex.en}</div>}
+                  {ex.en && <div style={{ color: C.mid, fontSize: 12, marginBottom: ex.ref ? 3 : 0 }}>{ex.en}</div>}
                   {ex.ref && <div style={{ color: C.muted, fontSize: 12 }}>{ex.ref}</div>}
                 </div>
               ))}
@@ -4690,6 +4705,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
   const [addForm, setAddForm] = useState({ front:"", back:"", pronunciation:"", example:"" });
   const [addErr, setAddErr]   = useState("");
   const [addOk, setAddOk]     = useState(false);
+  const [importMsg, setImportMsg] = useState("");
 
   const [practiceAll, setPracticeAll]       = useState(false);
   const [sessionReviewed, setSessionReviewed] = useState(new Set());
@@ -4739,8 +4755,9 @@ function Flashcards({ tLang, onStreakUpdate }) {
         if (fcAdd({ lang: tLang, front: entry.fr, back: entry.ref || entry.input || "", pronunciation: entry.pronunciation || "", example: "" })) added++;
       });
       refreshCards();
-      alert(`Imported ${added} new words from Word Space.`);
-    } catch(e) {}
+      setImportMsg(added ? `Imported ${added} new ${added === 1 ? "word" : "words"} from Word Space.` : "No new words to import — your saved words are already here.");
+      setTimeout(() => setImportMsg(""), 2800);
+    } catch(e) { setImportMsg("Couldn't import from Word Space."); setTimeout(() => setImportMsg(""), 2800); }
   };
 
   const totalCards   = cards.length;
@@ -4789,6 +4806,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
           Import Word Space
         </button>
       </div>
+      {importMsg && <div style={{ background:C.green+"14", border:`1px solid ${C.green}33`, color:C.green, fontSize:12.5, fontWeight:600, borderRadius:10, padding:"9px 13px", marginBottom:12, display:"flex", alignItems:"center", gap:7 }}><Icon name="check-circle" size={14} color={C.green}/>{importMsg}</div>}
 
       {/* ── REVIEW VIEW ── */}
       {view === "review" && (
@@ -5081,19 +5099,23 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           <Icon name="arrow-up-right" size={16} color={C.faint}/>
         </button>
 
-        {/* Continue card */}
-        <button onClick={() => nav("grammar")} style={{width:"100%",textAlign:"left",borderRadius:16,padding:"14px 16px",background:GRAD,color:"#fff",cursor:"pointer",border:"none",boxShadow:"0 14px 28px -12px rgba(192,21,62,.45)",marginBottom:18,fontFamily:"inherit"}}>
-          <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",opacity:.85}}>Pick up where you left off</div>
-          <div style={{fontWeight:700,fontSize:17,margin:"5px 0 11px"}}>{L.resume}</div>
-          <div style={{display:"flex",alignItems:"center",gap:11}}>
-            <div style={{flex:1,height:4,background:"rgba(255,255,255,.28)",borderRadius:99,overflow:"hidden"}}>
-              <div style={{height:"100%",width:L.resumePct,background:"#fff",borderRadius:99}}/>
-            </div>
-            <span style={{display:"flex",alignItems:"center",gap:5,fontWeight:600,fontSize:12}}>
-              <Icon name="play" size={13} color="#fff"/>Resume
-            </span>
-          </div>
-        </button>
+        {/* Continue card — reflects the last thing you actually opened (no fake progress) */}
+        {(() => {
+          let last = null;
+          try { last = JSON.parse(localStorage.getItem("tongue_last") || "null"); } catch(e) {}
+          const hasLast = last && last.view && last.label;
+          return (
+            <button onClick={() => nav(hasLast ? last.view : "grammar")} style={{width:"100%",textAlign:"left",borderRadius:16,padding:"15px 16px",background:GRAD,color:"#fff",cursor:"pointer",border:"none",boxShadow:"0 14px 28px -12px rgba(192,21,62,.45)",marginBottom:18,fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+              <div style={{minWidth:0}}>
+                <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",opacity:.85}}>{hasLast ? "Pick up where you left off" : "New here?"}</div>
+                <div style={{fontWeight:700,fontSize:17,marginTop:5}}>{hasLast ? last.label : "Start with the essentials"}</div>
+              </div>
+              <span style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,fontSize:13,flexShrink:0,background:"rgba(255,255,255,.18)",borderRadius:10,padding:"9px 14px"}}>
+                <Icon name={hasLast ? "play" : "sparkles"} size={14} color="#fff"/>{hasLast ? "Resume" : "Start"}
+              </span>
+            </button>
+          );
+        })()}
 
         {/* What do you want to do? — intent-first navigation */}
         <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>What do you want to do?</div>
@@ -6166,7 +6188,7 @@ function TodaysPractice({ tLang, onGoToTab }) {
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
         <div>
           <div style={{ fontSize:10, fontWeight:700, textTransform:"uppercase", letterSpacing:2, opacity:0.7, marginBottom:3 }}>{t("todays_practice")}</div>
-          <div style={{ fontWeight:900, fontSize:18 }}>{todayPlan.icon} {todayPlan.theme}</div>
+          <div style={{ fontWeight:900, fontSize:18 }}>{todayPlan.theme}</div>
           <div style={{ opacity:0.85, fontSize:13, marginTop:4, lineHeight:1.5 }}>{todayPlan.desc}</div>
         </div>
         <div style={{ textAlign:"right", flexShrink:0, marginLeft:12 }}>
@@ -7049,10 +7071,20 @@ function App() {
   }, [dark]);
 
   // ── navigation helpers ────────────────────────────────────────────────────
+  // Views worth resuming, with the label shown on the Home "Continue" card.
+  const RESUMABLE = {
+    grammar:"Grammar", "grammar-full":"Grammar reference", concept:"Grammar", coach:"AI Coach",
+    "voice-tutor":"Conversation", dialogues:"Dialogues", drills:"Drills", "vocab-full":"Vocabulary",
+    structures:"Sentence patterns", sounds:"Sounds", culture:"Culture & nuance", roadmap:"Roadmap",
+    wordspace:"Word Space", analyzer:"Text analyzer", cards:"Flashcards", review:"Review", today:"Today's practice",
+  };
   const nav = (v) => {
     const ns = makeNavState(v, view, stack);
     setView(ns.view);
     setStack(ns.stack);
+    if (RESUMABLE[ns.view]) {
+      try { localStorage.setItem("tongue_last", JSON.stringify({ view: ns.view, label: RESUMABLE[ns.view] })); } catch(e){}
+    }
   };
   const goBack = () => {
     const bs = makeBackState(stack);
@@ -7199,7 +7231,7 @@ function App() {
           <div>
             <TodaysPractice tLang={tLang} onGoToTab={(i) => {
               // Map old tab indices to new views
-              const tabMap = {1:"coach",2:"grammar-full",3:"structures",4:"vocab-full",5:"drills",6:"dialogues",7:"roadmap",8:"wordspace",9:"cards"};
+              const tabMap = {0:"grammar-full",1:"coach",2:"grammar-full",3:"structures",4:"vocab-full",5:"drills",6:"dialogues",7:"roadmap",8:"wordspace",9:"cards"};
               if (tabMap[i]) nav(tabMap[i]);
             }}/>
             <CheatSheet tLang={tLang} rLangs={rLangs}/>
