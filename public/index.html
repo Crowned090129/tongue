@@ -104,6 +104,7 @@
     /* Screen transition */
     @keyframes rise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
     @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
     @keyframes fadeFact{0%{opacity:0;transform:translateY(-4px)}100%{opacity:1;transform:none}}
     @keyframes sheetSlide{0%{transform:translateY(102%)}100%{transform:translateY(0)}}
     .scr-anim{animation:rise .26s cubic-bezier(.22,1,.36,1)}
@@ -2659,6 +2660,55 @@ async function askClaude(prompt, maxTokens, lang, nativeLang) {
   // Log a practice session every time AI is successfully called
   _streak.log();
   return data;
+}
+
+// Streaming conversation client. Reads the SSE stream from /api/claude/chat and
+// invokes onDelta(text) as words arrive, onDone(meta) at the end, onError(ev).
+async function streamChat({ messages, scenario, level, lang, nativeLang }, { onDelta, onDone, onError }) {
+  if (!isLoggedIn()) { onError && onError({ type:"auth", message:"Please sign in." }); return; }
+  let res;
+  try {
+    res = await fetch("/api/claude/chat", {
+      method: "POST",
+      headers: { "Content-Type":"application/json", "Authorization":"Bearer "+getToken() },
+      body: JSON.stringify({ messages, scenario, level, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en" }),
+    });
+  } catch(e) { onError && onError({ type:"connection", message:"Connection error. Please try again." }); return; }
+
+  if (res.status === 401) {
+    const d = await res.json().catch(()=>({})); logout();
+    if (d.reason === "renewed") { window.dispatchEvent(new CustomEvent("session-renewed")); onError && onError({ type:"renewed" }); return; }
+    onError && onError({ type:"auth", message:"Session expired. Please sign in again." }); return;
+  }
+  if (res.status === 429) {
+    const d = await res.json().catch(()=>({}));
+    if (d.upgrade) { window.dispatchEvent(new CustomEvent("show-upgrade", { detail:{ reason:"ai_limit" } })); onError && onError({ type:"limit" }); return; }
+    onError && onError({ type:"limit", message: d.error || "Please slow down a moment." }); return;
+  }
+  if (!res.ok || !res.body) { onError && onError({ type:"api", message:"The tutor hit a snag. Please try again." }); return; }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "", meta = {};
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream:true });
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop() || "";
+      for (const part of parts) {
+        const line = part.split("\n").find(l => l.startsWith("data:"));
+        if (!line) continue;
+        let ev; try { ev = JSON.parse(line.slice(5).trim()); } catch { continue; }
+        if (ev.type === "delta") onDelta && onDelta(ev.text);
+        else if (ev.type === "done") meta = ev;
+        else if (ev.type === "error") { onError && onError(ev); return; }
+      }
+    }
+    _streak.log();
+    onDone && onDone(meta);
+  } catch(e) { onError && onError({ type:"connection", message:"Connection lost. Please try again." }); }
 }
 
 // ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────────
@@ -6132,26 +6182,63 @@ function TodaysPractice({ tLang, onGoToTab }) {
 }
 
 // ─── VOICE TUTOR ──────────────────────────────────────────────────────────────
-function VoiceTutor({ tLang, rLangs, nativeLang }) {
-  const [phase, setPhase]   = useState("idle"); // idle|thinking|speaking|listening|review
-  const [msgs,  setMsgs]    = useState([]);
-  const [summary, setSummary] = useState(null);
-  const [errMsg, setErrMsg] = useState("");
-  const recRef = useRef(null);
-  const histRef = useRef([]);
-
-  const tName = TARGETS[tLang]?.name || "French";
-  const tTts  = TARGETS[tLang]?.tts  || "fr-FR";
+// ─── CONVERSATION ──────────────────────────────────────────────────────────────
+// A real, streaming, multi-turn conversation. Pick a scenario, then chat by typing
+// or speaking; the tutor replies live (SSE), stays in the target language, recasts
+// mistakes, and you can hear or translate any line. End any time for a report.
+function Conversation({ tLang, rLangs, nativeLang }) {
+  const tName   = TARGETS[tLang]?.name || "French";
+  const tTts    = TARGETS[tLang]?.tts  || "fr-FR";
   const refName = rLangs[0] ? (REFS?.[rLangs[0]]?.name || TARGETS[rLangs[0]]?.name || "English") : "English";
+  const level   = (() => { try { return localStorage.getItem("user_level") || "beginner"; } catch(e){ return "beginner"; } })();
+  const hasSR   = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
-  const speakWait = (text) => new Promise(resolve => {
-    const s = synth();
-    if (!s) { resolve(); return; }
-    try { s.cancel(); } catch(e) {}
+  const SCENARIOS = [
+    { id:"free",       icon:"message-circle",  title:"Free chat",       blurb:"Talk about anything" },
+    { id:"cafe",       icon:"coffee",          title:"At a café",       blurb:"Order a drink, chat" },
+    { id:"friend",     icon:"users",           title:"Make a friend",   blurb:"Meet someone new" },
+    { id:"restaurant", icon:"utensils",        title:"At a restaurant", blurb:"Order from a waiter" },
+    { id:"directions", icon:"map-pin",         title:"Ask directions",  blurb:"You're a lost tourist" },
+    { id:"market",     icon:"shopping-basket", title:"At the market",   blurb:"Buy food, haggle" },
+    { id:"hotel",      icon:"bed-double",      title:"Hotel check-in",  blurb:"Check in, ask around" },
+    { id:"interview",  icon:"briefcase",       title:"Job interview",   blurb:"Land your dream job" },
+    { id:"doctor",     icon:"stethoscope",     title:"At the doctor",   blurb:"Describe symptoms" },
+    { id:"date",       icon:"heart",           title:"First date",      blurb:"A warm, playful chat" },
+  ];
+
+  const [phase, setPhase]     = useState("pick");   // pick | chat | review
+  const [scenario, setScen]   = useState(null);
+  const [msgs, setMsgs]       = useState([]);
+  const [input, setInput]     = useState("");
+  const [streaming, setStreaming] = useState(false);
+  const [voiceOn, setVoiceOn] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [errMsg, setErrMsg]   = useState("");
+  const [summary, setSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+
+  const apiRef   = useRef([]);
+  const msgsRef  = useRef([]);
+  const recRef   = useRef(null);
+  const scrollRef = useRef(null);
+  const voiceRef = useRef(false);
+  const phaseRef = useRef("pick");
+  const scenRef  = useRef(null);
+
+  useEffect(() => { voiceRef.current = voiceOn; }, [voiceOn]);
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+  useEffect(() => { const el = scrollRef.current; if (el) el.scrollTop = el.scrollHeight; }, [msgs, streaming, listening]);
+  useEffect(() => () => { try { recRef.current?.abort(); } catch(e){} try { synth()?.cancel(); } catch(e){} }, []);
+
+  const setBoth = (arr) => { msgsRef.current = arr; setMsgs(arr); };
+
+  const speak = (text) => new Promise(resolve => {
+    const s = synth(); if (!s || !text) { resolve(); return; }
+    try { s.cancel(); } catch(e){}
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = tTts; u.rate = 0.85;
+    u.lang = tTts; u.rate = 0.9;
     u.onend = resolve; u.onerror = resolve;
-    setTimeout(() => { try { s.speak(u); } catch(e) { resolve(); } }, 80);
+    setTimeout(() => { try { s.speak(u); } catch(e){ resolve(); } }, 60);
   });
 
   const listenOnce = () => new Promise((resolve, reject) => {
@@ -6162,198 +6249,259 @@ function VoiceTutor({ tLang, rLangs, nativeLang }) {
     recRef.current = r;
     r.onresult = e => resolve(e.results[0][0].transcript);
     r.onerror  = e => reject(new Error(e.error));
-    try { r.start(); } catch(e) { reject(e); }
+    try { r.start(); } catch(e){ reject(e); }
   });
 
-  const addMsg = (msg) => {
-    histRef.current = [...histRef.current, msg];
-    setMsgs([...histRef.current]);
-  };
-
-  const start = async () => {
-    if (!isLoggedIn()) { window.dispatchEvent(new CustomEvent("show-upgrade")); return; }
-    setErrMsg(""); setSummary(null); setMsgs([]); histRef.current = [];
-    setPhase("thinking");
-    try {
-      const g = await askClaude(
-        `You are a friendly ${tName} conversation tutor. Open with a warm 1-sentence greeting in ${tName} and ask the learner to introduce themselves. Return JSON: {"text":"${tName} greeting","hint":"English translation"}`,
-        120, tLang, nativeLang
-      );
-      if (!g?.text) throw new Error("no_response");
-      addMsg({ who:"ai", text: g.text, hint: g.hint });
-      setPhase("speaking"); await speakWait(g.text);
-
-      for (let i = 0; i < 5; i++) {
-        setPhase("listening");
-        let userText;
-        try { userText = await listenOnce(); }
-        catch(e) { if (e.message === "no-speech" || e.message === "aborted") break; throw e; }
-        addMsg({ who:"you", text: userText });
-        setPhase("thinking");
-
-        const hist = histRef.current.map(m => `${m.who === "ai" ? "Tutor" : "You"}: ${m.text}`).join("\n");
-        const r = await askClaude(
-          `You are a ${tName} tutor. Learner speaks ${refName}.\n\nConversation:\n${hist}\n\nReply ONLY in ${tName}, 1-3 short sentences. If there's a grammar error, weave a gentle correction in naturally. End with a question.\n\nReturn JSON: {"text":"${tName} reply","hint":"English translation of YOUR reply","correction":null}`,
-          200, tLang, nativeLang
-        );
-        if (!r?.text) break;
-        addMsg({ who:"ai", text: r.text, hint: r.hint, correction: r.correction || null });
-        setPhase("speaking"); await speakWait(r.text);
+  // Stream one tutor turn from the current apiRef into a live-updating bubble.
+  const streamTurn = async () => {
+    setStreaming(true); setErrMsg("");
+    let arr = [...msgsRef.current, { who:"ai", text:"" }];
+    setBoth(arr);
+    const idx = arr.length - 1;
+    let acc = "";
+    await streamChat(
+      { messages: apiRef.current, scenario: scenRef.current, level, lang: tLang, nativeLang },
+      {
+        onDelta: (t) => {
+          acc += t;
+          const next = [...msgsRef.current];
+          if (next[idx]) next[idx] = { ...next[idx], text: acc };
+          setBoth(next);
+        },
+        onDone: async () => {
+          apiRef.current = [...apiRef.current, { role:"assistant", content: acc }];
+          setStreaming(false);
+          if (acc && voiceRef.current && phaseRef.current === "chat") {
+            await speak(acc);
+            if (voiceRef.current && phaseRef.current === "chat") micTurn();
+          }
+        },
+        onError: (e) => {
+          setStreaming(false);
+          if (!acc) { setBoth(msgsRef.current.slice(0, idx)); }
+          if (e.type === "limit" || e.type === "auth" || e.type === "renewed") setErrMsg("");
+          else setErrMsg(e.message || "The tutor hit a snag. Please try again.");
+          if (voiceRef.current) setVoiceOn(false);
+        },
       }
-
-      setPhase("thinking");
-      const hist = histRef.current.map(m => `${m.who === "ai" ? "Tutor" : "You"}: ${m.text}`).join("\n");
-      const fb = await askClaude(
-        `You were a ${tName} tutor. Transcript:\n${hist}\n\nGive honest helpful feedback in English. Return JSON: {"score":"A/B/C/D","strong":["point1","point2"],"fixes":[{"said":"exact quote","better":"correction","why":"brief reason"}],"next":"one thing to practice"}`,
-        350, tLang, nativeLang
-      );
-      setSummary(fb); setPhase("review");
-    } catch(e) {
-      setErrMsg(e.message === "no_sr" ? "Speech recognition isn't available on this browser — try Chrome or Safari." : "Something went wrong. Check your connection and try again.");
-      setPhase("idle");
-    }
-    try { synth()?.cancel(); } catch(e) {}
+    );
   };
 
-  const stop = () => {
-    try { recRef.current?.abort(); } catch(e) {}
-    try { synth()?.cancel(); } catch(e) {}
-    if (histRef.current.length > 0) setPhase("review");
-    else setPhase("idle");
+  const startScenario = async (sc) => {
+    setScen(sc.id); scenRef.current = sc.id;
+    setPhase("chat"); phaseRef.current = "chat";
+    setBoth([]); setSummary(null); setErrMsg(""); setInput("");
+    apiRef.current = [{ role:"user", content:"(Please begin — greet me and start the scene.)" }];
+    await streamTurn();
+  };
+
+  const sendText = async (text) => {
+    const t = (text != null ? text : input).trim();
+    if (!t || streaming) return;
+    setInput("");
+    setBoth([...msgsRef.current, { who:"you", text: t }]);
+    apiRef.current = [...apiRef.current, { role:"user", content: t }];
+    await streamTurn();
+  };
+
+  const micTurn = async () => {
+    if (streaming || listening) return;
+    setListening(true); setErrMsg("");
+    try {
+      const heard = await listenOnce();
+      setListening(false);
+      if (heard && heard.trim()) await sendText(heard);
+      else if (voiceRef.current && phaseRef.current === "chat") micTurn();
+    } catch(e) {
+      setListening(false); setVoiceOn(false);
+      if (e.message === "no_sr") setErrMsg("Voice input needs Chrome or Safari — you can still type.");
+      else if (e.message !== "no-speech" && e.message !== "aborted") setErrMsg("Didn't catch that — try again or type.");
+    }
+  };
+
+  const toggleVoice = () => {
+    const next = !voiceOn;
+    setVoiceOn(next); voiceRef.current = next;
+    if (next) { if (!streaming && !listening) micTurn(); }
+    else { try { recRef.current?.abort(); } catch(e){} try { synth()?.cancel(); } catch(e){} setListening(false); }
+  };
+
+  const translateMsg = async (idx) => {
+    const m = msgsRef.current[idx];
+    if (!m || m.translation || m.translating) return;
+    setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translating:true } : x));
+    try {
+      const r = await askClaude(`Translate this ${tName} text into ${refName}. Return ONLY JSON: {"t":"the translation"}\n\nText: ${m.text}`, 250, tLang, nativeLang);
+      setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translation: (r && r.t) || "—", translating:false } : x));
+    } catch(e) {
+      setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translating:false } : x));
+    }
+  };
+
+  const endConversation = async () => {
+    try { recRef.current?.abort(); } catch(e){} try { synth()?.cancel(); } catch(e){}
+    setVoiceOn(false); voiceRef.current = false; setListening(false);
+    if (msgsRef.current.filter(m => m.who === "you").length === 0) { setPhase("pick"); return; }
+    setPhase("review"); phaseRef.current = "review"; setSummaryLoading(true);
+    const transcript = msgsRef.current.map(m => `${m.who==="ai"?"Tutor":"You"}: ${m.text}`).join("\n");
+    try {
+      const fb = await askClaude(`You were a ${tName} conversation tutor. Transcript:\n${transcript}\n\nGive honest, encouraging feedback in ${refName}. Return ONLY JSON: {"score":"A/B/C/D","strong":["point","point"],"fixes":[{"said":"exact quote","better":"correction","why":"brief reason"}],"next":"one thing to practice next"}`, 700, tLang, nativeLang);
+      setSummary(fb);
+    } catch(e) { setSummary(null); }
+    setSummaryLoading(false);
+  };
+
+  const reset = () => {
+    try { recRef.current?.abort(); } catch(e){} try { synth()?.cancel(); } catch(e){}
+    setPhase("pick"); phaseRef.current = "pick";
+    setScen(null); scenRef.current = null;
+    setBoth([]); setSummary(null); setErrMsg(""); setInput(""); setVoiceOn(false); voiceRef.current = false;
+    apiRef.current = [];
   };
 
   const scoreColor = { A:C.green, B:C.green, C:C.accent, D:C.red };
+  const scenMeta = SCENARIOS.find(s => s.id === scenario);
 
-  return (
-    <div style={{padding:"16px 16px 24px",overflowY:"auto",flex:1}}>
-      {/* Phase: idle */}
-      {phase === "idle" && (
-        <div style={{textAlign:"center",paddingTop:32}}>
-          <div style={{fontSize:56,marginBottom:12}}>{TARGETS[tLang]?.flag || ""}</div>
-          <div style={{fontWeight:800,fontSize:22,color:C.text,marginBottom:6}}>Talk to your {tName} tutor</div>
-          <div style={{color:C.muted,fontSize:13,lineHeight:1.6,marginBottom:28,maxWidth:300,margin:"0 auto 28px"}}>Have a real conversation in {tName}. The AI corrects you naturally — no awkward interruptions. You'll get a full report at the end.</div>
-          {errMsg && <div style={{background:C.red+"12",border:`1px solid ${C.red}30`,borderRadius:10,padding:"10px 14px",color:C.red,fontSize:12.5,marginBottom:20}}>{errMsg}</div>}
-          {!(window.SpeechRecognition || window.webkitSpeechRecognition) && (
-            <div style={{background:C.surf2,border:`1px solid ${C.line}`,borderRadius:10,padding:"10px 14px",color:C.muted,fontSize:12,marginBottom:20}}>Speech recognition requires Chrome or Safari. Text responses work on all browsers.</div>
-          )}
-          <button onClick={start} style={{display:"inline-flex",alignItems:"center",gap:10,padding:"15px 32px",background:GRAD,color:"#fff",border:"none",borderRadius:14,fontWeight:800,fontSize:16,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 8px 24px -8px rgba(192,21,62,.5)"}}>
-            <Icon name="mic" size={20} color="#fff"/> Start talking
-          </button>
+  // ── PICK ──
+  if (phase === "pick") {
+    return (
+      <div style={{padding:"16px 16px 28px",overflowY:"auto",flex:1}}>
+        <div style={{marginBottom:16}}>
+          <div style={{fontWeight:800,fontSize:18,color:C.text,marginBottom:4}}>Have a real {tName} conversation</div>
+          <div style={{color:C.muted,fontSize:13,lineHeight:1.55}}>Pick a situation. Type or speak — your tutor replies live, stays in {tName}, and gently fixes your mistakes as you go.</div>
         </div>
-      )}
-
-      {/* Phase: thinking / speaking / listening */}
-      {(phase === "thinking" || phase === "speaking" || phase === "listening") && (
-        <div>
-          {/* Status bar */}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
-            <div style={{display:"flex",alignItems:"center",gap:8}}>
-              <div style={{
-                width:10,height:10,borderRadius:"50%",flexShrink:0,
-                background: phase === "listening" ? C.red : phase === "speaking" ? C.green : C.muted,
-                boxShadow: phase === "listening" ? `0 0 0 4px ${C.red}30` : phase === "speaking" ? `0 0 0 4px ${C.green}30` : "none",
-              }}/>
-              <span style={{fontWeight:700,fontSize:13,color:C.text}}>
-                {phase === "listening" ? "Listening…" : phase === "speaking" ? "Speaking…" : "Thinking…"}
-              </span>
-            </div>
-            <button onClick={stop} style={{padding:"5px 12px",borderRadius:8,border:`1px solid ${C.line}`,background:C.surf2,color:C.muted,fontSize:11,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>End & review</button>
-          </div>
-
-          {/* Conversation bubbles */}
-          <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
-            {msgs.map((m,i) => (
-              <div key={i} style={{display:"flex",flexDirection:"column",alignItems: m.who === "you" ? "flex-end" : "flex-start"}}>
-                <div style={{
-                  maxWidth:"85%",padding:"10px 13px",borderRadius:13,
-                  background: m.who === "ai" ? C.accentSoft : C.surf2,
-                  border: `1px solid ${m.who === "ai" ? C.accentLine : C.line}`,
-                }}>
-                  <div style={{fontWeight:700,fontSize:14,color: m.who === "ai" ? C.accent : C.text,marginBottom: m.hint ? 3 : 0}}>{m.text}</div>
-                  {m.hint && <div style={{fontSize:11,color:C.muted,fontStyle:"italic"}}>{m.hint}</div>}
-                  {m.correction && <div style={{fontSize:11,color:C.green,marginTop:4,fontWeight:600}}>✓ {m.correction}</div>}
-                </div>
-                <div style={{fontSize:10,color:C.faint,marginTop:2,paddingLeft:4,paddingRight:4}}>{m.who === "ai" ? "Tutor" : "You"}</div>
+        {errMsg && <div style={{background:C.red+"12",border:`1px solid ${C.red}30`,borderRadius:10,padding:"10px 13px",color:C.red,fontSize:12.5,marginBottom:14}}>{errMsg}</div>}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:9}}>
+          {SCENARIOS.map(sc => (
+            <button key={sc.id} onClick={() => startScenario(sc)} style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start",textAlign:"left",background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"13px 13px",cursor:"pointer",fontFamily:"inherit"}}>
+              <div style={{width:36,height:36,borderRadius:10,background:C.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Icon name={sc.icon} size={18} color={C.accent}/>
               </div>
-            ))}
-          </div>
-
-          {/* Listening mic */}
-          {phase === "listening" && (
-            <div style={{textAlign:"center",padding:"16px 0"}}>
-              <div style={{width:64,height:64,borderRadius:"50%",background:C.red+"15",border:`2px solid ${C.red}40`,display:"inline-flex",alignItems:"center",justifyContent:"center"}}>
-                <Icon name="mic" size={26} color={C.red}/>
+              <div>
+                <div style={{fontWeight:700,fontSize:13.5,color:C.text,lineHeight:1.25}}>{sc.title}</div>
+                <div style={{fontSize:11,color:C.muted,marginTop:1}}>{sc.blurb}</div>
               </div>
-              <div style={{color:C.muted,fontSize:12,marginTop:8}}>Speak in {tName}…</div>
-            </div>
-          )}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Phase: review */}
-      {phase === "review" && (
-        <div>
-          <div style={{fontWeight:800,fontSize:18,color:C.text,marginBottom:4}}>Conversation complete</div>
-          <div style={{color:C.muted,fontSize:12,marginBottom:16}}>{msgs.length} messages · {tName}</div>
-
-          {/* Transcript */}
-          <div style={{marginBottom:20,display:"flex",flexDirection:"column",gap:8}}>
-            {msgs.map((m,i) => (
-              <div key={i} style={{display:"flex",flexDirection:"column",alignItems: m.who === "you" ? "flex-end" : "flex-start"}}>
-                <div style={{maxWidth:"85%",padding:"9px 12px",borderRadius:12,background: m.who === "ai" ? C.accentSoft : C.surf2,border:`1px solid ${m.who === "ai" ? C.accentLine : C.line}`}}>
-                  <div style={{fontWeight:700,fontSize:13,color: m.who === "ai" ? C.accent : C.text}}>{m.text}</div>
-                  {m.hint && <div style={{fontSize:11,color:C.muted,fontStyle:"italic",marginTop:2}}>{m.hint}</div>}
-                </div>
+  // ── REVIEW ──
+  if (phase === "review") {
+    return (
+      <div style={{padding:"16px 16px 28px",overflowY:"auto",flex:1}}>
+        <div style={{fontWeight:800,fontSize:18,color:C.text,marginBottom:3}}>Conversation complete</div>
+        <div style={{color:C.muted,fontSize:12,marginBottom:16}}>{msgsRef.current.length} messages · {scenMeta?.title || tName}</div>
+        <div style={{marginBottom:18,display:"flex",flexDirection:"column",gap:8}}>
+          {msgsRef.current.map((m,i) => (
+            <div key={i} style={{display:"flex",flexDirection:"column",alignItems: m.who==="you"?"flex-end":"flex-start"}}>
+              <div style={{maxWidth:"88%",padding:"9px 12px",borderRadius:13,background: m.who==="ai"?C.accentSoft:C.surf2,border:`1px solid ${m.who==="ai"?C.accentLine:C.line}`}}>
+                <div style={{fontWeight:600,fontSize:13.5,color: m.who==="ai"?C.accent:C.text}}>{m.text}</div>
               </div>
-            ))}
-          </div>
-
-          {/* Feedback */}
-          {summary && (
-            <div style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"16px 16px",marginBottom:16}}>
-              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-                <div style={{width:44,height:44,borderRadius:12,background:(scoreColor[summary.score] || C.accent)+"18",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:20,color:scoreColor[summary.score] || C.accent,flexShrink:0}}>{summary.score || "B"}</div>
-                <div>
-                  <div style={{fontWeight:800,fontSize:15,color:C.text}}>Your performance</div>
-                  <div style={{fontSize:11,color:C.muted}}>{tName} conversation</div>
-                </div>
+            </div>
+          ))}
+        </div>
+        {summaryLoading && <div style={{color:C.muted,fontSize:13,textAlign:"center",padding:"10px 0"}}>Reviewing your conversation…</div>}
+        {summary && (
+          <div style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:16,marginBottom:16}}>
+            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+              <div style={{width:44,height:44,borderRadius:12,background:(scoreColor[summary.score]||C.accent)+"18",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:900,fontSize:20,color:scoreColor[summary.score]||C.accent}}>{summary.score||"B"}</div>
+              <div><div style={{fontWeight:800,fontSize:15,color:C.text}}>Your performance</div><div style={{fontSize:11,color:C.muted}}>{tName} conversation</div></div>
+            </div>
+            {summary.strong?.length>0 && (
+              <div style={{marginBottom:12}}>
+                <div style={{fontWeight:700,fontSize:11,color:C.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>What went well</div>
+                {summary.strong.map((s,i)=><div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",marginBottom:4}}><Icon name="check" size={14} color={C.green}/><span style={{fontSize:13,color:C.text,lineHeight:1.4}}>{s}</span></div>)}
               </div>
-              {summary.strong?.length > 0 && (
-                <div style={{marginBottom:12}}>
-                  <div style={{fontWeight:700,fontSize:11,color:C.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>What went well</div>
-                  {summary.strong.map((s,i) => <div key={i} style={{display:"flex",gap:7,alignItems:"flex-start",marginBottom:4}}><span style={{color:C.green,fontSize:14,lineHeight:1.3,flexShrink:0}}>✓</span><span style={{fontSize:13,color:C.text,lineHeight:1.4}}>{s}</span></div>)}
-                </div>
-              )}
-              {summary.fixes?.length > 0 && (
-                <div style={{marginBottom:12}}>
-                  <div style={{fontWeight:700,fontSize:11,color:C.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>Corrections</div>
-                  {summary.fixes.map((f,i) => (
-                    <div key={i} style={{background:C.surf2,border:`1px solid ${C.line}`,borderRadius:9,padding:"9px 11px",marginBottom:7}}>
-                      <div style={{display:"flex",gap:6,alignItems:"baseline",marginBottom:3,flexWrap:"wrap"}}>
-                        <span style={{fontSize:12,color:C.red,textDecoration:"line-through"}}>{f.said}</span>
-                        <span style={{fontSize:11,color:C.muted}}>→</span>
-                        <span style={{fontSize:12,color:C.green,fontWeight:700}}>{f.better}</span>
-                      </div>
-                      <div style={{fontSize:11,color:C.muted}}>{f.why}</div>
+            )}
+            {summary.fixes?.length>0 && (
+              <div style={{marginBottom:12}}>
+                <div style={{fontWeight:700,fontSize:11,color:C.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>Corrections</div>
+                {summary.fixes.map((f,i)=>(
+                  <div key={i} style={{background:C.surf2,border:`1px solid ${C.line}`,borderRadius:9,padding:"9px 11px",marginBottom:7}}>
+                    <div style={{display:"flex",gap:6,alignItems:"baseline",marginBottom:3,flexWrap:"wrap"}}>
+                      <span style={{fontSize:12,color:C.red,textDecoration:"line-through"}}>{f.said}</span>
+                      <Icon name="arrow-right" size={11} color={C.muted}/>
+                      <span style={{fontSize:12,color:C.green,fontWeight:700}}>{f.better}</span>
                     </div>
-                  ))}
-                </div>
-              )}
-              {summary.next && (
-                <div style={{background:C.accentSoft,border:`1px solid ${C.accentLine}`,borderRadius:9,padding:"9px 11px"}}>
-                  <div style={{fontWeight:700,fontSize:11,color:C.accent,marginBottom:3,textTransform:"uppercase",letterSpacing:1}}>Practice next</div>
-                  <div style={{fontSize:12.5,color:C.text}}>{summary.next}</div>
+                    <div style={{fontSize:11,color:C.muted}}>{f.why}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {summary.next && (
+              <div style={{background:C.accentSoft,border:`1px solid ${C.accentLine}`,borderRadius:9,padding:"9px 11px"}}>
+                <div style={{fontWeight:700,fontSize:11,color:C.accent,marginBottom:3,textTransform:"uppercase",letterSpacing:1}}>Practice next</div>
+                <div style={{fontSize:12.5,color:C.text}}>{summary.next}</div>
+              </div>
+            )}
+          </div>
+        )}
+        <button onClick={reset} style={{width:"100%",padding:13,background:GRAD,color:"#fff",border:"none",borderRadius:13,fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>New conversation</button>
+      </div>
+    );
+  }
+
+  // ── CHAT ──
+  return (
+    <div style={{display:"flex",flexDirection:"column",flex:1,minHeight:0}}>
+      {/* Scenario header */}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px",borderBottom:`1px solid ${C.line}`,flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:9,minWidth:0}}>
+          <div style={{width:30,height:30,borderRadius:9,background:C.accentSoft,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+            <Icon name={scenMeta?.icon || "message-circle"} size={15} color={C.accent}/>
+          </div>
+          <div style={{minWidth:0}}>
+            <div style={{fontWeight:700,fontSize:13.5,color:C.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{scenMeta?.title || "Conversation"}</div>
+            <div style={{fontSize:10.5,color:C.muted}}>{tName} · tap a line to hear or translate</div>
+          </div>
+        </div>
+        <button onClick={endConversation} style={{padding:"6px 12px",borderRadius:9,border:`1px solid ${C.line}`,background:C.surf2,color:C.text,fontSize:11.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",flexShrink:0}}>End &amp; review</button>
+      </div>
+
+      {/* Messages */}
+      <div ref={scrollRef} style={{flex:1,overflowY:"auto",padding:"14px 14px 8px",display:"flex",flexDirection:"column",gap:11,minHeight:0}}>
+        {msgs.map((m,i) => (
+          <div key={i} style={{display:"flex",flexDirection:"column",alignItems: m.who==="you"?"flex-end":"flex-start",maxWidth:"100%"}}>
+            <div style={{maxWidth:"88%",padding:"10px 13px",borderRadius:14,background: m.who==="ai"?C.accentSoft:C.surf2,border:`1px solid ${m.who==="ai"?C.accentLine:C.line}`}}>
+              <div style={{fontWeight:600,fontSize:14.5,color: m.who==="ai"?C.accent:C.text,lineHeight:1.5,whiteSpace:"pre-wrap"}}>
+                {m.text || (streaming && i===msgs.length-1 ? "…" : "")}
+              </div>
+              {m.translation && <div style={{fontSize:12,color:C.muted,fontStyle:"italic",marginTop:5,paddingTop:5,borderTop:`1px solid ${C.line}`}}>{m.translation}</div>}
+              {m.who==="ai" && m.text && !(streaming && i===msgs.length-1) && (
+                <div style={{display:"flex",gap:14,marginTop:7}}>
+                  <button onClick={()=>speak(m.text)} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",padding:0,cursor:"pointer",color:C.accent,fontSize:11,fontWeight:600,fontFamily:"inherit"}}><Icon name="volume-2" size={13} color={C.accent}/>Hear</button>
+                  <button onClick={()=>translateMsg(i)} disabled={m.translating} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",padding:0,cursor:"pointer",color:C.muted,fontSize:11,fontWeight:600,fontFamily:"inherit"}}><Icon name="languages" size={13} color={C.muted}/>{m.translating?"…":m.translation?"Translated":"Translate"}</button>
                 </div>
               )}
             </div>
-          )}
-          {!summary && <div style={{color:C.muted,fontSize:13,textAlign:"center",padding:"10px 0"}}>Generating your feedback…</div>}
+          </div>
+        ))}
+        {streaming && msgs.length>0 && msgs[msgs.length-1]?.who!=="ai" && (
+          <div style={{display:"flex",alignItems:"center",gap:6,color:C.muted,fontSize:12,paddingLeft:4}}><span style={{width:6,height:6,borderRadius:"50%",background:C.accent,animation:"pulse 1s infinite"}}/>Tutor is typing…</div>
+        )}
+      </div>
 
-          <button onClick={() => { setPhase("idle"); setMsgs([]); setSummary(null); histRef.current = []; }} style={{width:"100%",padding:13,background:GRAD,color:"#fff",border:"none",borderRadius:13,fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>
-            Start another conversation
-          </button>
-        </div>
-      )}
+      {/* Errors / listening */}
+      {errMsg && <div style={{margin:"0 14px 8px",background:C.red+"12",border:`1px solid ${C.red}30`,borderRadius:10,padding:"8px 12px",color:C.red,fontSize:12}}>{errMsg}</div>}
+      {listening && <div style={{margin:"0 14px 8px",display:"flex",alignItems:"center",justifyContent:"center",gap:8,color:C.red,fontSize:12.5,fontWeight:600}}><span style={{width:9,height:9,borderRadius:"50%",background:C.red,boxShadow:`0 0 0 4px ${C.red}25`}}/>Listening — speak in {tName}…</div>}
+
+      {/* Input bar */}
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 12px max(12px, env(safe-area-inset-bottom))",borderTop:`1px solid ${C.line}`,background:C.surf,flexShrink:0}}>
+        <button onClick={toggleVoice} title={hasSR?"Hands-free voice mode":"Voice needs Chrome or Safari"}
+          style={{width:42,height:42,borderRadius:12,flexShrink:0,border:`1px solid ${voiceOn?C.accent:C.line}`,background: voiceOn?C.accent:C.surf2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",opacity:hasSR?1:.5}}>
+          <Icon name="mic" size={18} color={voiceOn?"#fff":C.text}/>
+        </button>
+        <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); sendText(); } }}
+          placeholder={`Reply in ${tName}…`} disabled={streaming}
+          style={{flex:1,minWidth:0,padding:"11px 14px",borderRadius:12,border:`1px solid ${C.line}`,background:C.bg,color:C.text,fontSize:15,fontFamily:"inherit",outline:"none"}}/>
+        <button onClick={()=>sendText()} disabled={streaming||!input.trim()}
+          style={{width:42,height:42,borderRadius:12,flexShrink:0,border:"none",background: (streaming||!input.trim())?C.line:GRAD,display:"flex",alignItems:"center",justifyContent:"center",cursor:(streaming||!input.trim())?"default":"pointer"}}>
+          <Icon name="arrow-up" size={18} color="#fff"/>
+        </button>
+      </div>
     </div>
   );
 }
@@ -7041,7 +7189,7 @@ function App() {
         {view === "roadmap" && wrap("Progress & Roadmap", "Where you are now — and exactly what to learn next", <Roadmap tLang={tLang}/>)}
 
         {/* ── VOICE TUTOR ── */}
-        {view === "voice-tutor" && wrap("Talk to Tutor", "A real spoken conversation — it replies and fixes your mistakes", <VoiceTutor tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
+        {view === "voice-tutor" && wrap("Conversation", "Talk with your tutor — type or speak, it replies live and fixes your mistakes", <Conversation tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
 
         {/* ── TEXT ANALYZER ── */}
         {view === "analyzer" && wrap("Analyze Any Text", "Paste lyrics, a menu, a message — get it decoded word by word", <TextAnalyzer tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
