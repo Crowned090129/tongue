@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Greet people, introduce yourself, and handle the most basic café and street interactions.","can":[
+"Master greetings and register: oi/olá, bom dia/boa tarde/boa noite, tudo bem?",
+"Conjugate ser and estar in the present and know when to use each",
+"Count 0–30 and give your phone number and age",
+"Use the mandatory contractions no/na/do/da/ao and the crase à",
+"Ask survival questions with quanto custa?, onde fica?, você fala inglês?",
+"Recognize nasal sounds ã/õ/-ão and the ç, lh, nh spellings"
+],"daily":"10 min greetings/audio, 10 min ser vs estar drills, 5 min numbers aloud, 5 min copying accented words by hand"},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Talk about your daily routine, family, and preferences in simple present-tense sentences.","can":[
+"Conjugate regular -ar, -er, and -ir verbs across all persons",
+"Build the near future with ir + infinitive (vou falar, vamos comer)",
+"Express likes with gostar de and obligation with ter que + infinitive",
+"Use estar + gerúndio for what is happening right now (estou estudando)",
+"Handle gender/number agreement of nouns and adjectives (o carro novo, as casas brancas)",
+"Place object pronouns before the verb in Brazilian style (ele me viu)"
+],"daily":"15 min verb conjugation, 10 min a short dialogue, 10 min vocab flashcards (family, food, city)"},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Narrate past events and connect ideas across two past tenses and everyday connectors.","can":[
+"Use the pretérito perfeito for finished actions, incl. irregulars fui/tive/fiz",
+"Use the pretérito imperfeito for habits and background (eu era, brincava)",
+"Choose correctly between perfeito and imperfeito when telling a story",
+"Form comparatives and superlatives (mais alto do que, o mais…de, melhor/pior)",
+"Use relative clauses with que and quem to join sentences",
+"Apply diminutives -inho/-inha naturally (cafezinho, um minutinho)"
+],"daily":"15 min past-tense narration writing, 10 min listening to a podcast or song, 10 min reviewing perfeito vs imperfeito"},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Express wishes, hypotheses, and opinions using the subjunctive and conditional with confidence.","can":[
+"Form and trigger the present subjunctive (espero que fale, talvez seja)",
+"Use the future subjunctive after quando/se (quando eu for, se você quiser)",
+"Use the conditional for politeness and hypotheticals (gostaria, viajaríamos)",
+"Handle the personal infinitive when subjects differ (é importante vocês chegarem)",
+"Build passive voice with ser + particípio and the passive se (vende-se)",
+"Report speech with tense shifts (ele disse que estava cansado)"
+],"daily":"20 min subjunctive/conditional practice, 15 min conversation or shadowing, 10 min reading news in Portuguese"},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Communicate with near-native nuance across registers, idioms, and complex hypotheticals.","can":[
+"Use the imperfect subjunctive in unreal conditions (se eu fosse rico, viajaria)",
+"Build the third conditional (se eu tivesse sabido, teria vindo)",
+"Use compound tenses tenho falado and tinha falado with correct meaning",
+"Switch between Brazilian and European clitic placement and vocabulary",
+"Handle regional slang and idioms (beleza, valeu, dar um jeito, saudade)",
+"Adapt register from casual (você/a gente) to formal (o senhor/a senhora)"
+],"daily":"30 min immersion (films, books, debate), 15 min writing essays, 10 min idiom and slang logging"}
+]}

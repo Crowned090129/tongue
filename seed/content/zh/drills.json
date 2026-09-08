@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I ate' (completed) in Chinese?","a":"我吃了","hint":"wǒ chī le — add 了 after the verb for a completed action; verbs never change form","type":"Conjugation"},
+{"q":"'I have been to Beijing' (experience) in Chinese?","a":"我去过北京","hint":"wǒ qù guo Běijīng — 过 marks a past experience, 'have ever done'","type":"Conjugation"},
+{"q":"'I am eating right now' in Chinese?","a":"我正在吃饭","hint":"wǒ zhèngzài chīfàn — 正在 + verb shows an action in progress","type":"Conjugation"},
+{"q":"'The train is about to leave' in Chinese?","a":"火车要开了","hint":"huǒchē yào kāi le — 要...了 signals an imminent action","type":"Conjugation"},
+{"q":"'My phone was stolen' (passive) in Chinese?","a":"我的手机被偷了","hint":"wǒ de shǒujī bèi tōu le — 被 marks the passive; verb needs 了","type":"Conjugation"},
+{"q":"'Take a look' (soft, casual) in Chinese?","a":"看看","hint":"kànkan — reduplicating the verb makes it brief and gentle","type":"Conjugation"},
+{"q":"'water' in Chinese?","a":"水","hint":"shuǐ — third tone, dipping","type":"Vocab"},
+{"q":"'older sister' in Chinese?","a":"姐姐","hint":"jiějie — age is built in; 妹妹 is younger sister","type":"Vocab"},
+{"q":"'teacher' in Chinese?","a":"老师","hint":"lǎoshī — 老 here is respectful, not 'old'","type":"Vocab"},
+{"q":"'expensive' in Chinese?","a":"贵","hint":"guì — opposite is 便宜 (piányi, cheap)","type":"Vocab"},
+{"q":"'cell phone' in Chinese?","a":"手机","hint":"shǒujī — literally 'hand machine'","type":"Vocab"},
+{"q":"The measure word for a book (一__书)?","a":"本","hint":"yì běn shū — books take 本; 个 (gè) is the default for people/things","type":"Grammar"},
+{"q":"Make it a yes/no question: 你去 + ___?","a":"吗","hint":"nǐ qù ma? — add 吗 to any statement for a yes/no question","type":"Grammar"},
+{"q":"'my book' — fill the particle: 我__书","a":"的","hint":"wǒ de shū — 的 links possessor to noun","type":"Grammar"},
+{"q":"'He is taller than me' — fill: 他__我高","a":"比","hint":"tā bǐ wǒ gāo — A + 比 + B + adjective; don't add 很","type":"Grammar"},
+{"q":"'two people' — which word for two: 两 or 二?","a":"两","hint":"liǎng gè rén — use 两 before a measure word, 二 for counting","type":"Numbers"},
+{"q":"'twelve' in Chinese?","a":"十二","hint":"shí'èr — 'ten-two'; teens are 十 + digit","type":"Numbers"},
+{"q":"'Thank you' in Chinese?","a":"谢谢","hint":"xièxie — second syllable is neutral tone","type":"Phrase"},
+{"q":"'How much is it?' in Chinese?","a":"多少钱?","hint":"duōshao qián? — 多少 = how much, 钱 = money","type":"Phrase"},
+{"q":"'I don't understand' in Chinese?","a":"我不明白","hint":"wǒ bù míngbai — negate with 不 for present/general states","type":"Phrase"}
+]}

@@ -1,0 +1,75 @@
+{"dialogues":[
+{"title":"Знакомство (Getting Acquainted)","scene":"Two people meet and introduce themselves at a cultural event.","level":"Beginner","lines":[
+{"speaker":"Анна","target":"Здравствуйте! Меня зовут Анна.","ref":"Hello! My name is Anna."},
+{"speaker":"Иван","target":"Очень приятно. Я Иван.","ref":"Nice to meet you. I'm Ivan."},
+{"speaker":"Анна","target":"Откуда вы, Иван?","ref":"Where are you from, Ivan?"},
+{"speaker":"Иван","target":"Я из Санкт-Петербурга. А вы?","ref":"I'm from Saint Petersburg. And you?"},
+{"speaker":"Анна","target":"Я живу в Москве. Кем вы работаете?","ref":"I live in Moscow. What do you do for work?"},
+{"speaker":"Иван","target":"Я работаю инженером. А вы?","ref":"I work as an engineer. And you?"},
+{"speaker":"Анна","target":"Я учительница. Преподаю английский язык.","ref":"I'm a teacher. I teach English."},
+{"speaker":"Иван","target":"Как интересно! Рад познакомиться.","ref":"How interesting! Glad to meet you."},
+{"speaker":"Анна","target":"Взаимно. До встречи!","ref":"Likewise. See you!"}
+],"vocab":["меня зовут (my name is)","откуда (from where)","работать кем (to work as)","познакомиться (to get acquainted)","взаимно (likewise)"],"note":"When stating a profession with работать, the job goes in the instrumental case: работаю инженером, not 'инженер'. Russians also often use the polite вы with people they've just met."},
+{"title":"В кафе (At the Café)","scene":"A customer orders tea, coffee and a dish, then asks for the bill.","level":"Beginner","lines":[
+{"speaker":"Официант","target":"Добрый день! Что будете заказывать?","ref":"Good afternoon! What would you like to order?"},
+{"speaker":"Гость","target":"Здравствуйте. Один чай с лимоном, пожалуйста.","ref":"Hello. One tea with lemon, please."},
+{"speaker":"Официант","target":"Что-нибудь ещё?","ref":"Anything else?"},
+{"speaker":"Гость","target":"Да, я хочу борщ и чёрный кофе.","ref":"Yes, I'd like borscht and a black coffee."},
+{"speaker":"Официант","target":"Кофе с сахаром?","ref":"Coffee with sugar?"},
+{"speaker":"Гость","target":"Нет, без сахара, спасибо.","ref":"No, without sugar, thank you."},
+{"speaker":"Официант","target":"Хорошо, одну минуту.","ref":"All right, one minute."},
+{"speaker":"Гость","target":"Всё было очень вкусно. Счёт, пожалуйста.","ref":"Everything was very tasty. The bill, please."},
+{"speaker":"Официант","target":"Конечно. С вас пятьсот рублей.","ref":"Of course. That'll be five hundred rubles."},
+{"speaker":"Гость","target":"Вот, пожалуйста. Спасибо!","ref":"Here you go. Thank you!"}
+],"vocab":["заказывать (to order)","что-нибудь ещё (anything else)","без сахара (without sugar)","счёт (the bill)","с вас (you owe)"],"note":"In a café the phrase С вас... literally means 'from you [is due]...' and is the standard way staff state the amount owed. Borscht (борщ) is a beet soup served hot or cold."},
+{"title":"Как пройти? (Asking Directions)","scene":"A tourist in Moscow asks how to reach Red Square, the metro and a pharmacy.","level":"Intermediate","lines":[
+{"speaker":"Турист","target":"Извините, как пройти к Красной площади?","ref":"Excuse me, how do I get to Red Square?"},
+{"speaker":"Прохожий","target":"Идите прямо, а потом поверните налево.","ref":"Go straight, and then turn left."},
+{"speaker":"Турист","target":"Это далеко?","ref":"Is it far?"},
+{"speaker":"Прохожий","target":"Нет, минут десять пешком.","ref":"No, about ten minutes on foot."},
+{"speaker":"Турист","target":"А где ближайшая станция метро?","ref":"And where is the nearest metro station?"},
+{"speaker":"Прохожий","target":"Метро вон там, за углом.","ref":"The metro is over there, around the corner."},
+{"speaker":"Турист","target":"Спасибо! Мне ещё нужна аптека.","ref":"Thank you! I also need a pharmacy."},
+{"speaker":"Прохожий","target":"Аптека находится напротив банка.","ref":"The pharmacy is located opposite the bank."},
+{"speaker":"Турист","target":"Большое спасибо за помощь!","ref":"Thank you very much for your help!"},
+{"speaker":"Прохожий","target":"Не за что. Всего доброго!","ref":"Don't mention it. All the best!"}
+],"vocab":["пройти (to get through/to)","поверните налево (turn left)","за углом (around the corner)","напротив (opposite)","пешком (on foot)"],"note":"Russians commonly give walking time as 'минут десять' with the number AFTER the noun to signal 'about ten minutes'. Reversing the order (десять минут) means exactly ten."},
+{"title":"В супермаркете (At the Supermarket)","scene":"A shopper asks where items are, buys quantities and pays at the cashier.","level":"Intermediate","lines":[
+{"speaker":"Покупатель","target":"Извините, где я могу найти хлеб?","ref":"Excuse me, where can I find bread?"},
+{"speaker":"Сотрудник","target":"Хлеб в третьем ряду, справа.","ref":"Bread is in the third aisle, on the right."},
+{"speaker":"Покупатель","target":"А молоко есть?","ref":"And do you have milk?"},
+{"speaker":"Сотрудник","target":"Да, молоко в холодильнике у входа.","ref":"Yes, milk is in the fridge by the entrance."},
+{"speaker":"Покупатель","target":"Дайте, пожалуйста, два килограмма яблок.","ref":"Please give me two kilograms of apples."},
+{"speaker":"Сотрудник","target":"Пожалуйста. Что-нибудь ещё?","ref":"Here you are. Anything else?"},
+{"speaker":"Покупатель","target":"Нет, это всё. Где касса?","ref":"No, that's all. Where is the checkout?"},
+{"speaker":"Сотрудник","target":"Касса вон там, у выхода.","ref":"The checkout is over there, by the exit."},
+{"speaker":"Кассир","target":"С вас триста рублей. Вам пакет нужен?","ref":"That's three hundred rubles. Do you need a bag?"},
+{"speaker":"Покупатель","target":"Да, и я плачу картой.","ref":"Yes, and I'm paying by card."}
+],"vocab":["найти (to find)","в третьем ряду (in the third aisle)","два килограмма (two kilograms)","касса (checkout)","платить картой (to pay by card)"],"note":"After 2, 3, 4 the counted noun takes the genitive singular (два килограмма), but with яблок the fruit itself is genitive plural because a weight quantity governs it. Paying 'by card' uses the instrumental: картой."},
+{"title":"В кассе вокзала (Buying a Train Ticket)","scene":"A traveler books a train ticket: destination, class, date, and one-way or return.","level":"Advanced","lines":[
+{"speaker":"Пассажир","target":"Здравствуйте, мне нужен билет до Казани.","ref":"Hello, I need a ticket to Kazan."},
+{"speaker":"Кассир","target":"На какое число?","ref":"For what date?"},
+{"speaker":"Пассажир","target":"На пятнадцатое сентября, если можно.","ref":"For September fifteenth, if possible."},
+{"speaker":"Кассир","target":"В один конец или туда и обратно?","ref":"One-way or round trip?"},
+{"speaker":"Пассажир","target":"Туда и обратно. И желательно нижнюю полку.","ref":"Round trip. And preferably a lower berth."},
+{"speaker":"Кассир","target":"Купе или плацкарт?","ref":"Compartment or open-plan carriage?"},
+{"speaker":"Пассажир","target":"Купе, пожалуйста. Во сколько отправление?","ref":"A compartment, please. What time is departure?"},
+{"speaker":"Кассир","target":"Поезд отправляется в двадцать два часа десять минут.","ref":"The train departs at 22:10."},
+{"speaker":"Пассажир","target":"Отлично. Сколько это стоит?","ref":"Great. How much does that cost?"},
+{"speaker":"Кассир","target":"Четыре тысячи рублей. Ваш паспорт, пожалуйста.","ref":"Four thousand rubles. Your passport, please."},
+{"speaker":"Пассажир","target":"Вот он. Спасибо большое!","ref":"Here it is. Thank you very much!"}
+],"vocab":["билет до (ticket to)","на какое число (for what date)","туда и обратно (round trip)","нижняя полка (lower berth)","купе (compartment)"],"note":"Russian long-distance trains distinguish купе (four-berth closed compartment) from плацкарт (open bunk carriage). Ticket purchases require a passport, and the 24-hour clock is standard for timetables."},
+{"title":"На почте (At the Post Office)","scene":"A customer sends a parcel, buys stamps and asks about delivery time and cost.","level":"Advanced","lines":[
+{"speaker":"Клиент","target":"Добрый день! Я хочу отправить посылку в Германию.","ref":"Good afternoon! I want to send a parcel to Germany."},
+{"speaker":"Оператор","target":"Что внутри? Заполните, пожалуйста, бланк.","ref":"What's inside? Please fill out the form."},
+{"speaker":"Клиент","target":"Там книги и небольшой подарок.","ref":"There are books and a small gift inside."},
+{"speaker":"Оператор","target":"Поставьте посылку на весы.","ref":"Put the parcel on the scale."},
+{"speaker":"Клиент","target":"Сколько будет стоить доставка?","ref":"How much will delivery cost?"},
+{"speaker":"Оператор","target":"Восемьсот рублей обычной почтой.","ref":"Eight hundred rubles by regular mail."},
+{"speaker":"Клиент","target":"А как долго идёт посылка?","ref":"And how long does the parcel take?"},
+{"speaker":"Оператор","target":"Примерно две недели.","ref":"Approximately two weeks."},
+{"speaker":"Клиент","target":"Хорошо. Ещё мне нужны пять марок.","ref":"All right. I also need five stamps."},
+{"speaker":"Оператор","target":"Пожалуйста. С вас всего девятьсот рублей.","ref":"Here you go. That's nine hundred rubles in total."},
+{"speaker":"Клиент","target":"Спасибо за помощь. Всего хорошего!","ref":"Thanks for your help. All the best!"}
+],"vocab":["отправить посылку (to send a parcel)","заполнить бланк (to fill out a form)","доставка (delivery)","как долго идёт (how long it takes)","марка (stamp)"],"note":"For mail 'in transit' Russians use the motion verb идти — посылка идёт две недели literally means 'the parcel goes for two weeks'. After the number пять, марок takes the genitive plural."}
+]}

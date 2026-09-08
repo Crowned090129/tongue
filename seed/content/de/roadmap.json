@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Greet people, introduce yourself and handle basic transactions with memorised chunks.","can":[
+"Pronounce the German sounds: ä/ö/ü umlauts, ß, ch (ich vs. ach), and the rolled/uvular r",
+"Use greetings and courtesies: Hallo, Guten Tag, Tschüss, bitte, danke, Entschuldigung",
+"Count 0–20 and give your name, nationality and where you live (Ich heiße…, Ich komme aus…)",
+"Conjugate sein and haben in the present (ich bin/du bist, ich habe/du hast)",
+"Recognise that every noun has a gender (der/die/das) and is written with a capital letter",
+"Order food and shop with Ich hätte gern… and Was kostet das?"
+],"daily":"10 min pronunciation drills (umlauts + ch), 10 min flashcards for greetings & numbers, 5 min saying your self-introduction aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Build correct present-tense sentences and start using the two most common cases.","can":[
+"Conjugate regular -en verbs in all six persons plus stem-changers (fahren→fährst, lesen→liest)",
+"Master the nominative and accusative cases, including der→den for masculine objects",
+"Negate correctly with nicht (for verbs/adjectives) and kein/keine (for nouns)",
+"Use the accusative prepositions durch, für, gegen, ohne, um",
+"Keep the verb in second position (V2) and invert after a fronted time/place phrase",
+"Tell the time and use numbers to 100 in shopping and appointments"
+],"daily":"15 min verb-conjugation practice, 10 min case drills (nom vs. akk), 10 min listening to slow German dialogues, 5 min writing three sentences."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Speak about the past and connect ideas with subordinate clauses.","can":[
+"Form the Perfekt with haben/sein + Partizip II and choose the right auxiliary",
+"Use modal verbs (können, müssen, wollen…) with the infinitive pushed to the end",
+"Split separable verbs correctly (Ich rufe dich an) in main clauses",
+"Master the dative case and its prepositions (aus, bei, mit, nach, seit, von, zu)",
+"Build subordinate clauses with weil, dass, wenn — sending the verb to the end",
+"Handle the two-way prepositions with accusative for motion, dative for location"
+],"daily":"15 min Perfekt & modal practice, 10 min dative/two-way preposition drills, 15 min graded reading, 10 min speaking about your day in the past tense."},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Express nuance with adjective endings, comparisons, the passive and relative clauses.","can":[
+"Apply strong, weak and mixed adjective endings by gender, case and article",
+"Form comparatives and superlatives (größer als, am schnellsten) including irregulars",
+"Use the genitive case and its prepositions (wegen, während, trotz)",
+"Build the passive with werden + Partizip II across tenses",
+"Connect ideas with relative clauses (der/die/das … Verb at the end)",
+"Use um…zu and infinitive-with-zu constructions to express purpose and opinions"
+],"daily":"10 min adjective-ending drills, 20 min podcasts or news at natural speed, 15 min conversation with a partner/tutor, 10 min keeping a short German journal."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Use the full tense and mood system naturally and adapt register to any situation.","can":[
+"Narrate in the Präteritum (war, ging, kam) as used in writing and storytelling",
+"Use the Plusquamperfekt with nachdem for sequencing past events",
+"Express hypotheticals and politeness with Konjunktiv II (wäre, hätte, würde, könnte)",
+"Report speech with Konjunktiv I (er sei, sie habe) in formal contexts",
+"Deploy Futur I and modal particles (doch, mal, ja, halt) for natural nuance",
+"Switch fluidly between formal Sie and informal du and follow regional accents"
+],"daily":"30 min native media (books, films, Tagesschau), 20 min writing essays or emails, active use of new idioms in conversation, and self-correction of the subjunctive."}
+]}

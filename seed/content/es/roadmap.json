@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Handle greetings, introduce yourself, and manage basic needs with set phrases.","can":[
+"Pronounce Spanish reliably: the five pure vowels, rolled rr, silent h, and ñ",
+"Use ser and estar in the present to say who and how you are",
+"Conjugate regular -ar/-er/-ir verbs in the present tense",
+"Count 0–100 and tell the time with son las... y media",
+"Ask basic questions with qué, dónde, cuánto and cómo",
+"Use masculine/feminine articles (el/la/un/una) with correct noun gender"
+],"daily":"15 min vocabulary flashcards, 10 min pronunciation drills (vowels + rr), 5 min conjugating one regular verb aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Talk about daily routines, likes, and plans in the present and near future.","can":[
+"Talk about the past with the preterite of regular verbs and key irregulars (fui, tuve, hice)",
+"Use reflexive verbs like levantarse and llamarse with me/te/se",
+"Express likes and dislikes with the gustar construction (me gusta/me gustan)",
+"Form the near future with ir a + infinitive",
+"Use estar + gerundio for actions happening right now",
+"Master stem-changing verbs (e→ie, o→ue, e→i): quiero, puedo, pido"
+],"daily":"15 min listening to slow Spanish audio, 10 min writing 3 sentences about your day, 10 min preterite conjugation practice."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Narrate past events and connect ideas in longer, natural sentences.","can":[
+"Contrast the preterite and imperfect to narrate stories (jugaba cuando llegó)",
+"Use direct and indirect object pronouns before the verb (lo veo, le hablo)",
+"Combine two pronouns, turning le/les into se (se lo di)",
+"Use the present perfect with haber + participle (he comido, has visto)",
+"Distinguish por and para for cause vs. purpose",
+"Give commands with the imperative, including irregulars (di, haz, ven)"
+],"daily":"20 min graded reader, 10 min narrating a past event using preterite + imperfect, 5 min irregular participle review."},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Express opinions, wishes and hypotheticals; understand native speech at normal speed.","can":[
+"Form and use the present subjunctive after querer que, ojalá and cuando",
+"Use the conditional to be polite and to hypothesize (me gustaría, viajaría)",
+"Build the imperfect subjunctive for si clauses (si tuviera, hablaría)",
+"Handle relative clauses with que, quien, cuyo and lo que",
+"Use comparatives and superlatives, including mejor, peor, mayor, menor",
+"Understand and produce the passive and impersonal se (se habla español)"
+],"daily":"25 min native podcast or series without subtitles, 15 min conversation exchange, 10 min journaling using subjunctive and conditional."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Communicate with near-native precision across formal and idiomatic registers.","can":[
+"Use compound and hypothetical tenses fluidly (pluscuamperfecto, futuro perfecto, condicional compuesto)",
+"Build third-conditional sentences (si hubiera sabido, habría venido)",
+"Switch registers between formal usted and colloquial tú/vosotros naturally",
+"Deploy idioms and regional expressions appropriately (¡qué va!, vale, tener ganas de)",
+"Recognize dialect differences (Spain vs. Latin America: vosotros, vos, ustedes, seseo)",
+"Write structured, cohesive texts using advanced connectors (sin embargo, no obstante, por lo tanto)"
+],"daily":"30 min reading literature or news, 20 min speaking on complex topics, 10 min noting new idioms and refining nuance."}
+]}

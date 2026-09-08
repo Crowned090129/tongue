@@ -1,0 +1,76 @@
+{"dialogues":[
+{"title":"At a Language Exchange Event","scene":"Two people meet for the first time at a Korean language exchange and introduce themselves.","level":"Beginner","lines":[
+{"speaker":"민수","target":"안녕하세요! 처음 뵙겠습니다.","ref":"Hello! Nice to meet you (for the first time)."},
+{"speaker":"에밀리","target":"안녕하세요. 저는 에밀리예요.","ref":"Hello. I'm Emily."},
+{"speaker":"민수","target":"저는 민수예요. 어느 나라에서 왔어요?","ref":"I'm Minsu. What country are you from?"},
+{"speaker":"에밀리","target":"미국에서 왔어요. 지금 한국어를 배워요.","ref":"I'm from the United States. I'm learning Korean now."},
+{"speaker":"민수","target":"한국어를 정말 잘하시네요!","ref":"You speak Korean really well!"},
+{"speaker":"에밀리","target":"감사합니다. 아직 조금밖에 못 해요.","ref":"Thank you. I can still only do a little."},
+{"speaker":"민수","target":"무슨 일 하세요?","ref":"What do you do (for work)?"},
+{"speaker":"에밀리","target":"저는 학생이에요. 민수 씨는요?","ref":"I'm a student. And you, Minsu?"},
+{"speaker":"민수","target":"저는 회사원이에요. 만나서 반가워요.","ref":"I'm an office worker. Nice to meet you."},
+{"speaker":"에밀리","target":"저도 반가워요. 앞으로 잘 부탁드려요.","ref":"Nice to meet you too. I look forward to getting to know you."}
+],"vocab":["처음 뵙겠습니다 (nice to meet you, first time)","어느 나라 (which country)","회사원 (office worker)","잘 부탁드려요 (I look forward to it)"],"note":"Koreans attach 씨 to a first or full name to be polite (민수 씨), but never to their own name. Asking someone's job and hometown early is normal small talk, not intrusive."},
+{"title":"Ordering at a Samgyeopsal Restaurant","scene":"A customer orders Korean barbecue and side dishes at a busy grill restaurant.","level":"Beginner","lines":[
+{"speaker":"손님","target":"저기요, 삼겹살 이 인분 주세요.","ref":"Excuse me, two servings of pork belly, please."},
+{"speaker":"종업원","target":"네, 삼겹살 이 인분이요. 음료수는요?","ref":"Sure, two servings of pork belly. And to drink?"},
+{"speaker":"손님","target":"콜라 하나하고 소주 한 병 주세요.","ref":"One cola and one bottle of soju, please."},
+{"speaker":"종업원","target":"네, 알겠습니다. 잠시만 기다려 주세요.","ref":"Okay, got it. Please wait a moment."},
+{"speaker":"손님","target":"저기요, 반찬 좀 더 주세요.","ref":"Excuse me, could I have more side dishes?"},
+{"speaker":"종업원","target":"네, 김치하고 상추 더 드릴게요.","ref":"Sure, I'll bring you more kimchi and lettuce."},
+{"speaker":"손님","target":"감사합니다. 이거 어떻게 먹어요?","ref":"Thank you. How do I eat this?"},
+{"speaker":"종업원","target":"상추에 고기하고 쌈장을 싸서 드세요.","ref":"Wrap the meat and ssamjang in the lettuce and eat it."},
+{"speaker":"손님","target":"맛있겠어요! 계산은 나중에 할게요.","ref":"It looks delicious! I'll pay later."},
+{"speaker":"종업원","target":"네, 맛있게 드세요.","ref":"Okay, enjoy your meal."}
+],"vocab":["인분 (servings/portions)","반찬 (side dishes)","상추 (lettuce)","쌈장 (dipping paste)","맛있게 드세요 (enjoy your meal)"],"note":"Side dishes (반찬) are free and refillable in Korea — just ask for 더 (more). Wrapping grilled meat in lettuce with garlic and ssamjang is called 쌈, a signature part of the meal."},
+{"title":"Asking for Directions in Seoul","scene":"A traveler asks a passerby how to reach the subway and Gyeongbokgung Palace.","level":"Intermediate","lines":[
+{"speaker":"여행자","target":"실례합니다. 지하철역이 어디에 있어요?","ref":"Excuse me. Where is the subway station?"},
+{"speaker":"행인","target":"이 길로 쭉 가면 오른쪽에 있어요.","ref":"If you go straight down this street, it's on the right."},
+{"speaker":"여행자","target":"여기에서 멀어요?","ref":"Is it far from here?"},
+{"speaker":"행인","target":"아니요, 걸어서 오 분쯤 걸려요.","ref":"No, it takes about five minutes on foot."},
+{"speaker":"여행자","target":"경복궁에 가려면 몇 번 출구로 나가요?","ref":"To get to Gyeongbokgung, which exit should I take?"},
+{"speaker":"행인","target":"오 번 출구로 나가세요. 바로 보여요.","ref":"Take exit five. You'll see it right away."},
+{"speaker":"여행자","target":"근처에 편의점도 있어요?","ref":"Is there also a convenience store nearby?"},
+{"speaker":"행인","target":"네, 역 앞에 하나 있어요.","ref":"Yes, there's one in front of the station."},
+{"speaker":"여행자","target":"정말 감사합니다. 도움이 많이 됐어요.","ref":"Thank you so much. That was a big help."},
+{"speaker":"행인","target":"별말씀을요. 좋은 여행 되세요.","ref":"Don't mention it. Have a good trip."}
+],"vocab":["실례합니다 (excuse me)","쭉 (straight)","출구 (exit)","걸어서 (on foot)","별말씀을요 (don't mention it)"],"note":"Seoul subway exits are numbered, so locals give directions by exit number (몇 번 출구). Saying 별말씀을요 in reply to thanks is a warm, humble way to say 'you're welcome'."},
+{"title":"At a Korean Cosmetics Store","scene":"A shopper asks a clerk for skincare recommendations and checks the price.","level":"Intermediate","lines":[
+{"speaker":"손님","target":"안녕하세요. 스킨케어 제품을 찾고 있어요.","ref":"Hello. I'm looking for skincare products."},
+{"speaker":"점원","target":"어떤 피부 타입이세요?","ref":"What's your skin type?"},
+{"speaker":"손님","target":"제 피부는 좀 건조해요.","ref":"My skin is a bit dry."},
+{"speaker":"점원","target":"그럼 이 수분 크림을 추천해 드려요.","ref":"Then I recommend this moisturizing cream."},
+{"speaker":"손님","target":"이거 향이 강해요?","ref":"Does this have a strong scent?"},
+{"speaker":"점원","target":"아니요, 향이 거의 없어요. 순해요.","ref":"No, it's almost unscented. It's mild."},
+{"speaker":"손님","target":"좋네요. 이거 얼마예요?","ref":"That's nice. How much is this?"},
+{"speaker":"점원","target":"이만 오천 원이에요. 지금 세일 중이에요.","ref":"It's 25,000 won. It's on sale right now."},
+{"speaker":"손님","target":"그럼 이걸로 할게요. 샘플도 있어요?","ref":"Then I'll take this one. Do you have samples too?"},
+{"speaker":"점원","target":"네, 샘플 몇 개 넣어 드릴게요.","ref":"Yes, I'll put in a few samples for you."}
+],"vocab":["피부 타입 (skin type)","건조하다 (to be dry)","수분 크림 (moisturizing cream)","순하다 (to be mild)","샘플 (sample)"],"note":"Korean cosmetics shops almost always add free samples (샘플) with a purchase, and it's normal to ask for them. Prices are read with Sino-Korean numbers: 이만 오천 원 = 25,000 won."},
+{"title":"Booking a Cooking Class by Phone","scene":"A caller phones a studio to reserve a spot in a Korean cooking class.","level":"Advanced","lines":[
+{"speaker":"손님","target":"여보세요, 요리 수업을 예약하고 싶은데요.","ref":"Hello, I'd like to book a cooking class."},
+{"speaker":"직원","target":"네, 어느 날짜를 원하세요?","ref":"Sure, which date would you like?"},
+{"speaker":"손님","target":"이번 주 토요일 오후에 자리가 있어요?","ref":"Is there a spot this Saturday afternoon?"},
+{"speaker":"직원","target":"토요일 두 시 반 수업에 자리가 있어요.","ref":"There's room in the 2:30 Saturday class."},
+{"speaker":"손님","target":"좋아요. 그 수업으로 예약할게요.","ref":"Great. I'll book that class."},
+{"speaker":"직원","target":"수업은 두 시간 정도 걸려요. 앞치마는 저희가 드려요.","ref":"The class takes about two hours. We provide the apron."},
+{"speaker":"손님","target":"뭘 준비해 가야 돼요?","ref":"What do I need to bring?"},
+{"speaker":"직원","target":"편한 옷만 입고 오시면 돼요.","ref":"You just need to come in comfortable clothes."},
+{"speaker":"손님","target":"수업료는 얼마예요?","ref":"How much is the class fee?"},
+{"speaker":"직원","target":"오만 원이고, 재료비가 포함돼 있어요.","ref":"It's 50,000 won, and ingredient costs are included."},
+{"speaker":"손님","target":"알겠습니다. 그럼 토요일에 뵐게요.","ref":"Understood. See you on Saturday, then."}
+],"vocab":["예약하다 (to reserve)","자리 (a spot/seat)","앞치마 (apron)","수업료 (class fee)","포함되다 (to be included)"],"note":"Koreans answer the phone with 여보세요 (only on calls). The ending -는데요 softens a request and invites a response, which is why it's so common when booking or asking for something."},
+{"title":"At the Pharmacy","scene":"A customer describes cold symptoms and asks the pharmacist for medicine and instructions.","level":"Advanced","lines":[
+{"speaker":"손님","target":"안녕하세요. 어제부터 감기에 걸렸어요.","ref":"Hello. I've had a cold since yesterday."},
+{"speaker":"약사","target":"어떤 증상이 있으세요?","ref":"What symptoms do you have?"},
+{"speaker":"손님","target":"목이 아프고 콧물이 나요.","ref":"My throat hurts and my nose is running."},
+{"speaker":"약사","target":"열도 있으세요?","ref":"Do you have a fever too?"},
+{"speaker":"손님","target":"조금 있어요. 머리도 아파요.","ref":"A little. My head also hurts."},
+{"speaker":"약사","target":"그럼 이 감기약을 드릴게요.","ref":"Then I'll give you this cold medicine."},
+{"speaker":"손님","target":"하루에 몇 번 먹어야 돼요?","ref":"How many times a day should I take it?"},
+{"speaker":"약사","target":"식사 후에 하루 세 번 드세요.","ref":"Take it three times a day after meals."},
+{"speaker":"손님","target":"졸릴 수 있어요?","ref":"Could it make me drowsy?"},
+{"speaker":"약사","target":"네, 조금 졸릴 수 있으니 운전은 조심하세요.","ref":"Yes, it may make you a little drowsy, so be careful driving."},
+{"speaker":"손님","target":"알겠습니다. 감사합니다.","ref":"I understand. Thank you."}
+],"vocab":["감기에 걸리다 (to catch a cold)","증상 (symptom)","콧물이 나다 (to have a runny nose)","감기약 (cold medicine)","식사 후 (after meals)"],"note":"In Korea, pharmacists (약사) can dispense over-the-counter cold medicine directly without a prescription. Dosage is typically given as 하루 세 번 (three times a day), 식사 후 (after meals)."}
+]}

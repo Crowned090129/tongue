@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Handle greetings, introduce yourself, and get through basic daily situations with fixed phrases.","can":[
+"Use the present simple of 'be' (I am, you are, he is) to introduce yourself",
+"Count from 0 to 20 and tell the time in whole hours",
+"Ask and answer 'What's your name?' and 'How are you?'",
+"Use the articles a/an and the with everyday nouns",
+"Form simple yes/no questions with 'do/does' (Do you speak English?)",
+"Order food and ask a price with 'I'd like...' and 'How much is...?'"
+],"daily":"10 min learning greetings and numbers, 10 min repeating survival phrases aloud, 5 min labeling objects around you in English."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Talk about routines, the past, and plans using the three most common tenses.","can":[
+"Use the present simple vs present continuous (I work / I am working)",
+"Form the past simple of regular verbs (-ed) and 20 key irregulars (went, saw, had)",
+"Talk about the future with 'will' and 'going to'",
+"Use prepositions of time at/in/on correctly",
+"Make comparatives and superlatives (bigger, the biggest, more useful)",
+"Use common modal verbs can, must, and should"
+],"daily":"15 min on one tense with examples, 10 min drilling irregular past verbs, 10 min writing three sentences about your day."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Connect ideas, describe experiences, and use the perfect and continuous tenses accurately.","can":[
+"Use the present perfect with since/for/just/already/yet",
+"Contrast past simple and present perfect correctly",
+"Build the passive voice (The book was written in 1984)",
+"Use first and second conditionals for real and unreal situations",
+"Add relative clauses with who/which/that",
+"Choose correctly between gerunds and infinitives (enjoy swimming / want to go)"
+],"daily":"20 min reading short graded texts, 10 min writing a paragraph using a target structure, 10 min listening and shadowing a podcast clip."},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Speak and write at length with natural connectors, phrasal verbs, and reported speech.","can":[
+"Use the past continuous and past perfect to tell richer stories",
+"Master 30+ common phrasal verbs (give up, look after, find out)",
+"Report what others said with tense backshift (He said he was tired)",
+"Use the present perfect continuous for duration (I've been working)",
+"Handle question tags and indirect questions politely",
+"Use although/despite and so that to link contrasting or purpose ideas"
+],"daily":"20 min conversation or voice notes, 15 min learning phrasal verbs in context, 15 min consuming native content (shows, articles) with notes."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Use advanced grammar and idiom with precision, sounding natural in formal and informal registers.","can":[
+"Use third and mixed conditionals for hypothetical pasts (If I had known...)",
+"Use future continuous and future perfect (I'll be flying / I will have graduated)",
+"Handle causative have/get something done (I had my hair cut)",
+"Express regret with wish and if only (I wish I had studied)",
+"Make past deductions with must have / can't have / might have + participle",
+"Switch smoothly between formal and casual registers and idioms"
+],"daily":"30 min immersion in native media, 15 min writing formal and informal versions of the same message, 15 min discussing abstract topics with a partner or tutor."}
+]}

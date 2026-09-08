@@ -1,0 +1,74 @@
+{"dialogues":[
+{"title":"Encontro no café","scene":"Two people meet for the first time at a café in Brazil.","level":"Beginner","lines":[
+{"speaker":"Lucas","target":"Oi! Tudo bem? Esse lugar aqui está livre?","ref":"Hi! How are you? Is this seat free?"},
+{"speaker":"Beatriz","target":"Oi! Tudo sim. Pode sentar, está livre.","ref":"Hi! All good. You can sit, it's free."},
+{"speaker":"Lucas","target":"Obrigado. Meu nome é Lucas. E o seu?","ref":"Thanks. My name is Lucas. And yours?"},
+{"speaker":"Beatriz","target":"Prazer, Lucas. Eu sou a Beatriz.","ref":"Nice to meet you, Lucas. I'm Beatriz."},
+{"speaker":"Lucas","target":"Prazer! Você é daqui de São Paulo?","ref":"Nice to meet you! Are you from here in São Paulo?"},
+{"speaker":"Beatriz","target":"Sou, sim. E você? Parece que não é daqui.","ref":"Yes, I am. And you? You don't seem to be from here."},
+{"speaker":"Lucas","target":"Não, eu sou do Rio. Estou aqui a trabalho.","ref":"No, I'm from Rio. I'm here for work."},
+{"speaker":"Beatriz","target":"Que legal! E você está gostando da cidade?","ref":"How cool! And are you liking the city?"},
+{"speaker":"Lucas","target":"Estou adorando. O café aqui é ótimo.","ref":"I'm loving it. The coffee here is great."},
+{"speaker":"Beatriz","target":"Verdade! Foi um prazer, Lucas. Até mais!","ref":"True! It was a pleasure, Lucas. See you!"}
+],"vocab":["oi (hi)","tudo bem? (how are you?)","prazer (nice to meet you)","que legal! (how cool!)","estar gostando (to be liking)"],"note":"Brazilians introduce themselves with the article: 'Eu sou a Beatriz.' Using 'a/o' before a first name is normal and friendly, not formal."},
+{"title":"Na churrascaria","scene":"Ordering at a Brazilian churrascaria — asking about the menu, drinks, and the bill.","level":"Beginner","lines":[
+{"speaker":"Garçom","target":"Boa noite! Mesa para quantas pessoas?","ref":"Good evening! A table for how many people?"},
+{"speaker":"Cliente","target":"Boa noite. Para dois, por favor.","ref":"Good evening. For two, please."},
+{"speaker":"Garçom","target":"O rodízio é à vontade. Aceitam a saladinha?","ref":"The all-you-can-eat is unlimited. Would you like the salad bar?"},
+{"speaker":"Cliente","target":"Aceitamos, sim. E o que vocês têm para beber?","ref":"Yes, we would. And what do you have to drink?"},
+{"speaker":"Garçom","target":"Temos suco, refrigerante, cerveja e caipirinha.","ref":"We have juice, soda, beer, and caipirinha."},
+{"speaker":"Cliente","target":"Então uma caipirinha e um suco de laranja.","ref":"Then a caipirinha and an orange juice."},
+{"speaker":"Garçom","target":"Ótimo. Quando quiserem carne, virem a plaquinha para o verde.","ref":"Great. When you want meat, turn the little card to green."},
+{"speaker":"Cliente","target":"Perfeito. Essa picanha está uma delícia!","ref":"Perfect. This picanha is delicious!"},
+{"speaker":"Cliente","target":"Já comemos bastante. Pode trazer a conta?","ref":"We've eaten a lot already. Can you bring the bill?"},
+{"speaker":"Garçom","target":"Claro. O serviço de dez por cento está incluído.","ref":"Of course. The ten percent service charge is included."}
+],"vocab":["rodízio (all-you-can-eat)","à vontade (as much as you like)","a caipirinha (caipirinha)","a picanha (top sirloin cap)","a conta (the bill)"],"note":"At a rodízio, servers keep bringing skewers of grilled meat until you flip your table card from green ('sim, obrigado') to red ('não, obrigado') to signal you've had enough."},
+{"title":"Pedindo direções","scene":"Asking for directions in São Paulo — finding a metro station and a pharmacy.","level":"Beginner","lines":[
+{"speaker":"Turista","target":"Com licença, onde fica a estação de metrô mais próxima?","ref":"Excuse me, where is the nearest metro station?"},
+{"speaker":"Local","target":"Fica ali na frente. Siga reto por dois quarteirões.","ref":"It's right ahead. Go straight for two blocks."},
+{"speaker":"Turista","target":"E depois dos dois quarteirões?","ref":"And after the two blocks?"},
+{"speaker":"Local","target":"Depois vire à direita. A entrada é logo na esquina.","ref":"Then turn right. The entrance is right on the corner."},
+{"speaker":"Turista","target":"Entendi. É longe daqui a pé?","ref":"I see. Is it far from here on foot?"},
+{"speaker":"Local","target":"Não, uns cinco minutos, no máximo.","ref":"No, about five minutes at most."},
+{"speaker":"Turista","target":"Ótimo. E tem uma farmácia por perto?","ref":"Great. And is there a pharmacy nearby?"},
+{"speaker":"Local","target":"Tem, sim. Fica ao lado da estação, do outro lado da rua.","ref":"Yes, there is. It's next to the station, across the street."},
+{"speaker":"Turista","target":"Muito obrigado pela ajuda!","ref":"Thank you very much for your help!"},
+{"speaker":"Local","target":"De nada! Boa sorte por aí.","ref":"You're welcome! Good luck out there."}
+],"vocab":["com licença (excuse me)","siga reto (go straight)","vire à direita (turn right)","a esquina (the corner)","por perto (nearby)"],"note":"'Ficar' is the go-to verb for where places are located: 'onde fica…?' is how you ask 'where is…?' for buildings and streets, not 'onde está…?'."},
+{"title":"No mercado","scene":"Shopping at a street market — asking prices, bargaining politely, and paying.","level":"Intermediate","lines":[
+{"speaker":"Cliente","target":"Bom dia! Quanto está o quilo da manga?","ref":"Good morning! How much is a kilo of mango?"},
+{"speaker":"Feirante","target":"Bom dia! Está oito reais o quilo, fresquinha.","ref":"Good morning! It's eight reais a kilo, nice and fresh."},
+{"speaker":"Cliente","target":"E se eu levar dois quilos, faz um preço melhor?","ref":"And if I take two kilos, can you give a better price?"},
+{"speaker":"Feirante","target":"Para o senhor eu faço por quinze nos dois quilos.","ref":"For you I'll do fifteen for the two kilos."},
+{"speaker":"Cliente","target":"Fechado. Me vê também um mamão maduro.","ref":"Deal. Get me a ripe papaya too."},
+{"speaker":"Feirante","target":"Esse aqui está no ponto. Mais alguma coisa?","ref":"This one is just right. Anything else?"},
+{"speaker":"Cliente","target":"Só isso por hoje. Quanto deu no total?","ref":"That's all for today. How much is it in total?"},
+{"speaker":"Feirante","target":"Deu dezoito reais. Aceita cartão ou pix.","ref":"It came to eighteen reais. I take card or Pix."},
+{"speaker":"Cliente","target":"Vou pagar no pix. Pode passar a chave?","ref":"I'll pay by Pix. Can you give me the key?"},
+{"speaker":"Feirante","target":"Claro! Obrigado, e volte sempre!","ref":"Of course! Thank you, and come back anytime!"}
+],"vocab":["o quilo (kilo)","fresquinho (nice and fresh)","fazer um preço (to give a deal)","no ponto / maduro (ripe)","o pix (instant payment)"],"note":"Pix is Brazil's free instant-payment system, used everywhere from street markets to big stores. Paying 'no pix' by scanning a QR code or a 'chave' (key) is now more common than cash."},
+{"title":"Reservando um hotel","scene":"Calling to book a hotel room — dates, room type, price, breakfast.","level":"Intermediate","lines":[
+{"speaker":"Recepção","target":"Hotel Praia Bela, boa tarde. Em que posso ajudar?","ref":"Hotel Praia Bela, good afternoon. How can I help you?"},
+{"speaker":"Cliente","target":"Boa tarde. Eu gostaria de reservar um quarto.","ref":"Good afternoon. I'd like to book a room."},
+{"speaker":"Recepção","target":"Claro. Para quais datas o senhor deseja?","ref":"Of course. For which dates would you like?"},
+{"speaker":"Cliente","target":"Do dia dez ao dia treze de março, três noites.","ref":"From the tenth to the thirteenth of March, three nights."},
+{"speaker":"Recepção","target":"Quarto de casal ou com duas camas?","ref":"A double room or one with two beds?"},
+{"speaker":"Cliente","target":"De casal, por favor. Quanto fica a diária?","ref":"A double, please. How much is the nightly rate?"},
+{"speaker":"Recepção","target":"São duzentos e cinquenta reais a diária, com café da manhã.","ref":"It's two hundred and fifty reais a night, with breakfast."},
+{"speaker":"Cliente","target":"O café da manhã já está incluído no valor?","ref":"Is breakfast already included in the price?"},
+{"speaker":"Recepção","target":"Sim, está incluído. Posso confirmar a reserva?","ref":"Yes, it's included. May I confirm the reservation?"},
+{"speaker":"Cliente","target":"Pode confirmar. Muito obrigado!","ref":"Yes, please confirm. Thank you very much!"}
+],"vocab":["reservar (to book)","o quarto de casal (double room)","a diária (nightly rate)","o café da manhã (breakfast)","incluído (included)"],"note":"In Brazil breakfast is 'café da manhã' (in Portugal, 'pequeno-almoço'). Many hotels include a generous buffet, and 'com café da manhã incluído' is a common selling point worth confirming."},
+{"title":"Entrevista de emprego","scene":"A job interview in Brazil — introducing yourself, describing experience, discussing hours and salary.","level":"Advanced","lines":[
+{"speaker":"Entrevistadora","target":"Boa tarde. Fale um pouco sobre a sua trajetória profissional.","ref":"Good afternoon. Tell me a bit about your professional background."},
+{"speaker":"Candidato","target":"Claro. Trabalho com marketing digital há cinco anos.","ref":"Sure. I've worked in digital marketing for five years."},
+{"speaker":"Entrevistadora","target":"E por que você quer sair do seu emprego atual?","ref":"And why do you want to leave your current job?"},
+{"speaker":"Candidato","target":"Busco novos desafios e mais espaço para crescer.","ref":"I'm looking for new challenges and more room to grow."},
+{"speaker":"Entrevistadora","target":"Entendo. Como você lida com prazos apertados?","ref":"I see. How do you handle tight deadlines?"},
+{"speaker":"Candidato","target":"Eu me organizo por prioridades e mantenho a equipe informada.","ref":"I organize myself by priorities and keep the team informed."},
+{"speaker":"Entrevistadora","target":"Ótimo. O horário seria das nove às dezoito, de segunda a sexta.","ref":"Great. The hours would be from nine to six, Monday to Friday."},
+{"speaker":"Candidato","target":"Perfeito para mim. Qual é a faixa salarial da vaga?","ref":"Perfect for me. What's the salary range for the position?"},
+{"speaker":"Entrevistadora","target":"Depende da experiência, mas conversamos sobre isso na próxima etapa.","ref":"It depends on experience, but we'll discuss that in the next stage."},
+{"speaker":"Candidato","target":"Combinado. Agradeço muito a oportunidade.","ref":"Agreed. Thank you very much for the opportunity."}
+],"vocab":["a trajetória profissional (professional background)","o desafio (challenge)","o prazo (deadline)","a faixa salarial (salary range)","a vaga (the position/opening)"],"note":"In Brazilian workplace culture it is normal to ask about the 'faixa salarial' and benefits ('benefícios' like vale-refeição and plano de saúde) during interviews, but usually after showing genuine interest in the role itself."}
+]}

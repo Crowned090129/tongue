@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–3","goal":"Read and write the Arabic script and handle greetings, numbers, and basic self-introduction.","can":[
+"Recognize and write all 28 Arabic letters in their initial, medial, and final forms",
+"Read short fully-voweled words using the harakat (fatḥa, kasra, ḍamma, sukūn)",
+"Apply the definite article ال and hear the sun/moon-letter difference (ash-shams vs al-qamar)",
+"Exchange greetings: as-salāmu ʿalaykum, ṣabāḥ al-khayr, kayfa ḥāluk, maʿa as-salāma",
+"Count 1–20 and read the Eastern Arabic numerals ٠١٢٣٤٥٦٧٨٩",
+"Introduce yourself with a nominal sentence: anā... , ismī... , anā min..."
+],"daily":"15 min tracing/reading the alphabet, 10 min flashcards for greetings and numbers, 5 min listening to spoken Arabic to tune your ear (30 min/day)."},
+{"phase":2,"title":"Foundation","dur":"Weeks 4–8","goal":"Build core vocabulary and form simple present-tense and nominal sentences with correct gender agreement.","can":[
+"Mark and use grammatical gender, adding ة for feminine nouns and adjectives",
+"Build nominal sentences with no verb 'to be' (al-bayt kabīr)",
+"Conjugate the present tense (المضارع) for anā/anta/huwa/hiya/naḥnu",
+"Attach possessive suffixes: kitābī, kitābuka, baytuhā, baytunā",
+"Ask and answer questions with hal, mā, ayna, matā, kam",
+"Use demonstratives hādhā/hādhihi/dhālika/tilka with agreement"
+],"daily":"20 min structured lessons (grammar + gender), 10 min vocab (family, food, colors), 10 min speaking simple sentences aloud (40 min/day)."},
+{"phase":3,"title":"Core Structures","dur":"Months 3–4","goal":"Command past, present, and future tenses and the key sentence structures of Modern Standard Arabic.","can":[
+"Conjugate the past tense (الماضي) across all persons (katabtu, katabta, katabat, katabnā)",
+"Form the future with the prefix سـ and سَوْفَ",
+"Negate correctly in every tense with lā, lam (+jussive), lan (+subjunctive), and laysa",
+"Build the iḍāfa possessive construct (bāb al-bayt, sayyārat al-mudīr)",
+"Form the imperative (uktub, iqraʾ, idhhab) and its negative with lā",
+"Handle the dual form and both sound and common broken plurals"
+],"daily":"20 min verb-tense drills, 15 min reading short voweled texts, 10 min writing 3–4 sentences, 10 min review (55 min/day)."},
+{"phase":4,"title":"Fluency","dur":"Months 5–9","goal":"Express complex ideas with subordinate clauses, the case system, and the derived verb forms.","can":[
+"Use أَنْ + subjunctive after urīd, yajib, and yumkin (urīdu an ataʿallama)",
+"Master كان وأخواتها and إنّ وأخواتها with the accusative case they govern",
+"Build relative clauses with alladhī/allatī/alladhīna on definite nouns",
+"Recognize and use derived verb Forms II, III, V, VII, VIII, and X",
+"Read unvoweled prose and infer the short vowels from context",
+"Handle conditional sentences with idhā and law and comparative/superlative أَفْعَل"
+],"daily":"20 min reading news or graded readers, 15 min listening to Al Jazeera/podcasts, 15 min writing a paragraph, 10 min vocabulary in context (60 min/day)."},
+{"phase":5,"title":"Mastery","dur":"Months 10+","goal":"Use Arabic naturally across formal registers, with full command of grammar, style, and rhetoric.","can":[
+"Apply full case endings (iʿrāb) accurately in speech and formal writing",
+"Use the maṣdar (verbal noun) and active/passive participles idiomatically",
+"Command the passive voice (المبني للمجهول) and the internal-vowel patterns it requires",
+"Read classical and literary texts, including Qurʾanic and poetic language",
+"Write formal essays, emails, and reports with cohesive connectors and rhetoric",
+"Switch appropriately between MSA (fuṣḥā) and a regional dialect (ʿāmmiyya)"
+],"daily":"30 min reading literature or specialist texts, 20 min writing/editing, 15 min discussion or shadowing native audio, ongoing dialect immersion (65 min/day)."}
+]}

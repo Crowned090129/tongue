@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1-2","goal":"Greet people, order food, and cover basic needs using the present tense.","can":[
+"Pronounce Italian's five clear vowels and double consonants (pizza, nonno)",
+"Use essere and avere in the present (io sono, io ho)",
+"Greet and introduce yourself formally (Lei) and informally (tu)",
+"Count from 0 to 100 and ask basic prices",
+"Order at a bar or restaurant with 'vorrei' and 'per favore'",
+"Ask 'Dov'è...?' and 'Quanto costa?' to get around"
+],"daily":"20 min: 10 min vocabulary flashcards (numbers, greetings), 5 min listening to a short dialogue, 5 min saying essere and avere aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3-6","goal":"Talk about daily routines and the recent past.","can":[
+"Conjugate regular -are, -ere, and -ire verbs in the present",
+"Form the passato prossimo with avere and essere",
+"Choose the right definite and indefinite articles by gender",
+"Make adjectives agree in gender and number (-o/-a/-i/-e)",
+"Use the partitive (del, della, dei) to say 'some'",
+"Describe your family and routine with reflexive verbs (mi sveglio)"
+],"daily":"30 min: 10 min new verbs, 10 min writing three sentences about your day, 10 min a graded podcast or video."},
+{"phase":3,"title":"Core Structures","dur":"Months 2-3","goal":"Narrate in the past and express future plans and polite wishes.","can":[
+"Contrast the imperfetto and passato prossimo when telling a story",
+"Use ci and ne correctly (ci vado, ne voglio due)",
+"Form the futuro semplice and the condizionale (partirò, vorrei)",
+"Combine object pronouns (me lo, glielo)",
+"Give commands with the imperativo, informal and formal",
+"Compare things with più/meno...di/che and build superlatives"
+],"daily":"40 min: 15 min grammar drills, 15 min reading a short article, 10 min shadowing or speaking practice."},
+{"phase":4,"title":"Fluency","dur":"Months 3-6","goal":"Handle opinions, hypotheticals, and most everyday conversations with confidence.","can":[
+"Use the congiuntivo presente after penso che, spero che, è importante che",
+"Form the trapassato prossimo for the earlier of two past events",
+"Build if-clauses with congiuntivo imperfetto + condizionale (se avessi tempo, verrei)",
+"Express the passive with essere/venire and the si passivante",
+"Link ideas with relative pronouns che and cui",
+"Report speech with the past conditional (ha detto che sarebbe venuto)"
+],"daily":"45-60 min: 20 min native content (podcast or series), 20 min conversation with a partner or tutor, 15 min reviewing mistakes."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Grasp nuance, register, and literary or regional forms with near-native ease.","can":[
+"Recognize and read the passato remoto in novels and news",
+"Use the condizionale composto for unrealized past actions (avrei voluto)",
+"Master the full periodo ipotetico, including the impossibility type",
+"Shift smoothly between formal, informal, and idiomatic register",
+"Understand regional accents and common colloquial expressions",
+"Write structured texts with connectors (nonostante, affinché, tuttavia)"
+],"daily":"60+ min: immerse through books, film, and news; write a weekly journal entry; discuss abstract topics and get corrections."}
+]}

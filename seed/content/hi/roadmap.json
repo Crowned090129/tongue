@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–3","goal":"Read the Devanagari script and handle greetings, numbers and the most basic needs.","can":[
+"Recognise and sound out all Devanagari vowels (अ आ इ ई...) and core consonants",
+"Read simple words with matras (vowel signs) like पानी, नमस्ते, किताब",
+"Greet and introduce yourself: नमस्ते, मेरा नाम... है, आप कैसे हैं?",
+"Count 1–100 and say prices and phone numbers",
+"Use को/मुझे to say what you want or need: मुझे पानी चाहिए",
+"Ask the survival questions यह कितने का है? and शौचालय कहाँ है?"
+],"daily":"15 min tracing Devanagari letters, 10 min number/greeting flashcards, 5 min listening to a beginner Hindi dialogue and repeating aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 4–8","goal":"Build correct present-tense sentences with gender agreement and postpositions.","can":[
+"Assign masculine/feminine gender and make adjectives agree (अच्छा लड़का / अच्छी लड़की)",
+"Form the habitual present with -ता/ती/ते + हूँ/है/हैं",
+"Use postpositions में, पर, से, को after nouns instead of prepositions",
+"Ask questions with क्या and the words कौन, कहाँ, कब, क्यों, कैसे",
+"Negate correctly with नहीं and command with मत",
+"Choose between आप, तुम and तू for the right level of respect"
+],"daily":"20 min conjugation and gender drills, 10 min building 5 SOV sentences of your own, 10 min shadowing audio to fix pronunciation of retroflex ट/ड and nasal sounds."},
+{"phase":3,"title":"Core Structures","dur":"Months 3–4","goal":"Handle past and future time and the ने construction in real conversation.","can":[
+"Talk about the past with था/थी/थे and the habitual -ता था form",
+"Use the ergative ने construction so the verb agrees with the object",
+"Form the future tense with -गा/गी/गे endings",
+"Apply the oblique case (लड़का→लड़के, plurals in -ओं) before postpositions",
+"Express obligation and ability with चाहिए, सकना and पड़ना",
+"Describe ongoing and completed actions with रहा है and चुका है"
+],"daily":"20 min narrating yesterday and tomorrow aloud, 15 min ने-sentence drills, 15 min reading graded stories and underlining every postposition and case change."},
+{"phase":4,"title":"Fluency","dur":"Months 5–9","goal":"Link ideas smoothly and hold everyday conversations with connectors and clauses.","can":[
+"Join actions with the conjunctive participle कर/के (खाकर, जाकर)",
+"Build relative–correlative sentences with जो...वह and जहाँ...वहाँ",
+"Use conditionals अगर...तो for real and hypothetical situations",
+"Compare and rank things with से, ज़्यादा and सबसे",
+"Add nuance with compound verbs like खा लेना, दे देना, सो जाना",
+"Handle real tasks: bargaining, directions, booking tickets, seeing a doctor"
+],"daily":"25 min conversation or self-talk on a daily topic, 15 min watching a Hindi show with Devanagari subtitles, 10 min journaling a few sentences using a new connector each day."},
+{"phase":5,"title":"Mastery","dur":"Months 10+","goal":"Use subtle, register-appropriate Hindi and understand native media with ease.","can":[
+"Use the subjunctive for wishes, doubt and politeness (शायद वह आए, मैं जाऊँ?)",
+"Handle the passive voice and impersonal statements (हिंदी बोली जाती है)",
+"Command causative verbs across layers (खिलाना, कटवाना, करवाना)",
+"Switch register between formal, literary and colloquial Hindi appropriately",
+"Recognise common Urdu-origin and Sanskrit-origin vocabulary and idioms",
+"Follow films, news and literature and discuss abstract topics fluently"
+],"daily":"30 min native podcasts or news without subtitles, 20 min reading a novel or newspaper column, 10 min noting idioms and shades of register to reuse in your own speech and writing."}
+]}

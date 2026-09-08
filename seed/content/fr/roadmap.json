@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Greet people, introduce yourself, and handle basic café and shop exchanges in French.","can":[
+"Pronounce the French alphabet, the accents (é, è, ê, ç) and the key nasal vowels (an, on, in, un)",
+"Use greetings and politeness: bonjour, merci, s'il vous plaît, au revoir, and the vous/tu distinction",
+"Conjugate être and avoir in the present and give your name, age and nationality",
+"Count 0–69 and tell basic time (il est deux heures)",
+"Recognize noun gender and the articles le/la/les and un/une/des",
+"Ask a simple question three ways: intonation, est-ce que, and quel/où/combien"
+],"daily":"10 min pronunciation drills (accents & nasal vowels), 10 min core vocab flashcards (greetings, numbers), 5 min conjugating être/avoir aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Talk about your daily life, likes and plans in the present and near future.","can":[
+"Conjugate regular -er, -ir and -re verbs plus aller, faire, prendre, venir in the present",
+"Master the negation ne … pas / jamais / plus / rien and the article change to de",
+"Use the partitive du/de la/des to talk about food and quantities",
+"Make adjectives agree in gender and number, including BAGS adjectives placed before the noun",
+"Express the near future with aller + infinitive (je vais partir)",
+"Count 70–1000 (soixante-dix, quatre-vingts, quatre-vingt-dix) and use days, months and dates"
+],"daily":"15 min verb conjugation practice, 10 min listening to slow French dialogues, 10 min writing 3–4 sentences about your day."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Narrate past events and handle real-life situations like travel, shopping and appointments.","can":[
+"Form the passé composé with avoir and with être (DR & MRS VANDERTRAMP verbs) with correct agreement",
+"Use the imparfait for description and habits, and choose it vs the passé composé",
+"Handle reflexive (pronominal) verbs: se lever, s'appeler, se coucher in present and past",
+"Replace nouns with direct/indirect object pronouns (le/la/les, lui/leur) and with y and en",
+"Give commands with the impératif (Parle ! Ne t'inquiète pas !)",
+"Compare things with plus/moins/aussi … que and use the superlative le plus … de"
+],"daily":"15 min passé composé vs imparfait exercises, 15 min reading a short news article or story, 10 min speaking practice describing a past event."},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Express opinions, hypotheses and nuance, and hold longer conversations with confidence.","can":[
+"Use the futur simple with its irregular stems (ser-, aur-, ir-, fer-, viendr-)",
+"Form and use the conditionnel for politeness and hypotheticals (je voudrais, si j'avais … je ferais)",
+"Build the présent du subjonctif after il faut que, vouloir que, bien que and emotion verbs",
+"Connect ideas with relative pronouns qui, que, dont and où",
+"Master si-clauses: si + présent → futur, and si + imparfait → conditionnel",
+"Follow and take part in native-speed conversations on familiar topics"
+],"daily":"20 min watching French series with French subtitles, 15 min subjunctive and conditional drills, 15 min conversation or journaling with new connectors."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Communicate precisely and idiomatically across formal and informal registers, close to a native speaker.","can":[
+"Use the plus-que-parfait and the past conditional for the 'past-before-past' and unreal past (si j'avais su …)",
+"Command adverb formation in -ment (-amment, -emment) and refined word order",
+"Switch between registers: soutenu, courant and familiar, including dropping ne in speech",
+"Recognize literary tenses (passé simple) when reading novels and formal texts",
+"Handle idioms, faux amis and cultural nuance (ça marche, quand même, n'importe quoi)",
+"Read newspapers, essays and literature and write structured, argued French texts"
+],"daily":"30 min reading authentic literature or press, 15 min shadowing native audio for prosody, 15 min writing or debating a topic and self-correcting."}
+]}

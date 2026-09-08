@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–3","goal":"Read Hangul confidently and handle basic greetings, numbers, and polite requests.","can":[
+"Read and write all 14 basic consonants and 10 vowels of Hangul, plus common batchim (final consonants)",
+"Use 안녕하세요, 감사합니다, 죄송합니다 and other core polite set phrases",
+"Count with both native (하나, 둘, 셋) and Sino-Korean (일, 이, 삼) numbers and know when to use each",
+"Build simple SOV sentences with the polite -아/어요 ending (가요, 먹어요, 있어요)",
+"Attach the topic 은/는 and subject 이/가 particles to nouns correctly",
+"Order food and ask 얼마예요? / 이거 주세요 in a shop or restaurant"
+],"daily":"10 min Hangul reading drills, 10 min learning 5 new words, 5 min repeating survival phrases aloud, 5 min number practice."},
+{"phase":2,"title":"Foundation","dur":"Weeks 4–8","goal":"Speak in past, present, and future about everyday life using core particles and negation.","can":[
+"Conjugate the past tense with -았/었어요 and future intention with -(으)ㄹ 거예요",
+"Negate sentences two ways: 안 + verb and verb stem + -지 않아요",
+"Use the object 을/를 and location particles 에 (static) vs 에서 (action)",
+"Tell time mixing native-number hours (세 시) and Sino-number minutes (삼십 분)",
+"Handle descriptive verbs (adjectives) like 좋아요, 비싸요 that conjugate like verbs",
+"Ask and answer questions with 뭐, 어디, 언제, 왜, 누구, 어떻게"
+],"daily":"15 min verb conjugation practice, 10 min listening to a beginner podcast, 10 min writing 3 sentences, 5 min flashcards."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–4","goal":"Connect clauses and express ability, desire, obligation, and comparison in natural speech.","can":[
+"Link ideas with connectives -고 (and), -아/어서 (so/because), -지만 (but)",
+"Express ability with -(으)ㄹ 수 있다/없다 and desire with -고 싶다",
+"State obligation (-아/어야 되다), permission (-아/어도 되다), and prohibition (-지 마세요)",
+"Form conditionals with -(으)면 and progressive actions with -고 있어요",
+"Compare things with 보다 + 더 and form superlatives with 가장/제일",
+"Use the honorific -(으)시- and honorific words (드시다, 계시다) to show respect"
+],"daily":"20 min grammar workbook, 15 min speaking with a tutor or app, 10 min reading short dialogues, 10 min vocabulary review."},
+{"phase":4,"title":"Fluency","dur":"Months 4–9","goal":"Handle relative clauses, reported speech, and irregular verbs across varied topics.","can":[
+"Build noun-modifying (relative) clauses with -(으)ㄴ / -는 / -(으)ㄹ endings",
+"Master the ㅂ, ㄷ, 르, ㅅ, and ㄹ irregular verb stems in speech",
+"Report what others said with -다고/-라고 하다 and its contractions (-대요)",
+"Nominalize verbs with -는 것 and -기 to talk about activities and ideas",
+"Switch between the -아/어요 polite style and the -습니다 formal style appropriately",
+"Follow and join native-paced conversations on daily topics like news and travel"
+],"daily":"20 min native media (K-drama or YouTube) with Korean subtitles, 15 min shadowing, 15 min writing a journal entry, 10 min reviewing irregulars."},
+{"phase":5,"title":"Mastery","dur":"Months 9+","goal":"Communicate with nuance, appropriate speech levels, and cultural fluency in any setting.","can":[
+"Choose the right speech level (반말, 해요체, 하십시오체) for each social situation",
+"Use nuanced endings like -(으)ㄹ 것 같다 (conjecture) and -(으)려고/-(으)러 (intention/purpose) naturally",
+"Understand Sino-Korean vocabulary roots (한자어) to guess advanced words",
+"Express favors and benefactive nuance with -아/어 주다 / 드리다",
+"Read newspapers, essays, and web content, and write formal emails or reports",
+"Adjust honorifics and humble forms fluidly to match age and status of the listener"
+],"daily":"30 min reading authentic articles or novels, 20 min conversation on abstract topics, 15 min writing formal texts, 10 min noting new idioms and 한자어."}
+]}

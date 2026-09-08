@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–2","goal":"Handle greetings, numbers, and the four tones, and read your first Hanzi and pinyin.","can":[
+"Produce and hear the four tones plus the neutral tone in pinyin",
+"Greet, thank, and apologize: 你好, 谢谢, 对不起, 再见",
+"Count 1–100 and read prices with 块/元",
+"Use the basic SVO order: 我喝茶, 他吃饭",
+"Ask yes/no questions by adding 吗",
+"Recognize 30–50 common characters and type Hanzi with a pinyin keyboard"
+],"daily":"10 min tone drills, 10 min pinyin + 5 new characters, 5 min speaking greetings aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 3–6","goal":"Build core sentences with measure words, 的, and the aspect marker 了.","can":[
+"Use the default measure word 个 and common ones (本, 张, 条)",
+"Mark completed actions and changes of state with 了",
+"Show possession and description with 的: 我的书, 红色的花",
+"Ask content questions with 什么/哪里/谁/几 in normal word order",
+"Put time and place before the verb: 我今天在家吃饭",
+"Read and write around 150 high-frequency characters"
+],"daily":"15 min HSK1 vocab (10 words), 10 min sentence-building, 10 min listening to slow dialogues."},
+{"phase":3,"title":"Core Structures","dur":"Months 2–3","goal":"Connect ideas and express ability, comparison, and completed circumstances.","can":[
+"Compare things with 比 and negate with 没有",
+"Distinguish the modals 会 / 能 / 可以",
+"Use resultative complements: 听懂, 吃完, 找到",
+"Emphasize time/place/manner with the 是...的 construction",
+"Link clauses with 因为...所以 and 虽然...但是",
+"Handle the 把 construction to stress what happens to an object"
+],"daily":"20 min HSK2–3 vocab, 15 min grammar patterns with example sentences, 10 min shadowing native audio."},
+{"phase":4,"title":"Fluency","dur":"Months 3–6","goal":"Speak in connected paragraphs and understand everyday native speech.","can":[
+"Use directional and potential complements: 进来, 听得懂, 吃不完",
+"Form the 被 passive naturally for unexpected events",
+"Express desire and duty precisely with 想/要/得",
+"Use 越来越 and 越...越 for gradual change and correlation",
+"Follow and join real conversations on taxis, markets, and dining",
+"Read short articles and messages with 800–1200 characters"
+],"daily":"20 min podcast/drama listening, 20 min speaking or language exchange, 15 min reading with a graded reader."},
+{"phase":5,"title":"Mastery","dur":"Months 6+","goal":"Reach professional fluency and comfort with formal and written Chinese.","can":[
+"Use chengyu (四字成语) and idiomatic expressions appropriately",
+"Switch between spoken register and formal written style (书面语)",
+"Read newspapers, novels, and business documents fluently",
+"Understand regional accents and fast colloquial speech",
+"Write essays and emails with correct 的/得/地 usage",
+"Recognize 2500+ characters toward HSK 5–6 level"
+],"daily":"30 min authentic reading (news/novels), 20 min writing practice, 20 min discussion or debate on real topics."}
+]}

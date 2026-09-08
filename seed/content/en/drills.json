@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"Conjugate 'to be' for 'he': He ___ a teacher.","a":"is","hint":"'be' is irregular: I am, you are, he/she/it is.","type":"Conjugation"},
+{"q":"Conjugate 'to have' for 'she': She ___ two cats.","a":"has","hint":"Only he/she/it changes 'have' to 'has'.","type":"Conjugation"},
+{"q":"Past simple of 'to go': Yesterday I ___ to work.","a":"went","hint":"'go' is irregular; its past is 'went', not 'goed'.","type":"Conjugation"},
+{"q":"Present simple of 'to do' for 'it': It ___ not matter.","a":"does","hint":"he/she/it takes 'does'; also used to form questions.","type":"Conjugation"},
+{"q":"Past participle of 'to eat': I have ___ lunch.","a":"eaten","hint":"eat → ate (past) → eaten (past participle), used after 'have'.","type":"Conjugation"},
+{"q":"Add -ing to 'to run': They are ___.","a":"running","hint":"Double the final consonant after a single vowel: run → running.","type":"Conjugation"},
+{"q":"'a happy feeling' in one word?","a":"happy","hint":"Opposite of 'sad'.","type":"Vocab"},
+{"q":"What do you call the room where you cook?","a":"kitchen","hint":"You prepare and cook food there.","type":"Vocab"},
+{"q":"The English word for the female parent?","a":"mother","hint":"Casual forms: 'mum' (UK), 'mom' (US).","type":"Vocab"},
+{"q":"What is the opposite of 'expensive'?","a":"cheap","hint":"It means costing very little.","type":"Vocab"},
+{"q":"The English word for a device you use to make calls?","a":"phone","hint":"Short for 'telephone'.","type":"Vocab"},
+{"q":"Choose the article: I saw ___ elephant. (a/an)","a":"an","hint":"Use 'an' before a vowel sound; 'elephant' starts with one.","type":"Grammar"},
+{"q":"Comparative of 'good': This one is ___ than that.","a":"better","hint":"'good' is irregular: good → better → best.","type":"Grammar"},
+{"q":"Make it negative: 'She works here.' → She ___ work here.","a":"doesn't","hint":"Use doesn't + base verb; the -s moves to the auxiliary.","type":"Grammar"},
+{"q":"Plural of 'child'?","a":"children","hint":"An irregular plural, not 'childs'.","type":"Grammar"},
+{"q":"Write the number 15 as a word.","a":"fifteen","hint":"Note 'fif', not 'five', plus '-teen'.","type":"Numbers"},
+{"q":"How do you say the time 8:45 using 'to'?","a":"quarter to nine","hint":"'to' counts the minutes before the next hour.","type":"Numbers"},
+{"q":"How do you politely greet someone before noon?","a":"Good morning","hint":"Switch to 'Good afternoon' after 12pm.","type":"Phrase"},
+{"q":"What phrase do you say to ask for the restaurant bill politely?","a":"The bill, please","hint":"Americans say 'the check, please'.","type":"Phrase"},
+{"q":"How do you reply to 'Thank you'?","a":"You're welcome","hint":"A standard, polite response to thanks.","type":"Phrase"}
+]}

@@ -1,0 +1,74 @@
+{"dialogues":[
+{"title":"The Job Interview","scene":"A candidate meets a hiring manager and answers common interview questions.","level":"Beginner","lines":[
+{"speaker":"Interviewer","target":"Good morning. Thanks for coming in. Please have a seat.","ref":"A polite, formal welcome. 'Have a seat' = sit down."},
+{"speaker":"Candidate","target":"Good morning. Thank you for the opportunity.","ref":"A courteous reply that shows appreciation."},
+{"speaker":"Interviewer","target":"Could you tell me a little about yourself?","ref":"A classic opening question; keep the answer short and relevant."},
+{"speaker":"Candidate","target":"Of course. I'm a graphic designer with five years of experience.","ref":"State your role and how long you've done it."},
+{"speaker":"Interviewer","target":"Why do you want to work for our company?","ref":"They want to hear that you know and like the company."},
+{"speaker":"Candidate","target":"I admire your work, and I believe I can contribute a lot.","ref":"A positive, confident answer."},
+{"speaker":"Interviewer","target":"What would you say is your greatest strength?","ref":"'greatest strength' = your best quality."},
+{"speaker":"Candidate","target":"I'm very organized, and I always meet my deadlines.","ref":"Give a strength with a concrete result."},
+{"speaker":"Interviewer","target":"Great. Do you have any questions for me?","ref":"Always prepare one or two questions to ask."},
+{"speaker":"Candidate","target":"Yes, what does a typical day in this role look like?","ref":"A smart question showing genuine interest."}
+],"vocab":["opportunity (a chance)","experience (skill from doing something)","strength (a strong quality)","deadline (the final time to finish)","to contribute (to add value)"],"note":"In English-speaking interviews, arriving 10 minutes early and giving a firm handshake are seen as signs of professionalism and respect."},
+{"title":"Checking Into a Hotel","scene":"A guest arrives at the front desk to check in and reports a problem.","level":"Beginner","lines":[
+{"speaker":"Receptionist","target":"Good evening. Welcome to the Grand Hotel. How can I help you?","ref":"A standard, friendly hotel greeting."},
+{"speaker":"Guest","target":"Hi, I have a reservation under the name Carter.","ref":"'under the name' = booked in the name of."},
+{"speaker":"Receptionist","target":"Let me check. Yes, a double room for three nights.","ref":"Confirming the booking details."},
+{"speaker":"Guest","target":"That's right. Does the room have wifi?","ref":"Asking about a facility."},
+{"speaker":"Receptionist","target":"Yes, it's free. Here is your key card. Room 204.","ref":"'key card' = the card that opens the door."},
+{"speaker":"Guest","target":"Thank you. What time is breakfast served?","ref":"'is served' is a passive form for scheduled service."},
+{"speaker":"Receptionist","target":"Breakfast is from seven to ten in the restaurant.","ref":"Giving the meal times."},
+{"speaker":"Guest","target":"Excuse me, the air conditioning in my room isn't working.","ref":"Politely reporting a problem with the room."},
+{"speaker":"Receptionist","target":"I'm very sorry. I'll send someone up right away.","ref":"'right away' = immediately; 'I'll' is a spontaneous offer."},
+{"speaker":"Guest","target":"Thank you, I appreciate it.","ref":"A polite way to thank someone for their help."}
+],"vocab":["reservation (a booking)","double room (a room for two)","key card (the door card)","to be served (to be provided)","air conditioning (the cooling system)"],"note":"Tipping the porter who carries your bags a small amount is customary in many English-speaking countries, especially the United States."},
+{"title":"Making Plans With a Friend","scene":"Two friends decide what to do at the weekend and agree on a time.","level":"Intermediate","lines":[
+{"speaker":"Mia","target":"Hey, are you free this weekend?","ref":"'are you free' = do you have time available."},
+{"speaker":"Tom","target":"I think so. What did you have in mind?","ref":"'have in mind' = are thinking of."},
+{"speaker":"Mia","target":"How about going to the new art exhibition?","ref":"'How about + -ing' is a common way to suggest."},
+{"speaker":"Tom","target":"Hmm, to be honest, museums aren't really my thing.","ref":"'not my thing' = something I don't enjoy."},
+{"speaker":"Mia","target":"Fair enough. We could go hiking instead.","ref":"'Fair enough' accepts the point; 'instead' offers an alternative."},
+{"speaker":"Tom","target":"Now that sounds great! I've been wanting to get outdoors.","ref":"'sounds great' shows enthusiasm; note the present perfect continuous."},
+{"speaker":"Mia","target":"Perfect. Shall we meet at the trailhead around nine?","ref":"'Shall we' proposes; 'around nine' = approximately 9:00."},
+{"speaker":"Tom","target":"Nine works for me. Should I bring some snacks?","ref":"'works for me' = that time suits me."},
+{"speaker":"Mia","target":"Good idea. I'll bring water and a map.","ref":"Dividing up who brings what."},
+{"speaker":"Tom","target":"Great, see you on Saturday then!","ref":"Confirming the day before parting."}
+],"vocab":["exhibition (a public display)","to hike (to walk in nature)","trailhead (the start of a trail)","snack (a small amount of food)","fair enough (I accept that)"],"note":"Suggestions in English are often softened with 'How about...?' or 'Shall we...?' rather than direct commands, which can sound bossy among friends."},
+{"title":"A Formal Meeting","scene":"Colleagues present an idea, ask for clarification, and agree on next steps.","level":"Intermediate","lines":[
+{"speaker":"Chair","target":"Thanks for joining. Today we'll discuss the new marketing plan.","ref":"Opening a meeting and stating its topic."},
+{"speaker":"Sara","target":"I'd like to propose that we focus on social media first.","ref":"'I'd like to propose' is a formal way to suggest."},
+{"speaker":"David","target":"Could you clarify what you mean by 'focus'?","ref":"'clarify' = explain more clearly."},
+{"speaker":"Sara","target":"Certainly. I mean we should spend most of our budget there.","ref":"'Certainly' politely agrees to explain."},
+{"speaker":"David","target":"I see your point, but I'm not sure it's enough.","ref":"'I see your point' acknowledges before disagreeing politely."},
+{"speaker":"Chair","target":"That's a valid concern. What would you suggest instead?","ref":"Inviting an alternative view."},
+{"speaker":"David","target":"Perhaps we could combine it with email campaigns.","ref":"'Perhaps we could' is a tentative, polite suggestion."},
+{"speaker":"Sara","target":"That makes sense. I'm happy to work on both.","ref":"'That makes sense' shows agreement."},
+{"speaker":"Chair","target":"Great. Let's agree on that and review the results next month.","ref":"Summarizing the decision and next step."},
+{"speaker":"David","target":"Sounds good. I'll send a summary by email.","ref":"Confirming a follow-up action."}
+],"vocab":["to propose (to suggest formally)","to clarify (to make clear)","budget (money set aside)","concern (a worry)","campaign (an organized set of actions)"],"note":"In professional English, disagreement is usually cushioned: phrases like 'I see your point, but...' keep the tone respectful and collaborative."},
+{"title":"At the Pharmacy","scene":"A customer describes symptoms and asks about medication and instructions.","level":"Advanced","lines":[
+{"speaker":"Pharmacist","target":"Hello, how can I help you today?","ref":"A standard, welcoming opener."},
+{"speaker":"Customer","target":"Hi, I've had a sore throat and a headache since yesterday.","ref":"Present perfect + 'since' describes symptoms continuing to now."},
+{"speaker":"Pharmacist","target":"I'm sorry to hear that. Do you have a fever?","ref":"'I'm sorry to hear that' shows sympathy."},
+{"speaker":"Customer","target":"A slight one. Is there something you'd recommend?","ref":"'would recommend' asks for a professional suggestion."},
+{"speaker":"Pharmacist","target":"You could take these tablets. They should ease the pain.","ref":"'could' and 'should' soften advice and prediction."},
+{"speaker":"Customer","target":"How often should I take them?","ref":"Asking about dosage frequency."},
+{"speaker":"Pharmacist","target":"Take one every eight hours, with food.","ref":"Giving clear dosage instructions."},
+{"speaker":"Customer","target":"Are there any side effects I should know about?","ref":"'side effects' = unwanted reactions to medicine."},
+{"speaker":"Pharmacist","target":"They may make you drowsy, so avoid driving.","ref":"'drowsy' = sleepy; 'avoid + -ing' gives a warning."},
+{"speaker":"Customer","target":"Understood. Thank you for your help.","ref":"Confirming understanding and thanking."}
+],"vocab":["sore throat (throat pain)","fever (a high body temperature)","tablet (a pill)","dosage (how much medicine to take)","side effect (an extra unwanted reaction)","drowsy (sleepy)"],"note":"In many English-speaking countries, pharmacists can give advice on minor illnesses for free, so people often ask them before booking a doctor."},
+{"title":"Dinner With a Friend's Family","scene":"A guest makes small talk, compliments the host, and offers to help.","level":"Advanced","lines":[
+{"speaker":"Host","target":"Welcome! We're so glad you could make it.","ref":"'make it' = manage to come; a warm welcome."},
+{"speaker":"Guest","target":"Thank you for having me. Your home is lovely.","ref":"'Thank you for having me' is the standard guest phrase."},
+{"speaker":"Host","target":"That's kind of you. Please, make yourself at home.","ref":"'make yourself at home' = relax and feel comfortable."},
+{"speaker":"Guest","target":"Something smells amazing. What are you cooking?","ref":"A natural compliment that starts small talk."},
+{"speaker":"Host","target":"It's a roast. I hope you're hungry!","ref":"'a roast' is a traditional cooked meal."},
+{"speaker":"Guest","target":"Absolutely. Is there anything I can do to help?","ref":"Politely offering to help before the meal."},
+{"speaker":"Host","target":"You could set the table if you don't mind.","ref":"'if you don't mind' softens the request."},
+{"speaker":"Guest","target":"Not at all. Where do you keep the plates?","ref":"'Not at all' happily accepts; asking where things are."},
+{"speaker":"Host","target":"In the cupboard on the left. Thanks so much.","ref":"Giving directions and thanking."},
+{"speaker":"Guest","target":"This meal was delicious. Thank you for a wonderful evening.","ref":"A warm compliment and thanks as the evening ends."}
+],"vocab":["to make it (to manage to come)","to make yourself at home (to relax as a guest)","roast (a traditional cooked meal)","to set the table (to lay out plates and cutlery)","cupboard (a storage cabinet)"],"note":"Bringing a small gift such as wine, flowers, or a dessert when invited to dinner is a common courtesy in most English-speaking cultures."}
+]}

@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I am' in French?","a":"je suis","hint":"être is irregular: je suis, tu es, il est","type":"Conjugation"},
+{"q":"'We have' in French?","a":"nous avons","hint":"avoir in the nous form; liaison sounds like 'noo-za-von'","type":"Conjugation"},
+{"q":"'They speak' (masculine, parler) in French?","a":"ils parlent","hint":"regular -er verb; the -ent ending is silent","type":"Conjugation"},
+{"q":"'She goes' (aller) in French?","a":"elle va","hint":"aller is irregular: je vais, tu vas, il/elle va","type":"Conjugation"},
+{"q":"'I ate' (passé composé of manger) in French?","a":"j'ai mangé","hint":"avoir + past participle; -er verbs give -é","type":"Conjugation"},
+{"q":"'You (tu) will do' (future of faire) in French?","a":"tu feras","hint":"irregular future stem fer- + endings -ai/-as/-a...","type":"Conjugation"},
+{"q":"'Water' in French (with its article)?","a":"l'eau","hint":"feminine noun; élision of la before a vowel","type":"Vocab"},
+{"q":"'Thank you very much' in French?","a":"merci beaucoup","hint":"beaucoup means 'a lot'; final p is silent","type":"Vocab"},
+{"q":"'The bread' in French?","a":"le pain","hint":"masculine; the -ain is a nasal vowel, no n sound","type":"Vocab"},
+{"q":"'Red' (feminine form) in French?","a":"rouge","hint":"adjectives ending in -e don't change in the feminine","type":"Vocab"},
+{"q":"'To speak' (infinitive) in French?","a":"parler","hint":"a regular -er verb, the most common verb group","type":"Vocab"},
+{"q":"Feminine of the adjective 'petit'?","a":"petite","hint":"most adjectives add -e for the feminine; the t is now pronounced","type":"Grammar"},
+{"q":"Contract 'à + le' in French?","a":"au","hint":"mandatory contraction; also à + les = aux","type":"Grammar"},
+{"q":"The partitive 'some' before 'café' (masculine)?","a":"du","hint":"du = de + le; use de la for feminine, de l' before a vowel","type":"Grammar"},
+{"q":"'I don't understand' in French (full negation)?","a":"je ne comprends pas","hint":"wrap the verb: ne + verb + pas","type":"Grammar"},
+{"q":"'Seventy' in French?","a":"soixante-dix","hint":"literally 'sixty-ten'; French counts 60 + 10","type":"Numbers"},
+{"q":"'It's half past three' in French?","a":"il est trois heures et demie","hint":"et demie = half past; demie agrees with heure","type":"Numbers"},
+{"q":"'Excuse me' (formal) in French?","a":"excusez-moi","hint":"vous form; use excuse-moi with someone you tutoie","type":"Phrase"},
+{"q":"'How much is it?' in French?","a":"combien ça coûte","hint":"literally 'how much does it cost'; also 'ça fait combien ?'","type":"Phrase"},
+{"q":"'The bill, please' in a restaurant?","a":"l'addition, s'il vous plaît","hint":"l'addition is the restaurant bill; note the élision","type":"Phrase"}
+]}

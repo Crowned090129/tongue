@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I am' (essere) in Italian?","a":"sono","hint":"io sono, tu sei, lui/lei è","type":"Conjugation"},
+{"q":"'I have' (avere) in Italian?","a":"ho","hint":"io ho, tu hai, lui/lei ha — the h is silent","type":"Conjugation"},
+{"q":"'You (informal) speak' — parlare, tu form?","a":"parli","hint":"-are verbs take -i in the tu form (parlo/parli/parla)","type":"Conjugation"},
+{"q":"'We eat' — mangiare, noi form?","a":"mangiamo","hint":"-are noi ending is -iamo; drop the extra i after g","type":"Conjugation"},
+{"q":"'I go' (andare) in Italian?","a":"vado","hint":"irregular: vado/vai/va/andiamo/andate/vanno","type":"Conjugation"},
+{"q":"'I ate' — passato prossimo of mangiare?","a":"ho mangiato","hint":"avere + participle; -are verbs give -ato","type":"Conjugation"},
+{"q":"'Thank you' in Italian?","a":"grazie","hint":"grazie mille = thanks a lot","type":"Vocab"},
+{"q":"'Water' in Italian?","a":"l'acqua","hint":"feminine noun; l'acqua, la mia acqua","type":"Vocab"},
+{"q":"'Dog' in Italian?","a":"il cane","hint":"masculine; plural i cani","type":"Vocab"},
+{"q":"'House' in Italian?","a":"la casa","hint":"feminine; a casa = (at) home","type":"Vocab"},
+{"q":"'To buy' in Italian?","a":"comprare","hint":"regular -are verb; io compro","type":"Vocab"},
+{"q":"Definite article for masculine 'libro' (book)?","a":"il","hint":"il before most consonants; lo before s+consonant, z, gn","type":"Grammar"},
+{"q":"Definite article for feminine 'casa'?","a":"la","hint":"la before a consonant; l' before a vowel","type":"Grammar"},
+{"q":"Indefinite article for feminine 'amica'?","a":"un'","hint":"un' with apostrophe before a feminine noun starting with a vowel","type":"Grammar"},
+{"q":"Plural of 'il ragazzo' (the boy)?","a":"i ragazzi","hint":"masculine -o becomes -i; article il becomes i","type":"Grammar"},
+{"q":"'Seven' in Italian?","a":"sette","hint":"sei (6), sette (7), otto (8)","type":"Numbers"},
+{"q":"'It's three o'clock' in Italian?","a":"Sono le tre","hint":"use Sono le + number; but È l'una for one o'clock","type":"Numbers"},
+{"q":"How do you say 'How are you?' (informal)?","a":"Come stai?","hint":"formal is Come sta?","type":"Phrase"},
+{"q":"How do you ask 'How much does it cost?'","a":"Quanto costa?","hint":"quanto costa (singular) / quanto costano (plural)","type":"Phrase"},
+{"q":"How do you say 'I would like a coffee'?","a":"Vorrei un caffè","hint":"vorrei = polite conditional of volere","type":"Phrase"}
+]}

@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I am' (permanent, from ser) in Spanish?","a":"soy","hint":"ser: soy, eres, es. Use it for identity and origin.","type":"Conjugation"},
+{"q":"'You have' (informal tú, from tener) in Spanish?","a":"tienes","hint":"tener is e→ie: tengo, tienes, tiene.","type":"Conjugation"},
+{"q":"'We speak' (from hablar) in Spanish?","a":"hablamos","hint":"Regular -ar nosotros ending is -amos.","type":"Conjugation"},
+{"q":"'He ate' (preterite of comer) in Spanish?","a":"comió","hint":"Regular -er/-ir él preterite ends in -ió, with an accent.","type":"Conjugation"},
+{"q":"'I went' (preterite of ir) in Spanish?","a":"fui","hint":"ser and ir share this form: fui, fuiste, fue.","type":"Conjugation"},
+{"q":"'They will do/make' (future of hacer) in Spanish?","a":"harán","hint":"Irregular future stem har- + endings; ellos takes -án.","type":"Conjugation"},
+{"q":"'Water' in Spanish?","a":"agua","hint":"Feminine but takes el for sound: el agua fría.","type":"Vocab"},
+{"q":"'Friend' (male) in Spanish?","a":"amigo","hint":"A female friend is amiga.","type":"Vocab"},
+{"q":"'To buy' in Spanish?","a":"comprar","hint":"Regular -ar verb; a shop is la tienda.","type":"Vocab"},
+{"q":"'House' in Spanish?","a":"casa","hint":"Feminine: la casa. En casa = at home.","type":"Vocab"},
+{"q":"'Tomorrow' in Spanish?","a":"mañana","hint":"Same word also means 'morning' (la mañana).","type":"Vocab"},
+{"q":"Fill in: '___ libro' (the book, masculine singular 'the')?","a":"el","hint":"Definite articles: el/la/los/las. Libro is masculine.","type":"Grammar"},
+{"q":"Fill in: '___ mesa' (a/one table, feminine 'a')?","a":"una","hint":"Indefinite articles: un/una/unos/unas. Mesa is feminine.","type":"Grammar"},
+{"q":"Make plural: 'la ciudad' → ?","a":"las ciudades","hint":"Words ending in a consonant add -es, and the article becomes las.","type":"Grammar"},
+{"q":"'It' referring to 'el libro' as a direct object (I read ___)?","a":"lo","hint":"Direct object pronouns: lo/la/los/las, placed before the verb: lo leí.","type":"Grammar"},
+{"q":"'Fifteen' in Spanish?","a":"quince","hint":"11–15 are single words: once, doce, trece, catorce, quince.","type":"Numbers"},
+{"q":"How do you say 'It's 2:30' in Spanish?","a":"Son las dos y media","hint":"Use son las for all hours except one (es la una); media = half.","type":"Numbers"},
+{"q":"How do you say 'Thank you very much' in Spanish?","a":"Muchas gracias","hint":"gracias is feminine plural, so 'much' agrees: muchas.","type":"Phrase"},
+{"q":"How do you ask 'How much does it cost?' in Spanish?","a":"¿Cuánto cuesta?","hint":"For plural items use ¿cuánto cuestan? (cost from costar, o→ue).","type":"Phrase"},
+{"q":"How do you say 'I don't understand' in Spanish?","a":"No entiendo","hint":"entender is e→ie: entiendo. Put no before the verb.","type":"Phrase"}
+]}

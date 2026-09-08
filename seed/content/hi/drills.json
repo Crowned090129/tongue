@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I go' (masculine) in Hindi?","a":"मैं जाता हूँ","hint":"jātā hūn — stem जा + ता (m.) + auxiliary हूँ for 'I'","type":"Conjugation"},
+{"q":"'She eats' in Hindi?","a":"वह खाती है","hint":"khātī hai — feminine subject takes -ती, auxiliary है","type":"Conjugation"},
+{"q":"'They do' (masculine plural) in Hindi?","a":"वे करते हैं","hint":"karte hain — plural/respect takes -ते and हैं","type":"Conjugation"},
+{"q":"'I will go' (masculine) in Hindi?","a":"मैं जाऊँगा","hint":"jāūngā — future adds -ऊँगा; -गी for feminine","type":"Conjugation"},
+{"q":"'I ate' (using ने, masculine speaker) in Hindi?","a":"मैंने खाया","hint":"mainne khāyā — transitive past: subject takes ने, verb is perfective खाया","type":"Conjugation"},
+{"q":"'I am eating' (masculine) in Hindi?","a":"मैं खा रहा हूँ","hint":"khā rahā hūn — continuous uses stem + रहा/रही + auxiliary","type":"Conjugation"},
+{"q":"'Water' in Hindi?","a":"पानी","hint":"pānī — masculine noun","type":"Vocab"},
+{"q":"'Friend' in Hindi?","a":"दोस्त","hint":"dost — same word for male or female friend","type":"Vocab"},
+{"q":"'Big' (masculine) in Hindi?","a":"बड़ा","hint":"baṛā — becomes बड़ी for feminine nouns","type":"Vocab"},
+{"q":"'Tomorrow' (or yesterday) in Hindi?","a":"कल","hint":"kal — context decides past or future","type":"Vocab"},
+{"q":"'Thank you' in Hindi?","a":"धन्यवाद","hint":"dhanyavād — शुक्रिया is a common alternative","type":"Vocab"},
+{"q":"Which postposition marks 'in the house': घर ___ ?","a":"में","hint":"men — 'in/inside'; पर would mean 'on'","type":"Grammar"},
+{"q":"The respectful word for 'you' in Hindi?","a":"आप","hint":"āp — takes plural verb; तुम is familiar, तू is intimate","type":"Grammar"},
+{"q":"Feminine form of the adjective अच्छा (good)?","a":"अच्छी","hint":"acchī — -आ adjectives change -आ to -ई for feminine","type":"Grammar"},
+{"q":"Oblique form of लड़का before a postposition (e.g. ___ को)?","a":"लड़के","hint":"laṛke — masculine -आ nouns shift to -ए in the oblique","type":"Grammar"},
+{"q":"'Seven' in Hindi?","a":"सात","hint":"sāt — छह is six, आठ is eight","type":"Numbers"},
+{"q":"'Hundred' in Hindi?","a":"सौ","hint":"sau — हज़ार is thousand","type":"Numbers"},
+{"q":"'How are you?' (formal) in Hindi?","a":"आप कैसे हैं?","hint":"āp kaise hain? — कैसी हैं when addressing a woman","type":"Phrase"},
+{"q":"'How much is this?' in Hindi?","a":"यह कितने का है?","hint":"yah kitne kā hai? — key shopping question","type":"Phrase"},
+{"q":"'I don't understand' in Hindi?","a":"मुझे समझ नहीं आया","hint":"mujhe samajh nahīn āyā — literally 'to me understanding did not come'","type":"Phrase"}
+]}

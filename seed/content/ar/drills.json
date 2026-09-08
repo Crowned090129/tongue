@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'He wrote' in Arabic?","a":"كَتَبَ","hint":"kataba — past tense, he-form is the dictionary citation form (root k-t-b)","type":"Conjugation"},
+{"q":"'I write' (present) in Arabic?","a":"أَكْتُبُ","hint":"aktubu — present 'I' takes the prefix أ (a-)","type":"Conjugation"},
+{"q":"'She goes' (present) in Arabic?","a":"تَذْهَبُ","hint":"tadhhabu — the ta- prefix marks both 'she' and 'you (m.)'","type":"Conjugation"},
+{"q":"'We studied' in Arabic?","a":"دَرَسْنا","hint":"darasnā — past 'we' adds the suffix ـنا (-nā)","type":"Conjugation"},
+{"q":"'They (m.) eat' (present) in Arabic?","a":"يَأْكُلونَ","hint":"yaʾkulūna — masculine plural present ends in ـونَ (-ūna)","type":"Conjugation"},
+{"q":"'Write!' (command to a man) in Arabic?","a":"اُكْتُبْ","hint":"uktub — imperative drops the present prefix and adds a helping hamza","type":"Conjugation"},
+{"q":"'Water' in Arabic?","a":"ماء","hint":"māʾ — ends in a hamza on the line","type":"Vocab"},
+{"q":"'Book' in Arabic?","a":"كِتاب","hint":"kitāb — from the root k-t-b (writing)","type":"Vocab"},
+{"q":"'House' in Arabic?","a":"بَيْت","hint":"bayt — plural is the broken form buyūt (بُيوت)","type":"Vocab"},
+{"q":"'Big' (masculine) in Arabic?","a":"كَبير","hint":"kabīr — feminine adds ة: kabīra (كَبيرة)","type":"Vocab"},
+{"q":"'Thank you' in Arabic?","a":"شُكْراً","hint":"shukran — reply is ʿafwan (عَفْواً)","type":"Vocab"},
+{"q":"Make 'book' definite ('the book') in Arabic.","a":"الكِتاب","hint":"al-kitāb — add the article ال; k is a moon letter so the l is pronounced","type":"Grammar"},
+{"q":"Feminine of the adjective كَبير ('big')?","a":"كَبيرة","hint":"kabīra — most feminine adjectives add ة (tāʾ marbūṭa)","type":"Grammar"},
+{"q":"Say 'the manager's car' using iḍāfa.","a":"سَيّارةُ المُديرِ","hint":"sayyārat al-mudīr — first noun drops ال, only the last noun keeps it","type":"Grammar"},
+{"q":"Negate the past 'I went' ('I did not go') in Arabic.","a":"لَمْ أَذْهَبْ","hint":"lam adhhab — لم + jussive is the standard past negation","type":"Grammar"},
+{"q":"'Three' in Arabic?","a":"ثَلاثة","hint":"thalātha — the digit is ٣","type":"Numbers"},
+{"q":"'Ten' in Arabic?","a":"عَشَرة","hint":"ʿashara — the digit is ١٠","type":"Numbers"},
+{"q":"Say 'peace be upon you' (hello) in Arabic.","a":"السَّلامُ عَلَيْكُم","hint":"as-salāmu ʿalaykum — reply wa-ʿalaykum as-salām","type":"Phrase"},
+{"q":"Ask 'What is your name?' (to a man) in Arabic.","a":"ما اسْمُك؟","hint":"mā-smuk — for a woman say mā-smuki","type":"Phrase"},
+{"q":"Say 'I don't understand' in Arabic.","a":"لا أَفْهَم","hint":"lā afham — lā negates the present tense","type":"Phrase"}
+]}

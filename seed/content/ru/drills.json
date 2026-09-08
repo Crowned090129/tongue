@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I read' (я, imperfective читать) in Russian?","a":"я читаю","hint":"1st-conjugation: stem чита- + -ю. cha-EE-ta-yu","type":"Conjugation"},
+{"q":"'You speak' (ты, говорить) in Russian?","a":"ты говоришь","hint":"2nd-conjugation: -ишь ending. ga-va-REESH","type":"Conjugation"},
+{"q":"'She was reading' (past of читать, feminine) in Russian?","a":"она читала","hint":"Past agrees with GENDER: -ла for feminine. chee-TA-la","type":"Conjugation"},
+{"q":"'I want' (я, хотеть) in Russian?","a":"я хочу","hint":"Irregular verb; note т→ч. ya kha-CHOO","type":"Conjugation"},
+{"q":"'We can' (мы, мочь) in Russian?","a":"мы можем","hint":"Stem change г→ж: могу but можем. mih MO-zhem","type":"Conjugation"},
+{"q":"'I will read' (finished, perfective прочитать) in Russian?","a":"я прочитаю","hint":"Perfective present-form = future meaning. pra-chee-TA-yu","type":"Conjugation"},
+{"q":"'Water' in Russian?","a":"вода","hint":"Feminine noun. va-DA","type":"Vocab"},
+{"q":"'Thank you' in Russian?","a":"спасибо","hint":"spa-SEE-ba — from 'спаси Бог', save [you] God","type":"Vocab"},
+{"q":"'Friend' (male) in Russian?","a":"друг","hint":"drook — female friend is подруга","type":"Vocab"},
+{"q":"'Today' in Russian?","a":"сегодня","hint":"see-VOD-nya — the 'г' is pronounced 'v'","type":"Vocab"},
+{"q":"'Doctor' in Russian?","a":"врач","hint":"vrach — same word for male and female","type":"Vocab"},
+{"q":"Put книга (book) in the accusative after 'я читаю ___'.","a":"книгу","hint":"Feminine -а → -у for the direct object. KNEE-gu","type":"Grammar"},
+{"q":"After 'у меня нет ___', put вода (water) in the correct case.","a":"воды","hint":"нет always takes the GENITIVE. va-DY","type":"Grammar"},
+{"q":"After 'пять' (five), what case does стол (table) take: пять ___?","a":"столов","hint":"5+ takes the genitive PLURAL. sta-LOF","type":"Grammar"},
+{"q":"Say 'I have a cat' using есть and кошка.","a":"у меня есть кошка","hint":"у + genitive (меня) + есть + nominative. oo mee-NYA yest KOSH-ka","type":"Grammar"},
+{"q":"'Seven' in Russian?","a":"семь","hint":"syem — the ь (soft sign) is silent but softens м","type":"Numbers"},
+{"q":"'What time is it?' — how to ask in Russian?","a":"который час","hint":"ka-TO-ryy chas — literally 'which hour'","type":"Numbers"},
+{"q":"'Excuse me' (to get attention, formal) in Russian?","a":"извините","hint":"eez-vee-NEE-tye — also means 'sorry'","type":"Phrase"},
+{"q":"'How much does this cost?' in Russian?","a":"сколько это стоит","hint":"SKOL-ka E-ta STO-eet — the key shopping phrase","type":"Phrase"},
+{"q":"'I don't understand' in Russian?","a":"я не понимаю","hint":"не before the verb. ya nye pa-nee-MA-yu","type":"Phrase"}
+]}

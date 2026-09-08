@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'to eat' (먹다) in polite present -아/어요?","a":"먹어요","hint":"Consonant stem 먹- + 어요; meogeoyo","type":"Conjugation"},
+{"q":"'to go' (가다) in polite present -아/어요?","a":"가요","hint":"가 + 아요 contracts to 가요; gayo","type":"Conjugation"},
+{"q":"'to do' (하다) in polite present?","a":"해요","hint":"하다 is irregular: 하 + 여요 → 해요; haeyo","type":"Conjugation"},
+{"q":"'ate' — past tense of 먹다 in -았/었어요?","a":"먹었어요","hint":"Insert 었 before 어요; meogeosseoyo","type":"Conjugation"},
+{"q":"'will eat' — future of 먹다 with -(으)ㄹ 거예요?","a":"먹을 거예요","hint":"Consonant stem takes 을 거예요; meogeul geoyeyo","type":"Conjugation"},
+{"q":"'to listen' (듣다) in polite present -아/어요?","a":"들어요","hint":"ㄷ irregular: ㄷ changes to ㄹ; deureoyo","type":"Conjugation"},
+{"q":"'water' in Korean?","a":"물","hint":"mul — a single-syllable everyday word","type":"Vocab"},
+{"q":"'thank you' (formal) in Korean?","a":"감사합니다","hint":"gamsahamnida; 고마워요 is more casual","type":"Vocab"},
+{"q":"'friend' in Korean?","a":"친구","hint":"chingu","type":"Vocab"},
+{"q":"'school' in Korean?","a":"학교","hint":"hakgyo","type":"Vocab"},
+{"q":"'delicious' (it's delicious) in Korean?","a":"맛있어요","hint":"masisseoyo; opposite is 맛없어요","type":"Vocab"},
+{"q":"Which particle marks the direct object after a vowel, as in 사과__?","a":"를","hint":"를 after a vowel, 을 after a consonant; 사과를","type":"Grammar"},
+{"q":"Which subject particle follows a vowel-final noun, as in 친구__ 왔어요?","a":"가","hint":"가 after a vowel, 이 after a consonant; 친구가","type":"Grammar"},
+{"q":"Which topic particle follows a consonant-final noun, as in 학생__?","a":"은","hint":"은 after a consonant, 는 after a vowel; 학생은","type":"Grammar"},
+{"q":"How do you negate 먹어요 by placing a word before the verb?","a":"안 먹어요","hint":"Put 안 directly before the verb; an meogeoyo","type":"Grammar"},
+{"q":"'three' as a native Korean number (for counting things)?","a":"셋","hint":"set; becomes 세 before a counter (세 개)","type":"Numbers"},
+{"q":"'10' as a Sino-Korean number (for dates and money)?","a":"십","hint":"sip; native equivalent is 열 (yeol)","type":"Numbers"},
+{"q":"How do you say 'hello' politely in Korean?","a":"안녕하세요","hint":"annyeonghaseyo — usable any time of day","type":"Phrase"},
+{"q":"How do you ask 'How much is it?' in a shop?","a":"얼마예요?","hint":"eolmayeyo? — from 얼마 (how much)","type":"Phrase"},
+{"q":"How do you say 'please give me this' pointing at an item?","a":"이거 주세요","hint":"igeo juseyo — 주세요 = please give","type":"Phrase"}
+]}

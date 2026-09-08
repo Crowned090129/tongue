@@ -1,0 +1,77 @@
+{"dialogues":[
+{"title":"職場での自己紹介 (Introductions at Work)","scene":"A new employee introduces himself to a colleague on his first day at a Tokyo company.","level":"Beginner","lines":[
+{"speaker":"田中 (Tanaka)","target":"おはようございます。はじめまして。","ref":"Good morning. Nice to meet you."},
+{"speaker":"佐藤 (Satō)","target":"おはようございます。佐藤です。","ref":"Good morning. I'm Satō."},
+{"speaker":"田中 (Tanaka)","target":"田中と申します。今日から営業部で働きます。","ref":"My name is Tanaka. I'll be working in the sales department from today."},
+{"speaker":"佐藤 (Satō)","target":"そうですか。どうぞよろしくお願いします。","ref":"Is that so? Pleased to work with you."},
+{"speaker":"田中 (Tanaka)","target":"こちらこそ、よろしくお願いします。","ref":"The pleasure is mine."},
+{"speaker":"佐藤 (Satō)","target":"田中さんの席はあそこです。","ref":"Your desk is over there, Mr. Tanaka."},
+{"speaker":"田中 (Tanaka)","target":"ありがとうございます。分からないことがあったら、聞いてもいいですか。","ref":"Thank you. If there's something I don't understand, may I ask you?"},
+{"speaker":"佐藤 (Satō)","target":"もちろんです。いつでも聞いてください。","ref":"Of course. Please ask anytime."},
+{"speaker":"田中 (Tanaka)","target":"助かります。頑張ります。","ref":"That's a big help. I'll do my best."}
+],"vocab":["はじめまして (nice to meet you)","申します (to be called, humble)","営業部 (sales department)","席 (seat/desk)","頑張る (to do one's best)"],"note":"On a first day, Japanese workers exchange 名刺 (business cards) with both hands and a slight bow. 〜と申します is the humble form of 〜と言います, standard for introducing yourself in business."},
+{"title":"ラーメン屋で注文 (Ordering at a Ramen Shop)","scene":"A customer orders at a busy ramen restaurant and asks about toppings.","level":"Beginner","lines":[
+{"speaker":"店員 (Staff)","target":"いらっしゃいませ。何名様ですか。","ref":"Welcome. How many people?"},
+{"speaker":"客 (Customer)","target":"一人です。","ref":"Just one."},
+{"speaker":"店員 (Staff)","target":"こちらへどうぞ。ご注文はお決まりですか。","ref":"This way, please. Have you decided on your order?"},
+{"speaker":"客 (Customer)","target":"醤油ラーメンをください。","ref":"I'll have the soy sauce ramen, please."},
+{"speaker":"店員 (Staff)","target":"トッピングはいかがですか。味玉やチャーシューがあります。","ref":"How about toppings? We have a seasoned egg and roast pork."},
+{"speaker":"客 (Customer)","target":"じゃあ、味玉を追加してください。","ref":"Then please add a seasoned egg."},
+{"speaker":"店員 (Staff)","target":"かしこまりました。麺の硬さはどうしますか。","ref":"Certainly. How would you like the noodle firmness?"},
+{"speaker":"客 (Customer)","target":"普通でお願いします。","ref":"Normal, please."},
+{"speaker":"店員 (Staff)","target":"少々お待ちください。","ref":"Please wait a moment."},
+{"speaker":"客 (Customer)","target":"すみません、お水をもらえますか。","ref":"Excuse me, could I get some water?"}
+],"vocab":["いらっしゃいませ (welcome)","注文 (order)","トッピング (topping)","追加 (addition)","麺の硬さ (noodle firmness)"],"note":"Slurping noodles loudly is not rude in Japan — it is considered a sign you're enjoying the meal. Water (お冷 or お水) and tea are self-serve or free in most ramen shops."},
+{"title":"渋谷で道を聞く (Asking Directions in Shibuya)","scene":"A tourist near Shibuya station asks a passer-by for help finding a convenience store and a café.","level":"Intermediate","lines":[
+{"speaker":"旅行者 (Tourist)","target":"すみません、ちょっと道を教えていただけますか。","ref":"Excuse me, could you tell me the way?"},
+{"speaker":"通行人 (Passer-by)","target":"はい、どちらへ行きたいんですか。","ref":"Sure, where would you like to go?"},
+{"speaker":"旅行者 (Tourist)","target":"近くにコンビニはありますか。","ref":"Is there a convenience store nearby?"},
+{"speaker":"通行人 (Passer-by)","target":"ええ、あの信号を右に曲がると、すぐにあります。","ref":"Yes, if you turn right at that traffic light, it's right there."},
+{"speaker":"旅行者 (Tourist)","target":"ありがとうございます。ハチ公口はどこですか。","ref":"Thank you. Where is the Hachikō exit?"},
+{"speaker":"通行人 (Passer-by)","target":"この道をまっすぐ行って、駅の方へ戻ってください。","ref":"Go straight down this street and head back toward the station."},
+{"speaker":"旅行者 (Tourist)","target":"分かりました。この辺にいいカフェはありますか。","ref":"I see. Is there a good café around here?"},
+{"speaker":"通行人 (Passer-by)","target":"コンビニの隣に静かなカフェがありますよ。","ref":"There's a quiet café next to the convenience store."},
+{"speaker":"旅行者 (Tourist)","target":"本当に助かりました。ありがとうございました。","ref":"You've really helped me. Thank you very much."},
+{"speaker":"通行人 (Passer-by)","target":"いいえ、気をつけて。","ref":"Not at all. Take care."}
+],"vocab":["道を教える (to give directions)","曲がる (to turn)","まっすぐ (straight)","隣 (next to)","気をつけて (take care)"],"note":"〜ていただけますか is a very polite way to make a request of a stranger. The Shibuya scramble crossing and the Hachikō dog statue (ハチ公) are the area's famous landmarks and common meeting points."},
+{"title":"デパートで買い物 (Shopping at a Department Store)","scene":"A customer asks a department-store clerk for help finding a size and requests gift wrapping.","level":"Intermediate","lines":[
+{"speaker":"客 (Customer)","target":"すみません、このセーターのMサイズはありますか。","ref":"Excuse me, do you have this sweater in medium?"},
+{"speaker":"店員 (Staff)","target":"少々お待ちください。ただいまお調べします。","ref":"One moment, please. I'll check right now."},
+{"speaker":"店員 (Staff)","target":"申し訳ございませんが、Mは売り切れです。Lならございます。","ref":"I'm very sorry, but medium is sold out. We do have large."},
+{"speaker":"客 (Customer)","target":"そうですか。別の色はありますか。","ref":"I see. Do you have another color?"},
+{"speaker":"店員 (Staff)","target":"はい、紺色と灰色がございます。","ref":"Yes, we have navy and gray."},
+{"speaker":"客 (Customer)","target":"じゃあ、紺色のLをください。プレゼント用です。","ref":"Then I'll take the navy in large. It's for a gift."},
+{"speaker":"店員 (Staff)","target":"かしこまりました。ラッピングもいたしましょうか。","ref":"Certainly. Shall I gift-wrap it as well?"},
+{"speaker":"客 (Customer)","target":"はい、お願いします。全部でいくらですか。","ref":"Yes, please. How much is it in total?"},
+{"speaker":"店員 (Staff)","target":"税込みで六千五百円になります。","ref":"That will be 6,500 yen, tax included."},
+{"speaker":"客 (Customer)","target":"カードで払えますか。","ref":"Can I pay by card?"},
+{"speaker":"店員 (Staff)","target":"はい、こちらでどうぞ。","ref":"Yes, right here, please."}
+],"vocab":["サイズ (size)","売り切れ (sold out)","ラッピング (gift wrapping)","税込み (tax included)","プレゼント用 (for a gift)"],"note":"Department-store clerks use elevated keigo like ございます and いたします. Free, beautiful gift wrapping (ラッピング) is a standard service, especially prized during gift seasons like お中元 (summer) and お歳暮 (winter)."},
+{"title":"旅館の予約電話 (Booking a Ryokan by Phone)","scene":"A guest phones a traditional inn to reserve a room with dinner included.","level":"Advanced","lines":[
+{"speaker":"旅館 (Inn)","target":"お電話ありがとうございます。山の湯旅館でございます。","ref":"Thank you for calling. This is Yama-no-Yu Inn."},
+{"speaker":"客 (Guest)","target":"予約をお願いしたいのですが。","ref":"I'd like to make a reservation."},
+{"speaker":"旅館 (Inn)","target":"ありがとうございます。ご希望の日はいつでしょうか。","ref":"Thank you. What date would you like?"},
+{"speaker":"客 (Guest)","target":"来月の十日から二泊したいです。","ref":"I'd like to stay two nights from the tenth of next month."},
+{"speaker":"旅館 (Inn)","target":"かしこまりました。何名様でしょうか。","ref":"Certainly. How many guests?"},
+{"speaker":"客 (Guest)","target":"大人二人です。夕食は付いていますか。","ref":"Two adults. Is dinner included?"},
+{"speaker":"旅館 (Inn)","target":"はい、夕食と朝食が付いております。会席料理でございます。","ref":"Yes, dinner and breakfast are included. It's a kaiseki course."},
+{"speaker":"客 (Guest)","target":"それは楽しみです。温泉も入れますか。","ref":"That's something to look forward to. Can we use the hot spring too?"},
+{"speaker":"旅館 (Inn)","target":"もちろんです。露天風呂もございます。","ref":"Of course. We also have an open-air bath."},
+{"speaker":"客 (Guest)","target":"では、その日でお願いします。","ref":"Then please book us for those dates."},
+{"speaker":"旅館 (Inn)","target":"承知いたしました。お名前を頂戴できますか。","ref":"Understood. May I have your name?"}
+],"vocab":["予約 (reservation)","二泊 (two nights)","夕食 (dinner)","会席料理 (kaiseki course meal)","露天風呂 (open-air bath)"],"note":"Ryokan stays are typically priced per person and include an elaborate multi-course dinner and breakfast. 頂戴できますか is an extremely polite humble way to ask for information like a name. Counting nights uses 〜泊 (haku/paku): 一泊 ippaku, 二泊 nihaku, 三泊 sanpaku."},
+{"title":"郵便局で海外発送 (Sending a Package Abroad)","scene":"A customer at a post office sends a parcel overseas and asks about cost, delivery time, and customs forms.","level":"Advanced","lines":[
+{"speaker":"客 (Customer)","target":"この荷物をアメリカに送りたいのですが。","ref":"I'd like to send this package to America."},
+{"speaker":"局員 (Clerk)","target":"かしこまりました。中身は何でしょうか。","ref":"Certainly. What are the contents?"},
+{"speaker":"客 (Customer)","target":"本とお菓子です。壊れ物はありません。","ref":"Books and sweets. There's nothing fragile."},
+{"speaker":"局員 (Clerk)","target":"航空便と船便がありますが、どちらになさいますか。","ref":"There's airmail and surface mail. Which would you like?"},
+{"speaker":"客 (Customer)","target":"航空便でお願いします。どのくらいかかりますか。","ref":"Airmail, please. How long does it take?"},
+{"speaker":"局員 (Clerk)","target":"だいたい一週間ほどで届きます。","ref":"It will arrive in about a week."},
+{"speaker":"客 (Customer)","target":"料金はいくらになりますか。","ref":"How much will the postage be?"},
+{"speaker":"局員 (Clerk)","target":"重さを量りますね。二千八百円になります。","ref":"I'll weigh it. That comes to 2,800 yen."},
+{"speaker":"局員 (Clerk)","target":"こちらの税関申告書にご記入ください。","ref":"Please fill out this customs declaration form."},
+{"speaker":"客 (Customer)","target":"分かりました。追跡番号はもらえますか。","ref":"I see. Can I get a tracking number?"},
+{"speaker":"局員 (Clerk)","target":"はい、こちらの控えに記載されております。","ref":"Yes, it's shown here on your receipt copy."},
+{"speaker":"客 (Customer)","target":"ありがとうございます。助かりました。","ref":"Thank you. That was a great help."}
+],"vocab":["荷物 (package)","航空便 (airmail)","税関申告書 (customs declaration form)","追跡番号 (tracking number)","記入する (to fill in)"],"note":"Japan Post distinguishes 航空便 (airmail, fast) from 船便 (surface/sea mail, cheap and slow), with EMS as the fastest tracked option. Customs forms (税関申告書) are required for any overseas parcel and must list contents and value in detail."}
+]}

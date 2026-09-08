@@ -1,0 +1,42 @@
+{"phases":[
+{"phase":1,"title":"Survival","dur":"Weeks 1–3","goal":"Read the Cyrillic alphabet and handle greetings, numbers, and a few survival phrases.","can":[
+"Read and write all 33 Cyrillic letters, including the vowel-reduction of unstressed о→'a'",
+"Recognize the false friends (В=v, Н=n, Р=r, С=s, У=oo) that look Latin but aren't",
+"Greet and introduce yourself: Здравствуйте, Меня зовут..., Очень приятно",
+"Count 1–20 plus 100 and 1000 and read prices in rubles",
+"Use да/нет, спасибо, пожалуйста, извините and основные survival phrases",
+"Ask 'How much?' (Сколько стоит?) and 'Where is...?' (Где...?)"
+],"daily":"20 min: alphabet tracing + reading street signs. 10 min: 5 greeting/number flashcards. 5 min: listen and repeat pronunciation aloud."},
+{"phase":2,"title":"Foundation","dur":"Weeks 4–8","goal":"Form simple present-tense sentences and start the six-case system with nominative, accusative and prepositional.","can":[
+"Conjugate 1st- and 2nd-conjugation verbs in the present (читаю, говорю)",
+"Drop 'to be' in the present and use есть/у меня есть for 'have'",
+"Use the accusative for direct objects (feminine -а → -у)",
+"Use the prepositional with в/на for location (в Москве, на столе)",
+"Handle grammatical gender (m./f./n.) and match adjective endings",
+"Ask and answer basic questions with кто, что, где, когда"
+],"daily":"15 min: verb-conjugation drills. 15 min: vocab (colors, family, food). 10 min: read a short graded dialogue and translate it aloud."},
+{"phase":3,"title":"Core Structures","dur":"Months 3–4","goal":"Master the remaining cases, verb aspect, and past/future tenses for everyday conversation.","can":[
+"Use the genitive for possession, absence (нет + gen.), and after 2/3/4 vs 5+",
+"Use the dative (мне нравится) and instrumental (работать врачом, с другом)",
+"Choose imperfective vs perfective aspect for process vs completed action",
+"Form the past tense with gender agreement (-л/-ла/-ло/-ли)",
+"Form both futures: буду + infinitive and the perfective simple future",
+"Use verbs of motion идти/ходить, ехать/ездить correctly"
+],"daily":"20 min: case-ending practice with a declension table. 15 min: aspect pairs and past-tense storytelling. 10 min: shadow a native audio clip."},
+{"phase":4,"title":"Fluency","dur":"Months 5–9","goal":"Speak in connected paragraphs using complex clauses, comparisons, and reported speech.","can":[
+"Link ideas with который, потому что, чтобы, and хотя",
+"Form comparatives (-ее) and superlatives (самый), including лучше/хуже",
+"Use imperatives (Читай!, Говорите) for requests and instructions",
+"Use conditional/subjunctive with бы for 'would' and unreal 'if'",
+"Handle reflexive verbs (-ся) and possessive свой correctly",
+"Follow and use obligatory double negation (никто не..., никогда не...)"
+],"daily":"25 min: converse or journal on one topic. 15 min: watch Russian video with subtitles. 10 min: learn 10 new words in context sentences."},
+{"phase":5,"title":"Mastery","dur":"Months 10+","goal":"Approach native-like nuance with participles, verbal adverbs, stylistic register, and idiom.","can":[
+"Use present/past participles (читающий, прочитанный) in written Russian",
+"Use verbal adverbs (читая, прочитав) for simultaneous and prior actions",
+"Switch register between formal вы-style and colloquial speech",
+"Understand aspectual and prefixal nuance across verb families (за-, пере-, до-)",
+"Grasp idioms, proverbs, and cultural allusions in literature and news",
+"Write structured essays and letters with correct stress and punctuation"
+],"daily":"30 min: read unadapted literature or news, noting participles/idioms. 20 min: write and self-correct a paragraph. 10 min: discuss abstract topics with a partner or tutor."}
+]}

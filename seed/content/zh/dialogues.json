@@ -1,0 +1,77 @@
+{"dialogues":[
+{"title":"校园初次见面 (First Meeting on Campus)","scene":"Two students introduce themselves at a Chinese university.","level":"Beginner","lines":[
+{"speaker":"李明 (Lǐ Míng)","target":"你好!我叫李明。","ref":"Hello! My name is Li Ming."},
+{"speaker":"Anna","target":"你好,李明!我叫安娜。","ref":"Hi, Li Ming! My name is Anna."},
+{"speaker":"李明 (Lǐ Míng)","target":"安娜,你是哪国人?","ref":"Anna, what country are you from?"},
+{"speaker":"Anna","target":"我是美国人。你呢?","ref":"I'm American. And you?"},
+{"speaker":"李明 (Lǐ Míng)","target":"我是中国人。你为什么学中文?","ref":"I'm Chinese. Why are you studying Chinese?"},
+{"speaker":"Anna","target":"因为我很喜欢中国文化。","ref":"Because I really like Chinese culture."},
+{"speaker":"李明 (Lǐ Míng)","target":"你的中文说得很好!","ref":"You speak Chinese very well!"},
+{"speaker":"Anna","target":"谢谢!我们做朋友吧。","ref":"Thank you! Let's be friends."},
+{"speaker":"李明 (Lǐ Míng)","target":"好啊!认识你很高兴。","ref":"Sure! Nice to meet you."}
+],"vocab":["叫 (to be called)","哪国人 (from which country)","为什么 (why)","文化 (culture)","认识 (to get to know)"],"note":"When someone praises your Chinese with 说得很好, the polite Chinese reply is often modest — 哪里哪里 (nǎlǐ nǎlǐ, 'not at all') is a classic humble response."},
+{"title":"在餐厅点菜 (Ordering at a Restaurant)","scene":"A customer orders dishes and asks about spice level.","level":"Beginner","lines":[
+{"speaker":"服务员 (Server)","target":"欢迎光临!请问几位?","ref":"Welcome! How many people, please?"},
+{"speaker":"顾客 (Customer)","target":"两位。请给我菜单。","ref":"Two. Please give me the menu."},
+{"speaker":"服务员 (Server)","target":"好的。你们想吃什么?","ref":"Okay. What would you like to eat?"},
+{"speaker":"顾客 (Customer)","target":"这个宫保鸡丁辣吗?","ref":"Is this Kung Pao chicken spicy?"},
+{"speaker":"服务员 (Server)","target":"有一点辣。可以不放辣椒。","ref":"A little spicy. We can leave out the chili."},
+{"speaker":"顾客 (Customer)","target":"好,我要一个宫保鸡丁和一碗米饭。","ref":"Okay, I'll have one Kung Pao chicken and a bowl of rice."},
+{"speaker":"服务员 (Server)","target":"要喝什么吗?","ref":"Anything to drink?"},
+{"speaker":"顾客 (Customer)","target":"两杯茶,谢谢。","ref":"Two cups of tea, thank you."},
+{"speaker":"服务员 (Server)","target":"好的,请稍等。","ref":"Okay, please wait a moment."},
+{"speaker":"顾客 (Customer)","target":"麻烦你,吃完帮我们买单。","ref":"Excuse me, please bring the bill when we're done."}
+],"vocab":["几位 (how many people)","菜单 (menu)","辣 (spicy)","米饭 (rice)","买单 (the bill)"],"note":"In China, calling out 服务员! to get the server's attention is normal and not rude. Tipping is generally not expected in mainland restaurants."},
+{"title":"在北京打车 (Taking a Taxi in Beijing)","scene":"A passenger tells the driver the destination and chats.","level":"Intermediate","lines":[
+{"speaker":"司机 (Driver)","target":"您好,去哪儿?","ref":"Hello, where to?"},
+{"speaker":"乘客 (Passenger)","target":"师傅,我去天安门。","ref":"Master (driver), I'm going to Tiananmen."},
+{"speaker":"司机 (Driver)","target":"好,系好安全带。","ref":"Okay, fasten your seatbelt."},
+{"speaker":"乘客 (Passenger)","target":"到那儿大概多少钱?","ref":"About how much will it cost to get there?"},
+{"speaker":"司机 (Driver)","target":"差不多五十块,看路上堵不堵。","ref":"Around fifty yuan, depending on the traffic."},
+{"speaker":"乘客 (Passenger)","target":"现在很堵吗?","ref":"Is it very congested now?"},
+{"speaker":"司机 (Driver)","target":"这个时间有点堵,可能要半个小时。","ref":"At this hour it's a bit jammed, it might take half an hour."},
+{"speaker":"乘客 (Passenger)","target":"没关系,不着急。","ref":"No problem, I'm not in a hurry."},
+{"speaker":"司机 (Driver)","target":"好嘞,到了我告诉您。","ref":"All right, I'll let you know when we arrive."},
+{"speaker":"乘客 (Passenger)","target":"谢谢师傅,可以用手机付款吗?","ref":"Thanks, driver. Can I pay by phone?"},
+{"speaker":"司机 (Driver)","target":"可以,扫这个码就行。","ref":"Sure, just scan this code."}
+],"vocab":["师傅 (master/driver)","安全带 (seatbelt)","堵 (traffic jam)","着急 (in a hurry)","扫码 (scan a code)"],"note":"师傅 (shīfu) is the respectful way to address a taxi driver, cook, or any skilled worker. Mobile payment via QR code is nearly universal in Chinese cities."},
+{"title":"在市场砍价 (Bargaining at the Market)","scene":"A shopper haggles over a scarf and pays with WeChat.","level":"Intermediate","lines":[
+{"speaker":"老板 (Vendor)","target":"看看吧,这条围巾很好看!","ref":"Take a look, this scarf is really pretty!"},
+{"speaker":"顾客 (Customer)","target":"这个多少钱?","ref":"How much is this one?"},
+{"speaker":"老板 (Vendor)","target":"一百八十块。","ref":"One hundred eighty yuan."},
+{"speaker":"顾客 (Customer)","target":"太贵了!便宜一点吧。","ref":"Too expensive! Make it a bit cheaper."},
+{"speaker":"老板 (Vendor)","target":"那你想出多少?","ref":"Then how much do you want to offer?"},
+{"speaker":"顾客 (Customer)","target":"一百块怎么样?","ref":"How about one hundred yuan?"},
+{"speaker":"老板 (Vendor)","target":"太低了,一百五吧。","ref":"That's too low, let's say one hundred fifty."},
+{"speaker":"顾客 (Customer)","target":"一百二,可以我就买。","ref":"A hundred twenty — if that works, I'll buy it."},
+{"speaker":"老板 (Vendor)","target":"好吧,交个朋友,一百二拿走。","ref":"Fine, for friendship's sake, one twenty and it's yours."},
+{"speaker":"顾客 (Customer)","target":"我用微信付,给我看看二维码。","ref":"I'll pay by WeChat, show me the QR code."},
+{"speaker":"老板 (Vendor)","target":"扫这里,谢谢惠顾!","ref":"Scan here, thanks for your business!"}
+],"vocab":["围巾 (scarf)","太贵了 (too expensive)","便宜 (cheap)","砍价 (to bargain)","二维码 (QR code)"],"note":"Bargaining is expected at open markets but not in malls or supermarkets. Starting around half the asking price and settling in the middle is a common rhythm."},
+{"title":"电话订酒店 (Booking a Hotel by Phone)","scene":"A traveler calls a hotel to reserve a room.","level":"Advanced","lines":[
+{"speaker":"前台 (Front Desk)","target":"您好,这里是阳光酒店,请问有什么可以帮您?","ref":"Hello, this is Sunshine Hotel, how may I help you?"},
+{"speaker":"客人 (Guest)","target":"你好,我想订一个房间。","ref":"Hello, I'd like to book a room."},
+{"speaker":"前台 (Front Desk)","target":"请问您要住几天?","ref":"How many nights will you be staying?"},
+{"speaker":"客人 (Guest)","target":"从这周五到周日,一共两晚。","ref":"From this Friday to Sunday, two nights in total."},
+{"speaker":"前台 (Front Desk)","target":"您要单人间还是双人间?","ref":"Would you like a single or a double room?"},
+{"speaker":"客人 (Guest)","target":"一个双人间,请问多少钱一晚?","ref":"A double room, how much is it per night?"},
+{"speaker":"前台 (Front Desk)","target":"每晚三百八十块,含早餐。","ref":"Three hundred eighty yuan per night, breakfast included."},
+{"speaker":"客人 (Guest)","target":"可以要一个安静的房间吗?","ref":"Could I have a quiet room?"},
+{"speaker":"前台 (Front Desk)","target":"没问题,我给您安排高层。","ref":"No problem, I'll arrange a room on a higher floor."},
+{"speaker":"客人 (Guest)","target":"太好了,我姓王,电话是139开头的。","ref":"Great, my surname is Wang, my number starts with 139."},
+{"speaker":"前台 (Front Desk)","target":"好的,王先生,已经为您预订好了。","ref":"Okay, Mr. Wang, your reservation is confirmed."}
+],"vocab":["订房间 (to book a room)","双人间 (double room)","含早餐 (breakfast included)","安静 (quiet)","预订 (to reserve)"],"note":"Chinese hotels usually require you to leave a deposit (押金 yājīn) at check-in, refunded when you return the key card and settle the bill."},
+{"title":"在药店看病 (At the Pharmacy)","scene":"A customer describes symptoms and asks for medicine.","level":"Advanced","lines":[
+{"speaker":"药剂师 (Pharmacist)","target":"您好,您哪里不舒服?","ref":"Hello, what's bothering you?"},
+{"speaker":"顾客 (Customer)","target":"我从昨天开始头疼,还有一点发烧。","ref":"I've had a headache since yesterday, and a slight fever too."},
+{"speaker":"药剂师 (Pharmacist)","target":"有没有咳嗽或者嗓子疼?","ref":"Do you have a cough or a sore throat?"},
+{"speaker":"顾客 (Customer)","target":"嗓子有点疼,不怎么咳嗽。","ref":"My throat hurts a bit, but I'm not coughing much."},
+{"speaker":"药剂师 (Pharmacist)","target":"应该是感冒了。我给您拿点感冒药。","ref":"It's probably a cold. I'll get you some cold medicine."},
+{"speaker":"顾客 (Customer)","target":"这个药怎么吃?","ref":"How do I take this medicine?"},
+{"speaker":"药剂师 (Pharmacist)","target":"一天三次,一次两片,饭后吃。","ref":"Three times a day, two tablets each time, after meals."},
+{"speaker":"顾客 (Customer)","target":"吃了以后可以开车吗?","ref":"Can I drive after taking it?"},
+{"speaker":"药剂师 (Pharmacist)","target":"最好别开,这个药会让人想睡觉。","ref":"Better not — this medicine can make you drowsy."},
+{"speaker":"顾客 (Customer)","target":"明白了。多喝水对吗?","ref":"I understand. Drink plenty of water, right?"},
+{"speaker":"药剂师 (Pharmacist)","target":"对,多喝水,多休息,很快就好了。","ref":"Yes, drink lots of water, rest well, and you'll recover soon."}
+],"vocab":["不舒服 (unwell)","发烧 (to have a fever)","感冒 (a cold)","饭后 (after meals)","休息 (to rest)"],"note":"Chinese pharmacies (药店) often stock both Western medicine (西药) and traditional Chinese medicine (中药); staff may ask which you prefer for a common cold."}
+]}

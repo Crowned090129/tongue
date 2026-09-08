@@ -1,0 +1,72 @@
+{"dialogues":[
+{"title":"Conociéndose en una fiesta","scene":"Two strangers meet at a social gathering and introduce themselves.","level":"Beginner","lines":[
+{"speaker":"Ana","target":"Hola, buenas noches. ¿Cómo te llamas?","ref":"Hi, good evening. What's your name?"},
+{"speaker":"Diego","target":"Me llamo Diego. ¿Y tú?","ref":"My name is Diego. And you?"},
+{"speaker":"Ana","target":"Yo soy Ana. Mucho gusto.","ref":"I'm Ana. Nice to meet you."},
+{"speaker":"Diego","target":"Encantado. ¿De dónde eres?","ref":"Pleased to meet you. Where are you from?"},
+{"speaker":"Ana","target":"Soy de México, pero vivo aquí en Madrid. ¿Y tú?","ref":"I'm from Mexico, but I live here in Madrid. And you?"},
+{"speaker":"Diego","target":"Soy de Sevilla. ¿A qué te dedicas?","ref":"I'm from Seville. What do you do for work?"},
+{"speaker":"Ana","target":"Soy profesora de inglés. ¿Y tú en qué trabajas?","ref":"I'm an English teacher. And what do you do?"},
+{"speaker":"Diego","target":"Trabajo como ingeniero. Oye, ¿quieres tomar algo?","ref":"I work as an engineer. Hey, do you want to get a drink?"},
+{"speaker":"Ana","target":"Sí, con mucho gusto. Gracias.","ref":"Yes, gladly. Thank you."}
+],"vocab":["me llamo (my name is)","¿de dónde eres? (where are you from?)","mucho gusto (nice to meet you)","¿a qué te dedicas? (what do you do?)","encantado (pleased to meet you)"],"note":"In Spain a man says encantado and a woman says encantada; the ending agrees with the speaker's own gender, not the listener's."},
+{"title":"En el restaurante","scene":"A customer orders a meal and asks for the bill at a restaurant.","level":"Beginner","lines":[
+{"speaker":"Camarero","target":"Buenas tardes. ¿Mesa para cuántas personas?","ref":"Good afternoon. A table for how many people?"},
+{"speaker":"Cliente","target":"Para dos, por favor. ¿Nos trae la carta?","ref":"For two, please. Could you bring us the menu?"},
+{"speaker":"Camarero","target":"Aquí tiene. ¿Qué van a tomar?","ref":"Here you go. What are you going to have?"},
+{"speaker":"Cliente","target":"¿Qué me recomienda?","ref":"What do you recommend?"},
+{"speaker":"Camarero","target":"La paella de mariscos está muy buena hoy.","ref":"The seafood paella is very good today."},
+{"speaker":"Cliente","target":"Perfecto. Para mí la paella y una copa de vino tinto.","ref":"Perfect. For me the paella and a glass of red wine."},
+{"speaker":"Camarero","target":"Muy bien. ¿Algo más?","ref":"Very good. Anything else?"},
+{"speaker":"Cliente","target":"No, gracias. Más tarde, la cuenta, por favor.","ref":"No, thank you. Later, the bill, please."},
+{"speaker":"Camarero","target":"Por supuesto. Enseguida se la traigo.","ref":"Of course. I'll bring it to you right away."}
+],"vocab":["la carta (the menu)","¿qué me recomienda? (what do you recommend?)","para mí (for me)","la cuenta (the bill)","enseguida (right away)"],"note":"In Spain the menu is la carta; el menú usually means the fixed-price set menu (menú del día), a great-value lunch option."},
+{"title":"Pedir direcciones","scene":"A tourist asks a passerby how to find the metro station.","level":"Beginner","lines":[
+{"speaker":"Turista","target":"Disculpe, ¿dónde está la estación de metro más cercana?","ref":"Excuse me, where is the nearest metro station?"},
+{"speaker":"Local","target":"Está muy cerca. Siga todo recto por esta calle.","ref":"It's very close. Go straight ahead down this street."},
+{"speaker":"Turista","target":"¿Todo recto? ¿Y luego?","ref":"Straight ahead? And then?"},
+{"speaker":"Local","target":"Luego gire a la derecha en el semáforo.","ref":"Then turn right at the traffic light."},
+{"speaker":"Turista","target":"De acuerdo. ¿Está lejos?","ref":"All right. Is it far?"},
+{"speaker":"Local","target":"No, está a unos cinco minutos a pie.","ref":"No, it's about five minutes on foot."},
+{"speaker":"Turista","target":"¿Hay una farmacia por aquí también?","ref":"Is there a pharmacy around here too?"},
+{"speaker":"Local","target":"Sí, hay una al lado del banco, a la izquierda.","ref":"Yes, there's one next to the bank, on the left."},
+{"speaker":"Turista","target":"Muchas gracias por su ayuda.","ref":"Thank you very much for your help."},
+{"speaker":"Local","target":"De nada. ¡Que tenga un buen día!","ref":"You're welcome. Have a nice day!"}
+],"vocab":["todo recto (straight ahead)","gire a la derecha (turn right)","a la izquierda (on the left)","¿está lejos? (is it far?)","al lado de (next to)"],"note":"Spaniards often use the formal usted with strangers (siga, gire, tenga are usted commands); it signals politeness to someone you don't know."},
+{"title":"Comprando ropa","scene":"A shopper asks about sizes, colors and prices while trying on clothes.","level":"Intermediate","lines":[
+{"speaker":"Dependienta","target":"Buenos días, ¿en qué puedo ayudarle?","ref":"Good morning, how can I help you?"},
+{"speaker":"Cliente","target":"Busco una camisa azul. ¿Tienen mi talla?","ref":"I'm looking for a blue shirt. Do you have my size?"},
+{"speaker":"Dependienta","target":"¿Qué talla usa usted?","ref":"What size do you wear?"},
+{"speaker":"Cliente","target":"Uso la mediana. ¿Puedo probármela?","ref":"I wear medium. Can I try it on?"},
+{"speaker":"Dependienta","target":"Claro, el probador está al fondo a la derecha.","ref":"Of course, the fitting room is at the back on the right."},
+{"speaker":"Cliente","target":"Me queda un poco grande. ¿La tiene más pequeña?","ref":"It's a bit big on me. Do you have it in a smaller size?"},
+{"speaker":"Dependienta","target":"Sí, aquí tiene la pequeña. Le queda muy bien.","ref":"Yes, here's the small. It suits you very well."},
+{"speaker":"Cliente","target":"Me la llevo. ¿Cuánto cuesta?","ref":"I'll take it. How much does it cost?"},
+{"speaker":"Dependienta","target":"Son veinticinco euros. ¿Paga con tarjeta o en efectivo?","ref":"That's twenty-five euros. Will you pay by card or in cash?"},
+{"speaker":"Cliente","target":"Con tarjeta, por favor.","ref":"By card, please."}
+],"vocab":["la talla (size)","probarse (to try on)","el probador (fitting room)","me queda grande (it's big on me)","me lo llevo (I'll take it)"],"note":"Use quedar to talk about fit and suitability: me queda grande (it's too big on me), te queda bien (it looks good on you) — a very common everyday construction."},
+{"title":"Cita con el médico","scene":"A patient phones a clinic to book an appointment and describe symptoms.","level":"Intermediate","lines":[
+{"speaker":"Recepcionista","target":"Clínica San Rafael, buenos días. ¿En qué puedo ayudarle?","ref":"San Rafael Clinic, good morning. How can I help you?"},
+{"speaker":"Paciente","target":"Buenos días. Quisiera pedir una cita con el médico.","ref":"Good morning. I'd like to make an appointment with the doctor."},
+{"speaker":"Recepcionista","target":"¿Qué le pasa? ¿Cuáles son sus síntomas?","ref":"What's wrong? What are your symptoms?"},
+{"speaker":"Paciente","target":"Me duele mucho la garganta y tengo fiebre desde ayer.","ref":"My throat hurts a lot and I've had a fever since yesterday."},
+{"speaker":"Recepcionista","target":"Entiendo. ¿Puede venir hoy a las cuatro de la tarde?","ref":"I see. Can you come today at four in the afternoon?"},
+{"speaker":"Paciente","target":"Sí, me viene bien. ¿Necesito traer algo?","ref":"Yes, that works for me. Do I need to bring anything?"},
+{"speaker":"Recepcionista","target":"Sí, traiga su tarjeta sanitaria y su documento de identidad.","ref":"Yes, bring your health card and your ID document."},
+{"speaker":"Paciente","target":"De acuerdo. ¿A nombre de quién hago la cita?","ref":"All right. Under whose name should I make the appointment?"},
+{"speaker":"Recepcionista","target":"A su nombre. ¿Me lo puede deletrear, por favor?","ref":"Under your name. Can you spell it for me, please?"},
+{"speaker":"Paciente","target":"Sí, claro. Muchas gracias. Hasta luego.","ref":"Yes, of course. Thank you very much. See you later."}
+],"vocab":["pedir una cita (to make an appointment)","me duele (it hurts)","tener fiebre (to have a fever)","los síntomas (symptoms)","me viene bien (that works for me)"],"note":"Doler works like gustar: the body part is the subject, so you say me duele la cabeza (my head hurts), not 'yo duelo'. Use duelen for plural body parts: me duelen los pies."},
+{"title":"En la oficina de Correos","scene":"A customer sends a package at a Spanish post office and asks about postage.","level":"Advanced","lines":[
+{"speaker":"Cliente","target":"Buenos días. Quería enviar este paquete a Barcelona.","ref":"Good morning. I'd like to send this package to Barcelona."},
+{"speaker":"Empleado","target":"Muy bien. ¿Qué contiene y cuánto pesa, más o menos?","ref":"Very well. What's inside and roughly how much does it weigh?"},
+{"speaker":"Cliente","target":"Son unos libros. Creo que pesa alrededor de dos kilos.","ref":"It's some books. I think it weighs around two kilos."},
+{"speaker":"Empleado","target":"Vamos a pesarlo. Dos kilos y cien gramos. ¿Urgente o normal?","ref":"Let's weigh it. Two kilos and a hundred grams. Express or standard?"},
+{"speaker":"Cliente","target":"¿Cuánto tardaría cada uno en llegar?","ref":"How long would each one take to arrive?"},
+{"speaker":"Empleado","target":"El urgente llega mañana; el normal, en tres o cuatro días.","ref":"Express arrives tomorrow; standard, in three or four days."},
+{"speaker":"Cliente","target":"Prefiero el normal, entonces. ¿Cuánto le debo?","ref":"I prefer standard, then. How much do I owe you?"},
+{"speaker":"Empleado","target":"Son ocho euros con cincuenta. Rellene este formulario, por favor.","ref":"That's eight euros fifty. Please fill out this form."},
+{"speaker":"Cliente","target":"¿Podría darme también un justificante del envío?","ref":"Could you also give me a proof of shipment?"},
+{"speaker":"Empleado","target":"Por supuesto. Aquí tiene el resguardo con el número de seguimiento.","ref":"Of course. Here's the receipt with the tracking number."}
+],"vocab":["enviar un paquete (to send a package)","¿cuánto pesa? (how much does it weigh?)","rellenar un formulario (to fill out a form)","el número de seguimiento (tracking number)","¿cuánto le debo? (how much do I owe you?)"],"note":"Correos is Spain's national postal service. Spaniards often write prices as 'ocho euros con cincuenta' (eight euros with fifty) rather than using a decimal point out loud."}
+]}

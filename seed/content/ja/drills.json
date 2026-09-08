@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"Put 食べる (to eat) into polite present ます-form.","a":"食べます","hint":"Ichidan verb: drop る, add ます. Romaji: tabemasu.","type":"Conjugation"},
+{"q":"Put 行く (to go) into polite past.","a":"行きました","hint":"Godan: 行き + ました. Romaji: ikimashita.","type":"Conjugation"},
+{"q":"Give the て-form of 飲む (to drink).","a":"飲んで","hint":"む/ぶ/ぬ verbs take んで. Romaji: nonde.","type":"Conjugation"},
+{"q":"Give the polite negative of 話す (to speak): 'do not speak'.","a":"話しません","hint":"Stem 話し + ません. Romaji: hanashimasen.","type":"Conjugation"},
+{"q":"Put する (to do) into polite past.","a":"しました","hint":"する is irregular: し + ました. Romaji: shimashita.","type":"Conjugation"},
+{"q":"Give the potential form (can eat) of 食べる.","a":"食べられる","hint":"Ichidan potential: drop る, add られる. Romaji: taberareru.","type":"Conjugation"},
+{"q":"How do you say 'water' in Japanese?","a":"水","hint":"Romaji: mizu; note 湯 (yu) is hot water.","type":"Vocab"},
+{"q":"How do you say 'station' in Japanese?","a":"駅","hint":"Romaji: eki.","type":"Vocab"},
+{"q":"What is the Japanese word for 'friend'?","a":"友達","hint":"Romaji: tomodachi.","type":"Vocab"},
+{"q":"How do you say 'delicious' (い-adjective) in Japanese?","a":"おいしい","hint":"Romaji: oishii; casual うまい umai.","type":"Vocab"},
+{"q":"What is the Japanese word for 'tomorrow'?","a":"明日","hint":"Romaji: ashita (or asu, more formal).","type":"Vocab"},
+{"q":"Fill in the particle: 私___学生です (As for me, I'm a student).","a":"は","hint":"Topic marker は, pronounced 'wa'.","type":"Grammar"},
+{"q":"Fill in the particle for the direct object: パン___食べます (I eat bread).","a":"を","hint":"を marks the direct object; pronounced 'o'.","type":"Grammar"},
+{"q":"Fill in the particle: 東京___行きます (I go to Tokyo).","a":"に","hint":"に (or へ) marks destination; へ is read 'e'.","type":"Grammar"},
+{"q":"Fill in the particle for place of action: 図書館___勉強します (I study at the library).","a":"で","hint":"で marks where an action occurs.","type":"Grammar"},
+{"q":"How do you say the number 8 in Japanese (kanji)?","a":"八","hint":"Romaji: hachi.","type":"Numbers"},
+{"q":"How do you say '3 o'clock' in Japanese?","a":"三時","hint":"Number + 時 (ji). Romaji: sanji.","type":"Numbers"},
+{"q":"How do you say 'Thank you' politely in Japanese?","a":"ありがとうございます","hint":"Romaji: arigatō gozaimasu.","type":"Phrase"},
+{"q":"How do you say 'Excuse me / I'm sorry' (all-purpose) in Japanese?","a":"すみません","hint":"Romaji: sumimasen; also used to get attention.","type":"Phrase"},
+{"q":"How do you ask 'How much is it?' in Japanese?","a":"いくらですか","hint":"Romaji: ikura desu ka.","type":"Phrase"}
+]}

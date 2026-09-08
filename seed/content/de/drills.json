@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I am' in German?","a":"ich bin","hint":"sein is irregular: ich bin, du bist, er ist","type":"Conjugation"},
+{"q":"'you (informal) have' in German?","a":"du hast","hint":"haben drops the b: ich habe → du hast, er hat","type":"Conjugation"},
+{"q":"'he goes' in German?","a":"er geht","hint":"regular verb gehen; er/sie/es always ends in -t","type":"Conjugation"},
+{"q":"'we come' in German?","a":"wir kommen","hint":"wir and sie(they) use the full infinitive form -en","type":"Conjugation"},
+{"q":"'she drives' (fahren) in German?","a":"sie fährt","hint":"stem-changing verb: a→ä in du and er/sie/es","type":"Conjugation"},
+{"q":"'I ate' (Perfekt of essen) in German?","a":"ich habe gegessen","hint":"haben + Partizip II; essen is strong: gegessen","type":"Conjugation"},
+{"q":"'the water' in German (with article)?","a":"das Wasser","hint":"Wasser is neuter — das, and all nouns are capitalised","type":"Vocab"},
+{"q":"'bread' in German (with article)?","a":"das Brot","hint":"das Brot; rolls are die Brötchen","type":"Vocab"},
+{"q":"'thank you' in German?","a":"danke","hint":"stronger: danke schön or vielen Dank","type":"Vocab"},
+{"q":"'to work' in German?","a":"arbeiten","hint":"die Arbeit = work/job (noun)","type":"Vocab"},
+{"q":"'red' in German?","a":"rot","hint":"colours: rot, blau, grün, gelb","type":"Vocab"},
+{"q":"Accusative of 'der Mann' (I see ___)?","a":"den Mann","hint":"only masculine changes in accusative: der → den","type":"Grammar"},
+{"q":"Dative article for 'die Frau' (I give ___)?","a":"der Frau","hint":"feminine dative: die → der (ich gebe der Frau…)","type":"Grammar"},
+{"q":"Negate a noun: 'I have ___ time' (no time)?","a":"keine Zeit","hint":"use kein/keine (not nicht) to negate nouns; Zeit is feminine","type":"Grammar"},
+{"q":"Gender article for 'Mädchen' (girl)?","a":"das Mädchen","hint":"nouns ending in -chen are always neuter, das","type":"Grammar"},
+{"q":"'twenty-one' in German?","a":"einundzwanzig","hint":"units first: ein-und-zwanzig (one-and-twenty)","type":"Numbers"},
+{"q":"How do you say the time 8:30 in German?","a":"halb neun","hint":"halb points to the NEXT hour: halb neun = half to nine","type":"Numbers"},
+{"q":"How do you ask 'How much does that cost?' in German?","a":"Wie viel kostet das?","hint":"kosten = to cost; das = that","type":"Phrase"},
+{"q":"How do you say 'I would like...' politely in German?","a":"Ich hätte gern...","hint":"Konjunktiv II of haben; softer than ich will","type":"Phrase"},
+{"q":"How do you say 'I don't understand' in German?","a":"Ich verstehe nicht","hint":"nicht comes after the conjugated verb","type":"Phrase"}
+]}

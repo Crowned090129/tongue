@@ -1,0 +1,74 @@
+{"dialogues":[
+{"title":"Meeting and Introducing Yourself","scene":"Two people meet for the first time at a language center and introduce themselves in formal Arabic.","level":"Beginner","lines":[
+{"speaker":"سامي","target":"السَّلامُ عَلَيْكُم.","ref":"Peace be upon you (hello)."},
+{"speaker":"لَيْلى","target":"وعَلَيْكُمُ السَّلام. أَهْلاً وسَهْلاً.","ref":"And peace be upon you. Welcome."},
+{"speaker":"سامي","target":"اسْمي سامي. ما اسْمُكِ؟","ref":"My name is Sami. What is your name?"},
+{"speaker":"لَيْلى","target":"اسْمي لَيْلى. سُرِرْتُ بِلِقائِكَ.","ref":"My name is Layla. Nice to meet you."},
+{"speaker":"سامي","target":"مِنْ أَيْنَ أَنْتِ؟","ref":"Where are you from?"},
+{"speaker":"لَيْلى","target":"أَنا مِنْ لُبْنان. وأَنْت؟","ref":"I am from Lebanon. And you?"},
+{"speaker":"سامي","target":"أَنا مِنْ مِصْر. لِماذا تَتَعَلَّمينَ العَرَبيّةَ؟","ref":"I am from Egypt. Why are you learning Arabic?"},
+{"speaker":"لَيْلى","target":"أُحِبُّ اللُّغةَ والثَّقافةَ العَرَبيّة.","ref":"I love the Arabic language and culture."},
+{"speaker":"سامي","target":"رائِع! أَتَمَنّى لَكِ التَّوْفيقَ.","ref":"Wonderful! I wish you success."},
+{"speaker":"لَيْلى","target":"شُكْراً جَزيلاً. مَعَ السَّلامة.","ref":"Thank you very much. Goodbye."}
+],"vocab":["اسم ism (name)","سُرِرْتُ بِلِقائِك surirtu bi-liqāʾik (nice to meet you)","مِنْ أَيْن min ayna (from where)","التَّوْفيق at-tawfīq (success)"],"note":"Arabs often ask 'where are you from?' early in a conversation; it signals genuine interest, not intrusion. The reply al-ḥamdu lillāh ('praise God') is expected to 'how are you?' regardless of your actual mood."},
+{"title":"At a Middle Eastern Restaurant","scene":"A customer orders mezze, a main dish, and tea, then asks for the bill.","level":"Beginner","lines":[
+{"speaker":"النّادِل","target":"مَساءُ الخَيْر. تَفَضَّلوا.","ref":"Good evening. Please, come in."},
+{"speaker":"الزَّبون","target":"مَساءُ النّور. القائمة، مِنْ فَضْلِك.","ref":"Good evening. The menu, please."},
+{"speaker":"النّادِل","target":"تَفَضَّل. ماذا تُحِبُّ أَنْ تَطْلُب؟","ref":"Here you are. What would you like to order?"},
+{"speaker":"الزَّبون","target":"أُريدُ حُمُّصاً وسَلَطةً في البِداية.","ref":"I want hummus and a salad to start."},
+{"speaker":"النّادِل","target":"وماذا بَعْدَ ذٰلِك؟","ref":"And after that?"},
+{"speaker":"الزَّبون","target":"دَجاجاً مَعَ الأَرُزّ، مِنْ فَضْلِك.","ref":"Chicken with rice, please."},
+{"speaker":"النّادِل","target":"وماذا تَشْرَب؟","ref":"And what will you drink?"},
+{"speaker":"الزَّبون","target":"شايٌ بِالنَّعْناع، شُكْراً.","ref":"Tea with mint, thank you."},
+{"speaker":"النّادِل","target":"حاضِر. صَحّتَيْن.","ref":"Right away. Enjoy your meal."},
+{"speaker":"الزَّبون","target":"كانَ لَذيذاً. الحِساب، مِنْ فَضْلِك.","ref":"It was delicious. The bill, please."}
+],"vocab":["القائمة al-qāʾima (menu)","حُمُّص ḥummuṣ (hummus)","النَّعْناع an-naʿnāʿ (mint)","الحِساب al-ḥisāb (the bill)","صَحّتَيْن ṣaḥḥatayn (bon appétit)"],"note":"Mint tea (شاي بالنعناع) is a symbol of hospitality across the Arab world. Refusing an offered drink can seem impolite — accepting even a small glass honours the host."},
+{"title":"Asking for Directions in Cairo","scene":"A visitor stops a passer-by to find a mosque and then a bank.","level":"Intermediate","lines":[
+{"speaker":"الزّائِر","target":"لَوْ سَمَحْت، أَيْنَ المَسْجِدُ القَريب؟","ref":"Excuse me, where is the nearby mosque?"},
+{"speaker":"المارّ","target":"اِمْشِ مُسْتَقيماً ثُمَّ انْعَطِفْ يَميناً.","ref":"Walk straight ahead then turn right."},
+{"speaker":"الزّائِر","target":"هَلْ هُوَ بَعيدٌ عَنْ هُنا؟","ref":"Is it far from here?"},
+{"speaker":"المارّ","target":"لا، عَلى بُعْدِ خَمْسِ دَقائِقَ سَيْراً.","ref":"No, about five minutes on foot."},
+{"speaker":"الزّائِر","target":"شُكْراً. وأَيْنَ أَقْرَبُ بَنْك؟","ref":"Thank you. And where is the nearest bank?"},
+{"speaker":"المارّ","target":"البَنْكُ بِجانِبِ المَسْجِد، عَلى اليَسار.","ref":"The bank is next to the mosque, on the left."},
+{"speaker":"الزّائِر","target":"مُمْتاز. وكَيْفَ آخُذُ سيّارةَ أُجْرة؟","ref":"Excellent. And how do I get a taxi?"},
+{"speaker":"المارّ","target":"هُناكَ سَيّاراتُ أُجْرةٍ أَمامَ البَنْك.","ref":"There are taxis in front of the bank."},
+{"speaker":"الزّائِر","target":"شُكْراً جَزيلاً عَلى مُساعَدَتِك.","ref":"Thank you very much for your help."},
+{"speaker":"المارّ","target":"العَفْو. مَعَ السَّلامة.","ref":"You're welcome. Goodbye."}
+],"vocab":["لَوْ سَمَحْت law samaḥt (excuse me)","مُسْتَقيماً mustaqīman (straight ahead)","يَمين / يَسار yamīn / yasār (right / left)","بِجانِب bi-jānib (next to)"],"note":"Egyptians are famously warm with lost strangers and may walk you part of the way rather than just point. Adding min faḍlik or law samaḥt to any request softens it and is always appreciated."},
+{"title":"Bargaining at the Souk","scene":"A shopper asks about a handmade item and negotiates the price at a market.","level":"Intermediate","lines":[
+{"speaker":"الزَّبون","target":"بِكَمْ هٰذِهِ الحَقيبةُ الجِلْديّة؟","ref":"How much is this leather bag?"},
+{"speaker":"البائِع","target":"بِمِئَتَيْ جُنَيْه، وهِيَ صُنْعٌ يَدَوِيّ.","ref":"Two hundred pounds, and it's handmade."},
+{"speaker":"الزَّبون","target":"غالِيةٌ قَليلاً. هَلْ مِنْ تَخْفيض؟","ref":"It's a bit expensive. Any discount?"},
+{"speaker":"البائِع","target":"لَكَ سِعْرٌ خاصّ: مِئةٌ وسَبْعونَ جُنَيْهاً.","ref":"A special price for you: a hundred and seventy pounds."},
+{"speaker":"الزَّبون","target":"مِئةٌ وخَمْسونَ، وآخُذُها فَوْراً.","ref":"A hundred and fifty, and I'll take it right away."},
+{"speaker":"البائِع","target":"اِتَّفَقْنا. إنَّها لَكَ.","ref":"Agreed. It's yours."},
+{"speaker":"الزَّبون","target":"مُمْتاز! أَدْفَعُ نَقْداً.","ref":"Excellent! I'll pay in cash."},
+{"speaker":"البائِع","target":"شُكْراً. هٰذا هُوَ الباقي.","ref":"Thank you. Here is your change."},
+{"speaker":"الزَّبون","target":"الجَوْدةُ رائِعة. شُكْراً لَك.","ref":"The quality is wonderful. Thank you."},
+{"speaker":"البائِع","target":"العَفْو. عُدْ إلَيْنا مَرّةً أُخْرى.","ref":"You're welcome. Come back to us again."}
+],"vocab":["بِكَمْ bi-kam (how much)","تَخْفيض takhfīḍ (discount)","نَقْداً naqdan (in cash)","الباقي al-bāqī (the change)","اِتَّفَقْنا ittafaqnā (we agreed)"],"note":"Haggling in a souk is expected and friendly, not confrontational — starting near half the asking price is normal. Sharing tea while negotiating is common and does not obligate you to buy."},
+{"title":"A Phone Call to Arrange a Meeting","scene":"Two colleagues phone to set the time, place, and agenda for a meeting.","level":"Advanced","lines":[
+{"speaker":"خالِد","target":"آلو، مَساءُ الخَيْر يا أُسْتاذ نادِر.","ref":"Hello, good evening, Mr. Nader."},
+{"speaker":"نادِر","target":"مَساءُ النّور يا خالِد. كَيْفَ حالُك؟","ref":"Good evening, Khalid. How are you?"},
+{"speaker":"خالِد","target":"بِخَيْر، شُكْراً. أُريدُ أَنْ نُحَدِّدَ مَوْعِدَ الاجْتِماع.","ref":"Fine, thanks. I'd like us to set the meeting time."},
+{"speaker":"نادِر","target":"حَسَناً. هَلْ يُناسِبُكَ يَوْمُ الثُّلاثاء؟","ref":"Alright. Does Tuesday suit you?"},
+{"speaker":"خالِد","target":"نَعَم، في السّاعةِ العاشِرةِ صَباحاً.","ref":"Yes, at ten in the morning."},
+{"speaker":"نادِر","target":"مُمْتاز. أَيْنَ سَنَجْتَمِع؟","ref":"Excellent. Where will we meet?"},
+{"speaker":"خالِد","target":"في مَكْتَبِ الشَّرِكةِ بِالطّابِقِ الثّالِث.","ref":"In the company office on the third floor."},
+{"speaker":"نادِر","target":"وما هِيَ المَواضيعُ الرَّئيسيّة؟","ref":"And what are the main topics?"},
+{"speaker":"خالِد","target":"المِيزانيّةُ الجَديدةُ وخُطّةُ التَّسْويق.","ref":"The new budget and the marketing plan."},
+{"speaker":"نادِر","target":"اتَّفَقْنا. سَأُؤَكِّدُ الحُضورَ بِرِسالةٍ. إلى اللِّقاء.","ref":"Agreed. I'll confirm attendance by message. See you."}
+],"vocab":["مَوْعِد mawʿid (appointment)","اجْتِماع ijtimāʿ (meeting)","يُناسِبُك yunāsibuk (suits you)","المِيزانيّة al-mīzāniyya (budget)","أُؤَكِّد uʾakkid (I confirm)"],"note":"In professional Arabic, addressing someone as أُستاذ (ustādh, 'professor/sir') plus their first name is a common mark of respect. Business often opens with a brief exchange about health and family before turning to the agenda."},
+{"title":"At the Pharmacy","scene":"A customer describes symptoms and asks the pharmacist for medicine and instructions.","level":"Advanced","lines":[
+{"speaker":"الزَّبون","target":"السَّلامُ عَلَيْكُم. عِنْدي صُداعٌ وحَرارة.","ref":"Peace be upon you. I have a headache and a fever."},
+{"speaker":"الصَّيْدَليّ","target":"وعَلَيْكُمُ السَّلام. مُنْذُ مَتى تَشْعُرُ بِذٰلِك؟","ref":"And peace be upon you. Since when have you felt this?"},
+{"speaker":"الزَّبون","target":"مُنْذُ يَوْمَيْن، وأَشْعُرُ بِالتَّعَبِ أَيْضاً.","ref":"For two days, and I feel tired too."},
+{"speaker":"الصَّيْدَليّ","target":"هَلْ عِنْدَكَ حَساسيّةٌ مِنْ أَيِّ دَواء؟","ref":"Do you have an allergy to any medicine?"},
+{"speaker":"الزَّبون","target":"لا، لا أَظُنُّ ذٰلِك.","ref":"No, I don't think so."},
+{"speaker":"الصَّيْدَليّ","target":"خُذْ هٰذا الدَّواءَ حَبّةً كُلَّ ثَماني ساعات.","ref":"Take this medicine, one tablet every eight hours."},
+{"speaker":"الزَّبون","target":"هَلْ آخُذُهُ قَبْلَ الأَكْلِ أَمْ بَعْدَه؟","ref":"Do I take it before eating or after?"},
+{"speaker":"الصَّيْدَليّ","target":"بَعْدَ الأَكْلِ، واشْرَبْ ماءً كَثيراً.","ref":"After eating, and drink plenty of water."},
+{"speaker":"الزَّبون","target":"وإذا اسْتَمَرَّتِ الحَرارة؟","ref":"And if the fever continues?"},
+{"speaker":"الصَّيْدَليّ","target":"راجِعْ طَبيباً. سَلامَتُك.","ref":"See a doctor. Get well soon."}
+],"vocab":["صُداع ṣudāʿ (headache)","حَرارة ḥarāra (fever)","دَواء dawāʾ (medicine)","حَساسيّة ḥasāsiyya (allergy)","سَلامَتُك salāmatuk (get well soon)"],"note":"Pharmacies in many Arab countries dispense a wide range of medicines without a prescription, and the pharmacist is often the first port of call for minor ailments. سَلامَتُك (salāmatuk) is the warm standard way to wish a sick person well; the reply is Allāh yusallimak."}
+]}

@@ -1,0 +1,79 @@
+{"dialogues":[
+{"title":"Introductions at a Dinner Party","scene":"Two guests meet for the first time at a friend's dinner party, moving from formal to informal address.","level":"Beginner","lines":[
+{"speaker":"Giulia","target":"Buonasera! Io sono Giulia. E Lei?","ref":"Good evening! I'm Giulia. And you?"},
+{"speaker":"Marco","target":"Piacere, Giulia. Mi chiamo Marco.","ref":"Nice to meet you, Giulia. My name is Marco."},
+{"speaker":"Giulia","target":"Piacere mio! Come sta?","ref":"My pleasure! How are you?"},
+{"speaker":"Marco","target":"Molto bene, grazie. Possiamo darci del tu?","ref":"Very well, thanks. Can we use 'tu' (informal)?"},
+{"speaker":"Giulia","target":"Certo! Allora, di dove sei?","ref":"Of course! So, where are you from?"},
+{"speaker":"Marco","target":"Sono di Napoli, ma vivo a Milano. E tu?","ref":"I'm from Naples, but I live in Milan. And you?"},
+{"speaker":"Giulia","target":"Io sono di Firenze. Come conosci Paolo?","ref":"I'm from Florence. How do you know Paolo?"},
+{"speaker":"Marco","target":"Siamo colleghi di lavoro. E tu?","ref":"We're work colleagues. And you?"},
+{"speaker":"Giulia","target":"È un mio vecchio amico. Andiamo a tavola?","ref":"He's an old friend of mine. Shall we go to the table?"},
+{"speaker":"Marco","target":"Volentieri, ho fame!","ref":"Gladly, I'm hungry!"}
+],"vocab":["darsi del tu (to switch to informal 'you')","piacere (nice to meet you)","di dove sei? (where are you from?)","a tavola (to the table)","volentieri (gladly)"],"note":"Italians switch from formal Lei to informal tu once a friendly rapport forms; 'Possiamo darci del tu?' is the polite way to propose the switch."},
+{"title":"At the Bar for Breakfast","scene":"A customer orders coffee and a pastry at a typical Italian bar.","level":"Beginner","lines":[
+{"speaker":"Cliente","target":"Buongiorno! Un cappuccino e un cornetto, per favore.","ref":"Good morning! A cappuccino and a croissant, please."},
+{"speaker":"Barista","target":"Subito. Il cornetto lo vuole vuoto o con la crema?","ref":"Right away. Do you want the croissant plain or with cream?"},
+{"speaker":"Cliente","target":"Con la crema, grazie.","ref":"With cream, thanks."},
+{"speaker":"Barista","target":"Beve il cappuccino qui al banco o al tavolo?","ref":"Will you drink the cappuccino here at the counter or at a table?"},
+{"speaker":"Cliente","target":"Al banco, ho fretta.","ref":"At the counter, I'm in a hurry."},
+{"speaker":"Barista","target":"Ecco a Lei. Desidera altro?","ref":"Here you are. Would you like anything else?"},
+{"speaker":"Cliente","target":"No, così va bene. Quanto le devo?","ref":"No, that's fine. How much do I owe you?"},
+{"speaker":"Barista","target":"Sono due euro e cinquanta.","ref":"That's two euros fifty."},
+{"speaker":"Cliente","target":"Ecco. Grazie mille!","ref":"Here you go. Thank you very much!"},
+{"speaker":"Barista","target":"Grazie a Lei, buona giornata!","ref":"Thank you, have a good day!"}
+],"vocab":["il cornetto (croissant)","al banco (at the counter)","avere fretta (to be in a hurry)","Quanto le devo? (How much do I owe you?)","buona giornata (have a good day)"],"note":"In Italy, coffee costs less standing at the counter (al banco) than sitting at a table, where a service charge is usually added."},
+{"title":"Asking for Directions in Rome","scene":"A tourist asks a passer-by how to reach the Colosseum and nearby services.","level":"Beginner","lines":[
+{"speaker":"Turista","target":"Scusi, come si arriva al Colosseo?","ref":"Excuse me, how do you get to the Colosseum?"},
+{"speaker":"Passante","target":"È facile. Vada sempre dritto fino al semaforo.","ref":"It's easy. Go straight ahead to the traffic light."},
+{"speaker":"Turista","target":"Sempre dritto, va bene. E poi?","ref":"Straight ahead, okay. And then?"},
+{"speaker":"Passante","target":"Poi giri a destra e lo vedrà davanti a Lei.","ref":"Then turn right and you'll see it in front of you."},
+{"speaker":"Turista","target":"È lontano a piedi?","ref":"Is it far on foot?"},
+{"speaker":"Passante","target":"No, dieci minuti circa.","ref":"No, about ten minutes."},
+{"speaker":"Turista","target":"C'è una fermata dell'autobus qui vicino?","ref":"Is there a bus stop near here?"},
+{"speaker":"Passante","target":"Sì, dall'altra parte della strada.","ref":"Yes, on the other side of the street."},
+{"speaker":"Turista","target":"E una farmacia? Ho bisogno di un'aspirina.","ref":"And a pharmacy? I need an aspirin."},
+{"speaker":"Passante","target":"Ce n'è una accanto al bar.","ref":"There's one next to the café."},
+{"speaker":"Turista","target":"Grazie mille, molto gentile!","ref":"Thank you very much, very kind of you!"}
+],"vocab":["sempre dritto (straight ahead)","girare a destra (to turn right)","la fermata (the stop)","qui vicino (near here)","a piedi (on foot)"],"note":"When giving directions to strangers, Italians use the formal imperative (vada, giri), which is the Lei-form of the subjunctive."},
+{"title":"Buying Fresh Produce at the Market","scene":"A shopper buys fruit and vegetables at an open-air market, discussing quantity, price, and freshness.","level":"Intermediate","lines":[
+{"speaker":"Cliente","target":"Buongiorno, sono freschi questi pomodori?","ref":"Good morning, are these tomatoes fresh?"},
+{"speaker":"Fruttivendolo","target":"Freschissimi, arrivati stamattina dalla campagna.","ref":"Very fresh, they arrived this morning from the countryside."},
+{"speaker":"Cliente","target":"Perfetto. Ne prendo un chilo.","ref":"Perfect. I'll take a kilo of them."},
+{"speaker":"Fruttivendolo","target":"Ecco fatto. Le servono anche le zucchine?","ref":"Done. Do you also need some zucchini?"},
+{"speaker":"Cliente","target":"Sì, mezzo chilo. E le pesche, quanto costano?","ref":"Yes, half a kilo. And the peaches, how much are they?"},
+{"speaker":"Fruttivendolo","target":"Due euro e cinquanta al chilo. Sono dolcissime.","ref":"Two fifty a kilo. They're very sweet."},
+{"speaker":"Cliente","target":"Allora ne prendo sei, ma che siano mature.","ref":"Then I'll take six, but make sure they're ripe."},
+{"speaker":"Fruttivendolo","target":"Non si preoccupi, scelgo le migliori.","ref":"Don't worry, I'll pick the best ones."},
+{"speaker":"Cliente","target":"La ringrazio. Quant'è in tutto?","ref":"Thank you. How much is it in total?"},
+{"speaker":"Fruttivendolo","target":"Sono sette euro esatti.","ref":"That's exactly seven euros."},
+{"speaker":"Cliente","target":"Ecco a Lei. Arrivederci!","ref":"Here you are. Goodbye!"}
+],"vocab":["freschissimo (very fresh)","un chilo (a kilo)","maturo (ripe)","Quant'è in tutto? (How much in total?)","non si preoccupi (don't worry, formal)"],"note":"At Italian markets you usually shouldn't touch the produce yourself; you ask the vendor, who selects and weighs it for you."},
+{"title":"Booking a Table by Phone","scene":"A customer phones a restaurant to reserve a table, giving the day, time, number of guests, and a dietary need.","level":"Intermediate","lines":[
+{"speaker":"Ristorante","target":"Ristorante Da Luigi, buonasera.","ref":"Da Luigi Restaurant, good evening."},
+{"speaker":"Cliente","target":"Buonasera, vorrei prenotare un tavolo.","ref":"Good evening, I'd like to book a table."},
+{"speaker":"Ristorante","target":"Certo. Per quante persone?","ref":"Of course. For how many people?"},
+{"speaker":"Cliente","target":"Per quattro, sabato sera.","ref":"For four, Saturday evening."},
+{"speaker":"Ristorante","target":"A che ora preferisce?","ref":"What time do you prefer?"},
+{"speaker":"Cliente","target":"Verso le otto e mezza, se possibile.","ref":"Around half past eight, if possible."},
+{"speaker":"Ristorante","target":"Va benissimo. A che nome?","ref":"That's fine. Under what name?"},
+{"speaker":"Cliente","target":"A nome Bianchi. Una persona è vegetariana.","ref":"Under Bianchi. One person is vegetarian."},
+{"speaker":"Ristorante","target":"Nessun problema, abbiamo diversi piatti vegetariani.","ref":"No problem, we have several vegetarian dishes."},
+{"speaker":"Cliente","target":"Ottimo. Avete un tavolo all'aperto?","ref":"Great. Do you have a table outside?"},
+{"speaker":"Ristorante","target":"Sì, glielo riservo. A sabato!","ref":"Yes, I'll reserve it for you. See you Saturday!"}
+],"vocab":["prenotare (to book)","A che nome? (Under what name?)","vegetariano (vegetarian)","all'aperto (outdoors)","riservare (to reserve)"],"note":"When booking, expect the question 'A che nome?' Italians give a surname, and 'A nome...' (under the name of...) is the standard reply."},
+{"title":"At the Pharmacy","scene":"A customer describes symptoms and asks the pharmacist for medicine and advice on dosage.","level":"Advanced","lines":[
+{"speaker":"Cliente","target":"Buongiorno, non mi sento molto bene.","ref":"Good morning, I don't feel very well."},
+{"speaker":"Farmacista","target":"Mi dica, quali sono i sintomi?","ref":"Tell me, what are the symptoms?"},
+{"speaker":"Cliente","target":"Ho mal di gola e un po' di febbre da ieri.","ref":"I have a sore throat and a slight fever since yesterday."},
+{"speaker":"Farmacista","target":"Ha anche la tosse o il raffreddore?","ref":"Do you also have a cough or a cold?"},
+{"speaker":"Cliente","target":"Sì, tossisco soprattutto la notte.","ref":"Yes, I cough especially at night."},
+{"speaker":"Farmacista","target":"Le consiglio queste pastiglie e uno sciroppo.","ref":"I recommend these lozenges and a syrup."},
+{"speaker":"Cliente","target":"Quante volte al giorno devo prenderle?","ref":"How many times a day should I take them?"},
+{"speaker":"Farmacista","target":"Le pastiglie tre volte al giorno, dopo i pasti.","ref":"The lozenges three times a day, after meals."},
+{"speaker":"Cliente","target":"E lo sciroppo?","ref":"And the syrup?"},
+{"speaker":"Farmacista","target":"Un cucchiaio prima di dormire. Se la febbre sale, veda un medico.","ref":"A spoonful before sleeping. If the fever rises, see a doctor."},
+{"speaker":"Cliente","target":"Grazie, è stato molto gentile. Quanto le devo?","ref":"Thanks, you've been very kind. How much do I owe you?"},
+{"speaker":"Farmacista","target":"Dodici euro. Guarisca presto!","ref":"Twelve euros. Get well soon!"}
+],"vocab":["mal di gola (sore throat)","la febbre (fever)","le pastiglie (lozenges/tablets)","dopo i pasti (after meals)","guarire (to get well)"],"note":"In Italy, pharmacists are highly trained and often give first advice for minor ailments; many medicines are kept behind the counter rather than on open shelves."}
+]}

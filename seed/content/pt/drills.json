@@ -1,0 +1,22 @@
+{"drills":[
+{"q":"'I am' (identity) in Portuguese?","a":"Eu sou","hint":"Ser for permanent traits; eu form is 'sou'","type":"Conjugation"},
+{"q":"'I am' (temporary state) in Portuguese?","a":"Eu estou","hint":"Estar for states/location; spoken 'tô'","type":"Conjugation"},
+{"q":"'She has' from the verb ter?","a":"Ela tem","hint":"ter: tenho/tem/tem; você and ele share 'tem'","type":"Conjugation"},
+{"q":"'We go' from the verb ir?","a":"Nós vamos","hint":"ir: vou/vai/vamos/vão","type":"Conjugation"},
+{"q":"'They eat' from the verb comer (present)?","a":"Eles comem","hint":"-er verbs, eles ending is -em: comem","type":"Conjugation"},
+{"q":"'I spoke' (past) from the verb falar?","a":"Eu falei","hint":"Pretérito perfeito -ar eu ending is -ei","type":"Conjugation"},
+{"q":"'Thank you' said by a man?","a":"Obrigado","hint":"Men say obrigado, women say obrigada","type":"Vocab"},
+{"q":"'Water' in Portuguese?","a":"a água","hint":"Feminine noun; accent on the á","type":"Vocab"},
+{"q":"'Today' in Portuguese?","a":"hoje","hint":"Pronounced 'OH-zhee'","type":"Vocab"},
+{"q":"'Dog' in Portuguese (Brazil)?","a":"o cachorro","hint":"Masculine; Brazil uses cachorro, Portugal cão","type":"Vocab"},
+{"q":"'Bathroom' in Portuguese (Brazil)?","a":"o banheiro","hint":"Brazil: banheiro; Portugal: casa de banho","type":"Vocab"},
+{"q":"The feminine article 'the' before 'casa'?","a":"a","hint":"a casa (fem.); o for masculine like o livro","type":"Grammar"},
+{"q":"Contract 'de + o' into one word?","a":"do","hint":"de+o=do, de+a=da; contractions are mandatory","type":"Grammar"},
+{"q":"Plural of 'o carro'?","a":"os carros","hint":"Add -s and change article o→os","type":"Grammar"},
+{"q":"Make 'Eu falo' negative.","a":"Eu não falo","hint":"Place não directly before the verb","type":"Grammar"},
+{"q":"'Fifteen' in Portuguese?","a":"quinze","hint":"11-15: onze, doze, treze, catorze, quinze","type":"Numbers"},
+{"q":"'It's two o'clock' in Portuguese?","a":"São duas horas","hint":"Plural São from 2:00 on; duas is feminine (horas)","type":"Numbers"},
+{"q":"How do you say 'please'?","a":"Por favor","hint":"Add it to soften any request","type":"Phrase"},
+{"q":"Ask 'How much is it?'","a":"Quanto custa?","hint":"Or 'Quanto é?'; custar = to cost","type":"Phrase"},
+{"q":"Ask 'The bill, please' at a restaurant.","a":"A conta, por favor","hint":"a conta = the bill/check","type":"Phrase"}
+]}

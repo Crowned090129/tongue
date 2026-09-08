@@ -1,0 +1,74 @@
+{"dialogues":[
+{"title":"Rencontre dans un café parisien","scene":"Two people meet for the first time in a Paris café and get acquainted.","level":"Beginner","lines":[
+{"speaker":"Camille","target":"Bonjour ! Est-ce que cette place est libre ?","ref":"Hello! Is this seat free?"},
+{"speaker":"Julien","target":"Oui, bien sûr, asseyez-vous. Je m'appelle Julien.","ref":"Yes, of course, sit down. My name is Julien."},
+{"speaker":"Camille","target":"Enchantée, Julien. Moi, c'est Camille.","ref":"Nice to meet you, Julien. I'm Camille."},
+{"speaker":"Julien","target":"Vous n'êtes pas d'ici, je crois. Vous venez d'où ?","ref":"You're not from here, I think. Where are you from?"},
+{"speaker":"Camille","target":"Je viens de Bordeaux, mais je travaille à Paris maintenant.","ref":"I'm from Bordeaux, but I work in Paris now."},
+{"speaker":"Julien","target":"Ah, et qu'est-ce que vous faites dans la vie ?","ref":"Oh, and what do you do for a living?"},
+{"speaker":"Camille","target":"Je suis architecte. Et vous ?","ref":"I'm an architect. And you?"},
+{"speaker":"Julien","target":"Je suis professeur de musique. On peut se tutoyer, si tu veux ?","ref":"I'm a music teacher. We can use tu with each other, if you like?"},
+{"speaker":"Camille","target":"Avec plaisir ! Alors, tu habites dans le quartier ?","ref":"Gladly! So, do you live in the neighborhood?"},
+{"speaker":"Julien","target":"Oui, juste à côté. Tu veux un autre café ?","ref":"Yes, right nearby. Would you like another coffee?"}
+],"vocab":["une place (seat)","enchanté(e) (nice to meet you)","dans la vie (for a living)","se tutoyer (to use tu)","le quartier (neighborhood)"],"note":"Switching from vous to tu is a real social step in France. It's polite to let the other person suggest it, often with 'On peut se tutoyer ?'"},
+{"title":"Au restaurant","scene":"A customer orders a full meal and asks for the bill at a French restaurant.","level":"Beginner","lines":[
+{"speaker":"Serveur","target":"Bonsoir, vous avez choisi ?","ref":"Good evening, have you decided?"},
+{"speaker":"Client","target":"Oui. Comme entrée, je voudrais la soupe à l'oignon.","ref":"Yes. As a starter, I'd like the onion soup."},
+{"speaker":"Serveur","target":"Très bien. Et comme plat principal ?","ref":"Very good. And for the main course?"},
+{"speaker":"Client","target":"Le steak-frites, s'il vous plaît. Qu'est-ce que vous recommandez comme vin ?","ref":"The steak and fries, please. What wine do you recommend?"},
+{"speaker":"Serveur","target":"Un verre de bordeaux rouge se marie très bien avec le steak.","ref":"A glass of red Bordeaux goes very well with the steak."},
+{"speaker":"Client","target":"Parfait. Et une carafe d'eau, s'il vous plaît.","ref":"Perfect. And a jug of water, please."},
+{"speaker":"Serveur","target":"Bien sûr. Vous prendrez un dessert ?","ref":"Of course. Will you have a dessert?"},
+{"speaker":"Client","target":"Oui, une crème brûlée. C'était délicieux, tout ça.","ref":"Yes, a crème brûlée. All of this was delicious."},
+{"speaker":"Serveur","target":"Merci ! Je vous apporte l'addition tout de suite.","ref":"Thank you! I'll bring you the bill right away."},
+{"speaker":"Client","target":"Merci. Est-ce que le service est compris ?","ref":"Thanks. Is the service charge included?"}
+],"vocab":["l'entrée (starter)","le plat principal (main course)","une carafe d'eau (jug of tap water)","l'addition (the bill)","le service compris (service included)"],"note":"In France, tap water (une carafe d'eau) is free on request, and service is legally included in the price, so tipping is a small optional extra, not a duty."},
+{"title":"Demander son chemin","scene":"A tourist asks a passer-by for directions to the metro, a pharmacy and a museum.","level":"Beginner","lines":[
+{"speaker":"Touriste","target":"Excusez-moi, pourriez-vous m'aider ? Je cherche la station de métro.","ref":"Excuse me, could you help me? I'm looking for the metro station."},
+{"speaker":"Passante","target":"Bien sûr. Continuez tout droit, puis prenez la première rue à droite.","ref":"Of course. Go straight ahead, then take the first street on the right."},
+{"speaker":"Touriste","target":"C'est loin d'ici ?","ref":"Is it far from here?"},
+{"speaker":"Passante","target":"Non, c'est à cinq minutes à pied.","ref":"No, it's a five-minute walk."},
+{"speaker":"Touriste","target":"Et il y a une pharmacie dans le coin ?","ref":"And is there a pharmacy nearby?"},
+{"speaker":"Passante","target":"Oui, il y en a une en face de la station, à gauche.","ref":"Yes, there's one opposite the station, on the left."},
+{"speaker":"Touriste","target":"Merci beaucoup. Une dernière question : où se trouve le musée d'Orsay ?","ref":"Thank you very much. One last question: where is the Musée d'Orsay?"},
+{"speaker":"Passante","target":"Il faut prendre le métro, ligne 12, et descendre à Solférino.","ref":"You need to take the metro, line 12, and get off at Solférino."},
+{"speaker":"Touriste","target":"Parfait, c'est très clair. Merci de votre aide !","ref":"Perfect, that's very clear. Thanks for your help!"},
+{"speaker":"Passante","target":"Je vous en prie. Bonne visite !","ref":"You're welcome. Enjoy your visit!"}
+],"vocab":["tout droit (straight ahead)","à droite / à gauche (right / left)","à pied (on foot)","en face de (opposite)","je vous en prie (you're welcome)"],"note":"'Pourriez-vous…' (the conditional of pouvoir) is the standard polite way to ask a stranger for a favor. Note that tout droit means 'straight ahead', not 'to the right' (à droite)."},
+{"title":"Au marché","scene":"A shopper buys fresh produce at an open-air market, discussing quantities and prices.","level":"Intermediate","lines":[
+{"speaker":"Cliente","target":"Bonjour ! Elles sont à combien, vos tomates ?","ref":"Hello! How much are your tomatoes?"},
+{"speaker":"Marchand","target":"Trois euros le kilo, madame. Elles sont bien mûres.","ref":"Three euros a kilo, madam. They're nice and ripe."},
+{"speaker":"Cliente","target":"J'en prends un kilo, alors. Et une livre de haricots verts.","ref":"I'll take a kilo, then. And half a kilo of green beans."},
+{"speaker":"Marchand","target":"Voilà. Avec ça, il vous faut autre chose ?","ref":"There you go. Anything else with that?"},
+{"speaker":"Cliente","target":"Oui, une douzaine d'œufs et ces fraises, elles sont fraîches ?","ref":"Yes, a dozen eggs, and these strawberries, are they fresh?"},
+{"speaker":"Marchand","target":"Cueillies ce matin ! Goûtez-en une, vous verrez.","ref":"Picked this morning! Try one, you'll see."},
+{"speaker":"Cliente","target":"Mmm, un vrai délice. J'en prends une barquette.","ref":"Mmm, a real treat. I'll take a punnet."},
+{"speaker":"Marchand","target":"Très bien. Ça nous fait huit euros cinquante en tout.","ref":"Very good. That comes to eight euros fifty in total."},
+{"speaker":"Cliente","target":"Tenez, voilà dix euros.","ref":"Here you are, ten euros."},
+{"speaker":"Marchand","target":"Et un euro cinquante qui vous fait la monnaie. Bonne journée !","ref":"And one euro fifty in change for you. Have a good day!"}
+],"vocab":["le kilo / la livre (kilo / half-kilo)","mûr(e) (ripe)","une douzaine (a dozen)","frais / fraîche (fresh)","la monnaie (change)"],"note":"At a French marché, prices are typically given le kilo (per kilo). Une livre literally means 'a pound' but in practice means 500 grams, half a kilo."},
+{"title":"Prendre rendez-vous chez le médecin","scene":"A patient phones a doctor's office to book an appointment and describe symptoms.","level":"Intermediate","lines":[
+{"speaker":"Secrétaire","target":"Cabinet du docteur Laurent, bonjour.","ref":"Dr. Laurent's office, hello."},
+{"speaker":"Patient","target":"Bonjour, je voudrais prendre rendez-vous, s'il vous plaît.","ref":"Hello, I'd like to make an appointment, please."},
+{"speaker":"Secrétaire","target":"Bien sûr. C'est pour quel motif ?","ref":"Of course. What is it regarding?"},
+{"speaker":"Patient","target":"J'ai mal à la gorge depuis trois jours et un peu de fièvre.","ref":"I've had a sore throat for three days and a bit of a fever."},
+{"speaker":"Secrétaire","target":"Je vois. Le docteur peut vous recevoir jeudi à quatorze heures.","ref":"I see. The doctor can see you on Thursday at 2 p.m."},
+{"speaker":"Patient","target":"Est-ce qu'il y aurait quelque chose de plus tôt ?","ref":"Would there be anything earlier?"},
+{"speaker":"Secrétaire","target":"Demain matin à neuf heures trente, si vous préférez.","ref":"Tomorrow morning at nine thirty, if you prefer."},
+{"speaker":"Patient","target":"C'est parfait. Je confirme pour demain matin.","ref":"That's perfect. I'll confirm for tomorrow morning."},
+{"speaker":"Secrétaire","target":"Très bien. C'est à quel nom ?","ref":"Very good. Under what name?"},
+{"speaker":"Patient","target":"Au nom de Martin. Merci, au revoir.","ref":"Under the name Martin. Thank you, goodbye."}
+],"vocab":["prendre rendez-vous (to make an appointment)","avoir mal à (to have a pain in)","la fièvre (fever)","recevoir (to see / receive a patient)","à quel nom ? (under what name?)"],"note":"'Avoir mal à' + body part is the standard way to say something hurts: j'ai mal à la tête (headache), au dos (backache). Note the contraction with à + le = au (mal au dos)."},
+{"title":"À la boulangerie puis à l'hôtel","scene":"A traveler buys bread and pastries, then checks in at a hotel and reports a problem.","level":"Advanced","lines":[
+{"speaker":"Boulangère","target":"Bonjour ! Vous désirez ?","ref":"Hello! What would you like?"},
+{"speaker":"Voyageur","target":"Bonjour, une baguette tradition et deux croissants, s'il vous plaît.","ref":"Hello, a traditional baguette and two croissants, please."},
+{"speaker":"Boulangère","target":"Voilà. Ce sera tout ?","ref":"There you go. Will that be all?"},
+{"speaker":"Voyageur","target":"Oui, merci. Ça fait combien ?","ref":"Yes, thank you. How much is that?"},
+{"speaker":"Boulangère","target":"Trois euros vingt. Bonne dégustation !","ref":"Three euros twenty. Enjoy!"},
+{"speaker":"Réceptionniste","target":"Bonsoir, bienvenue à l'hôtel. Vous avez une réservation ?","ref":"Good evening, welcome to the hotel. Do you have a reservation?"},
+{"speaker":"Voyageur","target":"Oui, une chambre double au nom de Rousseau, avec petit-déjeuner inclus.","ref":"Yes, a double room under the name Rousseau, with breakfast included."},
+{"speaker":"Réceptionniste","target":"Je vois votre réservation. Voici la clé, chambre 214, au deuxième étage.","ref":"I see your reservation. Here is the key, room 214, on the second floor."},
+{"speaker":"Voyageur","target":"Merci. J'ai un petit souci : le chauffage ne marche pas dans ma chambre.","ref":"Thank you. I have a small problem: the heating isn't working in my room."},
+{"speaker":"Réceptionniste","target":"Je suis désolé, j'envoie quelqu'un tout de suite pour le réparer.","ref":"I'm sorry, I'll send someone right away to fix it."}
+],"vocab":["une baguette tradition (traditional baguette)","le petit-déjeuner inclus (breakfast included)","la clé (key)","le chauffage (heating)","un souci (a worry / problem)"],"note":"French floors are counted from le rez-de-chaussée (ground floor, floor 0), so le deuxième étage ('second floor') is what an American would call the third floor."}
+]}

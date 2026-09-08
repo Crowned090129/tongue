@@ -1,0 +1,74 @@
+{"dialogues":[
+{"title":"पहली मुलाक़ात (First Meeting)","scene":"Two strangers introduce themselves at a language exchange.","level":"Beginner","lines":[
+{"speaker":"आरव","target":"नमस्ते! मेरा नाम आरव है।","ref":"Hello! My name is Aarav."},
+{"speaker":"सारा","target":"नमस्ते आरव! मैं सारा हूँ। आपसे मिलकर खुशी हुई।","ref":"Hello Aarav! I am Sara. Nice to meet you."},
+{"speaker":"आरव","target":"आप कहाँ से हैं?","ref":"Where are you from?"},
+{"speaker":"सारा","target":"मैं अमेरिका से हूँ। और आप?","ref":"I am from America. And you?"},
+{"speaker":"आरव","target":"मैं दिल्ली से हूँ। आप हिंदी क्यों सीख रही हैं?","ref":"I am from Delhi. Why are you learning Hindi?"},
+{"speaker":"सारा","target":"मुझे भारतीय संस्कृति बहुत पसंद है।","ref":"I like Indian culture very much."},
+{"speaker":"आरव","target":"बहुत अच्छा! आपकी हिंदी अच्छी है।","ref":"Very good! Your Hindi is good."},
+{"speaker":"सारा","target":"धन्यवाद! मैं रोज़ अभ्यास करती हूँ।","ref":"Thank you! I practise every day."},
+{"speaker":"आरव","target":"चलिए, फिर मिलेंगे।","ref":"Alright, see you again."},
+{"speaker":"सारा","target":"ज़रूर, अलविदा!","ref":"Sure, goodbye!"}
+],"vocab":["नमस्ते (hello)","नाम (name)","मिलकर खुशी हुई (nice to meet you)","अभ्यास (practice)","फिर मिलेंगे (see you again)"],"note":"When meeting someone, join your palms and say नमस्ते rather than shaking hands — it works for both hello and goodbye, and suits any age or gender."},
+{"title":"ढाबे पर खाना (Eating at a Dhaba)","scene":"A customer orders a meal at a roadside dhaba.","level":"Beginner","lines":[
+{"speaker":"ग्राहक","target":"भैया, मेन्यू दिखाइए।","ref":"Brother, please show the menu."},
+{"speaker":"वेटर","target":"जी, आज दाल, सब्ज़ी और रोटी है।","ref":"Yes, today we have dal, vegetables and roti."},
+{"speaker":"ग्राहक","target":"एक दाल और चार रोटी दीजिए।","ref":"Please give one dal and four rotis."},
+{"speaker":"वेटर","target":"कुछ पीने के लिए?","ref":"Anything to drink?"},
+{"speaker":"ग्राहक","target":"एक चाय, कम तीखा खाना बनाइए।","ref":"One tea, and please make the food less spicy."},
+{"speaker":"वेटर","target":"ठीक है। दस मिनट लगेंगे।","ref":"Okay. It will take ten minutes."},
+{"speaker":"ग्राहक","target":"कोई बात नहीं।","ref":"No problem."},
+{"speaker":"वेटर","target":"खाना कैसा है?","ref":"How is the food?"},
+{"speaker":"ग्राहक","target":"बहुत स्वादिष्ट है! अब बिल लाइए।","ref":"Very delicious! Now please bring the bill."},
+{"speaker":"वेटर","target":"जी, कुल एक सौ बीस रुपये।","ref":"Yes, one hundred and twenty rupees in total."}
+],"vocab":["ढाबा (roadside eatery)","रोटी (flatbread)","कम तीखा (less spicy)","स्वादिष्ट (delicious)","बिल (bill)"],"note":"भैया ('brother') is the normal friendly way to address a male waiter or shopkeeper; बहन जी or दीदी works for a woman. Using them is warmer than a bare 'excuse me'."},
+{"title":"रास्ता पूछना (Asking for Directions)","scene":"A traveller in Delhi asks a passer-by how to reach the metro station.","level":"Intermediate","lines":[
+{"speaker":"यात्री","target":"माफ़ कीजिए, मेट्रो स्टेशन कहाँ है?","ref":"Excuse me, where is the metro station?"},
+{"speaker":"राहगीर","target":"सीधे जाइए, फिर दाईं ओर मुड़िए।","ref":"Go straight, then turn to the right."},
+{"speaker":"यात्री","target":"यहाँ से कितनी दूर है?","ref":"How far is it from here?"},
+{"speaker":"राहगीर","target":"बस पाँच मिनट पैदल।","ref":"Just five minutes on foot."},
+{"speaker":"यात्री","target":"क्या पास में कोई बाज़ार भी है?","ref":"Is there a market nearby too?"},
+{"speaker":"राहगीर","target":"हाँ, स्टेशन के सामने ही बड़ा बाज़ार है।","ref":"Yes, there's a big market right opposite the station."},
+{"speaker":"यात्री","target":"बहुत-बहुत धन्यवाद!","ref":"Thank you very much!"},
+{"speaker":"राहगीर","target":"कोई बात नहीं। रास्ता आसान है।","ref":"You're welcome. The way is easy."},
+{"speaker":"यात्री","target":"अगर मैं भटक जाऊँ तो किससे पूछूँ?","ref":"If I get lost, whom should I ask?"},
+{"speaker":"राहगीर","target":"किसी से भी पूछ लीजिए, सब जानते हैं।","ref":"Ask anyone, everyone knows it."}
+],"vocab":["सीधे (straight)","दाईं ओर (to the right)","दूर (far)","पैदल (on foot)","सामने (opposite/in front)"],"note":"Distances in India are often given in minutes on foot rather than metres, and 'सीधे' (straight) plus a turn direction is the usual shape of an answer. A polite माफ़ कीजिए opens the exchange."},
+{"title":"बाज़ार में मोलभाव (Bargaining at the Bazaar)","scene":"A shopper haggles over the price of a scarf at a street market.","level":"Intermediate","lines":[
+{"speaker":"ग्राहक","target":"भैया, यह दुपट्टा कितने का है?","ref":"Brother, how much is this scarf?"},
+{"speaker":"दुकानदार","target":"यह पाँच सौ रुपये का है।","ref":"This is five hundred rupees."},
+{"speaker":"ग्राहक","target":"बहुत महँगा है! कुछ कम कीजिए।","ref":"That's too expensive! Please reduce it a bit."},
+{"speaker":"दुकानदार","target":"आपके लिए चार सौ लगा दूँगा।","ref":"For you I'll make it four hundred."},
+{"speaker":"ग्राहक","target":"नहीं, तीन सौ में दे दीजिए।","ref":"No, give it for three hundred."},
+{"speaker":"दुकानदार","target":"इतने में तो नहीं होगा, साढ़े तीन सौ।","ref":"It won't happen at that price — three hundred fifty."},
+{"speaker":"ग्राहक","target":"ठीक है, पर रंग अच्छा होना चाहिए।","ref":"Alright, but the colour must be good."},
+{"speaker":"दुकानदार","target":"बिलकुल, यह लाल वाला सबसे अच्छा है।","ref":"Absolutely, this red one is the best."},
+{"speaker":"ग्राहक","target":"तो यही दे दीजिए। रसीद भी चाहिए।","ref":"Then give me this one. I need a receipt too."},
+{"speaker":"दुकानदार","target":"जी ज़रूर, धन्यवाद!","ref":"Yes of course, thank you!"}
+],"vocab":["मोलभाव (bargaining)","महँगा (expensive)","कम करना (to reduce)","साढ़े (and a half)","रसीद (receipt)"],"note":"Bargaining is expected in street markets, not in fixed-price shops. Opening with 'बहुत महँगा है' and countering at roughly half the quoted price is normal, and both sides stay friendly throughout."},
+{"title":"ट्रेन टिकट बुक करना (Booking a Train Ticket)","scene":"A passenger books a train ticket at a railway counter.","level":"Advanced","lines":[
+{"speaker":"यात्री","target":"नमस्ते, मुझे जयपुर के लिए एक टिकट चाहिए।","ref":"Hello, I need one ticket for Jaipur."},
+{"speaker":"क्लर्क","target":"किस तारीख़ के लिए और कौन-सी श्रेणी?","ref":"For what date and which class?"},
+{"speaker":"यात्री","target":"कल के लिए, वातानुकूलित शयनयान में।","ref":"For tomorrow, in an AC sleeper."},
+{"speaker":"क्लर्क","target":"एक तरफ़ का या आने-जाने का?","ref":"One-way or return?"},
+{"speaker":"यात्री","target":"आने-जाने का, और खिड़की वाली सीट मिल सकती है?","ref":"Return, and can I get a window seat?"},
+{"speaker":"क्लर्क","target":"जी, अगर उपलब्ध हुई तो ज़रूर दे दूँगा।","ref":"Yes, if it's available I'll certainly give it."},
+{"speaker":"यात्री","target":"ट्रेन कितने बजे छूटती है?","ref":"What time does the train leave?"},
+{"speaker":"क्लर्क","target":"सुबह साढ़े छह बजे, प्लेटफ़ॉर्म नंबर तीन से।","ref":"At half past six in the morning, from platform number three."},
+{"speaker":"यात्री","target":"किराया कितना हुआ?","ref":"How much is the fare?"},
+{"speaker":"क्लर्क","target":"कुल मिलाकर सोलह सौ रुपये। यह लीजिए आपका टिकट।","ref":"Sixteen hundred rupees in all. Here is your ticket."}
+],"vocab":["श्रेणी (class)","वातानुकूलित (air-conditioned)","एक तरफ़ का (one-way)","आने-जाने का (return)","किराया (fare)"],"note":"On Indian Railways, classes are named by codes learners will hear spoken — 'AC' for air-conditioned coaches and 'sleeper' for the non-AC शयनयान. Booking well ahead matters because popular trains fill up days in advance."},
+{"title":"डॉक्टर के पास (At the Doctor's Clinic)","scene":"A patient describes symptoms and asks about medicine at a clinic.","level":"Advanced","lines":[
+{"speaker":"मरीज़","target":"डॉक्टर साहब, मुझे कल से बुखार है।","ref":"Doctor, I've had a fever since yesterday."},
+{"speaker":"डॉक्टर","target":"और कोई तकलीफ़? गला या सिर?","ref":"Any other trouble? Throat or head?"},
+{"speaker":"मरीज़","target":"हाँ, गले में दर्द है और खाँसी भी।","ref":"Yes, my throat hurts and I have a cough too."},
+{"speaker":"डॉक्टर","target":"कब से यह सब शुरू हुआ?","ref":"Since when did all this start?"},
+{"speaker":"मरीज़","target":"दो दिन पहले, धीरे-धीरे बढ़ता गया।","ref":"Two days ago, and it gradually got worse."},
+{"speaker":"डॉक्टर","target":"चिंता की बात नहीं, यह मौसमी संक्रमण है।","ref":"Nothing to worry about, it's a seasonal infection."},
+{"speaker":"मरीज़","target":"कौन-सी दवा लेनी होगी?","ref":"Which medicine will I have to take?"},
+{"speaker":"डॉक्टर","target":"यह गोली दिन में तीन बार, खाने के बाद लीजिए।","ref":"Take this tablet three times a day, after meals."},
+{"speaker":"मरीज़","target":"क्या मुझे परहेज़ करना चाहिए?","ref":"Should I avoid anything (in my diet)?"},
+{"speaker":"डॉक्टर","target":"ठंडी चीज़ों से बचिए और खूब पानी पीजिए।","ref":"Avoid cold things and drink plenty of water."}
+],"vocab":["बुखार (fever)","तकलीफ़ (trouble/discomfort)","दवा (medicine)","गोली (tablet/pill)","परहेज़ (dietary restriction)"],"note":"Patients often address a doctor as डॉक्टर साहब as a mark of respect. Prescriptions are usually explained as 'so many times a day, before/after food' (खाने से पहले / खाने के बाद) rather than by exact hours."}
+]}

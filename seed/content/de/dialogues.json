@@ -1,0 +1,80 @@
+{"dialogues":[
+{"title":"Ein neuer Kollege","scene":"You meet a new colleague on your first day at a German office.","level":"Beginner","lines":[
+{"speaker":"Anna","target":"Guten Morgen! Sind Sie neu hier?","ref":"Good morning! Are you new here?"},
+{"speaker":"Tom","target":"Ja, guten Morgen. Ich bin Tom, der neue Praktikant.","ref":"Yes, good morning. I'm Tom, the new intern."},
+{"speaker":"Anna","target":"Freut mich, Tom. Ich heiße Anna und arbeite im Marketing.","ref":"Nice to meet you, Tom. My name is Anna and I work in marketing."},
+{"speaker":"Tom","target":"Freut mich auch. Woher kommen Sie, Anna?","ref":"Nice to meet you too. Where are you from, Anna?"},
+{"speaker":"Anna","target":"Ich komme aus Hamburg. Und Sie?","ref":"I'm from Hamburg. And you?"},
+{"speaker":"Tom","target":"Ich komme aus Spanien, aus Madrid.","ref":"I'm from Spain, from Madrid."},
+{"speaker":"Anna","target":"Wie schön! Ihr Deutsch ist schon sehr gut.","ref":"How nice! Your German is already very good."},
+{"speaker":"Tom","target":"Danke! Ich lerne seit einem Jahr.","ref":"Thank you! I've been learning for a year."},
+{"speaker":"Anna","target":"Kommen Sie, ich zeige Ihnen Ihren Schreibtisch.","ref":"Come, I'll show you your desk."},
+{"speaker":"Tom","target":"Sehr gern. Vielen Dank für Ihre Hilfe!","ref":"Gladly. Thank you very much for your help!"}
+],"vocab":["neu (new)","der Kollege (colleague)","Freut mich (nice to meet you)","arbeiten (to work)","die Hilfe (help)"],"note":"Germans often shake hands and say Freut mich when first introduced. Colleagues typically use the formal Sie until someone explicitly offers the informal du."},
+{"title":"In der Bäckerei","scene":"You order bread and rolls at a German bakery, then pay at the counter.","level":"Beginner","lines":[
+{"speaker":"Verkäuferin","target":"Guten Tag! Was darf es sein?","ref":"Hello! What would you like?"},
+{"speaker":"Kunde","target":"Guten Tag. Ich hätte gern ein Brot, bitte.","ref":"Hello. I would like a loaf of bread, please."},
+{"speaker":"Verkäuferin","target":"Gern. Dunkel oder hell?","ref":"Of course. Dark or light?"},
+{"speaker":"Kunde","target":"Ein dunkles Brot, bitte. Und drei Brötchen.","ref":"A dark loaf, please. And three rolls."},
+{"speaker":"Verkäuferin","target":"Sonst noch etwas?","ref":"Anything else?"},
+{"speaker":"Kunde","target":"Ja, eine Brezel, bitte. Was kostet das zusammen?","ref":"Yes, a pretzel, please. How much is that altogether?"},
+{"speaker":"Verkäuferin","target":"Das macht vier Euro fünfzig.","ref":"That's four euros fifty."},
+{"speaker":"Kunde","target":"Hier sind fünf Euro.","ref":"Here are five euros."},
+{"speaker":"Verkäuferin","target":"Danke, und fünfzig Cent zurück. Einen schönen Tag!","ref":"Thank you, and fifty cents change. Have a nice day!"},
+{"speaker":"Kunde","target":"Danke, gleichfalls!","ref":"Thank you, you too!"}
+],"vocab":["die Bäckerei (bakery)","das Brötchen (bread roll)","kosten (to cost)","zusammen (altogether)","gleichfalls (you too/likewise)"],"note":"Bakeries are a daily ritual in Germany, open early even on Sundays. Fresh Brötchen for breakfast are a national institution, and each region has its own name for them (Semmel, Schrippe, Weck)."},
+{"title":"Nach dem Weg fragen","scene":"A tourist in Berlin asks a local how to reach the station by public transport.","level":"Intermediate","lines":[
+{"speaker":"Tourist","target":"Entschuldigung, wie komme ich zum Hauptbahnhof?","ref":"Excuse me, how do I get to the main station?"},
+{"speaker":"Berliner","target":"Am besten mit der U-Bahn. Nehmen Sie die U5.","ref":"Best by underground. Take the U5."},
+{"speaker":"Tourist","target":"Wo ist die nächste U-Bahn-Station?","ref":"Where is the nearest underground station?"},
+{"speaker":"Berliner","target":"Gehen Sie geradeaus und dann links. Sie sehen sie sofort.","ref":"Go straight ahead and then left. You'll see it right away."},
+{"speaker":"Tourist","target":"Muss ich umsteigen?","ref":"Do I have to change trains?"},
+{"speaker":"Berliner","target":"Ja, am Alexanderplatz steigen Sie in die S-Bahn um.","ref":"Yes, at Alexanderplatz you change to the S-Bahn."},
+{"speaker":"Tourist","target":"Wie viele Stationen sind es ungefähr?","ref":"About how many stops is it?"},
+{"speaker":"Berliner","target":"Etwa fünf Stationen, also zehn Minuten.","ref":"About five stops, so ten minutes."},
+{"speaker":"Tourist","target":"Und wo kaufe ich einen Fahrschein?","ref":"And where do I buy a ticket?"},
+{"speaker":"Berliner","target":"Am Automaten dort drüben. Gute Reise!","ref":"At the machine over there. Have a good trip!"},
+{"speaker":"Tourist","target":"Vielen Dank für Ihre Hilfe!","ref":"Thank you very much for your help!"}
+],"vocab":["der Hauptbahnhof (main station)","umsteigen (to change/transfer)","geradeaus (straight ahead)","der Fahrschein (ticket)","der Automat (machine)"],"note":"Berlin's transport network mixes U-Bahn (underground) and S-Bahn (city rail). Buy and validate (entwerten) your ticket before boarding — inspectors are plain-clothed and fines for Schwarzfahren (fare-dodging) are steep."},
+{"title":"Beim Arzt","scene":"At the doctor's office, a patient describes their symptoms and receives advice.","level":"Intermediate","lines":[
+{"speaker":"Ärztin","target":"Guten Tag, was fehlt Ihnen denn?","ref":"Hello, what's the matter with you?"},
+{"speaker":"Patient","target":"Ich fühle mich nicht gut. Ich habe Kopfschmerzen.","ref":"I don't feel well. I have a headache."},
+{"speaker":"Ärztin","target":"Seit wann haben Sie die Schmerzen?","ref":"Since when have you had the pain?"},
+{"speaker":"Patient","target":"Seit drei Tagen. Ich habe auch Fieber.","ref":"For three days. I also have a fever."},
+{"speaker":"Ärztin","target":"Haben Sie auch Halsschmerzen oder Husten?","ref":"Do you also have a sore throat or a cough?"},
+{"speaker":"Patient","target":"Ja, mein Hals tut weh und ich huste viel.","ref":"Yes, my throat hurts and I cough a lot."},
+{"speaker":"Ärztin","target":"Das klingt nach einer Grippe. Ruhen Sie sich aus.","ref":"That sounds like the flu. Get some rest."},
+{"speaker":"Patient","target":"Brauche ich ein Medikament?","ref":"Do I need any medication?"},
+{"speaker":"Ärztin","target":"Ich verschreibe Ihnen etwas gegen das Fieber.","ref":"I'll prescribe you something for the fever."},
+{"speaker":"Patient","target":"Vielen Dank, Frau Doktor.","ref":"Thank you very much, Doctor."},
+{"speaker":"Ärztin","target":"Gute Besserung! Trinken Sie viel Tee.","ref":"Get well soon! Drink plenty of tea."}
+],"vocab":["die Kopfschmerzen (headache)","das Fieber (fever)","wehtun (to hurt)","das Medikament (medication)","Gute Besserung! (get well soon)"],"note":"To see a specialist in Germany you usually need an Überweisung (referral) from your GP. Bring your Versichertenkarte (insurance card) to every appointment — it is scanned at the reception desk."},
+{"title":"Eine Wohnung mieten","scene":"A prospective tenant asks a landlord about the size, rent and lease of an apartment.","level":"Advanced","lines":[
+{"speaker":"Interessent","target":"Guten Tag, ich interessiere mich für die Wohnung.","ref":"Hello, I'm interested in the apartment."},
+{"speaker":"Vermieter","target":"Schön, dass Sie da sind. Die Wohnung hat drei Zimmer.","ref":"Glad you're here. The apartment has three rooms."},
+{"speaker":"Interessent","target":"Wie groß ist sie denn genau?","ref":"How big is it exactly?"},
+{"speaker":"Vermieter","target":"Sie ist fünfundsiebzig Quadratmeter groß.","ref":"It is seventy-five square metres."},
+{"speaker":"Interessent","target":"Und wie hoch ist die Miete?","ref":"And how high is the rent?"},
+{"speaker":"Vermieter","target":"Achthundert Euro kalt, plus zweihundert Euro Nebenkosten.","ref":"Eight hundred euros without utilities, plus two hundred euros for utilities."},
+{"speaker":"Interessent","target":"Sind die Nebenkosten inklusive Heizung?","ref":"Do the utilities include heating?"},
+{"speaker":"Vermieter","target":"Ja, Heizung und Wasser sind enthalten, Strom nicht.","ref":"Yes, heating and water are included, electricity is not."},
+{"speaker":"Interessent","target":"Wie lange läuft der Mietvertrag?","ref":"How long does the lease run?"},
+{"speaker":"Vermieter","target":"Der Vertrag ist unbefristet, mit drei Monaten Kündigungsfrist.","ref":"The contract is open-ended, with three months' notice."},
+{"speaker":"Interessent","target":"Das klingt gut. Wann könnte ich einziehen?","ref":"That sounds good. When could I move in?"},
+{"speaker":"Vermieter","target":"Ab dem Ersten des nächsten Monats.","ref":"From the first of next month."}
+],"vocab":["die Miete (rent)","die Nebenkosten (utility costs)","der Mietvertrag (lease)","die Kündigungsfrist (notice period)","einziehen (to move in)"],"note":"German rents are quoted as Kaltmiete (cold rent, base only) plus Nebenkosten; the total is the Warmmiete. Tenants also pay a Kaution (deposit) of up to three months' cold rent, held in a separate account."},
+{"title":"Bei der Bank","scene":"A new customer opens a bank account and asks about fees and transfers.","level":"Advanced","lines":[
+{"speaker":"Kunde","target":"Guten Tag, ich möchte ein Konto eröffnen.","ref":"Hello, I would like to open an account."},
+{"speaker":"Berater","target":"Gern. Haben Sie einen Ausweis und eine Meldebescheinigung dabei?","ref":"Of course. Do you have an ID and a registration certificate with you?"},
+{"speaker":"Kunde","target":"Ja, hier ist mein Reisepass und die Anmeldung.","ref":"Yes, here is my passport and the registration."},
+{"speaker":"Berater","target":"Wunderbar. Möchten Sie ein Girokonto oder ein Sparkonto?","ref":"Wonderful. Would you like a current account or a savings account?"},
+{"speaker":"Kunde","target":"Ein Girokonto, bitte. Gibt es monatliche Gebühren?","ref":"A current account, please. Are there monthly fees?"},
+{"speaker":"Berater","target":"Das Konto kostet fünf Euro im Monat, inklusive Girokarte.","ref":"The account costs five euros a month, including a debit card."},
+{"speaker":"Kunde","target":"Kann ich damit auch Überweisungen online machen?","ref":"Can I also make transfers online with it?"},
+{"speaker":"Berater","target":"Selbstverständlich, über unser Online-Banking und die App.","ref":"Of course, through our online banking and the app."},
+{"speaker":"Kunde","target":"Und wie lange dauert eine Überweisung?","ref":"And how long does a transfer take?"},
+{"speaker":"Berater","target":"Innerhalb Europas meistens einen Werktag.","ref":"Within Europe usually one business day."},
+{"speaker":"Kunde","target":"Sehr gut. Wo muss ich unterschreiben?","ref":"Very good. Where do I have to sign?"},
+{"speaker":"Berater","target":"Hier unten, bitte. Ihre Karte kommt in einer Woche per Post.","ref":"Here at the bottom, please. Your card will arrive by mail in a week."}
+],"vocab":["das Konto (account)","die Gebühr (fee)","die Überweisung (bank transfer)","die Girokarte (debit card)","unterschreiben (to sign)"],"note":"Germany still relies heavily on the SEPA-Überweisung (bank transfer) rather than cheques, and the IBAN is essential for every payment. Opening an account usually requires an Anmeldung — proof you have registered your address at the local Bürgeramt."}
+]}
