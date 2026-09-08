@@ -1594,32 +1594,52 @@ function loadSeedFile(lang, tab) {
   } catch (e) { return null; }
 }
 
-// Load seed files into content_cache for any (lang, tab) that has no row yet.
-// Idempotent: never overwrites AI-generated or already-seeded content.
+// Number of reference items in a content object (schema differs per tab).
+function seedItemCount(content) {
+  const arr = content.sections || content.categories || content.structures
+    || content.dialogues || content.drills || content.phases || [];
+  return Array.isArray(arr) ? arr.length : 0;
+}
+
+// Load curated seed files into content_cache. Inserts where a (lang, tab) row is
+// missing, AND upgrades any existing row that is SHALLOWER than the curated seed
+// (e.g. stale/partial content from an earlier generation). Never downgrades a row
+// that is already richer than the seed (so deeper AI-enriched content is preserved).
 async function seedContent() {
   const fs = require("fs");
   if (!fs.existsSync(_seedDir)) return;
-  let inserted = 0, invalid = 0;
+  let inserted = 0, upgraded = 0, invalid = 0;
   for (const lang of VALID_LANGS) {
     for (const tab of VALID_TABS) {
       const file = require("path").join(_seedDir, lang, `${tab}.json`);
       if (!fs.existsSync(file)) continue;
-      const existing = await db.get("SELECT 1 FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
-      if (existing) continue;
       let content;
       try { content = JSON.parse(fs.readFileSync(file, "utf8")); }
       catch (e) { console.warn(`[Seed] bad JSON ${lang}/${tab}: ${e.message}`); invalid++; continue; }
       const verr = validateContent(lang, tab, content);
       if (verr) { console.warn(`[Seed] invalid ${lang}/${tab}: ${verr}`); invalid++; continue; }
+
+      const existing = await db.get("SELECT content_json FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
+      let write = false;
+      if (!existing) write = true;
+      else {
+        try { write = seedItemCount(content) > seedItemCount(JSON.parse(existing.content_json)); }
+        catch (e) { write = true; } // existing row unparseable → replace with the valid seed
+      }
+      if (!write) continue;
+
       await db.run(
         `INSERT INTO content_cache (lang, tab, content_json, generated_at)
-         VALUES ($1, $2, $3, NOW()) ON CONFLICT(lang, tab) DO NOTHING`,
+         VALUES ($1, $2, $3, NOW())
+         ON CONFLICT(lang, tab) DO UPDATE SET content_json = excluded.content_json, generated_at = NOW()`,
         [lang, tab, JSON.stringify(content)]
       );
-      inserted++;
+      if (existing) upgraded++; else inserted++;
     }
   }
-  if (inserted || invalid) console.log(`[Seed] loaded ${inserted} curated content files${invalid ? `, ${invalid} skipped (invalid)` : ""}`);
+  if (inserted || upgraded || invalid) {
+    console.log(`[Seed] ${inserted} inserted, ${upgraded} upgraded to curated content${invalid ? `, ${invalid} skipped (invalid)` : ""}`);
+  }
 }
 
 module.exports = router;
