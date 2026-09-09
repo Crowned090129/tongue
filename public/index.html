@@ -2930,7 +2930,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
   };
 
   return (
-    <div style={{ fontFamily:"system-ui,-apple-system,sans-serif", background:"#f1f5f9", minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", padding:"20px" }}>
+    <div style={{ fontFamily:"var(--font)", background:"transparent", display:"flex", alignItems:"center", justifyContent:"center", padding:"20px", width:"100%" }}>
       <div style={{ background:"#fff", borderRadius:16, padding:28, width:"100%", maxWidth:390, boxShadow:"0 4px 24px rgba(0,0,0,0.10)" }}>
         <div style={{ textAlign:"center", marginBottom:22 }}>
           <img src="/icon.svg" alt="Tongue" style={{ width:64, height:64, marginBottom:10, display:"inline-block" }}/>
@@ -2951,7 +2951,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
         )}
 
         {/* Mode switcher */}
-        <div style={{ display:"flex", background:"#f1f5f9", borderRadius:12, padding:4, marginBottom:20, gap:3 }}>
+        <div style={{ display:"flex", background:"#F1ECE3", borderRadius:12, padding:4, marginBottom:20, gap:3 }}>
           {[["free","Start Free"],["code","I Have a Code"]].map(([m,label]) => (
             <button key={m} onClick={()=>{setMode(m);setErr("");}} style={{
               flex:1, padding:"10px 0", borderRadius:9, border:"none", fontWeight:700, fontSize:13, cursor:"pointer",
@@ -7201,7 +7201,7 @@ function App() {
 
   if (!loggedIn && authChecking) {
     return (
-      <div style={{fontFamily:"system-ui,-apple-system,sans-serif",background:"#f1f5f9",minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16}}>
+      <div style={{fontFamily:"var(--font)",background:"transparent",minHeight:"50vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:16}}>
         <img src="/icon.svg" alt="Tongue" style={{width:64,height:64}}/>
         <div style={{width:26,height:26,border:"3px solid #e2e8f0",borderTopColor:"#C0153E",borderRadius:"50%",animation:"spin .7s linear infinite"}}/>
         <div style={{color:"#64748b",fontSize:13,fontWeight:600}}>Signing you in…</div>
