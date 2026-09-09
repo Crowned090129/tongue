@@ -2811,7 +2811,10 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
   // Remember the last-used code/email so returning users never have to look it up.
   const savedCode  = (() => { try { return localStorage.getItem("tongue_code")  || ""; } catch(e) { return ""; } })();
   const savedEmail = (() => { try { return localStorage.getItem("auth_email")   || ""; } catch(e) { return ""; } })();
-  const [mode, setMode]   = useState(savedCode ? "code" : "free"); // "code" | "free"
+  // "Sign in" from the landing (/app?signin=1) opens the login (code/email) view,
+  // not the "Start Free" signup — so returning users don't land on a trial screen.
+  const wantSignin = (() => { try { return new URLSearchParams(window.location.search).get("signin") === "1"; } catch(e) { return false; } })();
+  const [mode, setMode]   = useState(savedCode || wantSignin ? "code" : "free"); // "code" | "free"
   const [code, setCode]   = useState(savedCode);
   const [email, setEmail] = useState(savedEmail);
   const [err, setErr]     = useState("");
@@ -2987,7 +2990,8 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
             <button onClick={login} disabled={loading} style={{ width:"100%", padding:13, background:"#C0153E", color:"#fff", border:"none", borderRadius:10, fontWeight:700, fontSize:15, cursor:loading?"default":"pointer", marginBottom:12 }}>
               {loading ? "Verifying..." : "Access App"}
             </button>
-            <div style={{ textAlign:"center" }}>
+            <div style={{ textAlign:"center", display:"flex", flexDirection:"column", gap:8 }}>
+              <button onClick={()=>{setMode("free");setErr("");}} style={{ background:"none", border:"none", color:"#C0153E", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>No code? Sign in with your email →</button>
               <a href="/resend-code" style={{ color:"#64748b", fontSize:12, textDecoration:"none" }}>Lost your code? Resend it →</a>
             </div>
           </>
