@@ -39,24 +39,28 @@ async function sendEmail(to, subject, html) {
   // Prefer SMTP (Gmail) when configured, then Resend, then log to console.
   if (smtpTransport) {
     try {
-      await smtpTransport.sendMail({ from: FROM, to, subject, html });
-      return;
+      const info = await smtpTransport.sendMail({ from: FROM, to, subject, html });
+      console.log(`[EMAIL] ✓ sent via SMTP to ${to} (id=${info.messageId}, accepted=${JSON.stringify(info.accepted)}, rejected=${JSON.stringify(info.rejected)})`);
+      return true;
     } catch (e) {
-      console.error("[EMAIL] SMTP send failed:", e.message);
+      console.error(`[EMAIL] ✗ SMTP send failed to ${to}: ${e.message}${e.code ? ` [${e.code}]` : ""}${e.responseCode ? ` (${e.responseCode})` : ""}`);
       // fall through to Resend if available
     }
   }
   if (resend) {
     try {
-      await resend.emails.send({ from: FROM, to, subject, html });
-      return;
+      const r = await resend.emails.send({ from: FROM, to, subject, html });
+      if (r && r.error) { console.error(`[EMAIL] ✗ Resend rejected to ${to}: ${JSON.stringify(r.error)}`); }
+      else { console.log(`[EMAIL] ✓ sent via Resend to ${to} (id=${r && r.data && r.data.id})`); return true; }
     } catch (e) {
-      console.error("[EMAIL] Resend send failed:", e.message);
+      console.error(`[EMAIL] ✗ Resend send failed to ${to}: ${e.message}`);
     }
   }
   if (!smtpTransport && !resend) {
     console.log(`[EMAIL] (no transport configured) To: ${to}\nSubject: ${subject}\n${html.replace(/<[^>]+>/g, "")}\n`);
   }
+  console.error(`[EMAIL] ✗ ALL transports failed for ${to} — email NOT delivered`);
+  return false;
 }
 
 function welcomeEmail(email, code, plan) {
