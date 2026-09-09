@@ -3626,6 +3626,26 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
   const [open,     setOpen]     = useState(null);
   const [genAt,    setGenAt]    = useState("");
   const [dIdx,     setDIdx]     = useState(0);
+  const [moreWords, setMoreWords] = useState({}); // AI-generated extra words per category → infinite vocab
+  const [genIdx,    setGenIdx]    = useState(null);
+  const nativeL = (() => { try { return localStorage.getItem("native_lang") || "en"; } catch(e) { return "en"; } })();
+
+  // Generate more real words for a vocab category on demand — makes the reference infinite.
+  const genMoreWords = async (cat, i) => {
+    if (genIdx !== null) return;
+    if (!isLoggedIn()) { window.dispatchEvent(new CustomEvent("show-upgrade")); return; }
+    setGenIdx(i);
+    const have = [...(cat.words || []), ...(moreWords[i] || [])].map(w => w.t);
+    try {
+      const r = await askClaude(
+        `You are a ${tName} vocabulary teacher. Give 8 more useful, real ${tName} words for the category "${cat.name}" that are NOT already in this list: ${have.join(", ")}. Return ONLY valid JSON: {"words":[{"t":"the ${tName} word","p":"pronunciation guide","r":"English meaning"}]}`,
+        700, tLang, nativeL
+      );
+      const fresh = (r && Array.isArray(r.words) ? r.words : []).filter(w => w && w.t && !have.includes(w.t));
+      if (fresh.length) setMoreWords(m => ({ ...m, [i]: [...(m[i] || []), ...fresh] }));
+    } catch(e) { /* FREE_LIMIT etc. handled by askClaude events */ }
+    setGenIdx(null);
+  };
 
   // Auto-fetch on mount or when language changes
   useEffect(() => {
@@ -3839,13 +3859,13 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
               <div onClick={() => setOpen(isOpen ? null : i)} style={{ padding:"13px 16px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <div>
                   <div style={{ fontWeight:900, color:catCol, fontSize:15 }}>{cat.name}</div>
-                  <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{(cat.words||[]).length} words</div>
+                  <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{(cat.words||[]).length + (moreWords[i]||[]).length} words</div>
                 </div>
                 <div style={{ color:catCol, fontSize:20, fontWeight:700 }}>{isOpen ? "−" : "+"}</div>
               </div>
               {isOpen && (
                 <div style={{ padding:"4px 13px 14px" }}>
-                  {(cat.words||[]).map((w, j) => (
+                  {[...(cat.words||[]), ...(moreWords[i]||[])].map((w, j) => (
                     <div key={j} style={{ background:j%2===0?C.bg:C.card, border:`1px solid ${C.bdr}`, borderRadius:9, padding:"9px 12px", marginBottom:6 }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:2 }}>
                         <span style={{ fontWeight:800, color:C.blue, fontSize:14 }}>{w.t}</span>
@@ -3855,6 +3875,9 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                       <div style={{ color:C.mid, fontSize:12 }}>{w.r}</div>
                     </div>
                   ))}
+                  <button onClick={() => genMoreWords(cat, i)} disabled={genIdx===i} style={{ width:"100%", marginTop:4, padding:"10px", background:genIdx===i?C.surf2:C.accentSoft, border:`1px solid ${C.accentLine}`, borderRadius:10, color:C.accent, fontWeight:700, fontSize:13, cursor:genIdx===i?"default":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
+                    <Icon name={genIdx===i?"loader":"plus"} size={14} color={C.accent}/> {genIdx===i ? "Generating…" : "Generate more words"}
+                  </button>
                 </div>
               )}
             </div>
