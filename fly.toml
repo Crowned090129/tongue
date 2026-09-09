@@ -2,7 +2,7 @@
 # Deploy with: fly deploy
 # Docs: https://fly.io/docs/reference/configuration/
 
-app            = "tonge-app"
+app            = "tongue-app"
 primary_region = "iad"   # US East (Ashburn) — closest to most English-speaking users
 
 [build]
