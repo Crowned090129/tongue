@@ -5067,6 +5067,39 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
 }
 
 // ── EXPLORE HOME ──────────────────────────────────────────────────────────────
+// A real word pulled from the live content, so the home shows actual language
+// (not just a menu). Stable per day; tap to hear it.
+function WordOfDay({ tLang }) {
+  const [w, setW] = useState(null);
+  useEffect(() => {
+    let cx = false;
+    fetch(`/api/content/${tLang}/vocab`, { headers:{ "Authorization":"Bearer "+getToken() } })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (cx || !d || !d.content) return;
+        const words = (d.content.categories || []).flatMap(c => (c.words || []));
+        if (!words.length) return;
+        const day = Math.floor(Date.now() / 86400000);
+        setW(words[day % words.length]);
+      }).catch(()=>{});
+    return () => { cx = true; };
+  }, [tLang]);
+  if (!w) return null;
+  return (
+    <div style={{borderRadius:16, padding:"14px 16px", background:"linear-gradient(135deg,rgba(255,95,126,.09),rgba(192,21,62,.07))", border:`1px solid ${C.accentLine}`, marginBottom:11}}>
+      <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:C.accent,marginBottom:9}}>Word to learn today</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+        <div style={{minWidth:0}}>
+          <div style={{fontFamily:"var(--serif)",fontSize:26,fontWeight:600,color:C.text,lineHeight:1.05}}>{w.t}</div>
+          {w.p && <div style={{fontSize:12.5,color:C.accent,fontStyle:"italic",marginTop:3}}>{w.p}</div>}
+          <div style={{fontSize:13.5,color:C.muted,marginTop:4}}>{w.r}</div>
+        </div>
+        <PlayBtn text={w.t}/>
+      </div>
+    </div>
+  );
+}
+
 function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak, isDesktop, userLevel }) {
   useLucide([L.id, factIdx, dark]);
   const fact = L.facts[factIdx % L.facts.length];
@@ -5138,6 +5171,9 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
             <span style={{fontWeight:600,fontSize:12,color:C.text}}>{levelText}</span>
           </div>
         </div>
+
+        {/* Real content up front, so the home isn't just a menu */}
+        <WordOfDay tLang={L.id}/>
 
         {/* Culture fact */}
         <div style={{borderRadius:16,padding:"13px 15px",background:"linear-gradient(135deg,rgba(255,95,126,.1),rgba(192,21,62,.08))",border:`1px solid ${C.accentLine}`,marginBottom:11}}>
