@@ -2450,9 +2450,8 @@ function Info({ text, color }) {
   return (
     <div style={{
       background: C.surf2, border: `1px solid ${C.line}`,
-      borderLeft: `2px solid ${C.faint}`,
-      borderRadius: 8, padding: "10px 14px", marginBottom: 10,
-      fontSize: 12.5, color: C.muted, lineHeight: 1.55,
+      borderRadius: 12, padding: "11px 15px", marginBottom: 11,
+      fontSize: 12.5, color: C.muted, lineHeight: 1.6,
     }}>{text}</div>
   );
 }
@@ -3466,7 +3465,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
 
           {Array.isArray(fb.fixes) && fb.fixes.map((fix, i) => (
             fix.wrong && (
-              <div key={i} style={{ background: C.bg, borderRadius: 9, padding: "9px 12px", marginBottom: 7, borderLeft: `3px solid ${C.red}` }}>
+              <div key={i} style={{ background: C.red+"0c", border:`1px solid ${C.red}22`, borderRadius: 11, padding: "10px 13px", marginBottom: 7 }}>
                 <div style={{ fontSize: 13 }}>
                   <span style={{ color: C.red, textDecoration: "line-through" }}>{fix.wrong}</span>
                   <span style={{ color: C.muted }}> → </span>
@@ -3644,7 +3643,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
   if (err || !content) {
     return (
       <div>
-        <Heading title={tabLabel} color={col} />
+        {!hideHeading && <Heading title={tabLabel} color={col} />}
         <div style={{ background:C.card, borderRadius:16, padding:"28px 20px", textAlign:"center", boxShadow:C.sh, border:`1px solid ${C.bdr}` }}>
           <div style={{ width:48, height:48, borderRadius:14, background:C.accentSoft, display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
             <Icon name="cloud-off" size={22} color={C.accent}/>
@@ -3786,7 +3785,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
               </div>
               {isOpen && (
                 <div style={{ padding:"0 16px 16px" }}>
-                  <div style={{ background:sCol+"08", border:`1px solid ${sCol}25`, borderLeft:`3px solid ${sCol}`, borderRadius:8, padding:"11px 14px", marginBottom:12 }}>
+                  <div style={{ background:sCol+"0a", border:`1px solid ${sCol}22`, borderRadius:12, padding:"12px 15px", marginBottom:12 }}>
                     <div style={{ fontWeight:700, color:sCol, fontSize:11, textTransform:"uppercase", letterSpacing:1, marginBottom:5 }}>How it works</div>
                     <div style={{ color:C.mid, fontSize:13, lineHeight:1.6 }}>{s.explanation}</div>
                   </div>
@@ -3908,7 +3907,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
             </div>
           )}
           {d.note && (
-            <div style={{ marginTop:12, padding:"10px 13px", background:C.surf2, border:`1px solid ${C.line}`, borderLeft:`2px solid ${C.line}`, borderRadius:8 }}>
+            <div style={{ marginTop:12, padding:"10px 13px", background:C.surf2, border:`1px solid ${C.line}`, borderRadius:8 }}>
               <div style={{ fontSize:10, fontWeight:700, color:C.muted, textTransform:"uppercase", letterSpacing:1, marginBottom:4 }}>Cultural Note</div>
               <div style={{ fontSize:13, color:C.mid, lineHeight:1.6 }}>{d.note}</div>
             </div>
@@ -4010,19 +4009,19 @@ function VocabCard({ fr, en, tLang, rLangs }) {
                 </div>
               )}
               {data.explanation && (
-                <div style={{ background: C.blue + "08", border: `1px solid ${C.blue}20`, borderLeft: `3px solid ${C.blue}`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
+                <div style={{ background: C.blue + "08", border: `1px solid ${C.blue}20`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
                   <div style={{ fontWeight: 700, color: C.blue, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>How and when to use it</div>
                   <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.55 }}>{data.explanation}</div>
                 </div>
               )}
               {data.ref_connection && (
-                <div style={{ background: C.surf2, border: `1px solid ${C.line}`, borderLeft: `2px solid ${C.line}`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
+                <div style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
                   <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>Compared to {refNames}</div>
                   <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.55 }}>{data.ref_connection}</div>
                 </div>
               )}
               {data.watch_out && (
-                <div style={{ background: C.red + "08", border: `1px solid ${C.red}20`, borderLeft: `3px solid ${C.red}`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
+                <div style={{ background: C.red + "08", border: `1px solid ${C.red}20`, borderRadius: 7, padding: "9px 12px", marginBottom: 10 }}>
                   <div style={{ fontWeight: 700, color: C.red, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 5 }}>Watch out</div>
                   <div style={{ color: C.mid, fontSize: 13 }}>{data.watch_out}</div>
                 </div>
@@ -4043,7 +4042,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
                 </div>
               )}
               {data.tip && (
-                <div style={{ background: C.green + "10", border: `1px solid ${C.green}25`, borderLeft: `3px solid ${C.green}`, borderRadius: 7, padding: "8px 12px" }}>
+                <div style={{ background: C.green + "10", border: `1px solid ${C.green}25`, borderRadius: 7, padding: "8px 12px" }}>
                   <span style={{ fontWeight: 700, color: C.green, fontSize: 11 }}>TIP  </span>
                   <span style={{ color: C.mid, fontSize: 13 }}>{data.tip}</span>
                 </div>
@@ -4665,7 +4664,7 @@ function WordSpace({ tLang, rLangs }) {
 
           {/* Grammar explanation */}
           {result.explanation && (
-            <div style={{ background: C.blue + "08", border: `1px solid ${C.blue}20`, borderLeft: `3px solid ${C.blue}`, borderRadius: 9, padding: "12px 14px", marginBottom: 10 }}>
+            <div style={{ background: C.blue + "08", border: `1px solid ${C.blue}20`, borderRadius: 9, padding: "12px 14px", marginBottom: 10 }}>
               <div style={{ fontWeight: 700, color: C.blue, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("grammar_usage")}</div>
               <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.6 }}>{result.explanation}</div>
             </div>
@@ -4673,7 +4672,7 @@ function WordSpace({ tLang, rLangs }) {
 
           {/* Reference language comparison */}
           {result.ref_comparison && (
-            <div style={{ background: C.surf2, border: `1px solid ${C.line}`, borderLeft: `2px solid ${C.line}`, borderRadius: 9, padding: "12px 14px", marginBottom: 10 }}>
+            <div style={{ background: C.surf2, border: `1px solid ${C.line}`, borderRadius: 9, padding: "12px 14px", marginBottom: 10 }}>
               <div style={{ fontWeight: 700, color: C.muted, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{t("compared_to")} {refNames}</div>
               <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.6 }}>{result.ref_comparison}</div>
             </div>
@@ -4681,7 +4680,7 @@ function WordSpace({ tLang, rLangs }) {
 
           {/* Memory tip */}
           {result.tip && (
-            <div style={{ background: C.green + "08", border: `1px solid ${C.green}20`, borderLeft: `3px solid ${C.green}`, borderRadius: 9, padding: "10px 14px", marginBottom: 10 }}>
+            <div style={{ background: C.green + "08", border: `1px solid ${C.green}20`, borderRadius: 9, padding: "10px 14px", marginBottom: 10 }}>
               <span style={{ fontWeight: 700, color: C.green, fontSize: 11 }}>TIP  </span>
               <span style={{ color: C.mid, fontSize: 13 }}>{result.tip}</span>
             </div>
@@ -5284,11 +5283,11 @@ function ConceptScreen({ L, nav, goBack }) {
       </div>
       <div style={{fontSize:13.5,fontWeight:500,lineHeight:1.55,color:C.muted,margin:"13px 0 14px"}}>{C2.body}</div>
 
-      <div style={{background:C.accentSoft,borderLeft:`3px solid ${C.accent}`,borderRadius:12,padding:"12px 15px",marginBottom:10}}>
+      <div style={{background:C.accentSoft,border:`1px solid ${C.accentLine}`,borderRadius:13,padding:"13px 16px",marginBottom:10}}>
         <div style={{fontSize:10,fontWeight:700,letterSpacing:".11em",textTransform:"uppercase",color:C.accent,marginBottom:6}}>What this is &amp; how it works</div>
         <div style={{fontSize:12.5,fontWeight:500,lineHeight:1.55,color:C.text}}>{C2.whatIs}</div>
       </div>
-      <div style={{background:C.surf2,borderLeft:`3px solid ${C.line}`,borderRadius:12,padding:"12px 15px",marginBottom:16}}>
+      <div style={{background:C.surf2,borderRadius:12,padding:"12px 15px",marginBottom:16}}>
         <div style={{fontSize:10,fontWeight:700,letterSpacing:".11em",textTransform:"uppercase",color:C.faint,marginBottom:6}}>Compared to your other languages</div>
         <div style={{fontSize:12.5,fontWeight:500,lineHeight:1.55,color:C.text}}>{C2.compared}</div>
       </div>
@@ -6679,7 +6678,7 @@ function TextAnalyzer({ tLang, rLangs, nativeLang }) {
 
           {/* Tip */}
           {analysis.tip && (
-            <div style={{background:C.surf2,border:`1px solid ${C.line}`,borderLeft:`3px solid ${C.faint}`,borderRadius:9,padding:"10px 13px"}}>
+            <div style={{background:C.surf2,border:`1px solid ${C.line}`,borderRadius:12,padding:"11px 14px"}}>
               <div style={{fontWeight:700,fontSize:10,color:C.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:4}}>Cultural tip</div>
               <div style={{fontSize:12.5,color:C.text,lineHeight:1.55}}>{analysis.tip}</div>
             </div>
