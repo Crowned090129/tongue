@@ -5069,20 +5069,22 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
 // ── EXPLORE HOME ──────────────────────────────────────────────────────────────
 // A real word pulled from the live content, so the home shows actual language
 // (not just a menu). Stable per day; tap to hear it.
+const _wodCache = {}; // module-level so it survives remounts (isDesktop toggling remounts children)
 function WordOfDay({ tLang }) {
-  const [w, setW] = useState(null);
+  const [w, setW] = useState(() => _wodCache[tLang] || null);
   useEffect(() => {
-    let cx = false;
+    if (_wodCache[tLang]) { setW(_wodCache[tLang]); return; }
+    let alive = true;
     fetch(`/api/content/${tLang}/vocab`, { headers:{ "Authorization":"Bearer "+getToken() } })
       .then(r => r.ok ? r.json() : null)
       .then(d => {
-        if (cx || !d || !d.content) return;
-        const words = (d.content.categories || []).flatMap(c => (c.words || []));
+        const words = ((d && d.content && d.content.categories) || []).flatMap(c => (c.words || []));
         if (!words.length) return;
-        const day = Math.floor(Date.now() / 86400000);
-        setW(words[day % words.length]);
+        const picked = words[Math.floor(Date.now() / 86400000) % words.length];
+        _wodCache[tLang] = picked;      // cache regardless of this instance's lifecycle
+        if (alive) setW(picked);
       }).catch(()=>{});
-    return () => { cx = true; };
+    return () => { alive = false; };
   }, [tLang]);
   if (!w) return null;
   return (
