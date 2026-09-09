@@ -1,19 +1,22 @@
 /* ── Tongue brand system ──────────────────────────────────────────────────── */
 /* Imported by all public pages (subscribe, faq, terms, privacy, 404, resend) */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&display=swap');
 
 :root {
   --blue:       #C0153E;
-  --blue-dark:  #A0122F;
+  --blue-dark:  #9C0E30;
   --blue-dim:   #7A0D24;
-  --blue-light: #fff0f4;
-  --blue-mid:   #ffb3c6;
-  --text:       #0f172a;
-  --text-mid:   #334155;
-  --text-dim:   #64748b;
-  --text-faint: #94a3b8;
-  --border:     #e2e8f0;
-  --bg:         #f8fafc;
-  --white:      #ffffff;
+  --blue-light: #F6E7E6;
+  --blue-mid:   #E7A9B6;
+  --text:       #231C16;
+  --text-mid:   #574C42;
+  --text-dim:   #8C8175;
+  --text-faint: #A79C8D;
+  --border:     #E7DECF;
+  --bg:         #F6F1E8;
+  --white:      #FCFAF5;
+  --serif:      'Fraunces',Georgia,'Times New Roman',serif;
+  --sans:       'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --green:      #16a34a;
   --green-bg:   #dcfce7;
   --red:        #dc2626;
@@ -32,12 +35,14 @@
 html { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--sans);
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; letter-spacing: -.015em; line-height: 1.1; }
 
 /* ── Nav bar shared by all pages ─────────────────────────────────────────── */
 .t-nav {
