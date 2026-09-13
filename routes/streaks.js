@@ -1,11 +1,12 @@
 const express = require("express");
-const { requireAuth, requirePaid } = require("./auth");
+const { requireAuth } = require("./auth");
 const db = require("../db");
 
 const router = express.Router();
 
-// POST /api/streaks/log — record a practice session (idempotent per day)
-router.post("/log", requireAuth, requirePaid, async (req, res) => {
+// POST /api/streaks/log — record a practice session (idempotent per day).
+// Streaks are core engagement, not a paid feature — available to every signed-in user.
+router.post("/log", requireAuth, async (req, res) => {
   const { userId } = req.user;
   const today = new Date().toISOString().slice(0, 10);
 
@@ -43,7 +44,7 @@ router.post("/log", requireAuth, requirePaid, async (req, res) => {
 });
 
 // GET /api/streaks — fetch current streak data
-router.get("/", requireAuth, requirePaid, async (req, res) => {
+router.get("/", requireAuth, async (req, res) => {
   const { userId } = req.user;
   const row = await db.get("SELECT * FROM streaks WHERE user_id = $1", [userId]);
 

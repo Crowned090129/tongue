@@ -116,6 +116,22 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Your subscription is not active. Please renew at /subscribe." });
   }
 
+  // Unclaimed codes (created without an email) bind to whoever redeems them first.
+  if (/^unclaimed__/.test(row.email || "")) {
+    const bindEmail = (req.body && req.body.email || "").trim().toLowerCase();
+    if (!bindEmail || !bindEmail.includes("@") || bindEmail.length > 254) {
+      // No email yet → tell the client to ask for one, then resubmit with { code, email }.
+      return res.json({ needsEmail: true });
+    }
+    const taken = await db.get("SELECT id FROM users WHERE email = $1 AND id <> $2", [bindEmail, row.userId]);
+    if (taken) {
+      return res.status(409).json({ error: "That email is already used by another account. Try a different email." });
+    }
+    await db.run("UPDATE users SET email = $1 WHERE id = $2", [bindEmail, row.userId]);
+    row.email = bindEmail;
+    db.trackEvent(row.userId, "code_email_bound", {});
+  }
+
   // Rotate nonce with 2-slot system — supports up to 2 concurrent devices.
   const existing = await db.get("SELECT session_nonce FROM access_codes WHERE id = $1", [row.codeId]);
   const nonce = crypto.randomBytes(16).toString("hex");

@@ -952,6 +952,30 @@ const VOCAB_CATEGORIES = {
   ]
 };
 
+// Comprehensive coverage: these universal categories are appended to EVERY language
+// so the base vocabulary is broad. Each category is generated on its own request
+// (see generateVocabDeep) so it can hold 40 words + example sentences without being
+// truncated — and users can still "generate more" per category for unlimited depth.
+const UNIVERSAL_VOCAB_EXTRA = [
+  "Emotions & Feelings — happiness, sadness, anger, fear, love, worry and everyday emotional states, with the verbs to feel/to be",
+  "House & Rooms — types of home, rooms, doors/windows/stairs and parts of a house",
+  "Furniture & Household Objects — furniture, appliances, kitchenware, bathroom and everyday household items",
+  "Health & Medicine — illnesses, symptoms, doctor/hospital/pharmacy words, medicine and staying healthy",
+  "Sports & Exercise — common sports, the gym, verbs of playing/running/training and sporting equipment",
+  "Hobbies & Free Time — pastimes, reading/music/gaming/photography and how to say what you like doing",
+  "Cooking & In the Kitchen — cooking verbs, ingredients, utensils, tastes and preparing meals",
+  "School & Education — subjects, classroom objects, studying, exams and school people/places",
+  "Office & Business — workplace, meetings, email, money/economy and common job-world vocabulary",
+  "Arts, Music & Entertainment — cinema, theatre, music, museums, instruments and going out",
+  "Directions & Positions — left/right/straight, near/far, prepositions of place and asking the way",
+  "Common Adverbs & Connectors — frequency, time, degree (very/too/enough) and linking words (but/because/so/although)",
+  "Personality & Describing People — character traits, appearance and adjectives for describing someone",
+  "Materials & Everyday Objects — materials (wood/metal/plastic/glass), shapes, and common small objects",
+];
+for (const _vl of Object.keys(VOCAB_CATEGORIES)) {
+  VOCAB_CATEGORIES[_vl] = VOCAB_CATEGORIES[_vl].concat(UNIVERSAL_VOCAB_EXTRA);
+}
+
 // ── Dialogue scenarios — 5 real-life scenes per language ─────────────────────
 const DIALOGUE_SCENARIOS = {
   "fr": [
@@ -1062,14 +1086,15 @@ function buildGrammarPrompt(lang) {
 ${topics.map((t, i) => `${i + 1}. ${t}`).join("\n")}
 
 Return ONLY a valid JSON object — no markdown, no code fences, no explanation before or after:
-{"sections":[{"title":"Short name (3–5 words)","level":"Beginner","rule":"2–3 sentence accurate explanation of the rule including the actual pattern or formula","example_target":"A natural grammatically correct sentence in ${name}","example_target_2":"A second shorter example sentence in ${name}","example_ref":"English: [translation of example 1] / [translation of example 2]","note":"The single most important tip, common mistake to avoid, or key nuance"}]}
+{"sections":[{"title":"Short name (3–5 words)","level":"Beginner","rule":"3–4 sentence accurate explanation of the rule including the actual pattern or formula and when to use it","example_target":"A natural grammatically correct sentence in ${name}","example_target_2":"A second shorter example sentence in ${name}","example_ref":"English: [translation of example 1] / [translation of example 2]","examples":[{"target":"a further example sentence in ${name}","ref":"its English translation"}],"common_mistake":"A specific error learners actually make with this rule, and the correct form","note":"The single most important tip, memory trick, or key nuance"}]}
 
 ACCURACY RULES — violations are unacceptable:
-- Every sentence in example_target and example_target_2 MUST be in ${name}, not English
-- All ${name} text must be grammatically correct — double-check every form
+- Every ${name} sentence (example_target, example_target_2, and every examples[].target) MUST be in ${name}, not English, and grammatically correct — double-check every form
+- examples must contain EXACTLY 3 additional worked examples (so each section shows 5 examples total), each with target + ref, progressing from simple to more complex
+- common_mistake must name a real, specific learner error and show the correction (e.g., "Learners say X — the correct form is Y because…"), not restate the rule
 - level: label the earliest third of the sections "Beginner", the middle third "Intermediate", and the final third "Advanced"
 - rule must state the actual grammatical rule, not just describe what the section is about
-- note must give practical advice (common error or memory trick), not restate the rule
+- note must give practical advice or a memory trick, not restate the rule
 - For non-Latin script languages (Chinese/Japanese/Korean/Russian/Arabic): ALWAYS include native script — do not romanize only`;
 }
 
@@ -1117,14 +1142,18 @@ function buildVocabPrompt(lang) {
 
 ${categories.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
+Generate exactly 18 words for EVERY category (the most useful, high-frequency words a learner actually needs — not padding).
+
 Return ONLY a valid JSON object — no markdown, no code fences:
-{"categories":[{"name":"Category Name in ${name} and English","words":[{"t":"word in ${name}","p":"pronunciation guide","r":"English meaning"}]}]}
+{"categories":[{"name":"Category Name in ${name} and English","words":[{"t":"word in ${name}","p":"pronunciation guide","r":"English meaning","ex":"a short natural example sentence in ${name} using this word","exr":"English translation of the example sentence"}]}]}
 
 ACCURACY RULES:
 - t (target) must be the correct ${name} spelling/script for every single word
 - p (pronunciation): Chinese = pinyin with tones; Japanese = romaji; Korean = revised romanization; Russian = English phonetics with stressed syllable in CAPS; Arabic = simple transliteration; Latin-script languages = stressed syllable in CAPS
 - r must be accurate English translation
-- Include the exact number of words specified in each category description
+- EVERY word must include ex (a real, natural example sentence in ${name} that actually uses the word) and exr (its English translation) — this is how learners see the word in context
+- Exactly 18 words per category, ordered most-common first
+- For non-Latin script languages (Chinese/Japanese/Korean/Russian/Arabic): t and ex MUST be in native script
 - For languages with grammatical gender: note gender where relevant in the r field with (m)/(f)/(n)`;
 }
 
@@ -1205,8 +1234,14 @@ function validateContent(lang, tab, data) {
       if (!s.rule)           return `section ${i} missing rule`;
       if (!s.example_target) return `section ${i} missing example_target`;
       if (!s.example_ref)    return `section ${i} missing example_ref`;
+      // Deepened spec: 3 extra worked examples + a real common-mistake note.
+      if (!Array.isArray(s.examples) || s.examples.length < 3) return `section ${i} needs ≥3 examples`;
+      if (s.examples.some(e => !e || !e.target || !e.ref))     return `section ${i} has an incomplete example`;
+      if (!s.common_mistake) return `section ${i} missing common_mistake`;
       const err = checkScriptInArray([s], "example_target");
       if (err) return err;
+      const err2 = checkScriptInArray(s.examples, "target");
+      if (err2) return `section ${i} examples: ${err2}`;
     }
     return null;
   }
@@ -1242,7 +1277,9 @@ function validateContent(lang, tab, data) {
     if (data.categories.length < 9)            return `only ${data.categories.length} categories (need ≥9)`;
     for (const [i, c] of data.categories.entries()) {
       if (!c.name)                             return `category ${i} missing name`;
-      if (!Array.isArray(c.words) || c.words.length < 5) return `category ${i} has too few words`;
+      // Comprehensive spec: ≥30 words per category, each shown in an example sentence.
+      if (!Array.isArray(c.words) || c.words.length < 30) return `category ${i} has too few words (need ≥30)`;
+      if (c.words.some(w => !w || !w.t || !w.r || !w.ex))  return `category ${i} has a word missing t/r/ex`;
       const err = checkScriptInArray(c.words, "t");
       if (err) return `category ${i}: ${err}`;
     }
@@ -1305,7 +1342,7 @@ async function callAnthropic(prompt) {
     },
     body: JSON.stringify({
       model: "claude-opus-4-5",   // Best accuracy for language content
-      max_tokens: 16000,   // headroom so the deepest tabs (22 grammar topics, etc.) aren't truncated
+      max_tokens: 22000,   // headroom for the deepened spec (18 vocab words w/ example sentences, 3-example grammar) so output isn't truncated
       messages: [{ role: "user", content: prompt }],
     }),
   });
@@ -1328,16 +1365,89 @@ async function callAnthropic(prompt) {
   }
 }
 
+// ── Deep per-category vocabulary generation ──────────────────────────────────
+// Each category is generated on its OWN request so it can hold 40 words + example
+// sentences without hitting the single-response token ceiling. This is what lets the
+// vocabulary be comprehensive (30 categories × 40 words ≈ 1,200 base words/language)
+// rather than a shallow sample — and any category can still be expanded further on demand.
+const VOCAB_WORDS_PER_CATEGORY = 40;
+
+function buildVocabCategoryPrompt(lang, categoryDescriptor) {
+  const name = LANG_NAMES[lang];
+  return `You are an expert ${name} teacher building a COMPREHENSIVE vocabulary list for one category:
+"${categoryDescriptor}"
+
+Generate the ${VOCAB_WORDS_PER_CATEGORY} most useful, high-frequency ${name} words or short phrases for this category — enough that a serious learner has real coverage of it, not a sample. Order most-common / most-essential first.
+
+Return ONLY valid JSON — no markdown, no code fences:
+{"name":"Category name in ${name} and English","words":[{"t":"word in ${name}","p":"pronunciation","r":"English meaning","ex":"a natural example sentence in ${name} that uses this word","exr":"English translation of the example"}]}
+
+RULES:
+- EXACTLY ${VOCAB_WORDS_PER_CATEGORY} distinct, genuinely useful words — no duplicates, no obscure filler
+- t (and every ex) in correct ${name} script — for Chinese/Japanese/Korean/Russian/Arabic/Hindi use native script, never romanization only
+- p (pronunciation): Chinese = pinyin with tones; Japanese = romaji; Korean = revised romanization; Russian = English phonetics with the stressed syllable in CAPS; Arabic = simple transliteration; Hindi = transliteration; Latin-script = stressed syllable in CAPS
+- EVERY word must include a real ex (example sentence) and its exr (English translation)
+- r must be an accurate English translation; note gender (m)/(f)/(n) where the language marks it`;
+}
+
+// Generate one full vocabulary set for a language, category by category, then store it.
+// Partial failures are tolerated per-category; the assembled set must still pass
+// validateContent (enough categories, each deep) or nothing is stored (old content kept).
+async function generateAndStoreVocab(lang) {
+  const cats = VOCAB_CATEGORIES[lang] || [];
+  const categories = [];
+  let firstErr = null;
+  console.log(`[Content] Generating ${lang}/vocab — ${cats.length} categories, per-category deep…`);
+  for (const desc of cats) {
+    let built = null;
+    for (let a = 1; a <= 2 && !built; a++) {
+      try {
+        const r = await callAnthropic(buildVocabCategoryPrompt(lang, desc));
+        if (r && Array.isArray(r.words) && r.words.length >= 30 && r.words.every(w => w && w.t && w.r && w.ex)) {
+          built = { name: r.name || desc.split(" — ")[0].split(" (")[0], words: r.words };
+        }
+      } catch (e) {
+        firstErr = firstErr || e;
+        // No point trying 30 categories when the account is out of credits / the key is bad —
+        // fail the whole language fast so boots don't hammer the API with dead calls.
+        if (/credit balance|billing|invalid_request_error|401|403/i.test(e.message)) {
+          throw new Error(`vocab ${lang} aborted — API unavailable: ${e.message}`);
+        }
+        if (a === 2) console.warn(`[Content] vocab ${lang} category failed: ${e.message}`);
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    }
+    if (built) categories.push(built);
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  const content = { categories };
+  const validationError = validateContent(lang, "vocab", content);
+  if (validationError) {
+    throw new Error(`vocab ${lang} incomplete: ${validationError}${firstErr ? ` (first API error: ${firstErr.message})` : ""}`);
+  }
+  await db.run(`
+    INSERT INTO content_cache (lang, tab, content_json, generated_at)
+    VALUES ($1, $2, $3, NOW())
+    ON CONFLICT(lang, tab) DO UPDATE SET content_json = excluded.content_json, generated_at = NOW()
+  `, [lang, "vocab", JSON.stringify(content)]);
+  const totalWords = categories.reduce((n, c) => n + c.words.length, 0);
+  console.log(`[Content] ✓ ${lang}/vocab stored (${categories.length} categories, ${totalWords} words)`);
+  return content;
+}
+
 // ── Main generation function with validation + retry ─────────────────────────
 
 const MAX_ATTEMPTS = 3;
 
 async function generateContent(lang, tab) {
+  // Vocabulary is generated category-by-category (deep, no truncation ceiling).
+  if (tab === "vocab") return await generateAndStoreVocab(lang);
+
   const prompts = {
     grammar:    buildGrammarPrompt(lang),
     cheatsheet: buildCheatsheetPrompt(lang),
     structures: buildStructuresPrompt(lang),
-    vocab:      buildVocabPrompt(lang),
     dialogues:  buildDialoguesPrompt(lang),
     drills:     buildDrillsPrompt(lang),
     roadmap:    buildRoadmapPrompt(lang),
@@ -1644,6 +1754,7 @@ async function seedContent() {
 
 module.exports = router;
 module.exports.generateMissingContent = generateMissingContent;
+module.exports.generateContent = generateContent;
 module.exports.seedContent = seedContent;
 module.exports.validateContent = validateContent;
 module.exports.VALID_LANGS  = VALID_LANGS;

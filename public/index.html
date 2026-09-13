@@ -182,34 +182,29 @@
       .app-shell ::-webkit-scrollbar{width:8px;height:8px}
       .desktop-stage ::-webkit-scrollbar{width:8px;height:8px}
     }
-    /* Desktop (≥900px): two-pane stage — persistent sidebar + content share one frame */
+    /* Desktop (≥900px): full-viewport column — top bar over a full-width content area.
+       (No floating card / sidebar; the page uses its whole width.) */
     @media(min-width:900px){
       .desktop-stage{
         display:flex;
+        flex-direction:column;
         width:100%;
-        max-width:1160px;
-        height:min(940px,calc(100dvh - 64px));
-        border-radius:26px;
+        height:100dvh;
         overflow:hidden;
-        border:1px solid var(--bezel);
-        background:var(--surf);
-        box-shadow:0 50px 110px -34px rgba(0,0,0,.42),0 14px 34px -16px rgba(0,0,0,.22);
+        background:var(--bg);
       }
-      /* Content pane drops its standalone frame and fills the space beside the rail */
+      /* Content pane fills the space below the top bar and scrolls internally */
       .app-shell.app-shell-in-stage{
         max-width:none!important;
-        width:auto!important;
-        flex:1!important;
-        height:100%!important;
+        width:100%!important;
+        flex:1 1 auto!important;
+        min-height:0!important;
+        height:auto!important;
         border:none!important;
         border-radius:0!important;
         box-shadow:none!important;
         margin:0!important;
       }
-    }
-    @media(min-width:1200px){
-      .app-shell{max-width:640px!important}
-      .desktop-stage{max-width:1240px}
     }
     /* Support chat widget */
     .support-fab{
@@ -401,6 +396,52 @@ const C = {
   get sh()         { return _cv("--shadow")       || "0 1px 3px rgba(0,0,0,0.06)"; },
   get brand()      { return _cv("--grad")         || "linear-gradient(135deg,#FF5F7E,#C0153E)"; },
 };
+
+// ─── COLOR THEMES ────────────────────────────────────────────────────────────
+// The whole UI is accent-driven through CSS variables, so retinting is just setting
+// a handful of vars on <html>. Every language has a signature accent; the learner can
+// also pick their own. Crimson stays the brand default.
+function _hexToRgb(h){ h=String(h).replace("#",""); if(h.length===3) h=h.split("").map(c=>c+c).join(""); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function _rgba(hex,a){ const [r,g,b]=_hexToRgb(hex); return `rgba(${r},${g},${b},${a})`; }
+function _lighten(hex,amt){ const [r,g,b]=_hexToRgb(hex); const m=c=>Math.round(c+(255-c)*amt); const hx=c=>c.toString(16).padStart(2,"0"); return `#${hx(m(r))}${hx(m(g))}${hx(m(b))}`; }
+
+// key → { name, light accent, dark accent }
+const THEMES = {
+  crimson: { name:"Crimson", light:"#C0153E", dark:"#FF7090" },
+  sunset:  { name:"Sunset",  light:"#E0532B", dark:"#FF8A5C" },
+  amber:   { name:"Amber",   light:"#C77A16", dark:"#F0B44E" },
+  emerald: { name:"Emerald", light:"#199B63", dark:"#48CB8D" },
+  teal:    { name:"Teal",    light:"#0E9F87", dark:"#3ED7BD" },
+  sky:     { name:"Sky",     light:"#1E82C4", dark:"#5CB8EE" },
+  indigo:  { name:"Indigo",  light:"#4C5FD5", dark:"#8F97F6" },
+  violet:  { name:"Violet",  light:"#7C5CE0", dark:"#B49CF5" },
+  sakura:  { name:"Sakura",  light:"#E0658F", dark:"#FF9DBE" },
+  rose:    { name:"Rose",    light:"#D6447A", dark:"#FF87B0" },
+};
+// Each language's signature colour — switching language re-tints the whole app.
+const LANG_THEME = {
+  fr:"indigo", es:"amber", en:"crimson", pt:"emerald", it:"rose", de:"sky",
+  zh:"sunset", ja:"sakura", ko:"violet", ru:"indigo", ar:"teal", hi:"amber",
+};
+function applyAccent(themeKey, isDark){
+  const t = THEMES[themeKey] || THEMES.crimson;
+  const accent = isDark ? t.dark : t.light;
+  const a2 = _lighten(accent, isDark ? 0.14 : 0.26);
+  const root = document.documentElement;
+  root.style.setProperty("--accent", accent);
+  root.style.setProperty("--accent-2", a2);
+  root.style.setProperty("--grad", `linear-gradient(135deg, ${a2} 0%, ${accent} 100%)`);
+  root.style.setProperty("--accentSoft", _rgba(accent, isDark ? 0.16 : 0.09));
+  root.style.setProperty("--accentLine", _rgba(accent, isDark ? 0.30 : 0.18));
+}
+// Default is the crimson brand for everyone; per-language "auto" and the pastels are opt-in via the picker.
+function themeChoiceGet(){ try { return localStorage.getItem("theme_choice") || "crimson"; } catch(e){ return "crimson"; } }
+function themeChoiceSet(v){ try { localStorage.setItem("theme_choice", v); } catch(e){} }
+// "auto" → the current language's signature colour; otherwise the learner's explicit pick.
+function resolveThemeKey(langId, choice){ const c = choice || themeChoiceGet(); return (c && c !== "auto" && THEMES[c]) ? c : (LANG_THEME[langId] || "crimson"); }
+// Distinct, cohesive colours for the Home action tiles (kept separate from the theme accent
+// so the "what do you want to do?" grid stays colourful in every theme).
+const INTENT_COLORS = ["#C0153E","#E0532B","#C77A16","#199B63","#0E9F87","#1E82C4","#4C5FD5","#7C5CE0","#D6447A"];
 
 // ─── LUCIDE ICON HELPER ──────────────────────────────────────────────────────
 // Renders a Lucide icon inline. size defaults to 18, color to currentColor.
@@ -716,11 +757,209 @@ const LANGS_DATA = {
     dialogue:{title:"出会い · Meeting",level:"Beginner",lines:[{who:"A",line:"こんにちは、お名前は？",en:"Hello, what's your name?"},{who:"B",line:"マリです。あなたは？",en:"I'm Mari. And you?"},{who:"A",line:"ルーカスです。英語を話しますか？",en:"I'm Lucas. Do you speak English?"},{who:"B",line:"少しだけ、でも日本語のほうがいいです。",en:"A little, but I prefer Japanese."}]},
   },
 };
+
+// ── Real reference data for the 9 languages that used to fall back to "…" stubs.
+// Sounds are the letters / phonemes a learner must recognize to read the script;
+// `example` is a real word spoken aloud via TTS. Facts and culture are accurate,
+// widely-attested notes — no placeholders. Single source consumed by the stub below.
+const SOUNDS_BY_LANG = {
+  en: [
+    {symbol:"θ",name:"Th · voiceless",example:"think"},{symbol:"ð",name:"Th · voiced",example:"this"},
+    {symbol:"æ",name:"Short A",example:"cat"},{symbol:"ə",name:"Schwa",example:"about"},
+    {symbol:"ɪ",name:"Short I",example:"ship"},{symbol:"iː",name:"Long E",example:"sheep"},
+    {symbol:"ʊ",name:"Short U",example:"book"},{symbol:"ʌ",name:"Cup vowel",example:"cup"},
+    {symbol:"ɜː",name:"Bird vowel",example:"bird"},{symbol:"ŋ",name:"Ng",example:"sing"},
+    {symbol:"r",name:"English R",example:"red"},{symbol:"w",name:"W glide",example:"water"},
+  ],
+  pt: [
+    {symbol:"ã",name:"Nasal A",example:"maçã"},{symbol:"õ",name:"Nasal O",example:"bom"},
+    {symbol:"ão",name:"Nasal ão",example:"pão"},{symbol:"lh",name:"LH · like 'lli'",example:"filho"},
+    {symbol:"nh",name:"NH · like 'ñ'",example:"vinho"},{symbol:"ç",name:"Soft C",example:"criança"},
+    {symbol:"ʒ",name:"J / soft G",example:"gente"},{symbol:"r",name:"Guttural R",example:"carro"},
+    {symbol:"é",name:"Open E",example:"pé"},{symbol:"ô",name:"Closed O",example:"avô"},
+    {symbol:"x",name:"X · as 'sh'",example:"peixe"},{symbol:"ɐ",name:"Reduced A",example:"casa"},
+  ],
+  it: [
+    {symbol:"gli",name:"GLI · like 'lli'",example:"famiglia"},{symbol:"gn",name:"GN · like 'ñ'",example:"gnocchi"},
+    {symbol:"ci",name:"Soft C · 'ch'",example:"ciao"},{symbol:"ch",name:"Hard C · 'k'",example:"chi"},
+    {symbol:"gi",name:"Soft G · 'j'",example:"gelato"},{symbol:"gh",name:"Hard G",example:"spaghetti"},
+    {symbol:"sc",name:"SC · 'sh'",example:"pesce"},{symbol:"z",name:"Z · 'ts/dz'",example:"pizza"},
+    {symbol:"r",name:"Rolled R",example:"Roma"},{symbol:"è",name:"Open E",example:"caffè"},
+    {symbol:"ó",name:"Closed O",example:"sole"},{symbol:"nn",name:"Double consonant",example:"nonno"},
+  ],
+  de: [
+    {symbol:"ü",name:"Ü umlaut",example:"über"},{symbol:"ö",name:"Ö umlaut",example:"schön"},
+    {symbol:"ä",name:"Ä umlaut",example:"Mädchen"},{symbol:"ch",name:"Ich-laut · soft",example:"ich"},
+    {symbol:"ch",name:"Ach-laut · hard",example:"Bach"},{symbol:"ß",name:"Eszett · 'ss'",example:"Straße"},
+    {symbol:"r",name:"Uvular R",example:"rot"},{symbol:"z",name:"Z · 'ts'",example:"Zeit"},
+    {symbol:"w",name:"W · like 'v'",example:"Wasser"},{symbol:"v",name:"V · like 'f'",example:"Vater"},
+    {symbol:"sch",name:"Sch · 'sh'",example:"Schule"},{symbol:"eu",name:"Eu · 'oy'",example:"Deutsch"},
+  ],
+  zh: [
+    {symbol:"ā",name:"1st tone · high flat",example:"妈"},{symbol:"á",name:"2nd tone · rising",example:"麻"},
+    {symbol:"ǎ",name:"3rd tone · dip",example:"马"},{symbol:"à",name:"4th tone · falling",example:"骂"},
+    {symbol:"zh",name:"ZH · retroflex",example:"中"},{symbol:"q",name:"Q · like 'ch'",example:"去"},
+    {symbol:"x",name:"X · like 'sh'",example:"谢"},{symbol:"c",name:"C · 'ts'",example:"菜"},
+    {symbol:"r",name:"R · retroflex",example:"人"},{symbol:"ü",name:"Ü vowel",example:"绿"},
+    {symbol:"ang",name:"-ang final",example:"忙"},{symbol:"er",name:"Er sound",example:"二"},
+  ],
+  ko: [
+    {symbol:"ㅏ",name:"a",example:"아"},{symbol:"ㅓ",name:"eo",example:"어"},
+    {symbol:"ㅗ",name:"o",example:"오"},{symbol:"ㅜ",name:"u",example:"우"},
+    {symbol:"ㅡ",name:"eu",example:"으"},{symbol:"ㅣ",name:"i",example:"이"},
+    {symbol:"ㅐ",name:"ae",example:"애"},{symbol:"ㅔ",name:"e",example:"에"},
+    {symbol:"ㄱ",name:"g / k",example:"가"},{symbol:"ㄴ",name:"n",example:"나"},
+    {symbol:"ㄷ",name:"d / t",example:"다"},{symbol:"ㄹ",name:"r / l",example:"라"},
+    {symbol:"ㅁ",name:"m",example:"마"},{symbol:"ㅂ",name:"b / p",example:"바"},
+    {symbol:"ㅅ",name:"s",example:"사"},{symbol:"ㅈ",name:"j",example:"자"},
+    {symbol:"ㅎ",name:"h",example:"하"},{symbol:"ㅊ",name:"ch · aspirated",example:"차"},
+  ],
+  ru: [
+    {symbol:"ы",name:"Hard I · 'yeru'",example:"ты"},{symbol:"й",name:"Short I / y",example:"мой"},
+    {symbol:"ж",name:"Zh",example:"жизнь"},{symbol:"ш",name:"Sh",example:"хорошо"},
+    {symbol:"щ",name:"Shch",example:"борщ"},{symbol:"ч",name:"Ch",example:"чай"},
+    {symbol:"ц",name:"Ts",example:"царь"},{symbol:"х",name:"Kh",example:"хлеб"},
+    {symbol:"р",name:"Rolled R",example:"рука"},{symbol:"э",name:"E · 'eh'",example:"это"},
+    {symbol:"ю",name:"Yu",example:"юг"},{symbol:"я",name:"Ya",example:"яблоко"},
+    {symbol:"ь",name:"Soft sign",example:"мать"},{symbol:"ъ",name:"Hard sign",example:"объект"},
+  ],
+  ar: [
+    {symbol:"ع",name:"Ayn · throat",example:"عربي"},{symbol:"غ",name:"Ghayn",example:"غريب"},
+    {symbol:"ح",name:"Ḥa · hard H",example:"حب"},{symbol:"خ",name:"Kha",example:"خبز"},
+    {symbol:"ق",name:"Qaf · deep K",example:"قلب"},{symbol:"ص",name:"Ṣad · emphatic S",example:"صباح"},
+    {symbol:"ض",name:"Ḍad · emphatic D",example:"ضيف"},{symbol:"ط",name:"Ṭa · emphatic T",example:"طويل"},
+    {symbol:"ث",name:"Tha",example:"ثلاثة"},{symbol:"ذ",name:"Dhal",example:"ذهب"},
+    {symbol:"ش",name:"Shin",example:"شمس"},{symbol:"ر",name:"Rolled R",example:"رجل"},
+    {symbol:"ء",name:"Hamza · glottal",example:"ماء"},{symbol:"ه",name:"Ha · soft",example:"هذا"},
+  ],
+  hi: [
+    {symbol:"ट",name:"Retroflex Ṭa",example:"टमाटर"},{symbol:"ड",name:"Retroflex Ḍa",example:"डर"},
+    {symbol:"त",name:"Dental Ta",example:"तीन"},{symbol:"थ",name:"Tha · aspirated",example:"थाली"},
+    {symbol:"ध",name:"Dha",example:"धन"},{symbol:"भ",name:"Bha",example:"भाई"},
+    {symbol:"घ",name:"Gha",example:"घर"},{symbol:"ख",name:"Kha",example:"खाना"},
+    {symbol:"ऋ",name:"Ri vowel",example:"ऋषि"},{symbol:"ं",name:"Anusvara · nasal",example:"हंस"},
+    {symbol:"ँ",name:"Chandrabindu",example:"चाँद"},{symbol:"ड़",name:"Ṛa · flap",example:"पेड़"},
+    {symbol:"ज्ञ",name:"Gya",example:"ज्ञान"},{symbol:"श",name:"Sha",example:"शहर"},
+  ],
+};
+const FACTS_BY_LANG = {
+  en: [
+    {tag:"Did you know",icon:"sparkles",text:"English has around a million words — more than almost any language — because it borrowed freely from French, Latin, and Norse."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Spelling and sound drifted apart: 'through', 'though', and 'tough' all end in -ough but rhyme with none of each other."},
+    {tag:"Culture",icon:"globe",text:"English is the most widely spoken language on Earth once you count second-language speakers — roughly 1.5 billion people."},
+    {tag:"Fun fact",icon:"music",text:"The most common word in spoken English is 'the' — it appears about once every 16 words."},
+  ],
+  pt: [
+    {tag:"Did you know",icon:"sparkles",text:"Portuguese is the official language of 9 countries across 4 continents — from Brazil to Angola to East Timor."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Portuguese is famously nasal: 'pão' (bread), 'mãe' (mother), and 'coração' (heart) all resonate through the nose."},
+    {tag:"Culture",icon:"coffee",text:"In Brazil a 'cafezinho' — a tiny, sweet coffee — is offered everywhere as a gesture of welcome."},
+    {tag:"Fun fact",icon:"music",text:"'Saudade', a deep longing for something absent, is often called untranslatable — and sits at the heart of fado music."},
+  ],
+  it: [
+    {tag:"Did you know",icon:"sparkles",text:"Modern Italian grew out of the Florentine of Dante, Petrarch, and Boccaccio — literature standardized the language."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Double consonants change meaning: 'nonno' (grandfather) vs 'nono' (ninth), 'penna' (pen) vs 'pena' (pity)."},
+    {tag:"Culture",icon:"coffee",text:"Ordering a cappuccino after 11am raises eyebrows — Italians take milky coffee only in the morning."},
+    {tag:"Fun fact",icon:"music",text:"Music borrowed Italian wholesale: piano, forte, allegro, tempo and crescendo are all everyday Italian words."},
+  ],
+  de: [
+    {tag:"Did you know",icon:"sparkles",text:"German builds long compound words on the fly — 'Handschuh' (hand-shoe) means glove, 'Fernseher' (far-seer) means TV."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Every noun is capitalized and has a gender — der, die, or das — and the verb often lands at the very end of the sentence."},
+    {tag:"Culture",icon:"clock",text:"Punctuality is respect: arriving 'five minutes early is on time'. 'Feierabend' — the sacred end of the workday — is a whole mood."},
+    {tag:"Fun fact",icon:"music",text:"German has a precise word for oddly specific feelings — like 'Schadenfreude', joy at another's misfortune."},
+  ],
+  zh: [
+    {tag:"Did you know",icon:"sparkles",text:"Mandarin is tonal: the syllable 'ma' means mother, hemp, horse, or scold depending on the tone you use."},
+    {tag:"Language quirk",icon:"lightbulb",text:"There's no alphabet — you learn characters. Around 3,000 cover most daily reading; a well-read adult knows 8,000+."},
+    {tag:"Culture",icon:"gift",text:"Numbers carry luck: 8 (八 bā) sounds like 'wealth' and is prized, while 4 (四 sì) sounds like 'death' and is avoided."},
+    {tag:"Fun fact",icon:"music",text:"Characters are built from radicals that hint at meaning — 好 (good) is literally 女 (woman) + 子 (child)."},
+  ],
+  ko: [
+    {tag:"Did you know",icon:"sparkles",text:"Hangul was invented in 1443 under King Sejong to make literacy possible for everyone — its shapes mirror the mouth as you speak."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Korean has layered politeness: the same idea changes form entirely depending on who you're speaking to."},
+    {tag:"Culture",icon:"users",text:"Age shapes speech and manners — people often ask your age early to know which speech level and titles to use."},
+    {tag:"Fun fact",icon:"music",text:"You can learn to read Hangul in an afternoon — it's a true alphabet, grouped into neat syllable blocks."},
+  ],
+  ru: [
+    {tag:"Did you know",icon:"sparkles",text:"Russian uses the Cyrillic alphabet — some letters mislead: 'В' is a V, 'Н' is an N, and 'Р' is an R."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Six grammatical cases reshape the ends of nouns, so word order is flexible — meaning rides on the endings."},
+    {tag:"Culture",icon:"coffee",text:"Hospitality runs deep: a guest is offered tea and food immediately, and refusing outright can seem cold."},
+    {tag:"Fun fact",icon:"music",text:"Russian often drops the verb 'to be' in the present — 'Я студент' is literally just 'I student'."},
+  ],
+  ar: [
+    {tag:"Did you know",icon:"sparkles",text:"Arabic is written right to left, and most letters change shape depending on their position in the word."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Words grow from three-letter roots: k-t-b gives kitāb (book), kātib (writer), maktab (office), maktaba (library)."},
+    {tag:"Culture",icon:"globe",text:"'Modern Standard Arabic' unites the news and books across 20+ countries, while each region keeps its own spoken dialect."},
+    {tag:"Fun fact",icon:"music",text:"English quietly borrowed from Arabic: coffee, sugar, algebra, cotton, and admiral all trace back to it."},
+  ],
+  hi: [
+    {tag:"Did you know",icon:"sparkles",text:"Hindi is written in Devanagari, where a horizontal line runs across the top and letters hang beneath it."},
+    {tag:"Language quirk",icon:"lightbulb",text:"Hindi distinguishes aspirated and unaspirated sounds — 'k' vs 'kh', 'p' vs 'ph' — that English blurs together."},
+    {tag:"Culture",icon:"users",text:"Respect is built in: elders and strangers get 'aap', friends 'tum', and the verb changes to match."},
+    {tag:"Fun fact",icon:"music",text:"Everyday English words like shampoo, jungle, bungalow, and loot came from Hindi and its neighbors."},
+  ],
+};
+const CULTURE_BY_LANG = {
+  en: [
+    {title:"Small talk",icon:"message-circle",color:"#C0153E",body:"'How are you?' is often a greeting, not a real question — 'Good, you?' is the expected reply."},
+    {title:"Please & thank you",icon:"heart",color:"#E8902B",body:"Politeness markers are frequent; dropping them can read as brusque even among friends."},
+    {title:"Queuing",icon:"users",color:"#3B7DD8",body:"In the UK especially, the line is sacred — cutting in is a genuine social offense."},
+    {title:"Idioms everywhere",icon:"lightbulb",color:"#7C3AED",body:"Everyday speech leans on idioms — 'break the ice', 'piece of cake', 'under the weather'."},
+  ],
+  pt: [
+    {title:"Você vs tu",icon:"users",color:"#C0153E",body:"Brazil favors 'você'; Portugal and parts of Brazil use 'tu' with its own verb forms. Both mean 'you'."},
+    {title:"Warm greetings",icon:"heart",color:"#E8902B",body:"Two cheek kisses greet friends in Portugal; a handshake or hug is common in Brazil."},
+    {title:"Saudade",icon:"moon",color:"#7C3AED",body:"A bittersweet longing with no clean English word — central to Portuguese music and mood."},
+    {title:"Cafezinho culture",icon:"coffee",color:"#0EA5A5",body:"A tiny strong coffee is a constant social ritual, offered to guests and coworkers alike."},
+  ],
+  it: [
+    {title:"Coffee rules",icon:"coffee",color:"#C0153E",body:"Cappuccino is a morning-only drink; after lunch it's an espresso, taken standing at the bar."},
+    {title:"La bella figura",icon:"sparkles",color:"#E8902B",body:"Presenting yourself well — dress, manners, hospitality — is a genuine cultural value."},
+    {title:"Gestures",icon:"hand",color:"#3B7DD8",body:"Hand gestures carry real meaning and run alongside speech — a whole parallel vocabulary."},
+    {title:"Long meals",icon:"utensils",color:"#7C3AED",body:"Meals are unhurried and social; courses arrive in order and lunch can stretch for hours."},
+  ],
+  de: [
+    {title:"Sie vs du",icon:"users",color:"#C0153E",body:"'Sie' is formal and default with strangers; switching to 'du' is a small milestone, often offered explicitly."},
+    {title:"Punctuality",icon:"clock",color:"#E8902B",body:"Being on time is respect. Arriving late without notice is taken seriously."},
+    {title:"Directness",icon:"message-circle",color:"#3B7DD8",body:"Feedback tends to be frank and honest — meant as clarity, not rudeness."},
+    {title:"Feierabend",icon:"moon",color:"#0EA5A5",body:"The end of the workday is protected personal time — work stays at work."},
+  ],
+  zh: [
+    {title:"Lucky numbers",icon:"gift",color:"#C0153E",body:"8 sounds like 'wealth' and is prized; 4 sounds like 'death' and is often avoided in floors and phone numbers."},
+    {title:"Face (面子)",icon:"users",color:"#E8902B",body:"Preserving dignity — yours and others' — shapes how people give feedback and handle disagreement."},
+    {title:"The tea gesture",icon:"coffee",color:"#3B7DD8",body:"Tap two fingers on the table to silently thank someone pouring your tea."},
+    {title:"Hongbao",icon:"heart",color:"#7C3AED",body:"Red envelopes of money mark New Year, weddings, and birthdays — the color red means luck."},
+  ],
+  ko: [
+    {title:"Speech levels",icon:"users",color:"#C0153E",body:"Verb endings shift with formality and the listener's status — the same sentence has polite and casual forms."},
+    {title:"Age & titles",icon:"clock",color:"#E8902B",body:"Age affects address and manners; people use titles and honorifics rather than first names."},
+    {title:"Two hands",icon:"hand",color:"#3B7DD8",body:"Give and receive things — cups, cards, gifts — with two hands to show respect to elders."},
+    {title:"Shared meals",icon:"utensils",color:"#0EA5A5",body:"Side dishes are shared, the eldest often starts, and pouring drinks for others is good manners."},
+  ],
+  ru: [
+    {title:"Ты vs вы",icon:"users",color:"#C0153E",body:"'Вы' is formal or plural; 'ты' is for friends and family. Using 'ты' too soon can seem overfamiliar."},
+    {title:"Guest hospitality",icon:"coffee",color:"#E8902B",body:"Guests are fed generously and immediately — refusing food outright can feel like a snub."},
+    {title:"Patronymics",icon:"user",color:"#3B7DD8",body:"Formal address uses first name + father's name (e.g., Ivan Petrovich) as a sign of respect."},
+    {title:"Reserved smiles",icon:"message-circle",color:"#7C3AED",body:"Smiling at strangers isn't customary — warmth is shown once you actually know someone."},
+  ],
+  ar: [
+    {title:"Right to left",icon:"book",color:"#C0153E",body:"Text, books, and pages run right to left; letters connect and reshape by position."},
+    {title:"Standard vs dialect",icon:"globe",color:"#E8902B",body:"Formal MSA is shared across the Arab world; each region also speaks its own everyday dialect."},
+    {title:"Greetings matter",icon:"heart",color:"#3B7DD8",body:"Greetings are warm and layered — 'as-salāmu ʿalaykum' and its reply open most interactions."},
+    {title:"The right hand",icon:"hand",color:"#0EA5A5",body:"Eat, give, and receive with the right hand; hospitality and generosity are deeply valued."},
+  ],
+  hi: [
+    {title:"Aap, tum, tu",icon:"users",color:"#C0153E",body:"Three levels of 'you' — 'aap' (respect), 'tum' (familiar), 'tu' (intimate) — each change the verb."},
+    {title:"Namaste",icon:"hand",color:"#E8902B",body:"Palms together with a slight bow greets respectfully across generations and settings."},
+    {title:"Guest is God",icon:"heart",color:"#3B7DD8",body:"'Atithi devo bhava' — guests are honored with food and warmth as a matter of tradition."},
+    {title:"Head wobble",icon:"message-circle",color:"#7C3AED",body:"A side-to-side head tilt can mean yes, okay, or 'I'm listening' — context tells you which."},
+  ],
+};
+
 // Build stubs for the 9 remaining languages from TARGETS metadata
 ["pt","it","de","en","zh","ko","ru","ar","hi"].forEach(code => {
   const t = TARGETS[code];
   const flagMap = {
-    pt:"linear-gradient(90deg,#046A38 40%,#DA291C 40%)",
+    pt:"radial-gradient(circle at 50% 50%, #002776 0 15%, #FEDF00 15% 34%, #009C3B 34%)",
     it:"linear-gradient(90deg,#009246 33%,#f4f4f4 33% 66%,#CE2B37 66%)",
     de:"linear-gradient(180deg,#000 33%,#DD0000 33% 66%,#FFCE00 66%)",
     en:"linear-gradient(90deg,#012169 0%,#012169 40%,#C8102E 40%)",
@@ -731,14 +970,14 @@ const LANGS_DATA = {
     hi:"linear-gradient(180deg,#FF9933 33%,#f4f4f4 33% 66%,#138808 66%)",
   };
   const speakersMap = {pt:"260M",it:"85M",de:"135M",en:"1.5B",zh:"1.1B",ko:"80M",ru:"255M",ar:"420M",hi:"600M"};
-  const nativeMap   = {pt:"Português",it:"Italiano",de:"Deutsch",en:"English",zh:"中文",ko:"한국어",ru:"Русский",ar:"العربية",hi:"हिन्दी"};
+  const nativeMap   = {pt:"Português (Brasil)",it:"Italiano",de:"Deutsch",en:"English",zh:"中文",ko:"한국어",ru:"Русский",ar:"العربية",hi:"हिन्दी"};
   const resumeMap   = {pt:"Personal Infinitive",it:"Essere vs Avere",de:"Cases · Nominative",en:"Articles · a / the",zh:"Tones · 1st tone",ko:"-아요 / 어요 endings",ru:"6 Cases",ar:"Root System",hi:"Postpositions"};
   LANGS_DATA[code] = {
     id:code, name:t.name, short:code.toUpperCase(), native:nativeMap[code]||t.name, speakers:(speakersMap[code]||"")+" speakers", level:"A2", streak:0,
     flag:flagMap[code]||"linear-gradient(135deg,#888,#444)",
     resume:resumeMap[code]||"Getting started", resumePct:"10%",
-    vocabTotal:"2,500", phraseCount:35, soundCount:30, grammarCount:60,
-    facts:[{tag:"Did you know",icon:"sparkles",text:t.name+" is spoken by millions of people around the world."}],
+    vocabTotal:"2,500", phraseCount:35, soundCount:(SOUNDS_BY_LANG[code]||[]).length||30, grammarCount:60,
+    facts: FACTS_BY_LANG[code] || [{tag:"Did you know",icon:"sparkles",text:t.name+" is spoken by millions of people around the world."}],
     grammarCats:[{title:"Core Grammar",count:10,chips:[{label:"Basics",hot:true},{label:"Verbs"},{label:"Nouns"},{label:"Sentences"}]}],
     concept:{
       crumb:"Grammar › Core",title:"Getting Started",subtitle:t.name+" basics",
@@ -761,8 +1000,8 @@ const LANGS_DATA = {
     ],
     words:[{term:"Hello",meaning:"Greeting",pron:"...",state:"learn"},{term:"Thank you",meaning:"Gratitude",pron:"...",state:"learn"}],
     phrases:[{title:"Greetings",level:"A1",sample:"Hello!"},{title:"Introductions",level:"A1",sample:"My name is..."}],
-    sounds:[{symbol:"...",name:"Core sound",example:"..."}],
-    culture:[{title:"Culture",icon:"globe",color:"#3B7DD8",body:"Every language carries a unique culture. Explore "+t.name+" as you learn."}],
+    sounds: SOUNDS_BY_LANG[code] || [{symbol:"·",name:"Core sound",example:t.name}],
+    culture: CULTURE_BY_LANG[code] || [{title:"Culture",icon:"globe",color:"#3B7DD8",body:"Every language carries a unique culture. Explore "+t.name+" as you learn."}],
     voices:[],voiceCount:0,
     scenarios:[{label:"Greetings",icon:"hand"},{label:"Shopping",icon:"shopping-bag"}],
     dialogue:{title:"First Words",level:"Beginner",lines:[{who:"A",line:"Hello!",en:"Hello!"},{who:"B",line:"Hello!",en:"Hello! Nice to meet you."}]},
@@ -2335,7 +2574,7 @@ Object.keys(UI_EXT).forEach(lang => {
 // English base; the other 11 languages are merged from UI_NAV_I18N just below.
 const UI_NAV = {
   en: {
-    nav_home:"Home", nav_coach:"Coach", nav_flashcards:"Flashcards", nav_drills:"Drills",
+    nav_home:"Home", nav_learn:"Learn", nav_coach:"Coach", nav_flashcards:"Flashcards", nav_drills:"Drills",
     nav_review:"Review", nav_grammar:"Grammar", nav_vocab:"Vocabulary", nav_dialogues:"Phrases & Dialogues",
     nav_structures:"Sentence Patterns", nav_sounds:"Sounds", nav_culture:"Culture & Nuance",
     nav_conversation:"Conversation", nav_analyzer:"Analyze Text", nav_wordspace:"Word Space",
@@ -2554,7 +2793,7 @@ function fcAdd(card) {
   // Deduplicate by front+lang
   if (cards.find(c => c.lang === card.lang && c.front.toLowerCase() === card.front.toLowerCase())) return false;
   cards.unshift({
-    id:          Date.now(),
+    id:          `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, // unique even when bulk-adding in a tight loop
     lang:        card.lang || "fr",
     front:       card.front || "",
     back:        card.back  || "",
@@ -2822,6 +3061,8 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
   const [googleOn, setGoogleOn] = useState(false);
   const googleBtnRef = useRef(null);
   const [magicSent, setMagicSent] = useState(false);
+  const [needEmail, setNeedEmail] = useState(false); // unclaimed code → bind an email
+  const [bindEmail, setBindEmail] = useState("");
   const [magicLoading, setMagicLoading] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -2887,14 +3128,17 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
 
   const login = async () => {
     if (code.trim().length < 6) { setErr("Please enter your access code."); return; }
+    if (needEmail && !bindEmail.includes("@")) { setErr("Enter the email to link to this code."); return; }
     setLoading(true); setErr("");
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: code.trim().toUpperCase() }),
+        body: JSON.stringify({ code: code.trim().toUpperCase(), email: needEmail ? bindEmail.trim() : undefined }),
       });
       const data = await res.json();
+      // Unclaimed code → ask which email to link, then resubmit.
+      if (data.needsEmail) { setNeedEmail(true); setLoading(false); return; }
       if (!res.ok) {
         if (data.hasPaid) { setMode("code"); }
         setErr(data.error || "Invalid access code.");
@@ -2986,9 +3230,18 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
               placeholder="TG-XXXXXXXX" autoFocus
               style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`2px solid ${err?"#dc2626":"#e2e8f0"}`, fontSize:16, marginBottom:10, boxSizing:"border-box", textAlign:"center", letterSpacing:3, fontWeight:700, textTransform:"uppercase" }}
             />
+            {needEmail && (
+              <>
+                <div style={{ fontSize:12.5, color:"#574C42", marginBottom:8, textAlign:"center", lineHeight:1.5 }}>This code isn't linked to an account yet. Enter the email you want to use — it'll be yours from now on.</div>
+                <input value={bindEmail} onChange={e=>setBindEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&login()}
+                  placeholder="your@email.com" type="email" autoFocus
+                  style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`2px solid ${err?"#dc2626":"#e2e8f0"}`, fontSize:16, marginBottom:10, boxSizing:"border-box" }}
+                />
+              </>
+            )}
             {err && <div style={{ color:"#dc2626", fontSize:13, marginBottom:10, textAlign:"center" }}>{err}</div>}
             <button onClick={login} disabled={loading} style={{ width:"100%", padding:13, background:"#C0153E", color:"#fff", border:"none", borderRadius:10, fontWeight:700, fontSize:15, cursor:loading?"default":"pointer", marginBottom:12 }}>
-              {loading ? "Verifying..." : "Access App"}
+              {loading ? "Verifying..." : needEmail ? "Link email & access" : "Access App"}
             </button>
             <div style={{ textAlign:"center", display:"flex", flexDirection:"column", gap:8 }}>
               <button onClick={()=>{setMode("free");setErr("");}} style={{ background:"none", border:"none", color:"#C0153E", fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>No code? Sign in with your email →</button>
@@ -3727,19 +3980,34 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                   {s.example_target && (
                     <div style={{ marginTop:14, display:"flex", flexDirection:"column", gap:7 }}>
                       <div style={{ fontSize:10, fontWeight:700, letterSpacing:1, textTransform:"uppercase", color:C.faint }}>Examples</div>
-                      <div style={{ background:C.surf2, borderRadius:10, padding:"11px 13px", display:"flex", alignItems:"center", gap:10 }}>
-                        <div style={{ flex:1, minWidth:0 }}>
-                          <div style={{ fontWeight:700, color:C.text, fontSize:15, lineHeight:1.35 }}>{s.example_target}</div>
-                          {s.example_ref && <div style={{ color:C.muted, fontSize:12.5, marginTop:2 }}>{s.example_ref}</div>}
-                        </div>
-                        <PlayBtn text={s.example_target} sm />
+                      <div style={{ background:C.surf2, borderRadius:10, padding:"4px 13px 9px" }}>
+                        <ExampleLine text={s.example_target} lang={tLang} knownRef={s.example_ref} big/>
+                        {s.example_ref && <div style={{ color:C.muted, fontSize:12.5, marginTop:2 }}>{s.example_ref}</div>}
                       </div>
                       {s.example_target_2 && (
-                        <div style={{ background:C.surf2, borderRadius:10, padding:"11px 13px", display:"flex", alignItems:"center", gap:10 }}>
-                          <div style={{ flex:1, fontWeight:700, color:C.text, fontSize:14.5 }}>{s.example_target_2}</div>
-                          <PlayBtn text={s.example_target_2} sm />
+                        <div style={{ background:C.surf2, borderRadius:10, padding:"4px 13px 9px" }}>
+                          <ExampleLine text={s.example_target_2} lang={tLang} big/>
                         </div>
                       )}
+                    </div>
+                  )}
+                  {Array.isArray(s.examples) && s.examples.length>0 && (
+                    <div style={{ marginTop:12 }}>
+                      <div style={{ fontSize:10.5, fontWeight:700, letterSpacing:".08em", textTransform:"uppercase", color:C.faint, marginBottom:6 }}>More examples</div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:7 }}>
+                        {s.examples.map((e,ei)=>(
+                          <div key={ei} style={{ background:C.surf2, borderRadius:10, padding:"4px 12px 9px" }}>
+                            <ExampleLine text={e.target} lang={tLang} knownRef={e.ref}/>
+                            {e.ref && <div style={{ color:C.muted, fontSize:12.5, marginTop:2 }}>{e.ref}</div>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {s.common_mistake && (
+                    <div style={{ marginTop:12, display:"flex", gap:8, alignItems:"flex-start", background:C.red+"12", border:`1px solid ${C.red}33`, borderRadius:10, padding:"10px 12px" }}>
+                      <Icon name="alert-triangle" size={14} color={C.red} style={{ marginTop:1, flexShrink:0 }}/>
+                      <div style={{ fontSize:12.5, color:C.text, lineHeight:1.55 }}><b style={{color:C.red}}>Common mistake. </b>{s.common_mistake}</div>
                     </div>
                   )}
                   {s.note && (
@@ -3777,9 +4045,9 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                 <div style={{ color:catCol, fontSize:20, fontWeight:700 }}>{isOpen ? "−" : "+"}</div>
               </div>
               {isOpen && (
-                <div style={{ padding:"0 13px 14px" }}>
+                <div style={{ padding:"0 13px 14px", display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(240px, 1fr))", gap:8, alignItems:"start" }}>
                   {(cat.items||[]).map((item, j) => (
-                    <div key={j} style={{ background:j%2===0?C.bg:C.card, border:`1px solid ${C.bdr}`, borderRadius:9, padding:"9px 12px", marginBottom:6 }}>
+                    <div key={j} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:9, padding:"9px 12px" }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:3 }}>
                         <span style={{ fontWeight:800, color:C.blue, fontSize:14 }}>{item.target}</span>
                         <PlayBtn text={item.target} sm />
@@ -3805,11 +4073,12 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
       <div>
         {!hideHeading && <Heading title={`${tName} Sentence Structures`} sub={`${(content.structures || []).length} core patterns — learn these as whole units, not grammar rules. Tap to expand.`} color={col} />}
         <Info text="Learn these patterns as whole units — the same way you absorbed patterns in your native language, without thinking about grammar rules." color={C.muted} />
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(340px, 1fr))", gap:10, alignItems:"start" }}>
         {(content.structures || []).map((s, i) => {
           const isOpen = open === i;
           const sCol   = sColors[i % sColors.length];
           return (
-            <div key={i} style={{ background:C.card, border:`2px solid ${isOpen?sCol:C.bdr}`, borderRadius:13, marginBottom:10, boxShadow:C.sh, overflow:"hidden" }}>
+            <div key={i} style={{ background:C.card, border:`2px solid ${isOpen?sCol:C.bdr}`, borderRadius:13, boxShadow:C.sh, overflow:"hidden" }}>
               <div onClick={() => setOpen(isOpen ? null : i)} style={{ padding:"13px 16px", cursor:"pointer", display:"flex", justifyContent:"space-between", alignItems:"center", gap:10 }}>
                 <div style={{ flex:1 }}>
                   <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:4 }}>
@@ -3840,6 +4109,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
             </div>
           );
         })}
+        </div>
         <ReportError tLang={tLang} tabName={tabName}/>
       </div>
     );
@@ -3850,7 +4120,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
     const catColors = [C.text, C.text, C.text, C.text, C.text, C.text];
     return (
       <div>
-        {!hideHeading && <Heading title={`${tName} Vocabulary`} sub={`${(content.categories || []).length} essential categories — numbers, colors, family, food, travel and more. Tap to expand.`} color={C.green} />}
+        {!hideHeading && <Heading title={`${tName} Vocabulary`} sub={`${(content.categories || []).length} categories · ${(content.categories||[]).reduce((n,c)=>n+(c.words||[]).length,0)} words — tap a category to open it, and “Generate more” to go deeper.`} color={C.green} />}
         {(content.categories || []).map((cat, i) => {
           const isOpen = open === i;
           const catCol = catColors[i % catColors.length];
@@ -3864,18 +4134,24 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                 <div style={{ color:catCol, fontSize:20, fontWeight:700 }}>{isOpen ? "−" : "+"}</div>
               </div>
               {isOpen && (
-                <div style={{ padding:"4px 13px 14px" }}>
+                <div style={{ padding:"4px 13px 14px", display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(260px, 1fr))", gap:8, alignItems:"start" }}>
                   {[...(cat.words||[]), ...(moreWords[i]||[])].map((w, j) => (
-                    <div key={j} style={{ background:j%2===0?C.bg:C.card, border:`1px solid ${C.bdr}`, borderRadius:9, padding:"9px 12px", marginBottom:6 }}>
+                    <div key={j} style={{ background:C.bg, border:`1px solid ${C.bdr}`, borderRadius:9, padding:"9px 12px" }}>
                       <div style={{ display:"flex", alignItems:"center", gap:8, flexWrap:"wrap", marginBottom:2 }}>
                         <span style={{ fontWeight:800, color:C.blue, fontSize:14 }}>{w.t}</span>
                         <PlayBtn text={w.t} sm />
                       </div>
                       {w.p && <div style={{ color:C.muted, fontSize:11, marginBottom:2, fontStyle:"italic" }}>{w.p}</div>}
                       <div style={{ color:C.mid, fontSize:12 }}>{w.r}</div>
+                      {w.ex && (
+                        <div style={{ marginTop:5, paddingTop:3, borderTop:`1px solid ${C.line}` }}>
+                          <ExampleLine text={w.ex} lang={tLang} knownRef={w.exr}/>
+                          {w.exr && <div style={{ fontSize:11.5, color:C.muted, marginTop:1 }}>{w.exr}</div>}
+                        </div>
+                      )}
                     </div>
                   ))}
-                  <button onClick={() => genMoreWords(cat, i)} disabled={genIdx===i} style={{ width:"100%", marginTop:4, padding:"10px", background:genIdx===i?C.surf2:C.accentSoft, border:`1px solid ${C.accentLine}`, borderRadius:10, color:C.accent, fontWeight:700, fontSize:13, cursor:genIdx===i?"default":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
+                  <button onClick={() => genMoreWords(cat, i)} disabled={genIdx===i} style={{ gridColumn:"1 / -1", width:"100%", marginTop:4, padding:"10px", background:genIdx===i?C.surf2:C.accentSoft, border:`1px solid ${C.accentLine}`, borderRadius:10, color:C.accent, fontWeight:700, fontSize:13, cursor:genIdx===i?"default":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
                     <Icon name={genIdx===i?"loader":"plus"} size={14} color={C.accent}/> {genIdx===i ? "Generating…" : "Generate more words"}
                   </button>
                 </div>
@@ -3926,11 +4202,8 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                   color: isA ? C.blue : col,
                   textAlign:"center", height:"fit-content", fontWeight:800,
                 }}>{l.speaker}</div>
-                <div style={{ flex:1 }}>
-                  <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:3 }}>
-                    <span style={{ fontWeight:800, fontSize:15, color:C.blue }}>{l.target}</span>
-                    <PlayBtn text={l.target} />
-                  </div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <ExampleLine text={l.target} lang={tLang} knownRef={l.ref} big/>
                   <div style={{ fontSize:13, color:C.mid }}>{l.ref}</div>
                 </div>
               </div>
@@ -4849,6 +5122,42 @@ function Flashcards({ tLang, onStreakUpdate }) {
     } catch(e) { setImportMsg("Couldn't import from Word Space."); setTimeout(() => setImportMsg(""), 2800); }
   };
 
+  // Seed a real starter deck from the curated vocabulary the app already ships for this
+  // language — so an empty deck can become reviewable in one tap instead of a dead screen.
+  const [starterLoading, setStarterLoading] = useState(false);
+  const loadStarterDeck = async () => {
+    setStarterLoading(true); setImportMsg("");
+    try {
+      const res = await fetch(`/api/content/${tLang}/vocab`, { headers: { "Authorization": "Bearer " + getToken() } });
+      if (!res.ok) throw new Error("fetch");
+      const data = await res.json();
+      const cats = Array.isArray(data?.categories) ? data.categories : [];
+      // Round-robin across categories so the starter deck is varied, not 24 numbers.
+      const queues = cats.map(c => (Array.isArray(c?.words) ? [...c.words] : []));
+      const picks = [];
+      const TARGET = 24;
+      let drained = false;
+      while (picks.length < TARGET && !drained) {
+        drained = true;
+        for (const q of queues) {
+          if (q.length) { picks.push(q.shift()); drained = false; if (picks.length >= TARGET) break; }
+        }
+      }
+      let added = 0;
+      picks.forEach(w => {
+        if (w && w.t && fcAdd({ lang: tLang, front: w.t, back: w.r || "", pronunciation: w.p || "", example: "" })) added++;
+      });
+      refreshCards();
+      setImportMsg(added
+        ? `Added ${added} starter ${tName} card${added === 1 ? "" : "s"}. Review below — the schedule builds from here.`
+        : "Your deck already has these words.");
+      setTimeout(() => setImportMsg(""), 3200);
+    } catch(e) {
+      setImportMsg("Couldn't load the starter deck. Check your connection and try again.");
+      setTimeout(() => setImportMsg(""), 3200);
+    } finally { setStarterLoading(false); }
+  };
+
   const totalCards   = cards.length;
   const learnedCards = cards.filter(c => c.repetitions > 0).length;
   const RATE_BTNS = [
@@ -4859,7 +5168,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
   ];
 
   return (
-    <div>
+    <div style={{maxWidth:880, margin:"0 auto", padding:"4px 16px 20px", width:"100%"}}>
       <div style={{fontSize:12.5,color:C.muted,fontWeight:600,marginBottom:14}}>{dueCards.length} card{dueCards.length !== 1 ? "s" : ""} due now · spaced repetition (SM-2)</div>
       {cards.length === 0
         ? <Info text="Your flashcard deck is empty. Save words while using the Coach (New Word exercise → Save to Flashcards) or the Vocabulary tab. Then come back here each day to review." color={C.muted} />
@@ -4914,9 +5223,14 @@ function Flashcards({ tLang, onStreakUpdate }) {
                     : `All ${totalCards} cards reviewed for today.`}
               </div>
               {totalCards === 0 ? (
-                <button onClick={() => setView("add")} style={{ padding:"11px 24px", background:C.surf2, color:C.text, border:`1px solid ${C.line}`, borderRadius:10, fontWeight:700, cursor:"pointer" }}>
-                  {t("add_first_card")}
-                </button>
+                <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
+                  <button onClick={loadStarterDeck} disabled={starterLoading} style={{ padding:"11px 24px", background:C.accent, color:"#fff", border:"none", borderRadius:10, fontWeight:700, cursor:starterLoading?"default":"pointer", opacity:starterLoading?0.7:1 }}>
+                    {starterLoading ? "Loading…" : `Load a starter ${tName} deck`}
+                  </button>
+                  <button onClick={() => setView("add")} style={{ padding:"11px 24px", background:C.surf2, color:C.text, border:`1px solid ${C.line}`, borderRadius:10, fontWeight:700, cursor:"pointer" }}>
+                    {t("add_first_card")}
+                  </button>
+                </div>
               ) : (
                 <div style={{ display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
                   <button onClick={() => { setSessionReviewed(new Set()); setFlipped(false); }} style={{ padding:"11px 24px", background:C.blue, color:"#fff", border:"none", borderRadius:10, fontWeight:700, cursor:"pointer" }}>
@@ -5055,7 +5369,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
 // All new-design screens. They receive { L, nav, goBack, dark } props.
 // nav(view) pushes current on stack and navigates; goBack() pops the stack.
 
-const GRAD = "linear-gradient(135deg,#FF5F7E,#C0153E)";
+const GRAD = "var(--grad)"; // resolves to the active theme's gradient (set by applyAccent)
 
 // Shared back button used in every sub-screen
 function BackBtn({ onClick }) {
@@ -5082,8 +5396,10 @@ function WrappedScreen({ title, subtitle, goBack, children, noPad }) {
           {subtitle && <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{subtitle}</div>}
         </div>
       </div>
-      <div style={{flex:1,minHeight:0,overflowY:"auto",padding:noPad ? 0 : "16px 18px calc(28px + env(safe-area-inset-bottom))"}}>
-        {children}
+      <div style={{flex:1,minHeight:0,overflowY:"auto"}}>
+        <div style={{maxWidth:1240, margin:"0 auto", width:"100%", padding:noPad ? 0 : "16px 18px calc(28px + env(safe-area-inset-bottom))"}}>
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -5111,7 +5427,7 @@ function WordOfDay({ tLang }) {
   }, [tLang]);
   if (!w) return null;
   return (
-    <div style={{borderRadius:16, padding:"14px 16px", background:"linear-gradient(135deg,rgba(255,95,126,.09),rgba(192,21,62,.07))", border:`1px solid ${C.accentLine}`, marginBottom:11}}>
+    <div style={{borderRadius:16, padding:"14px 16px", background:C.accentSoft, border:`1px solid ${C.accentLine}`, marginBottom:11}}>
       <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",color:C.accent,marginBottom:9}}>Word to learn today</div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
         <div style={{minWidth:0}}>
@@ -5133,6 +5449,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
   const levelText = LEVEL_LABEL[userLevel] || `Level ${L.level}`;
 
   const HELPERS = [
+    {id:"learn",  label:t("nav_learn"),  icon:"route"},
     {id:"coach",  label:t("nav_coach"),  icon:"sparkles"},
     {id:"cards",  label:t("nav_flashcards"),  icon:"layers"},
     {id:"drills", label:t("nav_drills"), icon:"zap"},
@@ -5140,6 +5457,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
   ];
   // Front door by INTENT (what the learner wants to do), not by tool name.
   const INTENTS = [
+    {id:"learn",       icon:"route",           want:"Learn from the start",    why:"A guided course — first words to real conversations"},
     {id:"voice-tutor", icon:"mic",             want:t("intent_speak"),         why:t("intent_speak_why")},
     {id:"coach",       icon:"sparkles",        want:t("intent_corrected"),     why:t("intent_corrected_why")},
     {id:"dialogues",   icon:"messages-square", want:t("intent_conversations"), why:t("intent_conversations_why")},
@@ -5164,9 +5482,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
       {!isDesktop && (
       <div style={{padding:"13px 16px 10px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:`1px solid ${C.line}`,background:C.surf,flexShrink:0}}>
         <button onClick={onOpenLang} style={{display:"flex",alignItems:"center",gap:9,background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:0}}>
-          <div style={{width:36,height:36,borderRadius:10,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <Icon name="languages" size={18} color="#fff"/>
-          </div>
+          <img src="/icon.svg" alt="Tongue" width={36} height={36} style={{borderRadius:10,flexShrink:0,display:"block"}}/>
           <div>
             <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:22,letterSpacing:"-.02em",color:C.text,lineHeight:1.1}}>{L.name}</div>
             <div style={{fontSize:10,fontWeight:600,color:C.accent,display:"flex",alignItems:"center",gap:3}}>{t("home_switch")} <Icon name="chevron-down" size={10} color={C.accent}/></div>
@@ -5185,23 +5501,45 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
 
       {/* Scrollable body */}
       <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "16px 18px 10px"}}>
-        {/* Streak + level pills */}
-        <div style={{display:"flex",gap:8,marginBottom:13}}>
-          <div style={{flex:1,display:"flex",alignItems:"center",gap:6,background:C.surf,border:`1px solid ${C.line}`,borderRadius:999,padding:"7px 12px"}}>
-            <Icon name="flame" size={14} color="#E8902B"/>
-            <span style={{fontWeight:600,fontSize:12,color:C.text}}>{streak > 0 ? t("streak_days", {n:streak}) : t("home_start_streak")}</span>
-          </div>
-          <div style={{flex:1,display:"flex",alignItems:"center",gap:6,background:C.surf,border:`1px solid ${C.line}`,borderRadius:999,padding:"7px 12px"}}>
-            <Icon name="trophy" size={14} color="#22A06B"/>
-            <span style={{fontWeight:600,fontSize:12,color:C.text}}>{levelText}</span>
-          </div>
-        </div>
+        {/* Real progress strip — replaces the old filler pills */}
+        {(() => {
+          let words = 0, lessons = 0;
+          try { words = fcLoad().filter(c => c.lang === L.id).length; } catch(e) {}
+          try { lessons = lpLoad(L.id).size; } catch(e) {}
+          const stats = [
+            { icon:"flame",        color:"#E8902B", val: streak,  label: streak === 1 ? "day streak" : "day streak", empty: streak === 0 ? t("home_start_streak") : null },
+            { icon:"layers",       color:C.accent,  val: words,   label: words === 1 ? "word saved" : "words saved" },
+            { icon:"circle-check", color:"#22A06B", val: lessons, label: lessons === 1 ? "lesson done" : "lessons done" },
+          ];
+          return (
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+              {stats.map((s,i) => (
+                <div key={i} style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"12px 14px",boxShadow:C.sh}}>
+                  <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:5}}>
+                    <div style={{width:26,height:26,borderRadius:8,background:s.color+"1a",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                      <Icon name={s.icon} size={15} color={s.color}/>
+                    </div>
+                  </div>
+                  {s.empty ? (
+                    <div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>{s.empty}</div>
+                  ) : (
+                    <div style={{display:"flex",alignItems:"baseline",gap:5}}>
+                      <span style={{fontSize:22,fontWeight:900,color:C.text,fontFamily:"var(--serif)"}}>{s.val}</span>
+                      <span style={{fontSize:11.5,fontWeight:600,color:C.muted}}>{s.label}</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
-        {/* Real content up front, so the home isn't just a menu */}
+        {/* Dashboard row: today's word · a fact · the coach */}
+        <div style={{display:"grid", gridTemplateColumns: isDesktop ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr", gap:12, marginBottom:14, alignItems:"start"}}>
         <WordOfDay tLang={L.id}/>
 
         {/* Culture fact */}
-        <div style={{borderRadius:16,padding:"13px 15px",background:"linear-gradient(135deg,rgba(255,95,126,.1),rgba(192,21,62,.08))",border:`1px solid ${C.accentLine}`,marginBottom:11}}>
+        <div style={{borderRadius:16,padding:"13px 15px",background:C.accentSoft,border:`1px solid ${C.accentLine}`,marginBottom:0}}>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
             <div style={{display:"flex",alignItems:"center",gap:7}}>
               <Icon name={fact.icon} size={13} color={C.accent}/>
@@ -5225,6 +5563,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           </div>
           <Icon name="arrow-up-right" size={16} color={C.faint}/>
         </button>
+        </div>
 
         {/* Continue card — reflects the last thing you actually opened (no fake progress) */}
         {(() => {
@@ -5232,7 +5571,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           try { last = JSON.parse(localStorage.getItem("tongue_last") || "null"); } catch(e) {}
           const hasLast = last && last.view && last.label;
           return (
-            <button onClick={() => nav(hasLast ? last.view : "grammar")} style={{width:"100%",textAlign:"left",borderRadius:16,padding:"15px 16px",background:GRAD,color:"#fff",cursor:"pointer",border:"none",boxShadow:"0 14px 28px -12px rgba(192,21,62,.45)",marginBottom:18,fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <button onClick={() => nav(hasLast ? last.view : "learn")} style={{width:"100%",textAlign:"left",borderRadius:16,padding:"15px 16px",background:GRAD,color:"#fff",cursor:"pointer",border:"none",boxShadow:"0 14px 28px -12px rgba(192,21,62,.45)",marginBottom:18,fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
               <div style={{minWidth:0}}>
                 <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",opacity:.85}}>{hasLast ? t("home_resume_label") : t("home_new_here")}</div>
                 <div style={{fontWeight:700,fontSize:17,marginTop:5}}>{hasLast ? last.label : t("home_start_essentials")}</div>
@@ -5245,20 +5584,26 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
         })()}
 
         {/* What do you want to do? — intent-first navigation */}
-        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:10}}>{t("home_what")}</div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:18}}>
-          {INTENTS.map(it => (
-            <button key={it.id} onClick={() => nav(it.id)} style={{display:"flex",alignItems:"center",gap:12,background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"11px 13px",cursor:"pointer",textAlign:"left",fontFamily:"inherit"}}>
-              <div style={{width:38,height:38,borderRadius:11,background:C.surf2,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                <Icon name={it.icon} size={19} color={C.accent}/>
+        <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:11}}>{t("home_what")}</div>
+        <div style={{display:"grid",gridTemplateColumns: isDesktop ? "repeat(auto-fit, minmax(340px, 1fr))" : "1fr",gap:10,marginBottom:18}}>
+          {INTENTS.map((it,i) => {
+            const col = INTENT_COLORS[i % INTENT_COLORS.length];
+            return (
+            <button key={it.id} onClick={() => nav(it.id)}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 10px 24px -12px ${col}88`;e.currentTarget.style.borderColor=col+"66";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow=C.sh;e.currentTarget.style.borderColor=C.line;}}
+              style={{position:"relative",display:"flex",alignItems:"center",gap:13,background:C.surf,border:`1px solid ${C.line}`,borderRadius:16,padding:"14px 15px",cursor:"pointer",textAlign:"left",fontFamily:"inherit",boxShadow:C.sh,overflow:"hidden",transition:"transform .14s, box-shadow .14s, border-color .14s"}}>
+              <span style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:col}}/>
+              <div style={{width:44,height:44,borderRadius:13,background:col+"18",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Icon name={it.icon} size={21} color={col}/>
               </div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontWeight:600,fontSize:14,color:C.text}}>{it.want}</div>
-                <div style={{fontSize:11,fontWeight:500,color:C.muted,marginTop:1}}>{it.why}</div>
+                <div style={{fontWeight:700,fontSize:15,color:C.text,letterSpacing:"-.01em"}}>{it.want}</div>
+                <div style={{fontSize:12,fontWeight:500,color:C.muted,marginTop:2,lineHeight:1.4}}>{it.why}</div>
               </div>
-              <Icon name="arrow-up-right" size={14} color={C.faint}/>
+              <Icon name="arrow-up-right" size={15} color={col}/>
             </button>
-          ))}
+          );})}
         </div>
 
         {/* Browse everything — secondary, for when they know what they want */}
@@ -5561,6 +5906,465 @@ function PhrasesScreen({ L, nav, goBack }) {
   );
 }
 
+// ── LEARN (guided course path) ────────────────────────────────────────────────
+// A sequenced beginner→advanced course built from the SAME cached seed content the
+// reference tabs use (grammar / vocab / dialogues) — so it is complete for all 12
+// languages, not just the ones with rich hardcoded data. Progress is per-language
+// and persists locally. This is the "teach me from the start" spine of the app.
+function lpKey(lang){ return "learn_progress_" + lang; }
+function lpLoad(lang){ try { return new Set(JSON.parse(localStorage.getItem(lpKey(lang)) || "[]")); } catch(e){ return new Set(); } }
+function lpSave(lang, set){ try { localStorage.setItem(lpKey(lang), JSON.stringify([...set])); } catch(e){} }
+
+function buildUnits(grammar, vocab, dialogues, tName){
+  const gAt = (lvl) => grammar.map((s,i)=>({s,i})).filter(x=>x.s.level===lvl);
+  const vLes = (i) => ({ id:"v"+i, kind:"vocab", idx:i });
+  const gLes = (i) => ({ id:"g"+i, kind:"grammar", idx:i });
+  const dLes = (i) => ({ id:"d"+i, kind:"dialogue", idx:i });
+  const units = [];
+  if (vocab.length)      units.push({ title:"Foundations — First Words", desc:"Your first "+tName+" words, spoken aloud.", lessons: vocab.slice(0,3).map((_,i)=>vLes(i)) });
+  const beg = gAt("Beginner");
+  if (beg.length)        units.push({ title:"Grammar — First Rules", desc:"The core patterns that unlock simple sentences.", lessons: beg.map(x=>gLes(x.i)) });
+  if (vocab.length>3)    units.push({ title:"Everyday Words", desc:"Vocabulary you'll reach for every day.", lessons: vocab.slice(3,9).map((_,i)=>vLes(i+3)) });
+  const intr = gAt("Intermediate");
+  if (intr.length)       units.push({ title:"Grammar — Building Sentences", desc:"Connect ideas and handle real situations.", lessons: intr.map(x=>gLes(x.i)) });
+  if (vocab.length>9)    units.push({ title:"More Vocabulary", desc:"Broaden your range.", lessons: vocab.slice(9).map((_,i)=>vLes(i+9)) });
+  const adv = gAt("Advanced");
+  if (adv.length)        units.push({ title:"Grammar — Advanced", desc:"Nuance, tone, and precision.", lessons: adv.map(x=>gLes(x.i)) });
+  if (dialogues.length)  units.push({ title:"Real Conversations", desc:"Put it together in natural dialogue.", lessons: dialogues.map((_,i)=>dLes(i)) });
+  return units;
+}
+function lpTitle(l,d,tName){
+  if(l.kind==="vocab"){   const c=d.vocab[l.idx];     return c ? c.name : "Vocabulary"; }
+  if(l.kind==="grammar"){ const s=d.grammar[l.idx];   return s ? s.title : "Grammar"; }
+  const dl=d.dialogues[l.idx]; return dl ? dl.title : "Conversation";
+}
+function lpSub(l,d){
+  if(l.kind==="vocab"){   const c=d.vocab[l.idx];   return ((c&&c.words)?c.words.length:0)+" words"; }
+  if(l.kind==="grammar"){ const s=d.grammar[l.idx]; return s ? s.level : "Grammar"; }
+  const dl=d.dialogues[l.idx]; return dl ? (dl.level||"Dialogue") : "Dialogue";
+}
+function lpKindMark(kind){ return kind==="vocab" ? "가" : kind==="grammar" ? "§" : "❝"; }
+
+function VocabLesson({ cat, tLang }){
+  const [msg,setMsg]=useState("");
+  if(!cat) return <Info text="This lesson isn't available yet." color={C.muted}/>;
+  const words=cat.words||[];
+  const addAll=()=>{ let n=0; words.forEach(w=>{ if(w.t && fcAdd({lang:tLang,front:w.t,back:w.r||"",pronunciation:w.p||"",example:""})) n++; }); setMsg(n?("Added "+n+" to Flashcards."):"Already in your Flashcards."); setTimeout(()=>setMsg(""),2500); };
+  return (
+    <div>
+      <div style={{fontFamily:"var(--serif)",fontSize:22,fontWeight:600,color:C.text,marginBottom:4}}>{cat.name}</div>
+      <div style={{fontSize:12.5,color:C.muted,marginBottom:14}}>Learn these {words.length} words — tap the speaker to hear each one.</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",gap:10,alignItems:"start"}}>
+        {words.map((w,i)=>(
+          <div key={i} style={{background:C.card,border:`1px solid ${C.bdr}`,borderRadius:12,padding:"11px 14px"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+              <div style={{minWidth:0}}>
+                <div style={{fontSize:17,fontWeight:700,color:C.text}}>{w.t}</div>
+                {w.p && <div style={{fontSize:12,fontStyle:"italic",color:C.accent}}>{w.p}</div>}
+                <div style={{fontSize:13,color:C.muted}}>{w.r}</div>
+              </div>
+              <PlayBtn text={w.t}/>
+            </div>
+            {w.ex && (
+              <div style={{marginTop:8,paddingTop:4,borderTop:`1px solid ${C.line}`}}>
+                <ExampleLine text={w.ex} lang={tLang} knownRef={w.exr}/>
+                {w.exr && <div style={{fontSize:12,color:C.muted,marginTop:1}}>{w.exr}</div>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div style={{marginTop:14,display:"flex",alignItems:"center",gap:10,flexWrap:"wrap"}}>
+        <button onClick={addAll} style={{padding:"10px 16px",background:C.surf2,color:C.text,border:`1px solid ${C.bdr}`,borderRadius:10,fontWeight:700,fontSize:13,cursor:"pointer"}}>Add all to Flashcards</button>
+        {msg && <span style={{color:C.green,fontSize:12.5,fontWeight:600}}>{msg}</span>}
+      </div>
+    </div>
+  );
+}
+// ─── SENTENCE EXPLORER ────────────────────────────────────────────────────────
+// Tap a sentence → it breaks into labelled parts (word/particle/ending), each coloured
+// by grammatical role. Tap a part → its reading/meaning/role + hear + save. "Related"
+// lets you jump to a connected grammar point or word, and a breadcrumb trail lets you
+// go back to exactly where you were. One cached AI call per sentence (free thereafter).
+const ROLE_COLORS = {
+  verb:"#C0153E", noun:"#1E82C4", pronoun:"#1E82C4", proper:"#1E82C4",
+  adjective:"#C77A16", adverb:"#0E9F87", particle:"#7C5CE0", postposition:"#7C5CE0",
+  preposition:"#7C5CE0", conjunction:"#199B63", article:"#9a938a", determiner:"#9a938a",
+  number:"#E0532B", numeral:"#E0532B", auxiliary:"#D6447A", ending:"#D6447A",
+  interjection:"#E0532B", punctuation:"#b8b2a6", other:"#9a938a",
+};
+function roleColor(role){ const k=String(role||"").toLowerCase(); for(const key in ROLE_COLORS){ if(k.indexOf(key)!==-1) return ROLE_COLORS[key]; } return ROLE_COLORS.other; }
+function _skey(s){ let h=0; s=String(s); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return (h>>>0).toString(36); }
+async function getBreakdown(lang, text){
+  const key = "bd_"+lang+"_"+_skey(text);
+  try { const c = localStorage.getItem(key); if (c) return JSON.parse(c); } catch(e){}
+  const name = (TARGETS[lang] && TARGETS[lang].name) || lang;
+  const prompt = `You are a ${name} teacher. Break this ${name} sentence into its parts for a learner, IN ORDER (each word, particle, grammatical ending, or punctuation as its own part). Sentence: "${text}"
+Return ONLY JSON: {"gist":"natural English translation of the whole sentence","parts":[{"s":"the surface form exactly as written, in ${name} script","r":"romanization/reading (empty string for Latin-script languages)","m":"short English meaning, 1-4 words","role":"noun|pronoun|verb|adjective|adverb|particle|preposition|conjunction|article|number|auxiliary|ending|interjection|punctuation"}],"related":[{"label":"a closely related grammar point OR a key word worth exploring next","note":"one short line on why it connects","kind":"grammar"}]}
+The parts, read left to right, MUST reconstruct the sentence exactly. Give 2-3 related items.`;
+  const data = await askClaude(prompt, 1300, lang, _nativeLang || "en");
+  if (!data || !Array.isArray(data.parts) || !data.parts.length) throw new Error("bad_breakdown");
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
+  return data;
+}
+
+function RoleBadge({ role }){
+  const col = roleColor(role);
+  return <span style={{fontSize:9.5,fontWeight:700,letterSpacing:".04em",textTransform:"uppercase",color:col,background:col+"1a",padding:"2px 7px",borderRadius:99}}>{role||"word"}</span>;
+}
+
+function SentenceExplorer({ text, lang, knownRef, onClose }){
+  useLucide([text]);
+  const [st, setSt] = useState({ loading:true, err:false, data:null });
+  const [focus, setFocus] = useState(null);   // {kind:"part"|"related", part?, item?}
+  const [trail, setTrail] = useState([]);       // previous focuses (breadcrumb)
+  const [saved, setSaved] = useState("");
+
+  useEffect(() => {
+    let alive = true; setSt({ loading:true, err:false, data:null }); setFocus(null); setTrail([]);
+    getBreakdown(lang, text)
+      .then(d => { if (alive) setSt({ loading:false, err:false, data:d }); })
+      .catch(() => { if (alive) setSt({ loading:false, err:true, data:null }); });
+    return () => { alive = false; };
+  }, [text, lang]);
+
+  const goFocus = (f) => { setFocus(prev => { if (prev) setTrail(t => [...t, prev]); return f; }); };
+  const back = () => { setTrail(t => { if (!t.length) { setFocus(null); return t; } const nt=[...t]; const prev=nt.pop(); setFocus(prev); return nt; }); };
+  const crumbTo = (i) => { setTrail(t => { const f=t[i]; setFocus(f); return t.slice(0,i); }); };
+
+  const addPartCard = (p) => { const ok = fcAdd({ lang, front:p.s, back:p.m||"", pronunciation:p.r||"", example:text }); setSaved(ok?("Saved “"+p.s+"”"):("“"+p.s+"” already saved")); setTimeout(()=>setSaved(""),1900); };
+
+  const d = st.data;
+
+  return (
+    <div style={{marginTop:10, background:C.surf2, border:`1px solid ${C.bdr}`, borderRadius:13, padding:"12px 13px"}}>
+      {/* header row */}
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, marginBottom:11}}>
+        <div style={{display:"flex", alignItems:"center", gap:7, color:C.accent}}>
+          <Icon name="scan-text" size={14} color={C.accent}/>
+          <span style={{fontSize:12, fontWeight:700}}>Tap a part to explore it</span>
+        </div>
+        <button onClick={onClose} title="Close" style={{width:26, height:26, borderRadius:8, border:`1px solid ${C.bdr}`, background:C.card, display:"flex", alignItems:"center", justifyContent:"center", cursor:"pointer", flexShrink:0}}><Icon name="x" size={13} color={C.muted}/></button>
+      </div>
+
+      {st.loading && <div style={{display:"flex", alignItems:"center", gap:9, color:C.muted, fontSize:12.5, padding:"6px 0"}}><div style={{width:15,height:15,border:`2px solid ${C.line}`,borderTopColor:C.accent,borderRadius:"50%",animation:"spin .7s linear infinite"}}/> Breaking it down…</div>}
+
+      {st.err && (
+        <div>
+          {knownRef && <div style={{fontSize:13, color:C.text, marginBottom:8}}>{knownRef}</div>}
+          <div style={{fontSize:12.5, color:C.muted, lineHeight:1.5}}>Couldn't build the word-by-word breakdown right now. It needs a quick analysis (each sentence is analyzed once, then saved). </div>
+          <button onClick={() => { setSt({loading:true,err:false,data:null}); getBreakdown(lang,text).then(d=>setSt({loading:false,err:false,data:d})).catch(()=>setSt({loading:false,err:true,data:null})); }} style={{marginTop:8, padding:"7px 13px", background:C.card, border:`1px solid ${C.bdr}`, borderRadius:9, fontWeight:700, fontSize:12.5, color:C.text, cursor:"pointer", fontFamily:"inherit"}}>Try again</button>
+        </div>
+      )}
+
+      {d && (
+        <div>
+          {/* chips */}
+          <div style={{display:"flex", flexWrap:"wrap", gap:6, marginBottom:10}}>
+            {d.parts.map((p,i) => {
+              const col = roleColor(p.role);
+              const active = focus && focus.kind==="part" && focus.i===i;
+              return (
+                <button key={i} onClick={() => goFocus({kind:"part", i, part:p})} style={{display:"flex", flexDirection:"column", alignItems:"center", gap:1, padding:"6px 9px 5px", borderRadius:9, cursor:"pointer", fontFamily:"inherit", background: active ? col+"22" : C.card, border:`1px solid ${active?col:C.bdr}`, borderBottom:`3px solid ${col}`}}>
+                  <span style={{fontSize:16, fontWeight:700, color:C.text, lineHeight:1.2}}>{p.s}</span>
+                  {p.r ? <span style={{fontSize:9.5, color:col, fontWeight:600}}>{p.r}</span> : null}
+                </button>
+              );
+            })}
+          </div>
+          {d.gist && <div style={{fontSize:12.5, color:C.muted, fontStyle:"italic", marginBottom:10}}>“{d.gist}”</div>}
+
+          {/* breadcrumb */}
+          {(trail.length>0 || focus) && (
+            <div style={{display:"flex", alignItems:"center", gap:5, flexWrap:"wrap", marginBottom:8, fontSize:11.5}}>
+              <button onClick={() => { setFocus(null); setTrail([]); }} style={{background:"none",border:"none",cursor:"pointer",color:C.muted,fontFamily:"inherit",fontWeight:600,padding:0}}>Sentence</button>
+              {trail.map((f,i) => (
+                <span key={i} style={{display:"flex",alignItems:"center",gap:5}}>
+                  <Icon name="chevron-right" size={11} color={C.faint}/>
+                  <button onClick={() => crumbTo(i)} style={{background:"none",border:"none",cursor:"pointer",color:C.muted,fontFamily:"inherit",fontWeight:600,padding:0}}>{f.kind==="part"?f.part.s:f.item.label}</button>
+                </span>
+              ))}
+              {focus && <span style={{display:"flex",alignItems:"center",gap:5}}><Icon name="chevron-right" size={11} color={C.faint}/><span style={{color:C.accent,fontWeight:700}}>{focus.kind==="part"?focus.part.s:focus.item.label}</span></span>}
+            </div>
+          )}
+
+          {/* focus detail */}
+          {focus && focus.kind==="part" && (
+            <div style={{background:C.card, border:`1px solid ${C.bdr}`, borderRadius:11, padding:"12px 13px"}}>
+              {trail.length>0 && <button onClick={back} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",color:C.muted,fontFamily:"inherit",fontSize:12,fontWeight:600,marginBottom:8,padding:0}}><Icon name="arrow-left" size={13} color={C.muted}/> Back</button>}
+              <div style={{display:"flex", alignItems:"center", gap:10, marginBottom:6}}>
+                <span style={{fontSize:24, fontWeight:800, color:C.text, fontFamily:"var(--serif)"}}>{focus.part.s}</span>
+                <RoleBadge role={focus.part.role}/>
+                <div style={{marginLeft:"auto"}}><PlayBtn text={focus.part.s} sm/></div>
+              </div>
+              {focus.part.r && <div style={{fontSize:13, fontStyle:"italic", color:roleColor(focus.part.role), marginBottom:3}}>{focus.part.r}</div>}
+              <div style={{fontSize:14, color:C.text, marginBottom:11}}>{focus.part.m}</div>
+              <button onClick={() => addPartCard(focus.part)} style={{display:"inline-flex", alignItems:"center", gap:6, padding:"7px 13px", background:C.accentSoft, border:`1px solid ${C.accentLine}`, borderRadius:9, color:C.accent, fontWeight:700, fontSize:12.5, cursor:"pointer", fontFamily:"inherit"}}><Icon name="plus" size={13} color={C.accent}/> Add to flashcards</button>
+              {saved && <span style={{marginLeft:10, fontSize:12, color:C.green, fontWeight:600}}>{saved}</span>}
+            </div>
+          )}
+
+          {focus && focus.kind==="related" && (
+            <div style={{background:C.card, border:`1px solid ${C.bdr}`, borderRadius:11, padding:"12px 13px"}}>
+              <button onClick={back} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",color:C.muted,fontFamily:"inherit",fontSize:12,fontWeight:600,marginBottom:8,padding:0}}><Icon name="arrow-left" size={13} color={C.muted}/> Back</button>
+              <div style={{fontSize:16, fontWeight:700, color:C.text, marginBottom:4}}>{focus.item.label}</div>
+              <div style={{fontSize:13, color:C.muted, lineHeight:1.5}}>{focus.item.note}</div>
+            </div>
+          )}
+
+          {/* related */}
+          {!focus && Array.isArray(d.related) && d.related.length>0 && (
+            <div style={{marginTop:2}}>
+              <div style={{fontSize:9.5, fontWeight:700, letterSpacing:".1em", textTransform:"uppercase", color:C.faint, marginBottom:7}}>Related — keep pulling the thread</div>
+              <div style={{display:"flex", flexWrap:"wrap", gap:7}}>
+                {d.related.map((it,i) => (
+                  <button key={i} onClick={() => goFocus({kind:"related", item:it})} style={{display:"flex", alignItems:"center", gap:7, padding:"8px 12px", background:C.card, border:`1px solid ${C.bdr}`, borderRadius:10, cursor:"pointer", fontFamily:"inherit", textAlign:"left"}}>
+                    <Icon name={it.kind==="word"?"type":"book-open"} size={14} color={C.accent}/>
+                    <span style={{fontSize:12.5, fontWeight:600, color:C.text}}>{it.label}</span>
+                    <Icon name="arrow-up-right" size={12} color={C.faint}/>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// A sentence that expands into the Sentence Explorer when tapped.
+function ExampleLine({ text, lang, knownRef, big }){
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", gap:10, padding:"5px 0"}}>
+        <button onClick={() => setOpen(o=>!o)} style={{flex:1, minWidth:0, textAlign:"left", background:"none", border:"none", cursor:"pointer", fontFamily:"inherit", padding:0, display:"flex", alignItems:"center", gap:8}}>
+          <span style={{fontSize:big?16:15, fontWeight:600, color:C.text}}>{text}</span>
+          <span style={{display:"inline-flex", alignItems:"center", gap:3, fontSize:10.5, fontWeight:700, color:C.accent, background:C.accentSoft, borderRadius:99, padding:"2px 8px", flexShrink:0}}><Icon name={open?"chevron-up":"scan-text"} size={11} color={C.accent}/>{open?"Hide":"Break down"}</span>
+        </button>
+        <PlayBtn text={text} sm/>
+      </div>
+      {open && <SentenceExplorer text={text} lang={lang} knownRef={knownRef} onClose={() => setOpen(false)}/>}
+    </div>
+  );
+}
+
+function GrammarLesson({ s, tLang }){
+  if(!s) return <Info text="This lesson isn't available yet." color={C.muted}/>;
+  const exs=[s.example_target,s.example_target_2].filter(Boolean);
+  return (
+    <div>
+      <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:6,flexWrap:"wrap"}}>
+        <div style={{fontFamily:"var(--serif)",fontSize:22,fontWeight:600,color:C.text}}>{s.title}</div>
+        {s.level && <span style={{fontSize:10,fontWeight:700,color:C.accent,background:C.accentSoft,padding:"2px 8px",borderRadius:99}}>{s.level}</span>}
+      </div>
+      <div style={{fontSize:14.5,color:C.text,lineHeight:1.6,marginBottom:14}}>{s.rule}</div>
+      {exs.length>0 && (
+        <div style={{background:C.card,border:`1px solid ${C.bdr}`,borderRadius:12,padding:"10px 14px",marginBottom:12}}>
+          {exs.map((ex,i)=>(
+            <ExampleLine key={i} text={ex} lang={tLang} knownRef={s.example_ref} big/>
+          ))}
+          {s.example_ref && <div style={{fontSize:12.5,color:C.muted,marginTop:6,borderTop:`1px solid ${C.line}`,paddingTop:8}}>{s.example_ref}</div>}
+        </div>
+      )}
+      {Array.isArray(s.examples) && s.examples.length>0 && (
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:10.5,fontWeight:700,letterSpacing:".08em",textTransform:"uppercase",color:C.faint,marginBottom:6}}>More examples</div>
+          <div style={{display:"flex",flexDirection:"column",gap:7}}>
+            {s.examples.map((e,i)=>(
+              <div key={i} style={{background:C.card,border:`1px solid ${C.bdr}`,borderRadius:10,padding:"5px 12px 9px"}}>
+                <ExampleLine text={e.target} lang={tLang} knownRef={e.ref}/>
+                {e.ref && <div style={{fontSize:12,color:C.muted,marginTop:2}}>{e.ref}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {s.common_mistake && <div style={{fontSize:12.5,color:C.text,lineHeight:1.55,background:C.red+"12",border:`1px solid ${C.red}33`,borderRadius:10,padding:"10px 13px",marginBottom:10}}><b style={{color:C.red}}>Common mistake. </b>{s.common_mistake}</div>}
+      {s.note && <div style={{fontSize:12.5,color:C.muted,lineHeight:1.55,background:C.surf2,borderRadius:10,padding:"10px 13px"}}><b style={{color:C.text}}>Note. </b>{s.note}</div>}
+    </div>
+  );
+}
+function DialogueLesson({ dl, tLang }){
+  if(!dl) return <Info text="This lesson isn't available yet." color={C.muted}/>;
+  return (
+    <div>
+      <div style={{fontFamily:"var(--serif)",fontSize:22,fontWeight:600,color:C.text,marginBottom:4}}>{dl.title}</div>
+      {dl.scene && <div style={{fontSize:12.5,color:C.muted,marginBottom:14,fontStyle:"italic"}}>{dl.scene}</div>}
+      <div style={{display:"flex",flexDirection:"column",gap:9}}>
+        {(dl.lines||[]).map((ln,i)=>(
+          <div key={i} style={{background:C.card,border:`1px solid ${C.bdr}`,borderRadius:12,padding:"11px 14px"}}>
+            <div style={{fontSize:10.5,fontWeight:700,color:C.accent,textTransform:"uppercase",letterSpacing:".05em",marginBottom:3}}>{ln.speaker}</div>
+            <ExampleLine text={ln.target} lang={tLang} knownRef={ln.ref}/>
+            {ln.ref && <div style={{fontSize:12.5,color:C.muted,marginTop:3}}>{ln.ref}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+function LessonView({ lesson, d, tLang, done, onToggle, onClose, onNext, hasNext }){
+  useLucide([lesson.id]);
+  return (
+    <div>
+      <button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:C.muted,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:14,padding:0}}>
+        <Icon name="arrow-left" size={16} color={C.muted}/> Back to course
+      </button>
+      {lesson.kind==="vocab"    && <VocabLesson cat={d.vocab[lesson.idx]} tLang={tLang}/>}
+      {lesson.kind==="grammar"  && <GrammarLesson s={d.grammar[lesson.idx]} tLang={tLang}/>}
+      {lesson.kind==="dialogue" && <DialogueLesson dl={d.dialogues[lesson.idx]} tLang={tLang}/>}
+      <div style={{display:"flex",gap:10,marginTop:20,flexWrap:"wrap"}}>
+        <button onClick={onNext} style={{flex:1,minWidth:170,padding:"13px",background:C.accent,color:"#fff",border:"none",borderRadius:11,fontWeight:700,fontSize:14,cursor:"pointer"}}>
+          {hasNext ? "Mark complete & continue" : "Mark complete"}
+        </button>
+        <button onClick={onToggle} style={{padding:"13px 18px",background:C.card,color:done?C.green:C.text,border:`1px solid ${done?C.green:C.bdr}`,borderRadius:11,fontWeight:700,fontSize:13.5,cursor:"pointer"}}>{done?"✓ Completed":"Mark done"}</button>
+      </div>
+    </div>
+  );
+}
+const LESSON_KIND = {
+  vocab:    { color:"#1E82C4", icon:"type",             label:"Words" },
+  grammar:  { color:"#C0153E", icon:"book-open",        label:"Grammar" },
+  dialogue: { color:"#0E9F87", icon:"messages-square",  label:"Dialogue" },
+};
+function lessonKind(k){ return LESSON_KIND[k] || { color:"#7C5CE0", icon:"circle", label:"Lesson" }; }
+
+// A small SVG progress ring.
+function ProgressRing({ pct, size=72, stroke=7, track="rgba(255,255,255,.28)", fill="#fff", textColor="#fff" }){
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const off = c * (1 - Math.max(0, Math.min(100, pct)) / 100);
+  return (
+    <div style={{position:"relative", width:size, height:size, flexShrink:0}}>
+      <svg width={size} height={size} style={{transform:"rotate(-90deg)"}}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={track} strokeWidth={stroke}/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={fill} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={c} strokeDashoffset={off} style={{transition:"stroke-dashoffset .5s ease"}}/>
+      </svg>
+      <div style={{position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:800, fontSize:size*0.26, color:textColor}}>{pct}%</div>
+    </div>
+  );
+}
+
+function LearnPath({ L, tLang, onStreakUpdate }){
+  useLucide([tLang]);
+  const tName = TARGETS[tLang]?.name || L.name || "your language";
+  const [d, setD]       = useState({ loading:true, err:false, grammar:[], vocab:[], dialogues:[] });
+  const [done, setDone] = useState(() => lpLoad(tLang));
+  const [open, setOpen] = useState(null);
+
+  useEffect(()=>{ setDone(lpLoad(tLang)); setOpen(null); }, [tLang]);
+  useEffect(()=>{
+    let alive=true; setD(x=>({...x, loading:true, err:false}));
+    const auth={ headers:{ "Authorization":"Bearer "+getToken() } };
+    Promise.all([
+      fetch("/api/content/"+tLang+"/grammar", auth).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch("/api/content/"+tLang+"/vocab", auth).then(r=>r.ok?r.json():null).catch(()=>null),
+      fetch("/api/content/"+tLang+"/dialogues", auth).then(r=>r.ok?r.json():null).catch(()=>null),
+    ]).then(([g,v,di])=>{
+      if(!alive) return;
+      const grammar=(g&&g.content&&g.content.sections)||[];
+      const vocab=(v&&v.content&&v.content.categories)||[];
+      const dialogues=(di&&di.content&&di.content.dialogues)||[];
+      if(!grammar.length && !vocab.length){ setD({loading:false,err:true,grammar:[],vocab:[],dialogues:[]}); return; }
+      setD({loading:false,err:false,grammar,vocab,dialogues});
+    });
+    return ()=>{alive=false;};
+  }, [tLang]);
+
+  const markDone = (id)=>setDone(prev=>{ const n=new Set(prev); n.add(id); lpSave(tLang,n); if(onStreakUpdate){ _streak.log(); onStreakUpdate(); } return n; });
+  const toggle   = (id)=>setDone(prev=>{ const n=new Set(prev); n.has(id)?n.delete(id):n.add(id); lpSave(tLang,n); return n; });
+
+  if (d.loading) return <div style={{padding:"44px 0",textAlign:"center",color:C.muted,fontSize:13}}><div style={{width:22,height:22,border:`2px solid ${C.line}`,borderTopColor:C.accent,borderRadius:"50%",animation:"spin .7s linear infinite",margin:"0 auto 12px"}}/>Building your {tName} course…</div>;
+  if (d.err)     return <Info text="Couldn't load the course right now — check your connection and try again." color={C.muted}/>;
+
+  const units = buildUnits(d.grammar, d.vocab, d.dialogues, tName);
+  const allLessons = units.reduce((a,u)=>a.concat(u.lessons),[]);
+  const total = allLessons.length;
+  const doneCount = allLessons.filter(l=>done.has(l.id)).length;
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+  const nextLesson = allLessons.find(l=>!done.has(l.id));
+
+  if (open){
+    const idx = allLessons.findIndex(l=>l.id===open.id);
+    const nx  = allLessons[idx+1] || null;
+    return <LessonView lesson={open} d={d} tLang={tLang} done={done.has(open.id)} hasNext={!!nx}
+      onToggle={()=>toggle(open.id)} onClose={()=>setOpen(null)}
+      onNext={()=>{ markDone(open.id); setOpen(nx); }}/>;
+  }
+
+  return (
+    <div style={{paddingBottom:24}}>
+      {/* Course dashboard — the journey at a glance */}
+      <div style={{background:GRAD, borderRadius:20, padding:"20px 22px", marginBottom:24, color:"#fff", boxShadow:"0 20px 40px -20px rgba(0,0,0,.35)"}}>
+        <div style={{display:"flex", alignItems:"center", gap:20, flexWrap:"wrap"}}>
+          <ProgressRing pct={pct} size={78}/>
+          <div style={{flex:1, minWidth:200}}>
+            <div style={{fontSize:10.5, fontWeight:700, letterSpacing:".14em", textTransform:"uppercase", opacity:.85}}>Your {tName} journey</div>
+            <div style={{fontFamily:"var(--serif)", fontSize:26, fontWeight:600, margin:"3px 0 4px", lineHeight:1.1}}>{doneCount} of {total} lessons</div>
+            <div style={{fontSize:13, opacity:.9}}>{units.length} stages · from first words to real conversations</div>
+          </div>
+          {nextLesson
+            ? <button onClick={()=>setOpen(nextLesson)} style={{background:"#fff", color:C.accent, border:"none", borderRadius:12, padding:"13px 20px", fontWeight:800, fontSize:14, cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:8, boxShadow:"0 8px 20px -8px rgba(0,0,0,.4)"}}>{doneCount?"Continue":"Start learning"} <Icon name="arrow-right" size={16} color={C.accent}/></button>
+            : <div style={{background:"rgba(255,255,255,.2)", borderRadius:12, padding:"12px 18px", fontWeight:700, fontSize:14}}>Course complete — keep reviewing!</div>}
+        </div>
+      </div>
+
+      {/* Stages */}
+      {units.map((u,ui)=>{
+        const uLessons = u.lessons;
+        const uDone = uLessons.filter(l=>done.has(l.id)).length;
+        const uAll = uLessons.length;
+        const uComplete = uDone===uAll;
+        const uStarted = uDone>0;
+        return (
+          <div key={ui} style={{marginBottom:26}}>
+            {/* stage header */}
+            <div style={{display:"flex", alignItems:"center", gap:13, marginBottom:13}}>
+              <div style={{width:36, height:36, borderRadius:11, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background:uComplete?C.green:(uStarted?C.accentSoft:C.surf2), border:uComplete?"none":`1px solid ${C.bdr}`}}>
+                {uComplete ? <Icon name="check" size={19} color="#fff"/> : <span style={{fontWeight:800, fontSize:15, color:uStarted?C.accent:C.muted}}>{ui+1}</span>}
+              </div>
+              <div style={{flex:1, minWidth:0}}>
+                <div style={{fontWeight:800, fontSize:16, color:C.text}}>{u.title}</div>
+                <div style={{fontSize:12, color:C.muted}}>{u.desc}</div>
+              </div>
+              <div style={{fontSize:11.5, fontWeight:700, color:uComplete?C.green:C.muted, whiteSpace:"nowrap", background:uComplete?C.green+"18":C.surf2, borderRadius:99, padding:"4px 11px"}}>{uDone}/{uAll}</div>
+            </div>
+            {/* lesson nodes grid */}
+            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(210px, 1fr))", gap:12}}>
+              {uLessons.map(l=>{
+                const isDone = done.has(l.id);
+                const isNext = nextLesson && nextLesson.id===l.id;
+                const k = lessonKind(l.kind);
+                return (
+                  <button key={l.id} onClick={()=>setOpen(l)}
+                    onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow=`0 12px 26px -14px ${k.color}99`;}}
+                    onMouseLeave={e=>{e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow=isNext?`0 0 0 2px ${C.accent}`:C.sh;}}
+                    style={{position:"relative", display:"flex", flexDirection:"column", gap:9, textAlign:"left", background:C.card, borderRadius:15, padding:"14px 15px", cursor:"pointer", fontFamily:"inherit", overflow:"hidden",
+                      border:`1px solid ${isDone?C.green+"44":(isNext?"transparent":C.bdr)}`,
+                      boxShadow: isNext?`0 0 0 2px ${C.accent}`:C.sh,
+                      transition:"transform .14s, box-shadow .14s"}}>
+                    <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                      <div style={{width:36, height:36, borderRadius:11, display:"flex", alignItems:"center", justifyContent:"center", background:isDone?C.green:k.color+"18", flexShrink:0}}>
+                        <Icon name={isDone?"check":k.icon} size={18} color={isDone?"#fff":k.color}/>
+                      </div>
+                      {isNext && <span style={{fontSize:9.5, fontWeight:800, letterSpacing:".06em", textTransform:"uppercase", color:C.accent, background:C.accentSoft, borderRadius:99, padding:"3px 9px"}}>Start here</span>}
+                    </div>
+                    <div style={{minWidth:0}}>
+                      <div style={{fontWeight:700, fontSize:13.5, color:C.text, lineHeight:1.25, overflow:"hidden", textOverflow:"ellipsis", display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", minHeight:34}}>{lpTitle(l,d,tName)}</div>
+                      <div style={{fontSize:11, fontWeight:600, color:k.color, marginTop:3, textTransform:"uppercase", letterSpacing:".04em"}}>{k.label} · {lpSub(l,d)}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ── SOUNDS ────────────────────────────────────────────────────────────────────
 function SoundsScreen({ L, goBack }) {
   useLucide([L.id]);
@@ -5621,7 +6425,7 @@ function CultureScreen({ L, goBack }) {
           <div style={{fontSize:11,fontWeight:500,color:C.muted}}>Tap any topic to go deeper into how {L.name} really works</div>
         </div>
       </div>
-      <div style={{display:"flex",flexDirection:"column",gap:11}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(340px, 1fr))",gap:11,alignItems:"start"}}>
         {L.culture.map((c,i)=>{
           const isOpen = open === i;
           const st = deep[i];
@@ -5780,9 +6584,7 @@ function NewOnboarding({ onDone, onSetLang }) {
       <div style={{flex:1,overflowY:"auto"}}>
         {step === 0 && (
           <>
-            <div style={{width:64,height:64,borderRadius:19,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:20,boxShadow:"0 14px 34px -8px rgba(192,21,62,.5)"}}>
-              <Icon name="languages" size={33} color="#fff"/>
-            </div>
+            <img src="/icon.svg" alt="Tongue" width={64} height={64} style={{borderRadius:19,marginBottom:20,boxShadow:"0 14px 34px -8px rgba(192,21,62,.5)",display:"block"}}/>
             <div style={{fontSize:27,fontWeight:700,letterSpacing:"-.02em",color:C.text,lineHeight:1.12}}>{t("open_whole_lang")}</div>
             <div style={{fontSize:14,fontWeight:500,color:C.muted,margin:"8px 0 22px"}}>Tongue lets you explore any language freely — and brings smart helpers to whatever you're curious about. Learn your own way.</div>
             <div style={{display:"flex",flexDirection:"column",gap:14}}>
@@ -5901,9 +6703,11 @@ function LangSwitchOverlay({ current, onPick, onClose }) {
 }
 
 // ── SETTINGS OVERLAY (new design) ─────────────────────────────────────────────
-function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFree, onOpenVoice, dark, onToggleDark }) {
-  useLucide([nativeLang]);
+function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFree, onOpenVoice, dark, onToggleDark, themeChoice, onPickTheme, tLang }) {
+  useLucide([nativeLang, themeChoice]);
   const NATIVES = [{code:"en",name:"English"},{code:"es",name:"Español"},{code:"fr",name:"Français"},{code:"de",name:"Deutsch"},{code:"ja",name:"日本語"},{code:"zh",name:"中文"},{code:"pt",name:"Português"},{code:"it",name:"Italiano"}];
+  const activeKey = resolveThemeKey(tLang, themeChoice);
+  const swatch = (k) => (THEMES[k] ? (dark ? THEMES[k].dark : THEMES[k].light) : "#C0153E");
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:80,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
       <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"82%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"var(--font)"}}>
@@ -5924,6 +6728,17 @@ function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFre
         <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:16}}>
           {NATIVES.map(n=>(
             <button key={n.code} onClick={() => onSetNativeLang(n.code)} style={{borderRadius:999,padding:"7px 13px",fontWeight:600,fontSize:12.5,cursor:"pointer",fontFamily:"inherit",background:nativeLang===n.code?GRAD:C.surf,color:nativeLang===n.code?"#fff":C.text,border:nativeLang===n.code?"none":`1px solid ${C.line}`}}>{n.name}</button>
+          ))}
+        </div>
+
+        <div style={{fontSize:12,fontWeight:600,color:C.muted,marginBottom:9}}>Colour theme</div>
+        <div style={{display:"flex",flexWrap:"wrap",gap:9,marginBottom:16,alignItems:"center"}}>
+          <button onClick={() => onPickTheme("auto")} title="Match the language" style={{display:"flex",alignItems:"center",gap:7,borderRadius:999,padding:"6px 12px 6px 8px",cursor:"pointer",fontFamily:"inherit",fontWeight:600,fontSize:12.5,background:themeChoice==="auto"?C.accentSoft:C.surf,border:`1.5px solid ${themeChoice==="auto"?C.accent:C.line}`,color:C.text}}>
+            <span style={{width:18,height:18,borderRadius:999,background:swatch(themeChoice==="auto"?activeKey:(LANG_THEME[tLang]||"crimson")),boxShadow:"inset 0 0 0 2px rgba(255,255,255,.5)"}}/>
+            Match language
+          </button>
+          {Object.keys(THEMES).map(k => (
+            <button key={k} onClick={() => onPickTheme(k)} title={THEMES[k].name} aria-label={THEMES[k].name} style={{width:30,height:30,borderRadius:999,cursor:"pointer",padding:0,background:swatch(k),border:themeChoice===k?`2.5px solid ${C.text}`:`2px solid ${C.line}`,boxShadow:themeChoice===k?`0 0 0 2px ${C.bg}, 0 0 0 4px ${swatch(k)}`:"none",transition:"transform .1s"}}/>
           ))}
         </div>
 
@@ -6900,10 +7715,133 @@ function ShareCardModal({ word, meaning, example, lang, onClose }) {
 // Persistent left-rail navigation shown only on wide screens. Reuses the same
 // nav(view) actions as the mobile bottom-nav / explore grid, so both layouts
 // drive one source of truth.
+// ─── TOP BAR (desktop primary navigation) ────────────────────────────────────
+// Full-width global bar. Primary destinations sit inline; everything else lives in
+// the "Explore" menu, and real movement happens by clicking content. Replaces the
+// old fixed sidebar so the page uses its full width.
+function TopBar({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettings, isFree }) {
+  useLucide([L.id, view, dark]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const PRIMARY = [
+    { id:"explore", label:t("nav_home"),       icon:"home" },
+    { id:"learn",   label:t("nav_learn"),       icon:"route" },
+    { id:"coach",   label:t("nav_coach"),        icon:"sparkles" },
+    { id:"cards",   label:t("nav_flashcards"),   icon:"layers" },
+    { id:"review",  label:t("nav_review"),       icon:"graduation-cap" },
+  ];
+  const MENU = [
+    { group:t("sec_explore"), items:[
+      { id:"grammar",    label:t("nav_grammar"),    icon:"book-open" },
+      { id:"vocab-full", label:t("nav_vocab"),      icon:"type" },
+      { id:"dialogues",  label:t("nav_dialogues"),  icon:"messages-square" },
+      { id:"structures", label:t("nav_structures"), icon:"layout-list" },
+      { id:"sounds",     label:t("nav_sounds"),     icon:"volume-2" },
+      { id:"culture",    label:t("nav_culture"),    icon:"compass" },
+    ]},
+    { group:t("sec_tools"), items:[
+      { id:"drills",      label:t("nav_drills"),       icon:"zap" },
+      { id:"voice-tutor", label:t("nav_conversation"), icon:"mic" },
+      { id:"analyzer",    label:t("nav_analyzer"),     icon:"scan-text" },
+      { id:"wordspace",   label:t("nav_wordspace"),    icon:"search" },
+      { id:"roadmap",     label:t("nav_roadmap"),      icon:"map" },
+      { id:"today",       label:t("nav_today"),        icon:"sun" },
+    ]},
+  ];
+  const activeFor = (id) => {
+    if (id === "grammar")    return view === "grammar" || view === "grammar-full" || view === "concept";
+    if (id === "vocab-full") return view === "vocab-full" || view === "vocabThemes" || view === "vocabWords";
+    if (id === "dialogues")  return view === "dialogues" || view === "phrases";
+    return view === id;
+  };
+  const go = (id) => { setMenuOpen(false); nav(id); };
+  const Tab = ({ item }) => {
+    const active = activeFor(item.id);
+    return (
+      <button onClick={() => go(item.id)} style={{
+        display:"flex", alignItems:"center", gap:7, padding:"8px 13px", borderRadius:11,
+        border:"none", cursor:"pointer", fontFamily:"inherit", fontSize:13.5, whiteSpace:"nowrap",
+        background: active ? C.accentSoft : "transparent",
+        color: active ? C.accent : C.text, fontWeight: active ? 700 : 500,
+        transition:"background .12s",
+      }}
+      onMouseEnter={e => { if (!active) e.currentTarget.style.background = C.surf2; }}
+      onMouseLeave={e => { if (!active) e.currentTarget.style.background = "transparent"; }}>
+        <Icon name={item.icon} size={16} color={active ? C.accent : C.muted}/>
+        {item.label}
+      </button>
+    );
+  };
+  return (
+    <header style={{
+      flexShrink:0, display:"flex", alignItems:"center", gap:14, height:60, padding:"0 20px",
+      borderBottom:`1px solid ${C.line}`, background:C.surf, position:"relative", zIndex:40,
+    }}>
+      {/* Brand */}
+      <div style={{display:"flex", alignItems:"center", gap:9, flexShrink:0}}>
+        <img src="/icon.svg" alt="Tongue" width={30} height={30} style={{borderRadius:8, display:"block"}}/>
+        <div style={{fontFamily:"var(--serif)", fontWeight:600, fontSize:20, letterSpacing:"-.02em", color:C.text}}>Tongue</div>
+      </div>
+      {/* Language switcher */}
+      <button onClick={onOpenLang} style={{display:"flex", alignItems:"center", gap:8, background:C.surf2, border:`1px solid ${C.line}`, borderRadius:999, padding:"6px 12px", cursor:"pointer", fontFamily:"inherit", flexShrink:0}}>
+        <span style={{width:22,height:15,borderRadius:3,background:L.flag,display:"block",flexShrink:0,boxShadow:"inset 0 0 0 1px rgba(0,0,0,.08)"}}/>
+        <span style={{fontWeight:700, fontSize:13, color:C.text}}>{L.name}</span>
+        <Icon name="chevron-down" size={13} color={C.muted}/>
+      </button>
+
+      {/* Primary tabs */}
+      <nav style={{display:"flex", alignItems:"center", gap:2, marginLeft:6, overflowX:"auto", flex:1, minWidth:0}}>
+        {PRIMARY.map(i => <Tab key={i.id} item={i}/>)}
+        <button onClick={() => setMenuOpen(o=>!o)} style={{
+          display:"flex", alignItems:"center", gap:6, padding:"8px 13px", borderRadius:11, border:"none",
+          cursor:"pointer", fontFamily:"inherit", fontSize:13.5, fontWeight:600, whiteSpace:"nowrap",
+          background: menuOpen ? C.surf2 : "transparent", color:C.text,
+        }}>
+          <Icon name="layout-grid" size={16} color={C.muted}/> Explore <Icon name={menuOpen?"chevron-up":"chevron-down"} size={13} color={C.muted}/>
+        </button>
+      </nav>
+
+      {/* Right controls */}
+      <div style={{display:"flex", alignItems:"center", gap:8, flexShrink:0}}>
+        <button onClick={() => go("wordspace")} title={t("nav_wordspace")} style={{display:"flex", alignItems:"center", gap:8, background:C.surf2, border:`1px solid ${C.line}`, borderRadius:999, padding:"8px 14px", cursor:"pointer", fontFamily:"inherit", color:C.muted, fontSize:13}}>
+          <Icon name="search" size={15} color={C.muted}/> Look up a word
+        </button>
+        {isFree && <a href="/subscribe" style={{background:GRAD, color:"#fff", borderRadius:10, padding:"8px 14px", fontWeight:700, fontSize:12.5, textDecoration:"none", fontFamily:"inherit"}}>Upgrade</a>}
+        <button onClick={onToggleDark} title={dark?"Light mode":"Dark mode"} style={{width:38, height:38, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:10, border:`1px solid ${C.line}`, background:C.surf2, color:C.text, cursor:"pointer"}}><Icon name={dark?"sun":"moon"} size={17}/></button>
+        <button onClick={onOpenSettings} title="Settings" style={{width:38, height:38, display:"flex", alignItems:"center", justifyContent:"center", borderRadius:10, border:`1px solid ${C.line}`, background:C.surf2, color:C.text, cursor:"pointer"}}><Icon name="settings" size={17}/></button>
+      </div>
+
+      {/* Explore mega-menu */}
+      {menuOpen && (
+        <>
+          <div onClick={() => setMenuOpen(false)} style={{position:"fixed", inset:0, zIndex:39}}/>
+          <div style={{position:"absolute", top:58, left:"50%", transform:"translateX(-50%)", width:"min(680px, 92vw)", background:C.surf, border:`1px solid ${C.line}`, borderRadius:16, boxShadow:"0 24px 60px -20px rgba(0,0,0,.35)", padding:16, zIndex:41, display:"grid", gridTemplateColumns:"1fr 1fr", gap:18}}>
+            {MENU.map(sec => (
+              <div key={sec.group}>
+                <div style={{fontSize:9.5, fontWeight:700, letterSpacing:".12em", textTransform:"uppercase", color:C.faint, padding:"0 8px", marginBottom:7}}>{sec.group}</div>
+                {sec.items.map(it => {
+                  const active = activeFor(it.id);
+                  return (
+                    <button key={it.id} onClick={() => go(it.id)} style={{display:"flex", alignItems:"center", gap:11, width:"100%", padding:"9px 10px", borderRadius:10, border:"none", cursor:"pointer", fontFamily:"inherit", textAlign:"left", background:active?C.accentSoft:"transparent", color:active?C.accent:C.text, fontWeight:active?700:500, fontSize:13.5, marginBottom:1}}
+                      onMouseEnter={e=>{if(!active)e.currentTarget.style.background=C.surf2;}}
+                      onMouseLeave={e=>{if(!active)e.currentTarget.style.background="transparent";}}>
+                      <Icon name={it.icon} size={16} color={active?C.accent:C.muted}/> {it.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </header>
+  );
+}
+
 function DesktopNav({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettings, isFree }) {
   useLucide([L.id, view, dark]);
   const PRIMARY = [
     { id:"explore", label:t("nav_home"),     icon:"home" },
+    { id:"learn",   label:t("nav_learn"),    icon:"route" },
     { id:"coach",   label:t("nav_coach"), icon:"sparkles" },
     { id:"cards",   label:t("nav_flashcards"), icon:"layers" },
     { id:"drills",  label:t("nav_drills"),   icon:"zap" },
@@ -6963,9 +7901,7 @@ function DesktopNav({ L, view, nav, dark, onToggleDark, onOpenLang, onOpenSettin
       {/* Brand + language */}
       <div style={{padding:"16px 14px 10px", borderBottom:`1px solid ${C.line}`}}>
         <div style={{display:"flex", alignItems:"center", gap:9, marginBottom:12}}>
-          <div style={{width:30,height:30,borderRadius:8,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-            <Icon name="languages" size={16} color="#fff"/>
-          </div>
+          <img src="/icon.svg" alt="Tongue" width={30} height={30} style={{borderRadius:8,flexShrink:0,display:"block"}}/>
           <div style={{fontFamily:"var(--serif)",fontWeight:600,fontSize:20,letterSpacing:"-.02em",color:C.text}}>Tongue</div>
         </div>
         <button onClick={onOpenLang} style={{
@@ -7025,6 +7961,7 @@ function App() {
     } catch(e) { return false; }
   });
   const [themeIdx, setThemeIdx]     = useState(0);
+  const [themeChoice, setThemeChoice] = useState(() => themeChoiceGet());
   const [factIdx, setFactIdx]       = useState(0);
   // ── auth / plan ────────────────────────────────────────────────────────────
   const [tLang, setTLang]           = useState(() => { try { return localStorage.getItem("target_lang") || "fr"; } catch(e) { return "fr"; } });
@@ -7197,6 +8134,13 @@ function App() {
     try { localStorage.setItem("_dark", dark ? "1" : "0"); } catch(e) {}
   }, [dark]);
 
+  // Retint the whole app whenever the language, dark mode, or the learner's chosen
+  // theme changes. "auto" tracks the language's signature colour.
+  useEffect(() => {
+    applyAccent(resolveThemeKey(tLang, themeChoice), dark);
+  }, [tLang, dark, themeChoice]);
+  const pickTheme = (key) => { themeChoiceSet(key); setThemeChoice(key); };
+
   // ── navigation helpers ────────────────────────────────────────────────────
   // Views worth resuming, with the label shown on the Home "Continue" card.
   const RESUMABLE = {
@@ -7204,6 +8148,7 @@ function App() {
     "voice-tutor":"Conversation", dialogues:"Dialogues", drills:"Drills", "vocab-full":"Vocabulary",
     structures:"Sentence patterns", sounds:"Sounds", culture:"Culture & nuance", roadmap:"Roadmap",
     wordspace:"Word Space", analyzer:"Text analyzer", cards:"Flashcards", review:"Review", today:"Today's practice",
+    learn:"Learn",
   };
   const nav = (v) => {
     const ns = makeNavState(v, view, stack);
@@ -7284,7 +8229,7 @@ function App() {
       )}
 
       {/* ── MAIN SCREEN AREA ── */}
-      <div key={view} className="scr-anim" style={{flex:1,minHeight:0,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+      <div key={view} className="scr-anim" style={{flex:1,minHeight:0,display:"flex",flexDirection:"column",overflow:"hidden",width:"100%"}}>
 
         {/* ── EXPLORE (home) ── */}
         {view === "explore" && (
@@ -7302,7 +8247,7 @@ function App() {
         {view === "coach" && wrap(t("nav_coach"), t("wrap_coach_sub"), <AICoach tLang={tLang} rLangs={rLangs} nativeLang={nativeLang}/>, true)}
 
         {/* ── GRAMMAR (new index) ── */}
-        {view === "grammar" && <GrammarScreen L={L} nav={nav} goBack={goBack}/>}
+        {view === "grammar" && wrap(t("nav_grammar"), t("wrap_grammar_sub"), <Grammar tLang={tLang} rLangs={rLangs}/>)}
 
         {/* ── GRAMMAR FULL (old component, all langs) ── */}
         {view === "grammar-full" && wrap(t("nav_grammar"), t("wrap_grammar_sub"), <Grammar tLang={tLang} rLangs={rLangs}/>)}
@@ -7324,6 +8269,9 @@ function App() {
 
         {/* ── DIALOGUES (old component, all langs) ── */}
         {view === "dialogues" && wrap(t("nav_dialogues"), t("wrap_dialogues_sub"), <Dialogues tLang={tLang}/>)}
+
+        {/* ── LEARN (guided course path) ── */}
+        {view === "learn" && wrap(t("nav_learn"), "Your guided course — from the very start", <LearnPath L={L} tLang={tLang} onStreakUpdate={() => setStreak(_streak.get().count)}/>, false)}
 
         {/* ── SOUNDS ── */}
         {view === "sounds" && <SoundsScreen L={L} goBack={goBack}/>}
@@ -7403,6 +8351,9 @@ function App() {
           onOpenVoice={() => setOverlay("voice")}
           dark={dark}
           onToggleDark={toggleDark}
+          themeChoice={themeChoice}
+          onPickTheme={pickTheme}
+          tLang={tLang}
         />
       )}
       {overlay === "voice" && <VoicePanel tLang={tLang} onClose={() => setOverlay(null)}/>}
@@ -7415,7 +8366,7 @@ function App() {
   if (isDesktop) {
     return (
       <div className="desktop-stage">
-        <DesktopNav
+        <TopBar
           L={L} view={view} nav={nav} dark={dark}
           onToggleDark={toggleDark}
           onOpenLang={() => setOverlay("lang")}

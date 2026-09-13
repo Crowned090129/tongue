@@ -137,14 +137,20 @@ router.get("/api/codes", adminAuth, async (req, res) => {
 // POST /admin/api/codes/generate — manually create a code for an email
 router.post("/api/codes/generate", adminAuth, async (req, res) => {
   const { email, plan = "monthly", sendEmail: doSendEmail = true } = req.body || {};
-  if (!email) return res.status(400).json({ error: "email is required." });
+
+  // Email is OPTIONAL. With no email, create an UNCLAIMED code that binds to the
+  // email of whoever redeems it first (see /api/auth/login).
+  const unclaimed = !email;
+  const userEmail = unclaimed
+    ? `unclaimed__${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}@claim.tongue`
+    : String(email).trim().toLowerCase();
 
   await db.run(`
     INSERT INTO users (email, plan, status) VALUES ($1, $2, 'active')
     ON CONFLICT(email) DO UPDATE SET plan = excluded.plan, status = 'active'
-  `, [email, plan]);
+  `, [userEmail, plan]);
 
-  const user = await db.get("SELECT id FROM users WHERE email = $1", [email]);
+  const user = await db.get("SELECT id FROM users WHERE email = $1", [userEmail]);
 
   await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
 
@@ -155,11 +161,11 @@ router.post("/api/codes/generate", adminAuth, async (req, res) => {
     [user.id, code, expiresAt]
   );
 
-  if (doSendEmail) {
-    await welcomeEmail(email, code, plan);
+  if (doSendEmail && !unclaimed) {
+    await welcomeEmail(userEmail, code, plan);
   }
 
-  res.json({ code, expiresAt, email, plan });
+  res.json({ code, expiresAt, email: unclaimed ? null : userEmail, plan, unclaimed });
 });
 
 // DELETE /admin/api/codes/:id — revoke a code
