@@ -1,15 +1,41 @@
-# French Immersion — Full-Stack Setup
+# Tongue — Speak Every Tongue
 
-AI-powered French language learning app with subscription billing, access code auth, and Anthropic API proxy.
+A 12-language learning web app: Express + Postgres server, a single-file React client, a curated
+content corpus with an AI layer on top, Stripe subscriptions and passwordless sign-in.
+Live at https://tongue-app.fly.dev/app (Fly.io app `tongue-app`).
 
-## Quick Start (local dev)
+## Start here
+
+| Document | What it is |
+|---|---|
+| [docs/ASTRA_PROMPT.md](docs/ASTRA_PROMPT.md) | The brief to hand whoever picks this up next |
+| [docs/ASTRA_HANDOFF.md](docs/ASTRA_HANDOFF.md) | Operating brief: rules, safety, next actions |
+| [docs/PROJECT_STATE.md](docs/PROJECT_STATE.md) | Living status — what is done, verified, pending |
+| [docs/CODEBASE_GUIDE.md](docs/CODEBASE_GUIDE.md) | Map of the code: APIs, components, data model |
+| [docs/ARCHITECTURE_FORENSICS.md](docs/ARCHITECTURE_FORENSICS.md) | Evidence-backed audit of what exists |
+| [docs/TARGET_ARCHITECTURE.md](docs/TARGET_ARCHITECTURE.md) | The architecture being migrated to |
+| [docs/MIGRATION_PLAN.md](docs/MIGRATION_PLAN.md) | Phases P0–P14, decision gates G1–G7 |
+| [docs/HISTORY.md](docs/HISTORY.md) | What was already tried and deliberately dropped |
+
+## Quick start (local dev)
+
+`.env` points at the **production** database. Never run tests or scripts against it. Use a local
+Postgres instead:
 
 ```bash
-cd french-app
 npm install
-cp .env.example .env   # fill in your keys
-node server.js
+# tests (refuses any database that is not local and named *_test)
+NODE_ENV=test TEST_DATABASE_URL=postgres://<user>@127.0.0.1:5432/tongue_test \
+  ANTHROPIC_API_KEY= RESEND_API_KEY= STRIPE_SECRET_KEY= STRIPE_WEBHOOK_SECRET= \
+  SMTP_HOST= SMTP_USER= SMTP_PASS= EMAIL_FROM= GOOGLE_CLIENT_ID= \
+  JWT_SECRET=local-test-secret ADMIN_PASSWORD=local-admin-test npm test
 ```
+
+To run the app locally, point `DATABASE_URL` at a local database and leave every provider key
+blank; see `docs/ASTRA_HANDOFF.md` §3 for the full command.
+
+> The rest of this README predates the current architecture and is kept for reference only.
+> Where it disagrees with `docs/`, the documents in `docs/` are correct.
 
 Open `http://localhost:3000` — you'll see the access code login screen.
 
