@@ -41,8 +41,8 @@ Run these one by one (copy values from your .env file):
 ```bash
 fly secrets set DATABASE_URL="postgresql://postgres:..."
 fly secrets set ANTHROPIC_API_KEY="sk-ant-api03-..."
-fly secrets set JWT_SECRET="601e578f..."
-fly secrets set ADMIN_PASSWORD="FrenchApp$2026!"
+fly secrets set JWT_SECRET="<generate: openssl rand -hex 32>"
+fly secrets set ADMIN_PASSWORD="<choose a new strong password>"
 fly secrets set STRIPE_SECRET_KEY="sk_live_..."
 fly secrets set STRIPE_WEBHOOK_SECRET="whsec_..."
 fly secrets set STRIPE_PRICE_MONTHLY="price_..."

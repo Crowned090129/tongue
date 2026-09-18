@@ -2,8 +2,10 @@
  * tests/smoke.test.js
  *
  * Integration smoke tests for Tongue's critical paths.
- * Requires a live DATABASE_URL (the same Supabase DB is fine — tests
- * create and clean up their own rows).
+ *
+ * NEVER runs against production. db.js in test mode opens only TEST_DATABASE_URL,
+ * and only a local database whose name ends in _test (tests/support/assertTestDatabase.js).
+ * Required env: NODE_ENV=test TEST_DATABASE_URL=postgres://…/<name>_test
  *
  * Run:  npm test
  *       node --test tests/smoke.test.js
@@ -16,7 +18,8 @@
 
 "use strict";
 
-require("dotenv").config(); // never override shell vars — NODE_ENV=test must survive
+// No dotenv here on purpose: .env holds production credentials. Tests read only
+// the environment the runner sets (TEST_DATABASE_URL + stubbed provider keys).
 
 const { test, describe, before, after } = require("node:test");
 const assert = require("node:assert/strict");
@@ -30,14 +33,13 @@ let server;
 let BASE_URL;
 
 before(async () => {
-  // Skip if no DB is available
-  if (!process.env.DATABASE_URL) {
-    console.warn("[Tests] DATABASE_URL not set — skipping integration tests");
-    process.exit(0);
+  // Fail loudly rather than silently skipping (a skipped suite reads as green).
+  if (!process.env.TEST_DATABASE_URL) {
+    throw new Error("TEST_DATABASE_URL is required. Example: NODE_ENV=test TEST_DATABASE_URL=postgres://tongue@127.0.0.1:55432/tongue_test npm test");
   }
   await db.initialize();
-  // Clear ALL rate limits — tests share 127.0.0.1 and Supabase DB; stale
-  // limits from prior runs or the dev server bleed into the test window.
+  // Clear ALL rate limits — every test shares 127.0.0.1, so stale limits from a
+  // prior run bleed into this window. Safe: this is the local test database only.
   await db.run("DELETE FROM rate_limits").catch(() => {});
 
   await new Promise((resolve, reject) => {
@@ -210,7 +212,8 @@ describe("Access control — unauthenticated rejections", () => {
 
 describe("Access control — free-tier gating", () => {
 
-  test("GET /api/streaks with free token returns 402 (paid only)", async () => {
+  // Streaks are core engagement, not a paid feature (routes/streaks.js).
+  test("GET /api/streaks with a free token returns 200 (streaks are free)", async () => {
     const email = testEmail();
     const signup = await POST("/api/auth/signup", { email });
     assert.equal(signup.status, 200);
@@ -218,8 +221,8 @@ describe("Access control — free-tier gating", () => {
     const { status, body } = await GET("/api/streaks", {
       Authorization: `Bearer ${signup.body.token}`,
     });
-    assert.equal(status, 402, `Expected 402 (paid-only), got ${status}: ${JSON.stringify(body)}`);
-    assert.equal(body.upgrade, true);
+    assert.equal(status, 200, `Expected 200 (streaks are free), got ${status}: ${JSON.stringify(body)}`);
+    assert.equal(typeof body.current_streak, "number");
   });
 
   test("POST /api/claude with free token is allowed (rate-limited, not blocked)", async () => {

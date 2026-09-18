@@ -5,16 +5,17 @@
  * DELETE /api/push/token    — remove a token (called on logout)
  */
 
-const express     = require("express");
-const db          = require("../db");
+const express      = require("express");
+const db           = require("../db");
 const { requireAuth } = require("./auth");
+const asyncHandler = require("../utils/asyncHandler");
 
 const router = express.Router();
 
 const VALID_PLATFORMS = ["ios", "android", "web"];
 
 // POST /api/push/register
-router.post("/register", requireAuth, async (req, res) => {
+router.post("/register", requireAuth, asyncHandler(async (req, res) => {
   const { userId } = req.user;
   const { token, platform } = req.body || {};
 
@@ -32,14 +33,17 @@ router.post("/register", requireAuth, async (req, res) => {
   `, [userId, token.trim(), platform]);
 
   res.json({ registered: true });
-});
+}));
 
 // DELETE /api/push/token — called on logout so we don't send reminders to signed-out devices
-router.delete("/token", requireAuth, async (req, res) => {
+router.delete("/token", requireAuth, asyncHandler(async (req, res) => {
   const { userId } = req.user;
   const { token } = req.body || {};
 
   if (!token) return res.status(400).json({ error: "token is required." });
+  // pg would serialise an object or array into the query parameter, so only a
+  // string can ever match a stored token.
+  if (typeof token !== "string") return res.status(400).json({ error: "token must be a string." });
 
   await db.run(
     "DELETE FROM push_tokens WHERE user_id = $1 AND token = $2",
@@ -47,6 +51,6 @@ router.delete("/token", requireAuth, async (req, res) => {
   );
 
   res.json({ removed: true });
-});
+}));
 
 module.exports = router;

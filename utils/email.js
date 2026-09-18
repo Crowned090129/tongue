@@ -89,7 +89,7 @@ function welcomeEmail(email, code, plan) {
 
         <div style="background:#f8fafc;border-radius:10px;padding:14px;font-size:13px;color:#64748b">
           <strong>Plan:</strong> ${planLabel}<br>
-          Your code renews automatically each billing cycle — we'll email you the new one.
+          Keep this code: it stays the same when your subscription renews.
         </div>
 
         ${emailFooter}
@@ -99,24 +99,34 @@ function welcomeEmail(email, code, plan) {
   );
 }
 
+// A renewal keeps the user's existing access code, so `code` is normally null.
+// It is only set when the account had no active code left (for example it was
+// switched off while a payment was failing) and a new one had to be issued.
 function renewalEmail(email, code, plan) {
   const planLabel = plan === "yearly" ? "Annual" : "Monthly";
+  const body = code
+    ? `
+        <p style="color:#334155;font-size:14px;margin:0 0 20px">Your account had no active access code, so here is a new one.</p>
+
+        <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:12px;padding:22px;text-align:center;margin-bottom:22px">
+          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Your Access Code</div>
+          <div style="font-size:30px;font-weight:900;color:#16a34a;letter-spacing:4px">${code}</div>
+        </div>
+
+        <p style="color:#64748b;font-size:13px">Sign in at <a href="${APP_URL}/app" style="color:#C0153E">${APP_URL}/app</a> with the code above.</p>`
+    : `
+        <p style="color:#334155;font-size:14px;margin:0 0 20px">Thanks for learning with Tongue. You don't need to do anything: your existing access code and sign-in keep working.</p>
+
+        <p style="color:#64748b;font-size:13px">Pick up where you left off at <a href="${APP_URL}/app" style="color:#C0153E">${APP_URL}/app</a>.</p>`;
   return sendEmail(
     email,
-    "Your New Tongue Access Code 🔄",
+    code ? "Your Tongue subscription renewed — your access code 🔄" : "Your Tongue subscription renewed 🔄",
     `
     <div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
       ${emailHeader}
       <div style="padding:28px">
         <h1 style="color:#0f172a;font-size:20px;margin:0 0 8px">Your ${planLabel} subscription renewed!</h1>
-        <p style="color:#334155;font-size:14px;margin:0 0 20px">Here is your new access code. Your old code has been deactivated.</p>
-
-        <div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:12px;padding:22px;text-align:center;margin-bottom:22px">
-          <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">New Access Code</div>
-          <div style="font-size:30px;font-weight:900;color:#16a34a;letter-spacing:4px">${code}</div>
-        </div>
-
-        <p style="color:#64748b;font-size:13px">Sign in again at <a href="${APP_URL}" style="color:#C0153E">${APP_URL}</a> with the new code above.</p>
+        ${body}
 
         ${emailFooter}
       </div>

@@ -2,6 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const db = require("../db");
+const asyncHandler = require("../utils/asyncHandler");
 const { OAuth2Client } = require("google-auth-library");
 
 const router = express.Router();
@@ -16,21 +17,62 @@ function googleClient() {
   return _googleClient;
 }
 
+// Malformed bodies (wrong types, e.g. {"email":1}) get a 400 with a code instead
+// of reaching string methods and throwing.
+function badInput(res, field, error) {
+  return res.status(400).json({ code: "invalid_input", field, error });
+}
+const isEmailInput = (v) => typeof v === "string" && v.includes("@") && v.length <= 254;
+
+// ── Suspended accounts (B3, gate G2 default) ──────────────────────────────────
+// An admin suspension must survive every sign-in path: the upserts below never
+// turn 'suspended' back into 'active', and signup, magic link, Google and access
+// code all refuse a suspended account. Only 'suspended' is refused. 'cancelled'
+// is also written by the Stripe webhook when a subscription ends, and those
+// users keep free access until gate G2 is decided.
+const ACCOUNT_SUSPENDED = {
+  code: "account_suspended",
+  error: "This account has been suspended. Contact support if you think this is a mistake.",
+};
+
+// ── Session verification (B2, gate G4 default) ────────────────────────────────
+// Sessions carry a `verified` claim. Access-code, magic-link and Google sessions
+// prove control of the code or the email address (verified: true). /signup proves
+// nothing (anyone can type any address), so every /signup session is
+// verified: false, including the first one for a brand-new address: otherwise
+// whoever registers someone else's address first would hold a verified session
+// on the account its owner later uses. Destructive account actions refuse
+// unverified sessions; everything else accepts them (no lockout while production
+// email delivery is unverified).
+//
+// Tokens issued before this claim existed have no `verified` field and are
+// treated as verified. They can't be told apart from existing magic-link and
+// Google sessions, and treating them as unverified would stop every signed-in
+// user from deleting their account until they signed in again. The remaining
+// exposure (a pre-existing /signup token) ends when those tokens expire
+// (90 days) or when JWT_SECRET is rotated (gate G5).
+function isVerifiedSession(user) {
+  return !!user && user.verified !== false;
+}
+
 // Log a (verified) email in at its REAL tier — paid if the account holds a live
 // access code (with the same 2-slot nonce rotation as /login), otherwise free
 // (same upsert as /signup). Never downgrades an existing account. Shared by every
-// verified-identity path (Google, magic link). Returns a session or null.
+// verified-identity path (Google, magic link). Returns a session, { suspended: true },
+// or null.
 async function issueSessionForEmail(email) {
   await db.run(`
     INSERT INTO users (email, plan, status)
     VALUES ($1, 'free', 'active')
-    ON CONFLICT(email) DO UPDATE SET status = 'active'
+    ON CONFLICT(email) DO UPDATE
+      SET status = CASE WHEN users.status = 'suspended' THEN users.status ELSE 'active' END
   `, [email]);
 
   const user = await db.get(
     "SELECT id, email, plan, status FROM users WHERE email = $1", [email]
   );
   if (!user || user.status === "deleted") return null;
+  if (user.status === "suspended") return { suspended: true };
 
   if (user.plan && user.plan !== "free") {
     const codeRow = await db.get(`
@@ -47,7 +89,7 @@ async function issueSessionForEmail(email) {
       );
       const expiresAt = new Date(codeRow.expires_at).toISOString();
       const token = jwt.sign(
-        { userId: user.id, codeId: codeRow.id, email: user.email, plan: user.plan, nonce },
+        { userId: user.id, codeId: codeRow.id, email: user.email, plan: user.plan, nonce, verified: true },
         JWT_SECRET(), { expiresIn: "30d" }
       );
       return { token, expiresAt, email: user.email, plan: user.plan, userId: user.id };
@@ -56,7 +98,7 @@ async function issueSessionForEmail(email) {
   }
 
   const token = jwt.sign(
-    { userId: user.id, email: user.email, plan: "free" },
+    { userId: user.id, email: user.email, plan: "free", verified: true },
     JWT_SECRET(), { expiresIn: "90d" }
   );
   const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
@@ -82,15 +124,18 @@ async function checkSignupRateLimit(ip) {
 }
 
 // ── POST /api/auth/login — validate access code (paid subscribers) ─────────────
-router.post("/login", async (req, res) => {
+router.post("/login", asyncHandler(async (req, res) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   if (!await checkLoginRateLimit(ip)) {
-    return res.status(429).json({ error: "Too many login attempts. Please wait 15 minutes and try again." });
+    return res.status(429).json({ code: "rate_limited", error: "Too many login attempts. Please wait 15 minutes and try again." });
   }
 
-  const { code } = req.body || {};
+  const { code, email } = req.body || {};
   if (!code || typeof code !== "string") {
-    return res.status(400).json({ error: "Access code is required." });
+    return badInput(res, "code", "Access code is required.");
+  }
+  if (email !== undefined && email !== null && typeof email !== "string") {
+    return badInput(res, "email", "A valid email address is required.");
   }
 
   const normalized = code.trim().toUpperCase();
@@ -106,6 +151,10 @@ router.post("/login", async (req, res) => {
   if (!row) {
     return res.status(401).json({ error: "Invalid access code. Check your email for the correct code." });
   }
+  // Checked before the code state: suspending an account also deactivates its codes.
+  if (row.status === "suspended") {
+    return res.status(403).json(ACCOUNT_SUSPENDED);
+  }
   if (!row.is_active) {
     return res.status(401).json({ error: "This access code is no longer active. Check your email for a renewed code." });
   }
@@ -118,7 +167,7 @@ router.post("/login", async (req, res) => {
 
   // Unclaimed codes (created without an email) bind to whoever redeems them first.
   if (/^unclaimed__/.test(row.email || "")) {
-    const bindEmail = (req.body && req.body.email || "").trim().toLowerCase();
+    const bindEmail = (email || "").trim().toLowerCase();
     if (!bindEmail || !bindEmail.includes("@") || bindEmail.length > 254) {
       // No email yet → tell the client to ask for one, then resubmit with { code, email }.
       return res.json({ needsEmail: true });
@@ -142,31 +191,34 @@ router.post("/login", async (req, res) => {
 
   const expiresAt = new Date(row.expires_at).toISOString();
   const token = jwt.sign(
-    { userId: row.userId, codeId: row.codeId, email: row.email, plan: row.plan, nonce },
+    { userId: row.userId, codeId: row.codeId, email: row.email, plan: row.plan, nonce, verified: true },
     JWT_SECRET(),
     { expiresIn: "30d" }
   );
 
   res.json({ token, expiresAt, email: row.email, plan: row.plan });
-});
+}));
 
 // ── POST /api/auth/signup — create free account (no payment required) ─────────
-router.post("/signup", async (req, res) => {
+router.post("/signup", asyncHandler(async (req, res) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   // Skip IP rate limiting in test mode (tests share 127.0.0.1 and exhaust the limit quickly)
   if (process.env.NODE_ENV !== "test" && !await checkSignupRateLimit(ip)) {
-    return res.status(429).json({ error: "Too many signups from this address. Please try again later." });
+    return res.status(429).json({ code: "rate_limited", error: "Too many signups from this address. Please try again later." });
   }
 
   const { email } = req.body || {};
-  if (!email || typeof email !== "string" || !email.includes("@") || email.length > 254) {
-    return res.status(400).json({ error: "A valid email address is required." });
+  if (!email || !isEmailInput(email)) {
+    return badInput(res, "email", "A valid email address is required.");
   }
 
   const normalized = email.trim().toLowerCase();
 
-  // Don't overwrite an existing paid account
   const existing = await db.get("SELECT id, plan, status FROM users WHERE email = $1", [normalized]);
+  if (existing && existing.status === "suspended") {
+    return res.status(403).json(ACCOUNT_SUSPENDED);
+  }
+  // Don't overwrite an existing paid account
   if (existing && existing.status === "active" && existing.plan !== "free") {
     return res.status(409).json({
       error: "This email already has an active subscription. Use your access code to log in.",
@@ -174,75 +226,94 @@ router.post("/signup", async (req, res) => {
     });
   }
 
-  // Upsert free user
-  await db.run(`
+  // Reusing an existing address still signs in (gate G4 default: no lockout), but
+  // it is throttled per address (5 per hour) and recorded. The session is unverified.
+  if (existing) {
+    const { allowed } = await db.checkIpRateLimit(`signup_email:${normalized}`, 5, 60 * 60 * 1000);
+    db.trackEvent(existing.id, "signup_existing_email", { status: existing.status, plan: existing.plan, allowed });
+    if (!allowed) {
+      return res.status(429).json({ code: "rate_limited", error: "Too many sign-in attempts for this email. Please try again later." });
+    }
+  }
+
+  // Upsert free user. A suspension that lands after the check above still sticks.
+  // (xmax = 0) is true only when this statement inserted the row.
+  const user = await db.get(`
     INSERT INTO users (email, plan, status)
     VALUES ($1, 'free', 'active')
     ON CONFLICT(email) DO UPDATE
       SET plan   = CASE WHEN users.plan <> 'free' THEN users.plan ELSE 'free' END,
-          status = 'active'
+          status = CASE WHEN users.status = 'suspended' THEN users.status ELSE 'active' END
+    RETURNING id, status, (xmax = 0) AS inserted
   `, [normalized]);
-
-  const user = await db.get("SELECT id, plan FROM users WHERE email = $1", [normalized]);
+  if (user.status === "suspended") {
+    return res.status(403).json(ACCOUNT_SUSPENDED);
+  }
 
   const token = jwt.sign(
-    { userId: user.id, email: normalized, plan: "free" },
+    { userId: user.id, email: normalized, plan: "free", verified: false },
     JWT_SECRET(),
     { expiresIn: "90d" }
   );
 
-  // Optional: send a welcome email (fire-and-forget)
-  try {
-    const { sendEmail } = require("../utils/email");
-    const APP_URL = process.env.APP_URL || "http://localhost:3000";
-    await sendEmail(
-      normalized,
-      "Welcome to Tongue — you're in!",
-      `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
-        <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;text-align:center">
-          <div style="font-size:36px;margin-bottom:4px">👅</div>
-          <div style="color:#fff;font-size:20px;font-weight:900">TONGUE</div>
-          <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
-        </div>
-        <div style="padding:28px">
-          <h1 style="color:#0f172a;font-size:20px;margin:0 0 10px">Welcome! Your free account is ready.</h1>
-          <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 16px">
-            You can explore all 11 language reference guides and try the Coach with <strong>5 free messages per day</strong>.
-          </p>
-          <p style="color:#64748b;font-size:13px;margin:0 0 22px">
-            Ready to go unlimited? Upgrade to Tongue Premium — $9/month or $79/year.
-          </p>
-          <a href="${APP_URL}/app" style="display:inline-block;padding:13px 28px;background:#C0153E;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">
-            Start learning →
-          </a>
-          <hr style="border:none;border-top:1px solid #e2e8f0;margin:22px 0">
-          <p style="color:#94a3b8;font-size:11px;text-align:center">© Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a></p>
-        </div>
-      </div>`
-    );
-  } catch (_) { /* non-fatal */ }
+  // Welcome email only for a newly created account, so /signup can't be used to
+  // send repeated mail to an existing address.
+  if (user.inserted) {
+    try {
+      const { sendEmail } = require("../utils/email");
+      const APP_URL = process.env.APP_URL || "http://localhost:3000";
+      await sendEmail(
+        normalized,
+        "Welcome to Tongue — you're in!",
+        `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
+          <div style="background:linear-gradient(135deg,#C0153E,#FF5F7E);padding:24px 28px;text-align:center">
+            <div style="font-size:36px;margin-bottom:4px">👅</div>
+            <div style="color:#fff;font-size:20px;font-weight:900">TONGUE</div>
+            <div style="color:rgba(255,255,255,0.75);font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px">Speak Every Tongue</div>
+          </div>
+          <div style="padding:28px">
+            <h1 style="color:#0f172a;font-size:20px;margin:0 0 10px">Welcome! Your free account is ready.</h1>
+            <p style="color:#334155;font-size:14px;line-height:1.7;margin:0 0 16px">
+              You can explore all 11 language reference guides and try the Coach with <strong>5 free messages per day</strong>.
+            </p>
+            <p style="color:#64748b;font-size:13px;margin:0 0 22px">
+              Ready to go unlimited? Upgrade to Tongue Premium — $9/month or $79/year.
+            </p>
+            <a href="${APP_URL}/app" style="display:inline-block;padding:13px 28px;background:#C0153E;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px">
+              Start learning →
+            </a>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:22px 0">
+            <p style="color:#94a3b8;font-size:11px;text-align:center">© Tongue · <a href="${APP_URL}" style="color:#C0153E;text-decoration:none">${APP_URL}</a></p>
+          </div>
+        </div>`
+      );
+    } catch (e) {
+      // Non-fatal: the account exists and the session is valid without the email.
+      console.error("[Auth] Signup welcome email failed:", e.message);
+    }
+  }
 
   const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
   res.json({ token, email: normalized, plan: "free", expiresAt });
-});
+}));
 
 // ── POST /api/auth/google — sign in / sign up with a Google account ───────────
 // Frontend (Google Identity Services) sends the ID token as `credential`.
 // We verify it with Google, then log the user in at their REAL tier: paid if
 // they hold an active access code, otherwise free — mirroring /login + /signup.
-router.post("/google", async (req, res) => {
+router.post("/google", asyncHandler(async (req, res) => {
   if (!GOOGLE_CLIENT_ID()) {
     return res.status(503).json({ error: "Google sign-in is not enabled." });
   }
 
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   if (process.env.NODE_ENV !== "test" && !await checkLoginRateLimit(ip)) {
-    return res.status(429).json({ error: "Too many attempts. Please wait 15 minutes and try again." });
+    return res.status(429).json({ code: "rate_limited", error: "Too many attempts. Please wait 15 minutes and try again." });
   }
 
   const { credential } = req.body || {};
   if (!credential || typeof credential !== "string") {
-    return res.status(400).json({ error: "Missing Google credential." });
+    return badInput(res, "credential", "Missing Google credential.");
   }
 
   // Verify the token's signature, audience, and expiry with Google.
@@ -258,18 +329,19 @@ router.post("/google", async (req, res) => {
     return res.status(401).json({ error: "Could not verify your Google account. Please try again." });
   }
 
-  if (!payload || !payload.email || !payload.email_verified) {
+  if (!payload || typeof payload.email !== "string" || !payload.email_verified) {
     return res.status(401).json({ error: "Your Google account has no verified email." });
   }
 
   const email = payload.email.trim().toLowerCase();
-  if (email.length > 254) return res.status(400).json({ error: "Invalid email address." });
+  if (email.length > 254) return badInput(res, "email", "Invalid email address.");
 
   const sess = await issueSessionForEmail(email);
   if (!sess) return res.status(401).json({ error: "Account not found." });
+  if (sess.suspended) return res.status(403).json(ACCOUNT_SUSPENDED);
   db.trackEvent(sess.userId, "login_google", { plan: sess.plan });
   res.json({ token: sess.token, expiresAt: sess.expiresAt, email: sess.email, plan: sess.plan });
-});
+}));
 
 // ── Magic-link (passwordless email) login ─────────────────────────────────────
 const MAGIC_TTL_MS = 15 * 60 * 1000; // link valid 15 minutes
@@ -277,16 +349,16 @@ const sha256 = (s) => crypto.createHash("sha256").update(s).digest("hex");
 
 // POST /api/auth/magic-link/request — email the user a one-tap login link.
 // Always returns { sent:true } (never reveals whether the email exists).
-router.post("/magic-link/request", async (req, res) => {
+router.post("/magic-link/request", asyncHandler(async (req, res) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   if (process.env.NODE_ENV !== "test") {
     const { allowed } = await db.checkIpRateLimit(`magic_ip:${ip}`, 8, 60 * 60 * 1000);
-    if (!allowed) return res.status(429).json({ error: "Too many requests. Please try again later." });
+    if (!allowed) return res.status(429).json({ code: "rate_limited", error: "Too many requests. Please try again later." });
   }
 
   const { email } = req.body || {};
-  if (!email || typeof email !== "string" || !email.includes("@") || email.length > 254) {
-    return res.status(400).json({ error: "A valid email address is required." });
+  if (!email || !isEmailInput(email)) {
+    return badInput(res, "email", "A valid email address is required.");
   }
   const normalized = email.trim().toLowerCase();
 
@@ -332,13 +404,13 @@ router.post("/magic-link/request", async (req, res) => {
   }
 
   res.json({ sent: true });
-});
+}));
 
 // POST /api/auth/magic-link/verify — exchange the token for a session.
-router.post("/magic-link/verify", async (req, res) => {
+router.post("/magic-link/verify", asyncHandler(async (req, res) => {
   const { token } = req.body || {};
   if (!token || typeof token !== "string") {
-    return res.status(400).json({ error: "Missing login token." });
+    return badInput(res, "token", "Missing login token.");
   }
   const tokenHash = sha256(token.trim());
 
@@ -356,27 +428,31 @@ router.post("/magic-link/verify", async (req, res) => {
 
   const sess = await issueSessionForEmail(row.email);
   if (!sess) return res.status(401).json({ error: "Account not found." });
+  if (sess.suspended) return res.status(403).json(ACCOUNT_SUSPENDED);
   db.trackEvent(sess.userId, "login_magic_link", { plan: sess.plan });
   res.json({ token: sess.token, expiresAt: sess.expiresAt, email: sess.email, plan: sess.plan });
-});
+}));
 
 // ── POST /api/auth/resend-code — email the current active code ────────────────
-const resendAttempts = new Map();
-router.post("/resend-code", async (req, res) => {
+// DB-backed limits (shared across machines, atomic): 10 requests per hour per IP,
+// and 3 per hour per address so one inbox can't be flooded from many IPs.
+router.post("/resend-code", asyncHandler(async (req, res) => {
+  const ip = req.ip || req.connection.remoteAddress || "unknown";
+  const { allowed: ipAllowed } = await db.checkIpRateLimit(`resend_ip:${ip}`, 10, 60 * 60 * 1000);
+  if (!ipAllowed) {
+    return res.status(429).json({ code: "rate_limited", error: "Too many attempts. Please wait an hour and try again." });
+  }
+
   const { email } = req.body || {};
-  if (!email || typeof email !== "string" || !email.includes("@") || email.length > 254) {
-    return res.status(400).json({ error: "A valid email address is required." });
+  if (!email || !isEmailInput(email)) {
+    return badInput(res, "email", "A valid email address is required.");
   }
 
   const normalized = email.trim().toLowerCase();
 
-  const now = Date.now();
-  const entry = resendAttempts.get(normalized) || { count: 0, reset: now + 3_600_000 };
-  if (now > entry.reset) { entry.count = 0; entry.reset = now + 3_600_000; }
-  entry.count++;
-  resendAttempts.set(normalized, entry);
-  if (entry.count > 3) {
-    return res.status(429).json({ error: "Too many attempts. Please wait an hour and try again." });
+  const { allowed: emailAllowed } = await db.checkIpRateLimit(`resend_email:${normalized}`, 3, 60 * 60 * 1000);
+  if (!emailAllowed) {
+    return res.status(429).json({ code: "rate_limited", error: "Too many attempts. Please wait an hour and try again." });
   }
 
   const row = await db.get(`
@@ -420,11 +496,11 @@ router.post("/resend-code", async (req, res) => {
   );
 
   res.json({ sent: true });
-});
+}));
 
 // ── GET /api/auth/validate — check token validity on app startup ──────────────
 // Always returns the CURRENT plan from DB — fixes stale JWT plan after upgrade.
-router.get("/validate", requireAuth, async (req, res) => {
+router.get("/validate", requireAuth, asyncHandler(async (req, res) => {
   const { userId, codeId, nonce, plan } = req.user;
 
   // Always fetch current user state from DB (source of truth)
@@ -486,17 +562,19 @@ router.get("/validate", requireAuth, async (req, res) => {
     dailyCommitment: user.daily_commitment,
     targetLang: user.target_lang,
   });
-});
+}));
 
 // ── POST /api/auth/preferences — persist target language / level mid-session ──
 // Lets language switches and level changes follow the account across devices,
 // not just localStorage.
-router.post("/preferences", requireAuth, async (req, res) => {
+router.post("/preferences", requireAuth, asyncHandler(async (req, res) => {
   const { userId } = req.user;
   const { language, level } = req.body || {};
   const VALID_LEVELS = ["beginner-zero", "beginner", "intermediate", "advanced"];
-  if (level && !VALID_LEVELS.includes(level)) return res.status(400).json({ error: "Invalid level." });
-  if (language && !/^[a-z]{2}$/.test(language)) return res.status(400).json({ error: "Invalid language." });
+  if (level && !VALID_LEVELS.includes(level)) return badInput(res, "level", "Invalid level.");
+  if (language && (typeof language !== "string" || !/^[a-z]{2}$/.test(language))) {
+    return badInput(res, "language", "Invalid language.");
+  }
   if (!language && !level) return res.json({ saved: false });
 
   await db.run(
@@ -504,10 +582,10 @@ router.post("/preferences", requireAuth, async (req, res) => {
     [language || null, level || null, userId]
   );
   res.json({ saved: true });
-});
+}));
 
 // ── POST /api/auth/onboarding — save onboarding preferences ──────────────────
-router.post("/onboarding", requireAuth, async (req, res) => {
+router.post("/onboarding", requireAuth, asyncHandler(async (req, res) => {
   const { userId } = req.user;
   const { level, goal, dailyCommitment, language } = req.body || {};
 
@@ -515,9 +593,12 @@ router.post("/onboarding", requireAuth, async (req, res) => {
   const VALID_GOALS  = ["travel", "work", "school", "conversation", "family", "business", "personal"];
   const VALID_MINS   = [5, 15, 30, 60];
 
-  if (level && !VALID_LEVELS.includes(level)) return res.status(400).json({ error: "Invalid level." });
-  if (goal  && !VALID_GOALS.includes(goal))   return res.status(400).json({ error: "Invalid goal." });
-  if (dailyCommitment && !VALID_MINS.includes(Number(dailyCommitment))) return res.status(400).json({ error: "Invalid daily commitment." });
+  if (level && !VALID_LEVELS.includes(level)) return badInput(res, "level", "Invalid level.");
+  if (goal  && !VALID_GOALS.includes(goal))   return badInput(res, "goal", "Invalid goal.");
+  if (dailyCommitment && !VALID_MINS.includes(Number(dailyCommitment))) return badInput(res, "dailyCommitment", "Invalid daily commitment.");
+  if (language && (typeof language !== "string" || !/^[a-z]{2}$/.test(language))) {
+    return badInput(res, "language", "Invalid language.");
+  }
 
   await db.run(`
     UPDATE users
@@ -533,10 +614,18 @@ router.post("/onboarding", requireAuth, async (req, res) => {
   db.trackEvent(userId, "onboarding_completed", { level, goal, dailyCommitment, language });
 
   res.json({ saved: true });
-});
+}));
 
 // ── DELETE /api/auth/account ──────────────────────────────────────────────────
-router.delete("/account", requireAuth, async (req, res) => {
+router.delete("/account", requireAuth, asyncHandler(async (req, res) => {
+  // Destructive: refuse sessions that never proved control of the email (B2).
+  if (!isVerifiedSession(req.user)) {
+    return res.status(403).json({
+      code: "verification_required",
+      error: "For your security, sign in with the email link before deleting your account.",
+    });
+  }
+
   const { userId } = req.user;
 
   const user = await db.get("SELECT id, email, stripe_customer_id FROM users WHERE id = $1", [userId]);
@@ -561,10 +650,13 @@ router.delete("/account", requireAuth, async (req, res) => {
 
   console.log(`[Auth] Account deleted: userId=${userId}`);
   res.json({ deleted: true });
-});
+}));
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
+// Accepts any valid token, with or without the `verified` claim (see "Session
+// verification" above). Routes that destroy account data also check
+// isVerifiedSession(req.user).
 function requireAuth(req, res, next) {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
@@ -577,7 +669,7 @@ function requireAuth(req, res, next) {
   }
 }
 
-async function requirePaid(req, res, next) {
+const requirePaid = asyncHandler(async (req, res, next) => {
   if (!req.user) return res.status(401).json({ error: "Authentication required." });
   // Always query DB — do NOT trust JWT plan. Cancelled subscriptions must be blocked
   // even while a valid JWT is still in circulation (up to 30 days).
@@ -589,8 +681,9 @@ async function requirePaid(req, res, next) {
     });
   }
   next();
-}
+});
 
 module.exports = router;
 module.exports.requireAuth = requireAuth;
 module.exports.requirePaid = requirePaid;
+module.exports.isVerifiedSession = isVerifiedSession;

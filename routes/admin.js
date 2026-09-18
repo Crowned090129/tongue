@@ -1,10 +1,26 @@
 const express = require("express");
 const crypto = require("crypto");
 const db = require("../db");
+const asyncHandler = require("../utils/asyncHandler");
 const { generateCode, codeExpiryDate } = require("../utils/codes");
 const { welcomeEmail, sendEmail } = require("../utils/email");
 
 const router = express.Router();
+
+const VALID_PLANS = ["monthly", "yearly"];
+
+// Malformed bodies (wrong types, e.g. {"password":1}) get a 400 with a code
+// instead of reaching string methods or the database and throwing.
+function badInput(res, field, error) {
+  return res.status(400).json({ code: "invalid_input", field, error });
+}
+
+// users.id / access_codes.id are SERIAL (int4): accept a positive integer given
+// as a number or a digit string, and nothing Postgres would refuse to cast.
+function isRowId(v) {
+  const s = typeof v === "number" ? String(v) : v;
+  return typeof s === "string" && /^[1-9]\d{0,9}$/.test(s) && Number(s) <= 2147483647;
+}
 
 // ── Admin login brute-force protection (5 attempts / 15 min per IP, DB-backed) ─
 async function checkAdminLoginLimit(ip) {
@@ -14,32 +30,49 @@ async function checkAdminLoginLimit(ip) {
   return allowed;
 }
 
-// ── Simple session-based admin auth ───────────────────────────────────────────
-
-function adminAuth(req, res, next) {
-  const token = req.headers["x-admin-token"] || req.query.token;
-  if (!token) return res.status(401).json({ error: "Admin token required." });
-
-  db.get("SELECT id FROM admin_sessions WHERE token = $1 AND expires_at > NOW()", [token])
-    .then(session => {
-      if (!session) return res.status(401).json({ error: "Invalid or expired admin session." });
-      next();
-    })
-    .catch(() => res.status(500).json({ error: "Auth error." }));
+// Compare fixed-length SHA-256 digests with timingSafeEqual, so response timing
+// leaks neither the password's contents nor its length.
+function adminPasswordMatches(given, expected) {
+  const a = crypto.createHash("sha256").update(given, "utf8").digest();
+  const b = crypto.createHash("sha256").update(expected, "utf8").digest();
+  return crypto.timingSafeEqual(a, b);
 }
 
+// ── Simple session-based admin auth ───────────────────────────────────────────
+
+// The token is accepted from the x-admin-token header only. A ?token= query
+// string ends up in access logs, browser history and Referer headers.
+function adminTokenFrom(req) {
+  const token = req.headers["x-admin-token"];
+  return typeof token === "string" && token ? token : null;
+}
+
+const adminAuth = asyncHandler(async (req, res, next) => {
+  const token = adminTokenFrom(req);
+  if (!token) return res.status(401).json({ code: "admin_auth_required", error: "Admin token required." });
+
+  const session = await db.get(
+    "SELECT id FROM admin_sessions WHERE token = $1 AND expires_at > NOW()", [token]
+  );
+  if (!session) return res.status(401).json({ code: "admin_session_invalid", error: "Invalid or expired admin session." });
+  next();
+});
+
 // POST /admin/api/login
-router.post("/api/login", async (req, res) => {
+router.post("/api/login", asyncHandler(async (req, res) => {
   const ip = req.ip || req.connection.remoteAddress || "unknown";
   if (!await checkAdminLoginLimit(ip)) {
-    return res.status(429).json({ error: "Too many login attempts. Please wait 15 minutes." });
+    return res.status(429).json({ code: "rate_limited", error: "Too many login attempts. Please wait 15 minutes." });
   }
 
   const { password } = req.body || {};
+  if (!password || typeof password !== "string") {
+    return badInput(res, "password", "Admin password is required.");
+  }
   const adminPass = process.env.ADMIN_PASSWORD;
 
-  if (!adminPass || password !== adminPass) {
-    return res.status(401).json({ error: "Invalid admin password." });
+  if (!adminPass || !adminPasswordMatches(password, adminPass)) {
+    return res.status(401).json({ code: "invalid_admin_password", error: "Invalid admin password." });
   }
 
   const token     = crypto.randomBytes(32).toString("hex");
@@ -47,10 +80,20 @@ router.post("/api/login", async (req, res) => {
   await db.run("INSERT INTO admin_sessions (token, expires_at) VALUES ($1, $2)", [token, expiresAt]);
 
   res.json({ token, expiresAt });
-});
+}));
+
+// POST /admin/api/logout — end the session on the server, so the token stops
+// working everywhere (not just in the browser that clicked "Log out").
+// Idempotent: an unknown or already-expired token is simply gone.
+router.post("/api/logout", asyncHandler(async (req, res) => {
+  const token = adminTokenFrom(req);
+  if (!token) return res.status(401).json({ code: "admin_auth_required", error: "Admin token required." });
+  await db.run("DELETE FROM admin_sessions WHERE token = $1", [token]);
+  res.json({ loggedOut: true });
+}));
 
 // GET /admin/api/stats
-router.get("/api/stats", adminAuth, async (req, res) => {
+router.get("/api/stats", adminAuth, asyncHandler(async (req, res) => {
   const [
     total, active, codes, monthly, yearly, free,
     aiToday, aiMonth, aiCostToday, aiCostMonth,
@@ -106,10 +149,10 @@ router.get("/api/stats", adminAuth, async (req, res) => {
     newSignupsToday: parseInt(newToday.n)  || 0,
     newSignupsMonth: parseInt(newMonth.n)  || 0,
   });
-});
+}));
 
 // GET /admin/api/users
-router.get("/api/users", adminAuth, async (req, res) => {
+router.get("/api/users", adminAuth, asyncHandler(async (req, res) => {
   const users = await db.all(`
     SELECT u.id, u.email, u.plan, u.status, u.created_at,
            ac.code, ac.is_active, ac.expires_at
@@ -119,10 +162,10 @@ router.get("/api/users", adminAuth, async (req, res) => {
     LIMIT 200
   `);
   res.json(users);
-});
+}));
 
 // GET /admin/api/codes
-router.get("/api/codes", adminAuth, async (req, res) => {
+router.get("/api/codes", adminAuth, asyncHandler(async (req, res) => {
   const codes = await db.all(`
     SELECT ac.id, ac.code, ac.is_active, ac.expires_at, ac.created_at,
            u.email, u.plan, u.status
@@ -132,18 +175,32 @@ router.get("/api/codes", adminAuth, async (req, res) => {
     LIMIT 200
   `);
   res.json(codes);
-});
+}));
 
 // POST /admin/api/codes/generate — manually create a code for an email
-router.post("/api/codes/generate", adminAuth, async (req, res) => {
+router.post("/api/codes/generate", adminAuth, asyncHandler(async (req, res) => {
   const { email, plan = "monthly", sendEmail: doSendEmail = true } = req.body || {};
+
+  if (email !== undefined && email !== null && typeof email !== "string") {
+    return badInput(res, "email", "Email must be text.");
+  }
+  if (!VALID_PLANS.includes(plan)) {
+    return badInput(res, "plan", "Plan must be monthly or yearly.");
+  }
+  if (typeof doSendEmail !== "boolean") {
+    return badInput(res, "sendEmail", "sendEmail must be true or false.");
+  }
 
   // Email is OPTIONAL. With no email, create an UNCLAIMED code that binds to the
   // email of whoever redeems it first (see /api/auth/login).
-  const unclaimed = !email;
+  const normalized = (email || "").trim().toLowerCase();
+  const unclaimed = !normalized;
+  if (!unclaimed && (!normalized.includes("@") || normalized.length > 254)) {
+    return badInput(res, "email", "A valid email address is required.");
+  }
   const userEmail = unclaimed
     ? `unclaimed__${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}@claim.tongue`
-    : String(email).trim().toLowerCase();
+    : normalized;
 
   await db.run(`
     INSERT INTO users (email, plan, status) VALUES ($1, $2, 'active')
@@ -166,21 +223,23 @@ router.post("/api/codes/generate", adminAuth, async (req, res) => {
   }
 
   res.json({ code, expiresAt, email: unclaimed ? null : userEmail, plan, unclaimed });
-});
+}));
 
 // DELETE /admin/api/codes/:id — revoke a code
-router.delete("/api/codes/:id", adminAuth, async (req, res) => {
+router.delete("/api/codes/:id", adminAuth, asyncHandler(async (req, res) => {
   const { id } = req.params;
+  if (!isRowId(id)) return badInput(res, "id", "Invalid code id.");
   const result = await db.run("UPDATE access_codes SET is_active = 0 WHERE id = $1", [id]);
   if (result.changes === 0) return res.status(404).json({ error: "Code not found." });
   res.json({ revoked: true });
-});
+}));
 
 // PATCH /admin/api/users/:id — update user status
-router.patch("/api/users/:id", adminAuth, async (req, res) => {
+router.patch("/api/users/:id", adminAuth, asyncHandler(async (req, res) => {
+  if (!isRowId(req.params.id)) return badInput(res, "id", "Invalid user id.");
   const { status } = req.body || {};
   if (!["active", "cancelled", "suspended"].includes(status)) {
-    return res.status(400).json({ error: "Invalid status." });
+    return badInput(res, "status", "Invalid status.");
   }
   const result = await db.run("UPDATE users SET status = $1 WHERE id = $2", [status, req.params.id]);
   if (result.changes === 0) return res.status(404).json({ error: "User not found." });
@@ -188,20 +247,23 @@ router.patch("/api/users/:id", adminAuth, async (req, res) => {
     await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [req.params.id]);
   }
   res.json({ updated: true });
-});
+}));
 
 // POST /admin/api/email — send a custom email to a subscriber
-router.post("/api/email", adminAuth, async (req, res) => {
+router.post("/api/email", adminAuth, asyncHandler(async (req, res) => {
   const { userId, subject, message } = req.body || {};
   if (!userId || !subject || !message) {
-    return res.status(400).json({ error: "userId, subject, and message are required." });
+    return badInput(res, "body", "userId, subject, and message are required.");
   }
+  if (!isRowId(userId)) return badInput(res, "userId", "Invalid user id.");
+  if (typeof subject !== "string" || !subject.trim()) return badInput(res, "subject", "Subject must be text.");
+  if (typeof message !== "string" || !message.trim()) return badInput(res, "message", "Message must be text.");
 
   const user = await db.get("SELECT email FROM users WHERE id = $1", [userId]);
   if (!user) return res.status(404).json({ error: "User not found." });
 
   const APP_URL = process.env.APP_URL || "http://localhost:3000";
-  const safeMsg = String(message).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const safeMsg = message.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
   await sendEmail(
     user.email,
@@ -219,7 +281,7 @@ router.post("/api/email", adminAuth, async (req, res) => {
   );
 
   res.json({ sent: true, to: user.email });
-});
+}));
 
 // GET /admin — serve admin dashboard HTML
 router.get("/", (req, res) => {
@@ -603,7 +665,20 @@ function showTab(name) {
   if (name === 'content') loadContentStatus();
 }
 
-function logout() { localStorage.removeItem('admin_token'); location.reload(); }
+// End the session on the server first, then forget it locally. A failed request
+// is logged and the local session is still cleared.
+async function logout() {
+  if (adminToken) {
+    try {
+      const r = await fetch('/admin/api/logout', { method:'POST', headers:headers() });
+      if (!r.ok) console.error('Admin logout: server returned ' + r.status);
+    } catch (e) {
+      console.error('Admin logout request failed:', e);
+    }
+  }
+  localStorage.removeItem('admin_token');
+  location.reload();
+}
 </script>
 </body>
 </html>`;

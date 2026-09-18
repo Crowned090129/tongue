@@ -1,13 +1,27 @@
 const express = require("express");
 const db = require("../db");
+const asyncHandler = require("../utils/asyncHandler");
+const { requireAuth } = require("./auth");
 const { generateCode, codeExpiryDate } = require("../utils/codes");
 const { welcomeEmail, renewalEmail, cancellationEmail, paymentFailedEmail } = require("../utils/email");
 
 const router = express.Router();
 
+// Stripe client. Production builds one from STRIPE_SECRET_KEY on every call.
+// Tests replace it with module.exports.__setStripeClientForTests(fn), where fn()
+// returns an object shaped like the Stripe client; pass null to restore.
+// Stripe API used in this file:
+//   POST /create-checkout            → checkout.sessions.create
+//   POST /create-portal              → billingPortal.sessions.create
+//   POST /webhook                    → webhooks.constructEvent (local signature check, no network)
+//   checkout.session.completed event → subscriptions.retrieve
+let stripeClientForTests = null;
 function stripe() {
+  if (stripeClientForTests) return stripeClientForTests();
   return require("stripe")(process.env.STRIPE_SECRET_KEY);
 }
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ── GET /api/stripe/prices ────────────────────────────────────────────────────
 router.get("/prices", (_req, res) => {
@@ -18,25 +32,34 @@ router.get("/prices", (_req, res) => {
 });
 
 // ── POST /api/stripe/create-checkout ─────────────────────────────────────────
-router.post("/create-checkout", async (req, res) => {
+router.post("/create-checkout", asyncHandler(async (req, res) => {
   const { plan, email } = req.body || {};
-  if (!plan || !["monthly", "yearly"].includes(plan)) {
-    return res.status(400).json({ error: "Invalid plan. Choose monthly or yearly." });
+  if (typeof plan !== "string" || !["monthly", "yearly"].includes(plan)) {
+    return res.status(400).json({ code: "invalid_plan", error: "Invalid plan. Choose monthly or yearly." });
+  }
+
+  // Email is optional (Stripe Checkout asks for it when absent), but when sent it must be an address.
+  let customerEmail;
+  if (email !== undefined && email !== null && email !== "") {
+    if (typeof email !== "string" || email.length > 254 || !EMAIL_RE.test(email.trim())) {
+      return res.status(400).json({ code: "invalid_email", error: "Please enter a valid email address." });
+    }
+    customerEmail = email.trim();
   }
 
   const priceId = plan === "yearly"
     ? process.env.STRIPE_PRICE_YEARLY
     : process.env.STRIPE_PRICE_MONTHLY;
 
-  if (!priceId) return res.status(500).json({ error: "Stripe prices not configured." });
+  if (!priceId) return res.status(500).json({ code: "billing_unconfigured", error: "Stripe prices not configured." });
 
   const appUrl = process.env.APP_URL || "http://localhost:3000";
   try {
     const session = await stripe().checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: priceId, quantity: 1 }],
-      customer_email: email || undefined,
-      success_url: `${appUrl}/?checkout=success`,
+      customer_email: customerEmail,
+      success_url: `${appUrl}/app?checkout=success`,
       cancel_url:  `${appUrl}/subscribe?checkout=cancelled`,
       metadata: { plan },
       subscription_data: { metadata: { plan } },
@@ -51,18 +74,17 @@ router.post("/create-checkout", async (req, res) => {
     res.json({ url: session.url });
   } catch (e) {
     console.error("Stripe checkout error:", e.message);
-    res.status(500).json({ error: "Could not create checkout session." });
+    res.status(500).json({ code: "checkout_failed", error: "Could not create checkout session." });
   }
-});
+}));
 
 // ── POST /api/stripe/create-portal ───────────────────────────────────────────
-router.post("/create-portal", async (req, res) => {
-  const { email } = req.body || {};
-  if (!email) return res.status(400).json({ error: "Email required." });
-
-  const user = await db.get("SELECT stripe_customer_id FROM users WHERE email = $1", [email.trim().toLowerCase()]);
+// Signed-in users only, and only for their own Stripe customer. The request body
+// is ignored: the customer comes from the verified session, never from input.
+router.post("/create-portal", requireAuth, asyncHandler(async (req, res) => {
+  const user = await db.get("SELECT stripe_customer_id FROM users WHERE id = $1", [req.user.userId]);
   if (!user?.stripe_customer_id) {
-    return res.status(404).json({ error: "No subscription found for that email." });
+    return res.status(404).json({ code: "no_billing_account", error: "No billing account found for this account." });
   }
 
   const appUrl = process.env.APP_URL || "http://localhost:3000";
@@ -74,59 +96,89 @@ router.post("/create-portal", async (req, res) => {
     res.json({ url: session.url });
   } catch (e) {
     console.error("Billing portal error:", e.message);
-    res.status(500).json({ error: "Could not open billing portal." });
+    res.status(500).json({ code: "portal_failed", error: "Could not open billing portal." });
   }
-});
+}));
 
 // ── POST /api/stripe/webhook ──────────────────────────────────────────────────
-// Raw body required — express.raw() is configured in server.js for this route.
-router.post("/webhook", async (req, res) => {
+// Raw body required — express.raw() is configured in app.js for this route.
+router.post("/webhook", asyncHandler(async (req, res) => {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     console.error("[Stripe] STRIPE_WEBHOOK_SECRET not set — webhook rejected");
-    return res.status(400).json({ error: "Webhook not configured." });
+    return res.status(400).json({ code: "webhook_unconfigured", error: "Webhook not configured." });
   }
 
   const sig = req.headers["stripe-signature"];
-  if (!sig) return res.status(400).json({ error: "Missing stripe-signature header." });
+  if (typeof sig !== "string" || !sig) {
+    return res.status(400).json({ code: "missing_signature", error: "Missing stripe-signature header." });
+  }
+  if (!Buffer.isBuffer(req.body)) {
+    return res.status(400).json({ code: "invalid_payload", error: "Webhook body must be raw JSON (Content-Type: application/json)." });
+  }
 
   let event;
   try {
     event = stripe().webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (e) {
     console.error("[Stripe] Signature verification failed:", e.message);
-    return res.status(400).send(`Webhook Error: ${e.message}`);
+    return res.status(400).json({ code: "invalid_signature", error: `Webhook Error: ${e.message}` });
   }
 
-  // ── Idempotency: skip already-processed events ────────────────────────────
+  // ── Idempotency: a stripe_events row only exists once its handler committed ──
+  const seen = await db.get("SELECT 1 FROM stripe_events WHERE event_id = $1", [event.id]);
+  if (seen) {
+    console.log(`[Stripe] Duplicate event ${event.id} (${event.type}) — skipped`);
+    return res.json({ received: true, duplicate: true });
+  }
+
+  // Record the event and apply the handler's writes in ONE transaction, so both
+  // commit or neither does; a failure answers 500 and Stripe retries. The insert
+  // runs first so a concurrent delivery of the same event waits on the primary
+  // key and gets a unique violation once this one commits. Emails and analytics
+  // are collected in afterCommit and never run for rolled-back work.
+  const afterCommit = [];
   try {
-    await db.run(
-      "INSERT INTO stripe_events (event_id) VALUES ($1)",
-      [event.id]
-    );
+    await db.transaction(async (tx) => {
+      await tx.run("INSERT INTO stripe_events (event_id) VALUES ($1)", [event.id]);
+      await handleStripeEvent(event, tx, afterCommit);
+    });
   } catch (e) {
-    // Unique constraint violation = already processed
-    if (e.code === "23505" || (e.message || "").includes("unique")) {
-      console.log(`[Stripe] Duplicate event ${event.id} (${event.type}) — skipped`);
-      return res.json({ received: true });
+    if (e.code === "23505" && e.table === "stripe_events") {
+      console.log(`[Stripe] Duplicate event ${event.id} (${event.type}) delivered concurrently — skipped`);
+      return res.json({ received: true, duplicate: true });
     }
-    // Any other DB error: log but continue (don't reject valid events)
-    console.error("[Stripe] stripe_events insert error:", e.message);
+    console.error("[Stripe] Handler error, rolled back (Stripe will retry):", e.message, "event:", event.id, event.type);
+    return res.status(500).json({ code: "webhook_failed", error: "Webhook handling failed. It will be retried." });
   }
 
-  try {
-    await handleStripeEvent(event);
-    res.json({ received: true });
-  } catch (e) {
-    console.error("[Stripe] Handler error:", e.message, "event:", event.id, event.type);
-    // Still return 200 so Stripe doesn't retry — the event is already recorded.
-    // Investigate via logs; do NOT return 500 here (causes infinite retries).
-    res.json({ received: true, warning: "handler error — check server logs" });
+  res.json({ received: true });
+
+  // The event is committed; these failures are logged and never fail the webhook.
+  for (const effect of afterCommit) {
+    try {
+      const ok = await effect.run();
+      if (ok === false) console.error(`[Stripe] After-commit ${effect.name} not delivered for event ${event.id} (${event.type})`);
+    } catch (e) {
+      console.error(`[Stripe] After-commit ${effect.name} failed for event ${event.id} (${event.type}):`, e.message);
+    }
   }
-});
+}));
 
 // ── Event Handlers ────────────────────────────────────────────────────────────
 
-async function handleStripeEvent(event) {
+// B5 interim: a paid period that continues keeps the user's active code (so their
+// signed-in sessions stay valid) and carries its expiry to the new period end.
+// GREATEST because Stripe may deliver an older event late: expiry never moves back.
+function extendActiveCodes(tx, userId, until) {
+  return tx.run(
+    "UPDATE access_codes SET expires_at = GREATEST(expires_at, $1::timestamptz) WHERE user_id = $2 AND is_active = 1",
+    [until, userId]
+  );
+}
+
+// Every DB write goes through tx (the webhook's transaction). Side effects that
+// must not repeat or run for rolled-back work are pushed to afterCommit.
+async function handleStripeEvent(event, tx, afterCommit) {
   console.log(`[Stripe] Processing event: ${event.type} (${event.id})`);
 
   switch (event.type) {
@@ -153,13 +205,15 @@ async function handleStripeEvent(event) {
         periodEnd = sub.current_period_end
           ? new Date(sub.current_period_end * 1000).toISOString()
           : null;
-      } catch (_) {}
+      } catch (e) {
+        console.error(`[Stripe] checkout.session.completed: subscriptions.retrieve(${subscriptionId}) failed, using plan-based expiry:`, e.message);
+      }
 
       const code      = generateCode();
       const expiresAt = periodEnd || codeExpiryDate(plan);
 
       // Upsert user — upgrade free → paid
-      await db.run(`
+      await tx.run(`
         INSERT INTO users (email, stripe_customer_id, plan, status)
         VALUES ($1, $2, $3, 'active')
         ON CONFLICT(email) DO UPDATE SET
@@ -168,18 +222,18 @@ async function handleStripeEvent(event) {
           status             = 'active'
       `, [email.trim().toLowerCase(), customerId, plan]);
 
-      const user = await db.get("SELECT id FROM users WHERE email = $1", [email.trim().toLowerCase()]);
+      const user = await tx.get("SELECT id FROM users WHERE email = $1", [email.trim().toLowerCase()]);
       if (!user) { console.error("[Stripe] checkout: could not find user after upsert"); break; }
 
       // Deactivate old codes, issue new one
-      await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
-      await db.run(
+      await tx.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
+      await tx.run(
         "INSERT INTO access_codes (user_id, code, is_active, expires_at) VALUES ($1, $2, 1, $3)",
         [user.id, code, expiresAt]
       );
 
       // Upsert subscription record
-      await db.run(`
+      await tx.run(`
         INSERT INTO subscriptions
           (user_id, stripe_subscription_id, stripe_price_id, plan, status,
            current_period_end, paid_access_until, updated_at)
@@ -195,9 +249,9 @@ async function handleStripeEvent(event) {
           updated_at             = NOW()
       `, [user.id, subscriptionId, priceId || null, plan, expiresAt]);
 
-      await welcomeEmail(email, code, plan);
       console.log(`[Stripe] New subscriber: ${email} (${plan}) code: ${code}`);
-      db.trackEvent(user.id, "subscription_started", { plan, subscriptionId });
+      afterCommit.push({ name: "welcome email", run: () => welcomeEmail(email, code, plan) });
+      afterCommit.push({ name: "analytics subscription_started", run: () => db.trackEvent(user.id, "subscription_started", { plan, subscriptionId }) });
       break;
     }
 
@@ -212,7 +266,7 @@ async function handleStripeEvent(event) {
       const subscriptionId = invoice.subscription;
       const priceId        = invoice.lines?.data?.[0]?.price?.id || null;
 
-      const user = await db.get(
+      const user = await tx.get(
         "SELECT id, email, plan FROM users WHERE stripe_customer_id = $1", [customerId]
       );
       if (!user) { console.error("[Stripe] invoice.payment_succeeded: no user for", customerId); break; }
@@ -228,16 +282,23 @@ async function handleStripeEvent(event) {
       if (priceId === process.env.STRIPE_PRICE_YEARLY)       plan = "yearly";
       else if (priceId === process.env.STRIPE_PRICE_MONTHLY) plan = "monthly";
 
-      const code      = generateCode();
       const expiresAt = periodEnd || codeExpiryDate(plan);
 
-      await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
-      await db.run(
-        "INSERT INTO access_codes (user_id, code, is_active, expires_at) VALUES ($1, $2, 1, $3)",
-        [user.id, code, expiresAt]
-      );
+      // Keep the active code; no new code on renewal (B5 interim, see extendActiveCodes).
+      const extended = await extendActiveCodes(tx, user.id, expiresAt);
 
-      await db.run(`
+      // No active code left (e.g. switched off while a payment was failing): issue
+      // one as before, otherwise this paying user could not sign in again.
+      let newCode = null;
+      if (extended.changes === 0) {
+        newCode = generateCode();
+        await tx.run(
+          "INSERT INTO access_codes (user_id, code, is_active, expires_at) VALUES ($1, $2, 1, $3)",
+          [user.id, newCode, expiresAt]
+        );
+      }
+
+      await tx.run(`
         UPDATE subscriptions SET
           status             = 'active',
           plan               = $1,
@@ -249,11 +310,11 @@ async function handleStripeEvent(event) {
         WHERE user_id = $4
       `, [plan, expiresAt, priceId, user.id]);
 
-      await db.run("UPDATE users SET status = 'active', plan = $1 WHERE id = $2", [plan, user.id]);
+      await tx.run("UPDATE users SET status = 'active', plan = $1 WHERE id = $2", [plan, user.id]);
 
-      await renewalEmail(user.email, code, plan);
-      console.log(`[Stripe] Renewed: ${user.email} (${plan}) new code: ${code}`);
-      db.trackEvent(user.id, "subscription_renewed", { plan, subscriptionId });
+      console.log(`[Stripe] Renewed: ${user.email} (${plan}) until ${expiresAt} — ${newCode ? "no active code, issued a new one" : "active code kept"}`);
+      afterCommit.push({ name: "renewal email", run: () => renewalEmail(user.email, newCode, plan) });
+      afterCommit.push({ name: "analytics subscription_renewed", run: () => db.trackEvent(user.id, "subscription_renewed", { plan, subscriptionId }) });
       break;
     }
 
@@ -275,18 +336,19 @@ async function handleStripeEvent(event) {
         ? new Date(sub.current_period_end * 1000).toISOString()
         : null;
 
-      const user = await db.get("SELECT id, plan FROM users WHERE stripe_customer_id = $1", [customerId]);
+      const user = await tx.get("SELECT id, plan FROM users WHERE stripe_customer_id = $1", [customerId]);
       if (!user) { console.log(`[Stripe] subscription.updated: no user for ${customerId}`); break; }
 
       // If active or trialing, keep user active; downgrade status otherwise
-      const userStatus = (subStatus === "active" || subStatus === "trialing") ? "active" : "cancelled";
+      const isActive   = subStatus === "active" || subStatus === "trialing";
+      const userStatus = isActive ? "active" : "cancelled";
 
-      await db.run(
+      await tx.run(
         "UPDATE users SET plan = $1, status = $2 WHERE id = $3",
         [newPlan, userStatus, user.id]
       );
 
-      await db.run(`
+      await tx.run(`
         UPDATE subscriptions SET
           plan                 = $1,
           status               = $2,
@@ -298,13 +360,16 @@ async function handleStripeEvent(event) {
         WHERE user_id = $6
       `, [newPlan, subStatus, priceId, periodEnd, cancelAtPeriodEnd, user.id]);
 
-      // Deactivate codes if subscription is no longer active
-      if (subStatus !== "active" && subStatus !== "trialing") {
-        await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
+      if (isActive) {
+        // Keep the active code and carry its expiry to the period end (B5 interim)
+        if (periodEnd) await extendActiveCodes(tx, user.id, periodEnd);
+      } else {
+        // Deactivate codes if subscription is no longer active
+        await tx.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
       }
 
       console.log(`[Stripe] Sub updated: userId=${user.id} plan=${newPlan} status=${subStatus} cancelAtEnd=${cancelAtPeriodEnd}`);
-      db.trackEvent(user.id, "subscription_updated", { newPlan, subStatus, cancelAtPeriodEnd });
+      afterCommit.push({ name: "analytics subscription_updated", run: () => db.trackEvent(user.id, "subscription_updated", { newPlan, subStatus, cancelAtPeriodEnd }) });
       break;
     }
 
@@ -318,12 +383,12 @@ async function handleStripeEvent(event) {
         ? new Date(sub.current_period_end * 1000).toISOString()
         : null;
 
-      const user = await db.get("SELECT id, email FROM users WHERE stripe_customer_id = $1", [customerId]);
+      const user = await tx.get("SELECT id, email FROM users WHERE stripe_customer_id = $1", [customerId]);
       if (!user) break;
 
-      await db.run("UPDATE users SET status = 'cancelled', plan = 'free' WHERE id = $1", [user.id]);
-      await db.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
-      await db.run(`
+      await tx.run("UPDATE users SET status = 'cancelled', plan = 'free' WHERE id = $1", [user.id]);
+      await tx.run("UPDATE access_codes SET is_active = 0 WHERE user_id = $1", [user.id]);
+      await tx.run(`
         UPDATE subscriptions SET
           status             = 'cancelled',
           cancel_at_period_end = FALSE,
@@ -332,9 +397,9 @@ async function handleStripeEvent(event) {
         WHERE user_id = $2
       `, [paidUntil, user.id]);
 
-      await cancellationEmail(user.email);
       console.log(`[Stripe] Subscription deleted (cancelled): ${user.email}`);
-      db.trackEvent(user.id, "subscription_cancelled", { paidUntil });
+      afterCommit.push({ name: "cancellation email", run: () => cancellationEmail(user.email) });
+      afterCommit.push({ name: "analytics subscription_cancelled", run: () => db.trackEvent(user.id, "subscription_cancelled", { paidUntil }) });
       break;
     }
 
@@ -344,15 +409,15 @@ async function handleStripeEvent(event) {
       const customerId = invoice.customer;
       const attemptCount = invoice.attempt_count || 1;
 
-      const user = await db.get(
+      const user = await tx.get(
         "SELECT id, email FROM users WHERE stripe_customer_id = $1", [customerId]
       );
       if (!user) break;
 
       // After 3 failed attempts Stripe will cancel — just notify user
-      if (user?.email) await paymentFailedEmail(user.email);
-      console.log(`[Stripe] Payment failed (attempt ${attemptCount}): ${user?.email || customerId}`);
-      db.trackEvent(user?.id, "payment_failed", { attemptCount, invoiceId: invoice.id });
+      if (user.email) afterCommit.push({ name: "payment-failed email", run: () => paymentFailedEmail(user.email) });
+      console.log(`[Stripe] Payment failed (attempt ${attemptCount}): ${user.email || customerId}`);
+      afterCommit.push({ name: "analytics payment_failed", run: () => db.trackEvent(user.id, "payment_failed", { attemptCount, invoiceId: invoice.id }) });
       break;
     }
 
@@ -364,3 +429,10 @@ async function handleStripeEvent(event) {
 }
 
 module.exports = router;
+
+// Test seam (see stripe() above). Refuses to run outside NODE_ENV=test so
+// production can never be pointed at a stub.
+module.exports.__setStripeClientForTests = (fn) => {
+  if (process.env.NODE_ENV !== "test") throw new Error("__setStripeClientForTests is only available when NODE_ENV=test");
+  stripeClientForTests = fn || null;
+};

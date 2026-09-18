@@ -17,11 +17,16 @@
  *   B. On first authenticated GET if somehow still missing after startup
  *   C. Admin-only POST /api/content/regenerate/:lang or /api/content/regenerate/:lang/:tab
  *
+ * All three are OFF unless CONTENT_AUTOGEN=on (content freeze). Lesson progress in the
+ * web client is keyed by array positions inside these rows, so rewriting a row silently
+ * remaps users' completed lessons. With the flag off, existing rows are served unchanged.
+ *
  * Users CANNOT trigger regeneration — they always get the cached, validated version.
  */
 
 const express = require("express");
 const db      = require("../db");
+const asyncHandler     = require("../utils/asyncHandler");
 const { requireAuth }  = require("./auth");
 const { requireAdmin } = require("./admin");
 
@@ -1436,11 +1441,46 @@ async function generateAndStoreVocab(lang) {
   return content;
 }
 
+// ── Content freeze (CONTENT_AUTOGEN) ─────────────────────────────────────────
+// AI generation rewrites content_cache rows, and the web client keys lesson progress
+// by array positions in those rows. Generation therefore only runs when the owner
+// sets CONTENT_AUTOGEN=on explicitly; unset or any other value means frozen.
+
+function isAutogenEnabled() {
+  return process.env.CONTENT_AUTOGEN === "on";
+}
+
+class AutogenDisabledError extends Error {
+  constructor(lang, tab) {
+    super(`content autogeneration is disabled (CONTENT_AUTOGEN is not "on"); refused ${lang}/${tab}`);
+    this.name = "AutogenDisabledError";
+    this.code = "autogen_disabled";
+  }
+}
+
 // ── Main generation function with validation + retry ─────────────────────────
 
 const MAX_ATTEMPTS = 3;
 
+// "lang/tab" → promise of the generation currently running in this process, so
+// parallel callers (on-demand GETs, admin regenerate, background repair) share one
+// generation instead of each paying for and writing their own.
+const inFlight = new Map();
+
+// Every generation path goes through here, so the freeze cannot be bypassed.
 async function generateContent(lang, tab) {
+  if (!isAutogenEnabled()) throw new AutogenDisabledError(lang, tab);
+
+  const key = `${lang}/${tab}`;
+  if (inFlight.has(key)) return inFlight.get(key);
+  const run = runGeneration(lang, tab).finally(() => {
+    if (inFlight.get(key) === run) inFlight.delete(key);
+  });
+  inFlight.set(key, run);
+  return run;
+}
+
+async function runGeneration(lang, tab) {
   // Vocabulary is generated category-by-category (deep, no truncation ceiling).
   if (tab === "vocab") return await generateAndStoreVocab(lang);
 
@@ -1507,6 +1547,11 @@ function anchorTarget(lang, tab) {
 }
 
 async function generateMissingContent() {
+  if (!isAutogenEnabled()) {
+    console.log('[Content] Autogeneration is off (CONTENT_AUTOGEN is not "on") — background generation skipped; content_cache is served unchanged');
+    return;
+  }
+
   const needed = [];
   for (const lang of VALID_LANGS) {
     for (const tab of VALID_TABS) {
@@ -1525,7 +1570,8 @@ async function generateMissingContent() {
           // permanent gate that re-flags every slightly-short generation each cron.
           if (have < Math.floor(t.count * 0.7)) needed.push([lang, tab]);
         }
-      } catch {
+      } catch (e) {
+        console.warn(`[Content] ${lang}/${tab} cached row is unparseable (${e.message}) — queued for regeneration`);
         needed.push([lang, tab]); // corrupt JSON → regenerate
       }
     }
@@ -1547,9 +1593,13 @@ async function generateMissingContent() {
       if (fresh) {
         try {
           if (!validateContent(lang, tab, JSON.parse(fresh.content_json))) { skipped++; continue; }
-        } catch { /* fall through and regenerate */ }
+        } catch (e) {
+          console.warn(`[Content] ${lang}/${tab} re-check: cached row is unparseable (${e.message}) — regenerating`);
+        }
       }
-    } catch { /* if the check fails, just attempt generation */ }
+    } catch (e) {
+      console.warn(`[Content] ${lang}/${tab} re-check query failed (${e.message}) — attempting generation anyway`);
+    }
 
     try {
       await generateContent(lang, tab);
@@ -1565,7 +1615,7 @@ async function generateMissingContent() {
 // ── API routes ────────────────────────────────────────────────────────────────
 
 // GET /api/content/:lang/:tab — serve cached content (authenticated users)
-router.get("/:lang/:tab", requireAuth, async (req, res) => {
+router.get("/:lang/:tab", requireAuth, asyncHandler(async (req, res) => {
   const { lang, tab } = req.params;
 
   if (!VALID_LANGS.includes(lang)) return res.status(400).json({ error: "Unknown language" });
@@ -1577,11 +1627,26 @@ router.get("/:lang/:tab", requireAuth, async (req, res) => {
   );
 
   if (cached) {
-    return res.json({
-      content:      JSON.parse(cached.content_json),
-      generated_at: cached.generated_at,
-      cached:       true,
-    });
+    let content, problem = null;
+    try {
+      content = JSON.parse(cached.content_json);
+      if (!content || typeof content !== "object") problem = "not a JSON object";
+    } catch (e) {
+      problem = e.message;
+    }
+    if (!problem) {
+      return res.json({
+        content,
+        generated_at: cached.generated_at,
+        cached:       true,
+      });
+    }
+    // Corrupt row: serve the curated seed but leave the row alone (replacing it would
+    // remap lesson progress), or say honestly that the section can't be loaded.
+    console.error(`[Content] Corrupt content_cache row ${lang}/${tab}: ${problem}`);
+    const fallback = loadSeedFile(lang, tab);
+    if (fallback) return res.json({ content: fallback, cached: false, seeded: true });
+    return res.status(503).json({ code: "content_corrupt", error: "This section can't be loaded right now." });
   }
 
   // No cached row yet. Serve the curated seed immediately (works with zero AI credits),
@@ -1592,11 +1657,16 @@ router.get("/:lang/:tab", requireAuth, async (req, res) => {
       `INSERT INTO content_cache (lang, tab, content_json, generated_at)
        VALUES ($1,$2,$3,NOW()) ON CONFLICT(lang,tab) DO NOTHING`,
       [lang, tab, JSON.stringify(seed)]
-    ).catch(() => {});
+    ).catch(e => console.error(`[Content] Seed insert failed ${lang}/${tab}: ${e.message}`));
     return res.json({ content: seed, cached: false, seeded: true });
   }
 
-  // No seed either — try on-demand AI generation as a last resort.
+  // No seed either. While content is frozen, answer honestly instead of calling AI.
+  if (!isAutogenEnabled()) {
+    return res.status(503).json({ code: "content_unavailable", error: "This section isn't available for this language yet." });
+  }
+
+  // Autogeneration on — try on-demand AI generation as a last resort.
   try {
     const content = await generateContent(lang, tab);
     res.json({ content, cached: false });
@@ -1604,10 +1674,10 @@ router.get("/:lang/:tab", requireAuth, async (req, res) => {
     console.error(`[Content] On-demand generation failed ${lang}/${tab}:`, e.message);
     res.status(503).json({ error: "Content is being prepared. Please try again in 30 seconds." });
   }
-});
+}));
 
 // GET /api/content/status — admin: shows cache status for all lang+tab pairs
-router.get("/status", requireAdmin, async (req, res) => {
+router.get("/status", requireAdmin, asyncHandler(async (req, res) => {
   const rows  = await db.all("SELECT lang, tab, generated_at FROM content_cache");
   const index = {};
   for (const r of rows) {
@@ -1622,12 +1692,15 @@ router.get("/status", requireAdmin, async (req, res) => {
     possible: VALID_LANGS.length * VALID_TABS.length,
     names:    LANG_NAMES,
   });
-});
+}));
+
+const AUTOGEN_DISABLED_MESSAGE = 'Content regeneration is off (CONTENT_AUTOGEN is not "on"). Existing content is served unchanged.';
 
 // POST /api/content/regenerate/:lang — admin: regenerate all tabs for one language
-router.post("/regenerate/:lang", requireAdmin, async (req, res) => {
+router.post("/regenerate/:lang", requireAdmin, asyncHandler(async (req, res) => {
   const { lang } = req.params;
   if (!VALID_LANGS.includes(lang)) return res.status(400).json({ error: "Unknown language" });
+  if (!isAutogenEnabled()) return res.status(409).json({ code: "autogen_disabled", error: AUTOGEN_DISABLED_MESSAGE });
 
   res.json({ message: `Regenerating all tabs for ${LANG_NAMES[lang]}…` });
 
@@ -1640,13 +1713,14 @@ router.post("/regenerate/:lang", requireAdmin, async (req, res) => {
     await new Promise(r => setTimeout(r, 2000));
   }
   console.log(`[Content] Admin regen of ${lang} complete`);
-});
+}));
 
 // POST /api/content/regenerate/:lang/:tab — admin: regenerate a single item
-router.post("/regenerate/:lang/:tab", requireAdmin, async (req, res) => {
+router.post("/regenerate/:lang/:tab", requireAdmin, asyncHandler(async (req, res) => {
   const { lang, tab } = req.params;
   if (!VALID_LANGS.includes(lang)) return res.status(400).json({ error: "Unknown language" });
   if (!VALID_TABS.includes(tab))   return res.status(400).json({ error: "Unknown tab" });
+  if (!isAutogenEnabled()) return res.status(409).json({ code: "autogen_disabled", error: AUTOGEN_DISABLED_MESSAGE });
 
   res.json({ message: `Regenerating ${LANG_NAMES[lang]} — ${tab}…` });
 
@@ -1655,19 +1729,20 @@ router.post("/regenerate/:lang/:tab", requireAdmin, async (req, res) => {
   } catch (e) {
     console.error(`[Content] Admin regen failed ${lang}/${tab}:`, e.message);
   }
-});
+}));
 
 // POST /api/content/report — a learner flags a content accuracy problem
-router.post("/report", requireAuth, async (req, res) => {
+router.post("/report", requireAuth, asyncHandler(async (req, res) => {
   const { lang, tab, note } = req.body || {};
-  if (!VALID_LANGS.includes(lang)) return res.status(400).json({ error: "Unknown language" });
-  if (!VALID_TABS.includes(tab))   return res.status(400).json({ error: "Unknown tab" });
+  if (typeof lang !== "string" || !VALID_LANGS.includes(lang)) return res.status(400).json({ code: "invalid_lang", error: "Unknown language" });
+  if (typeof tab !== "string" || !VALID_TABS.includes(tab))    return res.status(400).json({ code: "invalid_tab", error: "Unknown tab" });
+  if (note != null && typeof note !== "string")                return res.status(400).json({ code: "invalid_note", error: "note must be text." });
 
   const userId = req.user?.userId || null;
   try {
     await db.run(
       "INSERT INTO content_reports (user_id, lang, tab, note) VALUES ($1, $2, $3, $4)",
-      [userId, lang, tab, (note || "").toString().slice(0, 500)]
+      [userId, lang, tab, (note || "").slice(0, 500)]
     );
     db.trackEvent(userId, "content_error_reported", { lang, tab });
     res.json({ ok: true });
@@ -1675,15 +1750,15 @@ router.post("/report", requireAuth, async (req, res) => {
     console.error("[Content] report failed:", e.message);
     res.status(500).json({ error: "Could not submit report." });
   }
-});
+}));
 
 // GET /api/content/reports — admin: open content reports, newest first
-router.get("/reports", requireAdmin, async (req, res) => {
+router.get("/reports", requireAdmin, asyncHandler(async (req, res) => {
   const rows = await db.all(
     "SELECT id, user_id, lang, tab, note, resolved, created_at FROM content_reports ORDER BY created_at DESC LIMIT 200"
   );
   res.json({ reports: rows, names: LANG_NAMES });
-});
+}));
 
 // ── Curated seed content ──────────────────────────────────────────────────────
 // Real, hand-curated reference content shipped in the repo at seed/content/<lang>/<tab>.json.
@@ -1701,7 +1776,10 @@ function loadSeedFile(lang, tab) {
     const content = JSON.parse(fs.readFileSync(file, "utf8"));
     if (validateContent(lang, tab, content)) return null; // invalid → ignore
     return content;
-  } catch (e) { return null; }
+  } catch (e) {
+    console.warn(`[Content] Seed file ${lang}/${tab} unreadable: ${e.message}`);
+    return null;
+  }
 }
 
 // Number of reference items in a content object (schema differs per tab).
@@ -1711,14 +1789,17 @@ function seedItemCount(content) {
   return Array.isArray(arr) ? arr.length : 0;
 }
 
-// Load curated seed files into content_cache. Inserts where a (lang, tab) row is
-// missing, AND upgrades any existing row that is SHALLOWER than the curated seed
-// (e.g. stale/partial content from an earlier generation). Never downgrades a row
-// that is already richer than the seed (so deeper AI-enriched content is preserved).
+// Load curated seed files into content_cache. Inserts where a (lang, tab) row is missing.
+// An existing row is never replaced unless CONTENT_SEED_UPGRADE=on: lesson progress in
+// the web client is keyed by array positions inside these rows, so swapping a row for a
+// deeper seed silently remaps users' completed lessons. With the flag off, every row that
+// would have been upgraded (shallower than the seed, or unparseable) is logged instead.
+// Never downgrades a row that is already richer than the seed.
 async function seedContent() {
   const fs = require("fs");
   if (!fs.existsSync(_seedDir)) return;
-  let inserted = 0, upgraded = 0, invalid = 0;
+  const allowUpgrade = process.env.CONTENT_SEED_UPGRADE === "on";
+  let inserted = 0, upgraded = 0, held = 0, invalid = 0;
   for (const lang of VALID_LANGS) {
     for (const tab of VALID_TABS) {
       const file = require("path").join(_seedDir, lang, `${tab}.json`);
@@ -1730,13 +1811,29 @@ async function seedContent() {
       if (verr) { console.warn(`[Seed] invalid ${lang}/${tab}: ${verr}`); invalid++; continue; }
 
       const existing = await db.get("SELECT content_json FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);
-      let write = false;
-      if (!existing) write = true;
-      else {
-        try { write = seedItemCount(content) > seedItemCount(JSON.parse(existing.content_json)); }
-        catch (e) { write = true; } // existing row unparseable → replace with the valid seed
+      if (!existing) {
+        // DO NOTHING, so a row another writer created after the SELECT is never replaced.
+        const r = await db.run(
+          `INSERT INTO content_cache (lang, tab, content_json, generated_at)
+           VALUES ($1, $2, $3, NOW()) ON CONFLICT(lang, tab) DO NOTHING`,
+          [lang, tab, JSON.stringify(content)]
+        );
+        if (r.changes) inserted++;
+        continue;
       }
-      if (!write) continue;
+
+      const newCount = seedItemCount(content);
+      let oldCount = null, parseError = null;
+      try { oldCount = seedItemCount(JSON.parse(existing.content_json)); }
+      catch (e) { parseError = e.message; }
+      if (parseError === null && newCount <= oldCount) continue; // row already as deep as the seed
+
+      if (!allowUpgrade) {
+        held++;
+        const was = parseError === null ? `has ${oldCount} item(s)` : `is unparseable (${parseError})`;
+        console.warn(`[Seed] kept ${lang}/${tab}: existing row ${was}, seed has ${newCount} item(s) — not replaced; set CONTENT_SEED_UPGRADE=on to upgrade (remaps lesson progress)`);
+        continue;
+      }
 
       await db.run(
         `INSERT INTO content_cache (lang, tab, content_json, generated_at)
@@ -1744,17 +1841,19 @@ async function seedContent() {
          ON CONFLICT(lang, tab) DO UPDATE SET content_json = excluded.content_json, generated_at = NOW()`,
         [lang, tab, JSON.stringify(content)]
       );
-      if (existing) upgraded++; else inserted++;
+      upgraded++;
     }
   }
-  if (inserted || upgraded || invalid) {
-    console.log(`[Seed] ${inserted} inserted, ${upgraded} upgraded to curated content${invalid ? `, ${invalid} skipped (invalid)` : ""}`);
+  if (inserted || upgraded || held || invalid) {
+    console.log(`[Seed] ${inserted} inserted, ${upgraded} upgraded to curated content${held ? `, ${held} upgrade(s) held (CONTENT_SEED_UPGRADE is off)` : ""}${invalid ? `, ${invalid} skipped (invalid)` : ""}`);
   }
 }
 
 module.exports = router;
 module.exports.generateMissingContent = generateMissingContent;
 module.exports.generateContent = generateContent;
+module.exports.isAutogenEnabled = isAutogenEnabled;
+module.exports.AutogenDisabledError = AutogenDisabledError;
 module.exports.seedContent = seedContent;
 module.exports.validateContent = validateContent;
 module.exports.VALID_LANGS  = VALID_LANGS;

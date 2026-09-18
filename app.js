@@ -9,16 +9,29 @@
  *   const { app } = require('./app');   // named export alternative
  */
 
-// Load .env but never override vars already set by the shell (e.g. NODE_ENV=test)
-require("dotenv").config();
+// Load .env for local development, never overriding vars set by the shell.
+// Never in tests: .env holds production credentials, and tests must only see
+// TEST_DATABASE_URL and stubbed providers.
+if (process.env.NODE_ENV !== "test") require("dotenv").config();
 const express = require("express");
 const cors    = require("cors");
 const helmet  = require("helmet");
 const path    = require("path");
 const db      = require("./db");
+const asyncHandler = require("./utils/asyncHandler");
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+const STARTED_AT = new Date().toISOString();
+
+// ── Proxy ─────────────────────────────────────────────────────────────────────
+// On Fly every request reaches Node through one hop, the Fly proxy, which appends
+// the address it accepted the connection from to X-Forwarded-For. Trusting exactly
+// that one hop makes req.ip the right-most X-Forwarded-For entry — the real client,
+// which a client cannot forge by sending its own header — so every per-IP limiter
+// keys on the visitor instead of on the proxy. Raise this only if another proxy
+// (e.g. a CDN) is ever put in front of Fly.
+app.set("trust proxy", 1);
 
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet({
@@ -43,7 +56,9 @@ app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);   // curl / mobile / server-to-server
     if (allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error("CORS: origin not allowed"));
+    const err = new Error(`CORS: origin not allowed: ${origin}`);
+    err.code = "cors_rejected"; // answered as 403 by the final error handler
+    cb(err);
   },
   credentials: true,
 }));
@@ -54,13 +69,30 @@ app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
 app.use(express.json({ limit: "100kb" }));
 
 // ── Health check ──────────────────────────────────────────────────────────────
-app.get("/health", async (_req, res) => {
+// Fly's http_service check (fly.toml) calls this; 503 marks the machine unhealthy.
+app.get("/health", asyncHandler(async (_req, res) => {
   let dbOk = false;
-  try { await db.get("SELECT 1"); dbOk = true; } catch (_) {}
+  try {
+    await db.get("SELECT 1");
+    dbOk = true;
+  } catch (e) {
+    console.error("[Health] Database check failed:", e.message);
+  }
   res.status(dbOk ? 200 : 503).json({
     status: dbOk ? "ok" : "degraded",
     db:     dbOk ? "ok" : "error",
     ts:     new Date().toISOString(),
+  });
+}));
+
+// ── Version ───────────────────────────────────────────────────────────────────
+// Which build is answering, for read-only post-deploy verification. Fly sets
+// FLY_IMAGE_REF on every machine; GIT_SHA is for other hosts; "dev" locally.
+app.get("/api/version", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json({
+    version:   process.env.FLY_IMAGE_REF || process.env.GIT_SHA || "dev",
+    startedAt: STARTED_AT,
   });
 });
 
@@ -252,6 +284,41 @@ app.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] })
 // 404 fallback
 app.use((_req, res) => {
   res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+});
+
+// ── Final error handler ───────────────────────────────────────────────────────
+// Everything passed to next(err) ends here: rejected handlers (via asyncHandler),
+// body-parser failures and CORS rejections. The failed request gets an answer and
+// the process keeps serving everyone else. Must stay the last app.use().
+const INTERNAL_ERROR = "Something went wrong on our side. Please try again.";
+
+app.use((err, req, res, next) => {
+  // Mid-response (e.g. an SSE stream): only Express can end the connection now.
+  if (res.headersSent) return next(err);
+
+  const urlPath  = (req.originalUrl || req.url || "").split("?")[0]; // never log query strings
+  const wantsJson = urlPath === "/api" || urlPath.startsWith("/api/") || urlPath.startsWith("/admin/api/");
+
+  if (err && err.code === "cors_rejected") {
+    console.warn(`[CORS] Rejected origin ${req.headers.origin} for ${req.method} ${urlPath}`);
+    return res.status(403).json({ error: "This origin is not allowed.", code: "cors_rejected" });
+  }
+
+  // Client errors raised by body-parser/http-errors carry expose=true and a 4xx
+  // status. Errors from other libraries (e.g. Stripe's statusCode) are ours → 500.
+  const status = err && (err.status || err.statusCode);
+  if (err && err.expose === true && status >= 400 && status < 500) {
+    let code  = "bad_request";
+    let error = "The request could not be processed.";
+    if (err.type === "entity.parse.failed") { code = "invalid_json";      error = "The request body is not valid JSON."; }
+    if (err.type === "entity.too.large")    { code = "payload_too_large"; error = "The request body is too large."; }
+    if (wantsJson) return res.status(status).json({ error, code });
+    return res.status(status).type("text/plain").send(error);
+  }
+
+  console.error(`[Error] ${req.method} ${urlPath} → 500:`, err);
+  if (wantsJson) return res.status(500).json({ error: INTERNAL_ERROR, code: "internal_error" });
+  res.status(500).type("text/plain").send(INTERNAL_ERROR);
 });
 
 module.exports = app;

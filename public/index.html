@@ -1423,6 +1423,7 @@ const UI_EXT = {
     // WordSpace
     translating: "Translating...",
     auto_translating: "Auto-translating...",
+    translate_failed: "Not translated",
     start_typing: "Start typing to translate",
     clear: "Clear",
     hear_it: "Hear it",
@@ -2826,6 +2827,20 @@ function sm2(card, quality) {
   return { ...card, interval, repetitions, ease, next_review };
 }
 
+// One source for deck numbers (Flashcards and Review must always agree).
+// Uses the stored shape from fcAdd/sm2: lang, next_review (ms), repetitions.
+// due + upcoming === total; "new" = never successfully reviewed (repetitions 0).
+function fcDeckStats(cards, lang, now) {
+  const deck = (cards || []).filter(c => c && c.lang === lang);
+  const due = [], upcoming = [];
+  let newCount = 0, learned = 0;
+  for (const c of deck) {
+    if ((Number(c.next_review) || 0) <= now) due.push(c); else upcoming.push(c);
+    if ((Number(c.repetitions) || 0) > 0) learned++; else newCount++;
+  }
+  return { deck, total: deck.length, due, upcoming, newCount, learned };
+}
+
 function SaveToFlashcardsBtn({ card }) {
   const [saved, setSaved] = useState(false);
   const handle = () => {
@@ -2937,31 +2952,105 @@ const _streak = {
   },
 };
 
-async function askClaude(prompt, maxTokens, lang, nativeLang) {
-  if (!isLoggedIn()) throw new Error("NOT_LOGGED_IN");
-  const res = await fetch("/api/claude", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
-    body: JSON.stringify({ prompt, maxTokens: maxTokens || 1000, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en" }),
+// ── API ERROR CONTRACT ────────────────────────────────────────────────────────
+// Every failed API call becomes one ApiRequestError. `code` is the server's code
+// ({ code, error, message, retryable }), "network" when the browser itself could not
+// connect, or a status-derived code for older responses. The Error message keeps the
+// legacy tokens (FREE_LIMIT, UNAUTHORIZED, …) so existing checks keep working.
+class ApiRequestError extends Error {
+  constructor(code, { status = 0, retryable = false, serverMessage = "", legacy = "", reason = "", upgrade = false } = {}) {
+    super(legacy || code);
+    this.name = "ApiRequestError";
+    this.code = code;
+    this.status = status;
+    this.retryable = retryable;
+    this.serverMessage = serverMessage;
+    this.reason = reason;   // 401: "renewed" when a paid code was renewed
+    this.upgrade = upgrade; // 429: true for the free daily limit (opens the upgrade overlay)
+  }
+}
+
+const MSG_AI_UNAVAILABLE = "The AI tutor is unavailable right now. Lessons, review and the library still work.";
+const MSG_OFFLINE        = "You're offline or the connection dropped. Check your connection and try again.";
+const MSG_GENERIC        = "Something went wrong. Please try again.";
+// Codes whose server message is already the honest, specific explanation.
+const AI_SERVER_MESSAGE_CODES = ["ai_overloaded", "ai_timeout", "ai_unreachable", "ai_bad_output", "ai_upstream_error"];
+
+// Read the JSON error body of a non-OK response. A body that is not JSON (e.g. a
+// proxy error page) yields no code/message, so callers fall back to generic copy.
+async function readApiError(res, legacy) {
+  let body = {};
+  try { body = (await res.json()) || {}; }
+  catch (e) { console.warn(`[api] ${res.status} response from ${res.url || "request"} had no JSON body:`, e.message); }
+  const code = body.code || (res.status === 429 ? "quota_exceeded" : "http_" + res.status);
+  return new ApiRequestError(code, {
+    status: res.status,
+    retryable: !!body.retryable,
+    serverMessage: body.message || body.error || "",
+    legacy: legacy || "",
+    reason: body.reason || "",
+    upgrade: !!body.upgrade,
   });
+}
+
+// One user-facing message per failure. "Check your connection" only for a real
+// network failure; quota and session problems keep the server's own explanation.
+function aiErrorMessage(err) {
+  if (!err) return MSG_GENERIC;
+  if (err.code === "network") return MSG_OFFLINE;
+  if (err.code === "ai_unavailable_credits" || err.code === "ai_unconfigured") return MSG_AI_UNAVAILABLE;
+  if (AI_SERVER_MESSAGE_CODES.includes(err.code)) return err.serverMessage || MSG_GENERIC;
+  if (err.status >= 400 && err.status < 500 && err.serverMessage) return err.serverMessage;
+  return MSG_GENERIC;
+}
+
+// Content (/api/content/:lang/:tab) uses the same error shape.
+async function fetchContent(lang, tab) {
+  let res;
+  try {
+    res = await fetch(`/api/content/${lang}/${tab}`, { headers: { "Authorization": "Bearer " + getToken() } });
+  } catch (e) {
+    throw new ApiRequestError("network", { legacy: "NETWORK" });
+  }
+  if (!res.ok) throw await readApiError(res);
+  return res.json();
+}
+function contentErrorMessage(err) {
+  if (err && err.code === "network") return MSG_OFFLINE;
+  if (err && err.serverMessage) return err.serverMessage;
+  return "Couldn't load this content. Please try again.";
+}
+
+async function askClaude(prompt, maxTokens, lang, nativeLang) {
+  if (!isLoggedIn()) throw new ApiRequestError("not_logged_in", { status: 401, serverMessage: "Please sign in to use the AI tutor.", legacy: "NOT_LOGGED_IN" });
+  let res;
+  try {
+    res = await fetch("/api/claude", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+      body: JSON.stringify({ prompt, maxTokens: maxTokens || 1000, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en" }),
+    });
+  } catch (e) {
+    throw new ApiRequestError("network", { legacy: "NETWORK" });
+  }
   if (res.status === 401) {
-    const errData = await res.json().catch(() => ({}));
+    const err = await readApiError(res);
     logout();
-    if (errData.reason === "renewed") {
+    if (err.reason === "renewed") {
+      err.message = "RENEWED";
       window.dispatchEvent(new CustomEvent("session-renewed"));
-      throw new Error("RENEWED");
+    } else {
+      err.message = "UNAUTHORIZED";
     }
-    throw new Error("UNAUTHORIZED");
+    throw err;
   }
   if (res.status === 429) {
-    const errData = await res.json().catch(() => ({}));
-    if (errData.upgrade) {
-      window.dispatchEvent(new CustomEvent("show-upgrade", { detail: { reason: "ai_limit" } }));
-      throw new Error("FREE_LIMIT");
-    }
-    throw new Error("RATE_LIMITED");
+    const err = await readApiError(res);
+    err.message = err.upgrade ? "FREE_LIMIT" : "RATE_LIMITED";
+    if (err.upgrade) window.dispatchEvent(new CustomEvent("show-upgrade", { detail: { reason: "ai_limit" } }));
+    throw err;
   }
-  if (!res.ok) throw new Error("API_ERROR:" + res.status);
+  if (!res.ok) throw await readApiError(res, "API_ERROR:" + res.status);
   const data = await res.json();
   // Log a practice session every time AI is successfully called
   _streak.log();
@@ -2970,8 +3059,10 @@ async function askClaude(prompt, maxTokens, lang, nativeLang) {
 
 // Streaming conversation client. Reads the SSE stream from /api/claude/chat and
 // invokes onDelta(text) as words arrive, onDone(meta) at the end, onError(ev).
+// ev always carries { type, code, message } with message from aiErrorMessage.
 async function streamChat({ messages, scenario, level, lang, nativeLang }, { onDelta, onDone, onError }) {
-  if (!isLoggedIn()) { onError && onError({ type:"auth", message:"Please sign in." }); return; }
+  const fail = (type, err) => onError && onError({ type, code: err.code, status: err.status, retryable: err.retryable, message: aiErrorMessage(err) });
+  if (!isLoggedIn()) { fail("auth", new ApiRequestError("not_logged_in", { status: 401, serverMessage: "Please sign in to use the AI tutor." })); return; }
   let res;
   try {
     res = await fetch("/api/claude/chat", {
@@ -2979,19 +3070,22 @@ async function streamChat({ messages, scenario, level, lang, nativeLang }, { onD
       headers: { "Content-Type":"application/json", "Authorization":"Bearer "+getToken() },
       body: JSON.stringify({ messages, scenario, level, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en" }),
     });
-  } catch(e) { onError && onError({ type:"connection", message:"Connection error. Please try again." }); return; }
+  } catch(e) { fail("connection", new ApiRequestError("network")); return; }
 
   if (res.status === 401) {
-    const d = await res.json().catch(()=>({})); logout();
-    if (d.reason === "renewed") { window.dispatchEvent(new CustomEvent("session-renewed")); onError && onError({ type:"renewed" }); return; }
-    onError && onError({ type:"auth", message:"Session expired. Please sign in again." }); return;
+    const err = await readApiError(res);
+    logout();
+    if (err.reason === "renewed") { window.dispatchEvent(new CustomEvent("session-renewed")); fail("renewed", err); return; }
+    fail("auth", err); return;
   }
   if (res.status === 429) {
-    const d = await res.json().catch(()=>({}));
-    if (d.upgrade) { window.dispatchEvent(new CustomEvent("show-upgrade", { detail:{ reason:"ai_limit" } })); onError && onError({ type:"limit" }); return; }
-    onError && onError({ type:"limit", message: d.error || "Please slow down a moment." }); return;
+    const err = await readApiError(res);
+    if (err.upgrade) window.dispatchEvent(new CustomEvent("show-upgrade", { detail:{ reason:"ai_limit" } }));
+    fail("limit", err); return;
   }
-  if (!res.ok || !res.body) { onError && onError({ type:"api", message:"The tutor hit a snag. Please try again." }); return; }
+  // The server now answers pre-stream failures (e.g. 503 credits) as JSON.
+  if (!res.ok) { fail("api", await readApiError(res)); return; }
+  if (!res.body) { fail("api", new ApiRequestError("no_stream_body", { status: res.status })); return; }
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
@@ -3009,12 +3103,19 @@ async function streamChat({ messages, scenario, level, lang, nativeLang }, { onD
         let ev; try { ev = JSON.parse(line.slice(5).trim()); } catch { continue; }
         if (ev.type === "delta") onDelta && onDelta(ev.text);
         else if (ev.type === "done") meta = ev;
-        else if (ev.type === "error") { onError && onError(ev); return; }
+        else if (ev.type === "error") {
+          fail("api", new ApiRequestError(ev.code || "stream_error", { status: 200, retryable: !!ev.retryable, serverMessage: ev.message || "" }));
+          return;
+        }
       }
     }
     _streak.log();
     onDone && onDone(meta);
-  } catch(e) { onError && onError({ type:"connection", message:"Connection lost. Please try again." }); }
+  } catch(e) {
+    // reader.read() rejects only when the connection itself dropped mid-stream.
+    console.warn("[streamChat] stream read failed:", e && e.message);
+    fail("connection", new ApiRequestError("network"));
+  }
 }
 
 // ── GOOGLE SIGN-IN ────────────────────────────────────────────────────────────
@@ -3046,7 +3147,7 @@ function getClientConfig() {
 }
 
 // ── ACCESS CODE LOGIN ─────────────────────────────────────────────────────────
-function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
+function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }) {
   // Remember the last-used code/email so returning users never have to look it up.
   const savedCode  = (() => { try { return localStorage.getItem("tongue_code")  || ""; } catch(e) { return ""; } })();
   const savedEmail = (() => { try { return localStorage.getItem("auth_email")   || ""; } catch(e) { return ""; } })();
@@ -3065,8 +3166,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
   const [bindEmail, setBindEmail] = useState("");
   const [magicLoading, setMagicLoading] = useState(false);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const checkoutSuccess = urlParams.get("checkout") === "success";
+  // checkoutSuccess comes from App, which reads ?checkout=success once and removes it.
 
   // Passwordless: email the user a one-tap login link.
   const requestMagicLink = async () => {
@@ -3208,8 +3308,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError }) {
 
         {checkoutSuccess && (
           <div style={{ background:"#dcfce7", border:"1px solid #86efac", borderRadius:10, padding:"12px 14px", marginBottom:16, textAlign:"center" }}>
-            <div style={{ fontWeight:700, color:"#16a34a", fontSize:13, marginBottom:3 }}>Payment successful! </div>
-            <div style={{ color:"#15803d", fontSize:12 }}>Check your email for your access code, then log in above.</div>
+            <div style={{ color:"#15803d", fontSize:12.5, fontWeight:600, lineHeight:1.5 }}>Thanks — your payment went through. Check your email for how to sign in to Premium.</div>
           </div>
         )}
         {renewedBanner && (
@@ -3335,7 +3434,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
       setEx(result);
     } catch (err) {
       if (err.message !== "FREE_LIMIT") {
-        setEx({ error: "Could not generate the exercise. Please check your connection and try again." });
+        setEx({ error: aiErrorMessage(err) });
       }
     }
     setLoading(false);
@@ -3359,7 +3458,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
       setFb(await askClaude(prompt, 1000, tLang, nativeLang));
     } catch (err) {
       if (err.message !== "FREE_LIMIT") {
-        setFb({ error: "Could not evaluate your answer. Please try again." });
+        setFb({ error: aiErrorMessage(err) });
       }
     }
     setLoading(false);
@@ -3796,13 +3895,12 @@ function useApiContent(tLang, tab) {
   useEffect(() => {
     let cancelled = false;
     setLoading(true); setErr(""); setContent(null);
-    fetch(`/api/content/${tLang}/${tab}`, { headers: { "Authorization": "Bearer " + getToken() } })
-      .then(r => {
-        if (!r.ok) throw new Error(r.status === 503 ? "This is still being prepared — check back in a moment." : "Couldn't load this content.");
-        return r.json();
-      })
+    fetchContent(tLang, tab)
       .then(d => { if (!cancelled) setContent(d.content); })
-      .catch(e => { if (!cancelled) setErr(e.message); })
+      .catch(e => {
+        console.error(`[content] load ${tLang}/${tab} failed:`, e.code || e.message);
+        if (!cancelled) setErr(contentErrorMessage(e));
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [tLang, tab, tick]);
@@ -3824,7 +3922,7 @@ function ContentLoader({ loading, err, label, onRetry }) {
           <div style={{ width:48, height:48, borderRadius:14, background:C.accentSoft, display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:14 }}>
             <Icon name="cloud-off" size={22} color={C.accent}/>
           </div>
-          <div style={{ fontWeight:800, fontSize:16, color:C.text, marginBottom:5 }}>{label} isn't ready yet</div>
+          <div style={{ fontWeight:800, fontSize:16, color:C.text, marginBottom:5 }}>{err ? `Couldn't load ${label}` : `${label} isn't ready yet`}</div>
           <div style={{ color:C.muted, fontSize:13, lineHeight:1.6, maxWidth:300, margin:"0 auto 18px" }}>{err || "This is still being prepared. Please try again in a moment."}</div>
           {onRetry && (
             <button onClick={onRetry} style={{ display:"inline-flex", alignItems:"center", gap:7, padding:"10px 20px", background:C.accent, color:"#fff", border:"none", borderRadius:11, fontWeight:700, fontSize:13.5, cursor:"pointer", fontFamily:"inherit" }}>
@@ -3881,6 +3979,8 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
   const [dIdx,     setDIdx]     = useState(0);
   const [moreWords, setMoreWords] = useState({}); // AI-generated extra words per category → infinite vocab
   const [genIdx,    setGenIdx]    = useState(null);
+  const [genErr,    setGenErr]    = useState({}); // per-category failure message for "Generate more words"
+  const [reloadTick, setReloadTick] = useState(0);
   const nativeL = (() => { try { return localStorage.getItem("native_lang") || "en"; } catch(e) { return "en"; } })();
 
   // Generate more real words for a vocab category on demand — makes the reference infinite.
@@ -3888,6 +3988,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
     if (genIdx !== null) return;
     if (!isLoggedIn()) { window.dispatchEvent(new CustomEvent("show-upgrade")); return; }
     setGenIdx(i);
+    setGenErr(m => ({ ...m, [i]: "" }));
     const have = [...(cat.words || []), ...(moreWords[i] || [])].map(w => w.t);
     try {
       const r = await askClaude(
@@ -3896,30 +3997,31 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
       );
       const fresh = (r && Array.isArray(r.words) ? r.words : []).filter(w => w && w.t && !have.includes(w.t));
       if (fresh.length) setMoreWords(m => ({ ...m, [i]: [...(m[i] || []), ...fresh] }));
-    } catch(e) { /* FREE_LIMIT etc. handled by askClaude events */ }
+    } catch(e) {
+      // The free-limit case opens the upgrade overlay (askClaude); still say why nothing was added.
+      console.error("[AITabContent] generate more words failed:", e.code || e.message);
+      setGenErr(m => ({ ...m, [i]: aiErrorMessage(e) }));
+    }
     setGenIdx(null);
   };
 
-  // Auto-fetch on mount or when language changes
+  // Auto-fetch on mount, when language changes, or on Try again
   useEffect(() => {
     let cancelled = false;
     setLoading(true); setErr(""); setContent(null); setOpen(null); setDIdx(0);
 
-    fetch(`/api/content/${tLang}/${tabName}`, {
-      headers: { "Authorization": "Bearer " + getToken() },
-    })
-      .then(r => {
-        if (!r.ok) throw new Error(r.status === 503 ? "Content is being generated — check back in 30 seconds." : "Failed to load content.");
-        return r.json();
-      })
+    fetchContent(tLang, tabName)
       .then(d => {
         if (!cancelled) { setContent(d.content); setGenAt(d.generated_at || ""); }
       })
-      .catch(e => { if (!cancelled) setErr(e.message); })
+      .catch(e => {
+        console.error(`[content] load ${tLang}/${tabName} failed:`, e.code || e.message);
+        if (!cancelled) setErr(contentErrorMessage(e));
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [tLang, tabName]);
+  }, [tLang, tabName, reloadTick]);
 
   if (loading) {
     return (
@@ -3938,11 +4040,11 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
           <div style={{ width:48, height:48, borderRadius:14, background:C.accentSoft, display:"inline-flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}>
             <Icon name="cloud-off" size={22} color={C.accent}/>
           </div>
-          <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:8 }}>{tName} {tabLabel} isn't ready yet</div>
+          <div style={{ fontWeight:900, fontSize:17, color:C.text, marginBottom:8 }}>{err ? `Couldn't load ${tName} ${tabLabel}` : `${tName} ${tabLabel} isn't ready yet`}</div>
           <div style={{ color:C.muted, fontSize:13, lineHeight:1.7, marginBottom:20 }}>
-            {err || "Content is being prepared. It will be ready shortly."}
+            {err || "This content isn't available yet."}
           </div>
-          <button onClick={() => { setLoading(true); setErr(""); fetch(`/api/content/${tLang}/${tabName}`, { headers:{"Authorization":"Bearer "+getToken()} }).then(r=>r.json()).then(d=>{setContent(d.content);setLoading(false);}).catch(e=>{setErr(e.message);setLoading(false);}); }}
+          <button onClick={() => setReloadTick(n => n + 1)}
             style={{ padding:"11px 28px", background:col, color:"#fff", border:"none", borderRadius:10, fontWeight:700, fontSize:14, cursor:"pointer" }}>
             Try Again
           </button>
@@ -4154,6 +4256,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
                   <button onClick={() => genMoreWords(cat, i)} disabled={genIdx===i} style={{ gridColumn:"1 / -1", width:"100%", marginTop:4, padding:"10px", background:genIdx===i?C.surf2:C.accentSoft, border:`1px solid ${C.accentLine}`, borderRadius:10, color:C.accent, fontWeight:700, fontSize:13, cursor:genIdx===i?"default":"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", justifyContent:"center", gap:7 }}>
                     <Icon name={genIdx===i?"loader":"plus"} size={14} color={C.accent}/> {genIdx===i ? "Generating…" : "Generate more words"}
                   </button>
+                  {genErr[i] && <div style={{ gridColumn:"1 / -1", color:C.red, fontSize:12.5, textAlign:"center" }}>{genErr[i]}</div>}
                 </div>
               )}
             </div>
@@ -4276,7 +4379,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
   const expand = async () => {
     if (open) { setOpen(false); return; }
     setOpen(true);
-    if (data) return;
+    if (data && !data.error) return; // a failed load retries when the card is reopened
     setLoading(true);
     try {
       const prompt = `You are a ${tName} teacher for ${refNames} speakers. Give a rich explanation of: "${displayFr}" (meaning: ${en}). Return ONLY valid JSON: {"pronunciation":"phonetic guide using simple English sounds","register":"formal / informal / neutral — when is this used?","explanation":"clear explanation of meaning and how/when to use it in real life","ref_connection":"how it compares to ${refNames} — same word? cognate? false friend? no equivalent?","examples":[{"fr":"natural ${tName} sentence","en":"English translation","ref":"${refNames} translation"},{"fr":"example 2","en":"English","ref":"ref"},{"fr":"example 3","en":"English","ref":"ref"}],"tip":"one memorable thing about this word","watch_out":"common mistake to avoid with this word"}`;
@@ -4284,7 +4387,8 @@ function VocabCard({ fr, en, tLang, rLangs }) {
       const result = await askClaude(prompt, 700, tLang);
       setData(result);
     } catch(e) {
-      setData({ error: "Could not load. Check your connection and tap to try again." });
+      console.error("[VocabCard] explanation failed:", e.code || e.message);
+      setData({ error: aiErrorMessage(e) });
     }
     setLoading(false);
   };
@@ -4649,7 +4753,7 @@ function SettingsPanel({ onClose, onLogout, nativeLang, onSetNativeLang }) {
             {email && <div style={{color:C.mid,fontSize:14,marginBottom:2}}>{email}</div>}
             <div style={{color:C.blue,fontSize:12,marginBottom:10}}>5 coach messages per day · All 12 languages · Reference guides</div>
             <a href="/subscribe" style={{display:"block",textAlign:"center",padding:"9px 0",background:C.blue,color:"#fff",borderRadius:8,fontWeight:700,fontSize:13,textDecoration:"none"}}>
-              Upgrade to Premium — from $9/month →
+              Premium: up to 300 Coach messages a day — from $9/month →
             </a>
           </div>
         ) : (
@@ -4879,7 +4983,8 @@ function WordSpace({ tLang, rLangs }) {
       const result = await askClaude(prompt, 900, tLang);
       setResult(result);
     } catch(e) {
-      setResult({ error: "Could not translate. Check your connection." });
+      console.error("[WordSpace] translate failed:", e.code || e.message);
+      setResult({ error: aiErrorMessage(e) });
     }
     setLoading(false);
   };
@@ -4919,7 +5024,7 @@ function WordSpace({ tLang, rLangs }) {
           style={{ width: "100%", padding: "16px", border: "none", outline: "none", fontSize: 18, fontWeight: 500, resize: "none", background: "transparent", boxSizing: "border-box", color: C.text }}
         />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderTop: `1px solid ${C.bdr}`, background: C.soft }}>
-          <div style={{ color: C.muted, fontSize: 11 }}>{loading ? t("translating") : input.trim().length > 1 ? t("auto_translating") : t("start_typing")}</div>
+          <div style={{ color: C.muted, fontSize: 11 }}>{loading ? t("translating") : result && result.error ? t("translate_failed") : input.trim().length > 1 ? t("auto_translating") : t("start_typing")}</div>
           <div style={{ display: "flex", gap: 8 }}>
             {input.trim() && <button onClick={() => { setInput(""); setResult(null); }} style={{ background: "none", border: `1px solid ${C.bdr}`, borderRadius: 7, padding: "4px 11px", color: C.muted, fontSize: 12, cursor: "pointer" }}>{t("clear")}</button>}
             {result && result.translation_fr && <button onClick={() => say(result.translation_fr)} style={{ background: C.blue, border: "none", borderRadius: 7, padding: "4px 11px", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>{t("hear_it")}</button>}
@@ -5068,13 +5173,15 @@ function Flashcards({ tLang, onStreakUpdate }) {
   const [addErr, setAddErr]   = useState("");
   const [addOk, setAddOk]     = useState(false);
   const [importMsg, setImportMsg] = useState("");
+  const [importErr, setImportErr] = useState(false);
 
   const [practiceAll, setPracticeAll]       = useState(false);
   const [sessionReviewed, setSessionReviewed] = useState(new Set());
   const now      = Date.now();
+  const stats    = fcDeckStats(cards, tLang, now);
   const dueCards = practiceAll
     ? cards.filter(c => !sessionReviewed.has(c.id))
-    : cards.filter(c => c.next_review <= now);
+    : stats.due;
   const current  = dueCards[0] || null;
 
   const refreshCards = () => setCards(fcLoad().filter(c => c.lang === tLang));
@@ -5117,21 +5224,24 @@ function Flashcards({ tLang, onStreakUpdate }) {
         if (fcAdd({ lang: tLang, front: entry.fr, back: entry.ref || entry.input || "", pronunciation: entry.pronunciation || "", example: "" })) added++;
       });
       refreshCards();
+      setImportErr(false);
       setImportMsg(added ? `Imported ${added} new ${added === 1 ? "word" : "words"} from Word Space.` : "No new words to import — your saved words are already here.");
       setTimeout(() => setImportMsg(""), 2800);
-    } catch(e) { setImportMsg("Couldn't import from Word Space."); setTimeout(() => setImportMsg(""), 2800); }
+    } catch(e) {
+      console.error("[Flashcards] import from Word Space failed:", e.message);
+      setImportErr(true); setImportMsg("Couldn't import from Word Space."); setTimeout(() => setImportMsg(""), 2800);
+    }
   };
 
   // Seed a real starter deck from the curated vocabulary the app already ships for this
   // language — so an empty deck can become reviewable in one tap instead of a dead screen.
   const [starterLoading, setStarterLoading] = useState(false);
   const loadStarterDeck = async () => {
-    setStarterLoading(true); setImportMsg("");
+    setStarterLoading(true); setImportMsg(""); setImportErr(false);
     try {
-      const res = await fetch(`/api/content/${tLang}/vocab`, { headers: { "Authorization": "Bearer " + getToken() } });
-      if (!res.ok) throw new Error("fetch");
-      const data = await res.json();
-      const cats = Array.isArray(data?.categories) ? data.categories : [];
+      // GET /api/content/:lang/vocab answers { content: { categories: [{ name, words: [{ t, p, r, ex, exr }] }] } }
+      const data = await fetchContent(tLang, "vocab");
+      const cats = Array.isArray(data?.content?.categories) ? data.content.categories : [];
       // Round-robin across categories so the starter deck is varied, not 24 numbers.
       const queues = cats.map(c => (Array.isArray(c?.words) ? [...c.words] : []));
       const picks = [];
@@ -5145,21 +5255,24 @@ function Flashcards({ tLang, onStreakUpdate }) {
       }
       let added = 0;
       picks.forEach(w => {
-        if (w && w.t && fcAdd({ lang: tLang, front: w.t, back: w.r || "", pronunciation: w.p || "", example: "" })) added++;
+        if (w && w.t && fcAdd({ lang: tLang, front: w.t, back: w.r || "", pronunciation: w.p || "", example: w.ex || "" })) added++;
       });
       refreshCards();
       setImportMsg(added
         ? `Added ${added} starter ${tName} card${added === 1 ? "" : "s"}. Review below — the schedule builds from here.`
-        : "Your deck already has these words.");
+        : cats.length ? "Your deck already has these words." : `There's no ${tName} vocabulary to build a starter deck from yet.`);
+      setImportErr(!added && !cats.length);
       setTimeout(() => setImportMsg(""), 3200);
     } catch(e) {
-      setImportMsg("Couldn't load the starter deck. Check your connection and try again.");
+      console.error(`[Flashcards] starter deck ${tLang} failed:`, e.code || e.message);
+      setImportErr(true);
+      setImportMsg(contentErrorMessage(e));
       setTimeout(() => setImportMsg(""), 3200);
     } finally { setStarterLoading(false); }
   };
 
-  const totalCards   = cards.length;
-  const learnedCards = cards.filter(c => c.repetitions > 0).length;
+  const totalCards   = stats.total;
+  const learnedCards = stats.learned;
   const RATE_BTNS = [
     { q:0, label:t("rate_again"), color:C.red,    desc:t("rate_again_desc") },
     { q:1, label:t("rate_hard"),  color:C.text,  desc:t("rate_hard_desc") },
@@ -5204,16 +5317,16 @@ function Flashcards({ tLang, onStreakUpdate }) {
           Import Word Space
         </button>
       </div>
-      {importMsg && <div style={{ background:C.green+"14", border:`1px solid ${C.green}33`, color:C.green, fontSize:12.5, fontWeight:600, borderRadius:10, padding:"9px 13px", marginBottom:12, display:"flex", alignItems:"center", gap:7 }}><Icon name="check-circle" size={14} color={C.green}/>{importMsg}</div>}
+      {importMsg && <div style={{ background:(importErr?C.red:C.green)+"14", border:`1px solid ${importErr?C.red:C.green}33`, color:importErr?C.red:C.green, fontSize:12.5, fontWeight:600, borderRadius:10, padding:"9px 13px", marginBottom:12, display:"flex", alignItems:"center", gap:7 }}><Icon name={importErr?"alert-circle":"check-circle"} size={14} color={importErr?C.red:C.green}/>{importMsg}</div>}
 
       {/* ── REVIEW VIEW ── */}
       {view === "review" && (
         <div>
           {dueCards.length === 0 ? (
             <div style={{ background:C.card, borderRadius:16, padding:"36px 20px", textAlign:"center", boxShadow:C.sh, border:`1px solid ${C.bdr}` }}>
-              <div style={{ marginBottom:12, display:"flex", justifyContent:"center" }}><Icon name="trophy" size={40} color={C.green}/></div>
-              <div style={{ fontWeight:900, fontSize:18, color:C.green, marginBottom:8 }}>
-                {practiceAll ? t("session_done") : t("all_caught_up")}
+              <div style={{ marginBottom:12, display:"flex", justifyContent:"center" }}><Icon name={totalCards === 0 ? "layers" : "trophy"} size={40} color={totalCards === 0 ? C.muted : C.green}/></div>
+              <div style={{ fontWeight:900, fontSize:18, color:totalCards === 0 ? C.text : C.green, marginBottom:8 }}>
+                {totalCards === 0 ? "No flashcards yet" : practiceAll ? t("session_done") : t("all_caught_up")}
               </div>
               <div style={{ color:C.muted, fontSize:13, marginBottom:16 }}>
                 {totalCards === 0
@@ -6249,25 +6362,29 @@ function ProgressRing({ pct, size=72, stroke=7, track="rgba(255,255,255,.28)", f
 function LearnPath({ L, tLang, onStreakUpdate }){
   useLucide([tLang]);
   const tName = TARGETS[tLang]?.name || L.name || "your language";
-  const [d, setD]       = useState({ loading:true, err:false, grammar:[], vocab:[], dialogues:[] });
+  const [d, setD]       = useState({ loading:true, err:"", grammar:[], vocab:[], dialogues:[] });
   const [done, setDone] = useState(() => lpLoad(tLang));
   const [open, setOpen] = useState(null);
 
   useEffect(()=>{ setDone(lpLoad(tLang)); setOpen(null); }, [tLang]);
   useEffect(()=>{
-    let alive=true; setD(x=>({...x, loading:true, err:false}));
-    const auth={ headers:{ "Authorization":"Bearer "+getToken() } };
-    Promise.all([
-      fetch("/api/content/"+tLang+"/grammar", auth).then(r=>r.ok?r.json():null).catch(()=>null),
-      fetch("/api/content/"+tLang+"/vocab", auth).then(r=>r.ok?r.json():null).catch(()=>null),
-      fetch("/api/content/"+tLang+"/dialogues", auth).then(r=>r.ok?r.json():null).catch(()=>null),
+    let alive=true; setD(x=>({...x, loading:true, err:""}));
+    Promise.allSettled([
+      fetchContent(tLang, "grammar"),
+      fetchContent(tLang, "vocab"),
+      fetchContent(tLang, "dialogues"),
     ]).then(([g,v,di])=>{
       if(!alive) return;
-      const grammar=(g&&g.content&&g.content.sections)||[];
-      const vocab=(v&&v.content&&v.content.categories)||[];
-      const dialogues=(di&&di.content&&di.content.dialogues)||[];
-      if(!grammar.length && !vocab.length){ setD({loading:false,err:true,grammar:[],vocab:[],dialogues:[]}); return; }
-      setD({loading:false,err:false,grammar,vocab,dialogues});
+      const part=(r,key)=>(r.status==="fulfilled" && r.value && r.value.content && r.value.content[key]) || [];
+      const grammar=part(g,"sections"), vocab=part(v,"categories"), dialogues=part(di,"dialogues");
+      if(!grammar.length && !vocab.length){
+        // Say what actually went wrong: the server's reason, offline, or simply no content yet.
+        const failed=[g,v].find(r=>r.status==="rejected");
+        if(failed) console.error("[learn] course load "+tLang+" failed:", failed.reason && (failed.reason.code || failed.reason.message));
+        setD({loading:false, err: failed ? contentErrorMessage(failed.reason) : "This course isn't available for "+tName+" yet.", grammar:[],vocab:[],dialogues:[]});
+        return;
+      }
+      setD({loading:false,err:"",grammar,vocab,dialogues});
     });
     return ()=>{alive=false;};
   }, [tLang]);
@@ -6276,7 +6393,7 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   const toggle   = (id)=>setDone(prev=>{ const n=new Set(prev); n.has(id)?n.delete(id):n.add(id); lpSave(tLang,n); return n; });
 
   if (d.loading) return <div style={{padding:"44px 0",textAlign:"center",color:C.muted,fontSize:13}}><div style={{width:22,height:22,border:`2px solid ${C.line}`,borderTopColor:C.accent,borderRadius:"50%",animation:"spin .7s linear infinite",margin:"0 auto 12px"}}/>Building your {tName} course…</div>;
-  if (d.err)     return <Info text="Couldn't load the course right now — check your connection and try again." color={C.muted}/>;
+  if (d.err)     return <Info text={d.err} color={C.muted}/>;
 
   const units = buildUnits(d.grammar, d.vocab, d.dialogues, tName);
   const allLessons = units.reduce((a,u)=>a.concat(u.lessons),[]);

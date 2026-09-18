@@ -1,8 +1,14 @@
 const express = require("express");
 const { requireAuth } = require("./auth");
 const db = require("../db");
+const asyncHandler = require("../utils/asyncHandler");
+const { classifyUpstream, classifyFetchFailure, aiErrorBody, sendAiError } = require("../utils/aiErrors");
+const { VALID_LANGS } = require("./content");
 
 const router = express.Router();
+
+const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
+const UPSTREAM_TIMEOUT_MS = 60_000;
 
 // ── Language-aware system prompts ─────────────────────────────────────────────
 const LANG_NAMES_COACH = {
@@ -104,53 +110,43 @@ async function checkAccess(user) {
   return { ok: true };
 }
 
-// ── Rate limiter ──────────────────────────────────────────────────────────────
+// ── Quota ─────────────────────────────────────────────────────────────────────
 // Free  : 5 requests per 24 hours (hard limit, backed by DB)
 // Paid  : 300 requests per 24 hours (safety cap) + 30 per 60 seconds (burst)
+// Units are reserved atomically before the upstream call and refunded when the
+// call fails, so a provider outage never uses up anyone's messages.
 
-async function checkRateLimit(userId, plan) {
-  const now = Date.now();
+async function reserveQuota(userId, plan) {
   const isFree = plan === "free";
+  const held = [];
 
-  // Per-minute burst limit for paid users (30/min)
   if (!isFree) {
-    const minKey = `${userId}_min`;
-    const minRow = await db.get("SELECT count, window_reset FROM rate_limits WHERE user_id = $1", [`${userId}_burst`]);
-    if (!minRow || now > parseInt(minRow.window_reset)) {
-      await db.run(`
-        INSERT INTO rate_limits (user_id, count, window_reset)
-        VALUES ($1, 1, $2)
-        ON CONFLICT(user_id) DO UPDATE SET count = 1, window_reset = $2
-      `, [`${userId}_burst`, now + 60_000]);
-    } else if (minRow.count >= 30) {
-      return { allowed: false, reason: "burst", remaining: 0 };
-    } else {
-      await db.run("UPDATE rate_limits SET count = count + 1 WHERE user_id = $1", [`${userId}_burst`]);
+    const burstKey = `${userId}_burst`;
+    const burst = await db.hitRateLimit(burstKey, 30, 60_000);
+    if (!burst.allowed) return { allowed: false, reason: "burst", resetAt: burst.resetAt };
+    held.push({ key: burstKey, resetAt: burst.resetAt });
+  }
+
+  const dayKey = String(userId);
+  const day = await db.hitRateLimit(dayKey, isFree ? 5 : 300, 86_400_000);
+  if (!day.allowed) {
+    await refundQuota({ held }, "daily limit reached");
+    return { allowed: false, reason: "daily", resetAt: day.resetAt };
+  }
+  held.push({ key: dayKey, resetAt: day.resetAt });
+  return { allowed: true, remaining: day.remaining, held };
+}
+
+// Give back what reserveQuota took. A failed refund is logged; the caller still
+// answers with the real AI error.
+async function refundQuota(quota, why) {
+  for (const { key, resetAt } of quota.held) {
+    try {
+      await db.refundRateLimit(key, resetAt);
+    } catch (e) {
+      console.error(`[Claude] quota refund failed for ${key} (${why}):`, e.message);
     }
   }
-
-  // Daily limit
-  const win  = 86_400_000; // 24h
-  const max  = isFree ? 5 : 300;
-  const key  = String(userId);
-
-  const row = await db.get("SELECT count, window_reset FROM rate_limits WHERE user_id = $1", [key]);
-
-  if (!row || now > parseInt(row.window_reset)) {
-    await db.run(`
-      INSERT INTO rate_limits (user_id, count, window_reset)
-      VALUES ($1, 1, $2)
-      ON CONFLICT(user_id) DO UPDATE SET count = 1, window_reset = $2
-    `, [key, now + win]);
-    return { allowed: true, remaining: max - 1 };
-  }
-
-  if (row.count >= max) {
-    return { allowed: false, reason: "daily", remaining: 0 };
-  }
-
-  await db.run("UPDATE rate_limits SET count = count + 1 WHERE user_id = $1", [key]);
-  return { allowed: true, remaining: max - row.count - 1 };
 }
 
 // ── Input validation ──────────────────────────────────────────────────────────
@@ -166,14 +162,43 @@ function validatePrompt(prompt) {
   return null;
 }
 
+// language and nativeLang go into the system prompt, so only known codes are
+// accepted. nativeLang falls back to English only when it is not sent at all.
+function resolveLanguages({ language, nativeLang }) {
+  if (!VALID_LANGS.includes(language)) {
+    return { error: `language must be one of: ${VALID_LANGS.join(", ")}` };
+  }
+  if (nativeLang === undefined || nativeLang === null) return { language, nativeLang: "en" };
+  if (!VALID_LANGS.includes(nativeLang)) {
+    return { error: `nativeLang must be one of: ${VALID_LANGS.join(", ")}` };
+  }
+  return { language, nativeLang };
+}
+
+// ── Usage log (cost tracking) ─────────────────────────────────────────────────
+// Cost estimate: claude-sonnet-4-5 ~$3/MTok in, $15/MTok out.
+// Fire-and-forget, but a failed insert is logged.
+function logUsage({ userId, language, featureType, inputTokens, outputTokens }) {
+  const costEstimate = (inputTokens / 1_000_000) * 3 + (outputTokens / 1_000_000) * 15;
+  db.run(`
+    INSERT INTO ai_usage_logs (user_id, language, feature_type, input_length, output_length, estimated_cost)
+    VALUES ($1, $2, $3, $4, $5, $6)
+  `, [userId, language, featureType, inputTokens, outputTokens, costEstimate])
+    .catch(e => console.error(`[Claude] ai_usage_logs insert failed (user ${userId}, feature ${featureType}):`, e.message));
+}
+
 // ── POST /api/claude ──────────────────────────────────────────────────────────
-router.post("/", requireAuth, async (req, res) => {
+router.post("/", requireAuth, asyncHandler(async (req, res) => {
   const { userId, plan } = req.user;
-  const { prompt, maxTokens, language, featureType, nativeLang } = req.body || {};
+  const { prompt, maxTokens, featureType } = req.body || {};
 
   // Input validation
   const validationError = validatePrompt(prompt);
   if (validationError) return res.status(400).json({ error: validationError });
+  const langs = resolveLanguages(req.body);
+  if (langs.error) return res.status(400).json({ code: "invalid_language", error: langs.error });
+  // Recorded as sent (the web client does not send one yet).
+  const feature = typeof featureType === "string" && featureType ? featureType.slice(0, 64) : null;
 
   // Paid users: validate code is still active + nonce matches + subscription live
   const access = await checkAccess(req.user);
@@ -181,91 +206,114 @@ router.post("/", requireAuth, async (req, res) => {
     return res.status(access.status).json({ error: access.error, reason: access.reason, upgrade: access.upgrade });
   }
 
-  // Rate limiting
-  const { allowed, remaining, reason } = await checkRateLimit(userId, plan);
-  if (!allowed) {
-    const isFree = plan === "free";
-    const error = isFree
-      ? "You've used your 5 free coach messages today. Upgrade to Tongue Premium for unlimited access."
-      : reason === "burst"
-        ? "Too many requests. Please slow down."
-        : "You've reached the daily limit (300 messages). Resets at midnight.";
-
-    db.trackEvent(userId, "free_limit_reached", { plan, reason });
-    return res.status(429).json({ error, upgrade: isFree });
-  }
-
+  // Configuration before quota: an unconfigured tutor must not cost a message.
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     console.error("[Claude] ANTHROPIC_API_KEY not set");
-    return res.status(500).json({ error: "the tutor is not configured." });
+    return sendAiError(res, "ai_unconfigured");
   }
 
-  const startTime = Date.now();
+  const quota = await reserveQuota(userId, plan);
+  if (!quota.allowed) {
+    const isFree = plan === "free";
+    const error = isFree
+      ? "You've used your 5 free coach messages today. Upgrade to Tongue Premium for unlimited access."
+      : quota.reason === "burst"
+        ? "Too many requests. Please slow down."
+        : "You've reached the daily limit (300 messages). It resets 24 hours after your first message of the day.";
+
+    db.trackEvent(userId, "free_limit_reached", { plan, reason: quota.reason });
+    return res.status(429).json({ code: "quota_exceeded", error, upgrade: isFree, resetAt: quota.resetAt });
+  }
+
+  // Every failure from here on gives the reserved message back.
+  const fail = async (code, detail) => {
+    console.error(`[Claude] ${code}:`, detail);
+    await refundQuota(quota, code);
+    return sendAiError(res, code);
+  };
+
+  const requestBody = JSON.stringify({
+    model: "claude-sonnet-4-5",
+    max_tokens: Math.min(maxTokens || 1000, 2000), // hard cap at 2000
+    system: buildSystemPrompt(langs.language, langs.nativeLang),
+    messages: [{ role: "user", content: String(prompt).slice(0, 6000) }],
+  });
+
+  let anthropicRes, bodyText;
   try {
-    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+    anthropicRes = await fetch(ANTHROPIC_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: Math.min(maxTokens || 1000, 2000), // hard cap at 2000
-        system: buildSystemPrompt(language || "fr", nativeLang || "en"),
-        messages: [{ role: "user", content: String(prompt).slice(0, 6000) }],
-      }),
+      body: requestBody,
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
-
-    if (!anthropicRes.ok) {
-      const errText = await anthropicRes.text();
-      console.error(`[Claude] API error ${anthropicRes.status}:`, errText.slice(0, 200));
-      return res.status(502).json({ error: "the tutor error. Please try again in a moment." });
-    }
-
-    const data = await anthropicRes.json();
-    const inputTokens  = data.usage?.input_tokens  || 0;
-    const outputTokens = data.usage?.output_tokens || 0;
-    // Cost estimate: claude-sonnet-4-5 ~$3/MTok in, $15/MTok out
-    const costEstimate = (inputTokens / 1_000_000) * 3 + (outputTokens / 1_000_000) * 15;
-
-    // Log usage (async, non-blocking)
-    db.run(`
-      INSERT INTO ai_usage_logs (user_id, language, feature_type, input_length, output_length, estimated_cost)
-      VALUES ($1, $2, $3, $4, $5, $6)
-    `, [userId, language || null, featureType || null, inputTokens, outputTokens, costEstimate]).catch(() => {});
-
-    const raw = (data.content?.[0]?.text || "{}").replace(/```json/g, "").replace(/```/g, "").trim();
-
-    let parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      console.error("[Claude] JSON parse failed:", raw.slice(0, 300));
-      return res.status(502).json({ error: "The tutor returned an unexpected response. Please try again." });
-    }
-
-    // Surface remaining free-tier quota
-    if (plan === "free") {
-      parsed._meta = { plan: "free", remaining };
-    }
-
-    db.trackEvent(userId, "ai_message_sent", { plan, language, featureType });
-    res.json(parsed);
-
+    bodyText = await anthropicRes.text();
   } catch (e) {
-    console.error("[Claude] Proxy error:", e.message);
-    res.status(500).json({ error: "Connection error. Please try again." });
+    return fail(classifyFetchFailure(e), `request failed: ${e.message}`);
   }
-});
+
+  if (!anthropicRes.ok) {
+    return fail(classifyUpstream(anthropicRes.status, bodyText), `API error ${anthropicRes.status}: ${bodyText.slice(0, 200)}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(bodyText);
+  } catch (e) {
+    return fail("ai_bad_output", `response body is not JSON (${e.message}): ${bodyText.slice(0, 200)}`);
+  }
+
+  // Tokens were spent even if the output below turns out to be unusable.
+  logUsage({
+    userId,
+    language: langs.language,
+    featureType: feature,
+    inputTokens: data?.usage?.input_tokens || 0,
+    outputTokens: data?.usage?.output_tokens || 0,
+  });
+
+  const text = data?.content?.[0]?.text;
+  const raw = typeof text === "string" ? text.replace(/```json/g, "").replace(/```/g, "").trim() : "";
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    return fail("ai_bad_output", `model output is not JSON (${e.message}): ${raw.slice(0, 300)}`);
+  }
+  if (!parsed || typeof parsed !== "object") {
+    return fail("ai_bad_output", `model output is not a JSON object: ${raw.slice(0, 300)}`);
+  }
+
+  // Surface remaining free-tier quota
+  if (plan === "free") {
+    parsed._meta = { plan: "free", remaining: quota.remaining };
+  }
+
+  db.trackEvent(userId, "ai_message_sent", { plan, language: langs.language, featureType: feature });
+  res.json(parsed);
+}));
+
+// Anthropic can also report an error inside an HTTP 200 stream. Map its type to
+// the status the same error has on a normal response, then classify as usual.
+const STREAM_ERROR_STATUS = {
+  invalid_request_error: 400, authentication_error: 401, permission_error: 403,
+  not_found_error: 404, request_too_large: 413, rate_limit_error: 429,
+  api_error: 500, overloaded_error: 529,
+};
 
 // ── POST /api/claude/chat — real streaming conversation (SSE) ─────────────────
 // Body: { messages:[{role,content}], scenario, level, language, nativeLang }
-// Streams events: {type:"delta",text} … {type:"done",remaining} | {type:"error",…}
-router.post("/chat", requireAuth, async (req, res) => {
+// Failures before the stream starts are JSON with a real status ({code,…}).
+// Streams events: {type:"delta",text} … {type:"done",remaining} | {type:"error",code,message,error,retryable}
+router.post("/chat", requireAuth, asyncHandler(async (req, res) => {
   const { userId, plan } = req.user;
-  const { messages, scenario, level, language, nativeLang } = req.body || {};
+  const { messages, scenario, level } = req.body || {};
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: "messages array is required" });
@@ -282,60 +330,100 @@ router.post("/chat", requireAuth, async (req, res) => {
   if (/ignore previous instructions|disregard all|you are now/i.test(lastUser)) {
     return res.status(400).json({ error: "invalid message content" });
   }
+  const langs = resolveLanguages(req.body);
+  if (langs.error) return res.status(400).json({ code: "invalid_language", error: langs.error });
 
   const access = await checkAccess(req.user);
   if (!access.ok) {
     return res.status(access.status).json({ error: access.error, reason: access.reason, upgrade: access.upgrade });
   }
 
-  const { allowed, remaining, reason } = await checkRateLimit(userId, plan);
-  if (!allowed) {
+  // Configuration before quota: an unconfigured tutor must not cost a message.
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    console.error("[Chat] ANTHROPIC_API_KEY not set");
+    return sendAiError(res, "ai_unconfigured");
+  }
+
+  const quota = await reserveQuota(userId, plan);
+  if (!quota.allowed) {
     const isFree = plan === "free";
     const error = isFree
       ? "You've used your free conversation turns today. Upgrade to Tongue Premium for unlimited conversations."
-      : reason === "burst" ? "Too many messages — please slow down." : "You've reached today's limit. Resets at midnight.";
-    db.trackEvent(userId, "free_limit_reached", { plan, reason, featureType: "chat" });
-    return res.status(429).json({ error, upgrade: isFree });
+      : quota.reason === "burst" ? "Too many messages — please slow down." : "You've reached today's limit. It resets 24 hours after your first message of the day.";
+    db.trackEvent(userId, "free_limit_reached", { plan, reason: quota.reason, featureType: "chat" });
+    return res.status(429).json({ code: "quota_exceeded", error, upgrade: isFree, resetAt: quota.resetAt });
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "the tutor is not configured." });
-
-  // Server-Sent Events
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache, no-transform");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no");
-  if (res.flushHeaders) res.flushHeaders();
-  const send = (obj) => { try { res.write(`data: ${JSON.stringify(obj)}\n\n`); } catch (_) {} };
+  // The upstream request ends on timeout or when the learner leaves. A leave is
+  // detected on res (closed before it finished): req "close" already fires once
+  // the JSON body has been read, while the connection is still open.
+  const leave = new AbortController();
+  let clientGone = false;
+  res.on("close", () => {
+    if (res.writableFinished) return;
+    clientGone = true;
+    leave.abort();
+  });
 
   let full = "", inTok = 0, outTok = 0;
+  const logChatUsage = () => logUsage({ userId, language: langs.language, featureType: "chat", inputTokens: inTok, outputTokens: outTok });
+
+  let upstream;
   try {
-    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
+    upstream = await fetch(ANTHROPIC_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01" },
       body: JSON.stringify({
         model: "claude-sonnet-4-5",
         max_tokens: 400,
         stream: true,
-        system: buildChatSystemPrompt({ lang: language || "fr", nativeLang: nativeLang || "en", scenario, level }),
+        system: buildChatSystemPrompt({ lang: langs.language, nativeLang: langs.nativeLang, scenario, level }),
         messages: clean,
       }),
+      signal: AbortSignal.any([leave.signal, AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)]),
     });
-
-    if (!upstream.ok || !upstream.body) {
-      const errText = await upstream.text().catch(() => "");
-      const lowCredit = /credit balance|insufficient|quota|billing/i.test(errText);
-      console.error(`[Chat] upstream ${upstream.status}:`, errText.slice(0, 200));
-      send({ type: "error", error: lowCredit ? "credits" : "upstream",
-        message: lowCredit ? "The tutor is offline for a moment. Please try again shortly." : "The tutor hit a snag. Please try again." });
-      return res.end();
+  } catch (e) {
+    if (clientGone) {
+      console.warn(`[Chat] user ${userId} disconnected before the tutor answered`);
+      return;
     }
+    const code = classifyFetchFailure(e);
+    console.error(`[Chat] upstream request failed (${code}):`, e.message);
+    await refundQuota(quota, code);
+    return sendAiError(res, code);
+  }
 
+  // Nothing has been sent yet, so a failed upstream still gets a real status.
+  if (!upstream.ok || !upstream.body) {
+    let errText = "";
+    try {
+      errText = await upstream.text();
+    } catch (e) {
+      console.error(`[Chat] could not read upstream ${upstream.status} body:`, e.message);
+    }
+    const code = upstream.ok ? "ai_bad_output" : classifyUpstream(upstream.status, errText);
+    console.error(`[Chat] upstream ${upstream.status} (${code}):`, errText.slice(0, 200));
+    await refundQuota(quota, code);
+    return sendAiError(res, code);
+  }
+
+  // Upstream answered OK: only now commit to Server-Sent Events.
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no");
+  if (res.flushHeaders) res.flushHeaders();
+  const send = (obj) => {
+    if (!res.writableEnded && !res.destroyed) res.write(`data: ${JSON.stringify(obj)}\n\n`);
+  };
+
+  let stopped = false, failure = null;
+  try {
     const reader = upstream.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
-    while (true) {
+    while (!failure) {
       const { done, value } = await reader.read();
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
@@ -346,27 +434,50 @@ router.post("/chat", requireAuth, async (req, res) => {
         if (!l.startsWith("data:")) continue;
         const payload = l.slice(5).trim();
         if (!payload || payload === "[DONE]") continue;
-        let ev; try { ev = JSON.parse(payload); } catch { continue; }
+        let ev;
+        try {
+          ev = JSON.parse(payload);
+        } catch (e) {
+          failure = { code: "ai_bad_output", detail: `unreadable stream event (${e.message}): ${payload.slice(0, 200)}` };
+          break;
+        }
         if (ev.type === "message_start") inTok = ev.message?.usage?.input_tokens || 0;
         else if (ev.type === "content_block_delta" && ev.delta?.type === "text_delta") {
           full += ev.delta.text;
           send({ type: "delta", text: ev.delta.text });
         } else if (ev.type === "message_delta") outTok = ev.usage?.output_tokens || outTok;
+        else if (ev.type === "message_stop") stopped = true;
+        else if (ev.type === "error") {
+          const status = STREAM_ERROR_STATUS[ev.error?.type] || 500;
+          failure = { code: classifyUpstream(status, payload), detail: payload.slice(0, 200) };
+          break;
+        }
       }
     }
-
-    send({ type: "done", remaining: plan === "free" ? remaining : null });
-    res.end();
-
-    const cost = (inTok / 1e6) * 3 + (outTok / 1e6) * 15;
-    db.run(`INSERT INTO ai_usage_logs (user_id, language, feature_type, input_length, output_length, estimated_cost)
-            VALUES ($1,$2,$3,$4,$5,$6)`, [userId, language || null, "chat", inTok, outTok, cost]).catch(() => {});
-    db.trackEvent(userId, "chat_message_sent", { plan, language, scenario });
+    if (failure) reader.cancel().catch(e => console.error("[Chat] could not cancel the upstream stream:", e.message));
+    else if (!stopped) failure = { code: "ai_unreachable", detail: "upstream stream ended before message_stop" };
   } catch (e) {
-    console.error("[Chat] stream error:", e.message);
-    send({ type: "error", error: "connection", message: "Connection lost. Please try again." });
-    try { res.end(); } catch (_) {}
+    if (clientGone) {
+      console.warn(`[Chat] user ${userId} disconnected mid-stream`);
+      logChatUsage();
+      return;
+    }
+    failure = { code: classifyFetchFailure(e), detail: e.message };
   }
-});
+
+  if (failure) {
+    console.error(`[Chat] stream failed (${failure.code}):`, failure.detail);
+    if (inTok || outTok) logChatUsage();
+    await refundQuota(quota, failure.code);
+    send({ type: "error", ...aiErrorBody(failure.code) });
+    return res.end();
+  }
+
+  send({ type: "done", remaining: plan === "free" ? quota.remaining : null });
+  res.end();
+
+  logChatUsage();
+  db.trackEvent(userId, "chat_message_sent", { plan, language: langs.language, scenario });
+}));
 
 module.exports = router;

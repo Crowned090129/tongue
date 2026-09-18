@@ -2,9 +2,30 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "tongue-app",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["--env-file=.env", "server.js"],
+      "name": "tongue-local",
+      "runtimeExecutable": "/usr/bin/env",
+      "runtimeArgs": [
+        "NODE_ENV=development",
+        "PORT=3001",
+        "APP_URL=http://localhost:3001",
+        "DATABASE_URL=postgres://tongue@127.0.0.1:55432/tongue_local",
+        "JWT_SECRET=local-dev-secret-not-production",
+        "ADMIN_PASSWORD=local-admin-not-production",
+        "ANTHROPIC_API_KEY=",
+        "RESEND_API_KEY=",
+        "STRIPE_SECRET_KEY=",
+        "STRIPE_WEBHOOK_SECRET=",
+        "STRIPE_PRICE_MONTHLY=",
+        "STRIPE_PRICE_YEARLY=",
+        "SMTP_HOST=",
+        "SMTP_PORT=",
+        "SMTP_USER=",
+        "SMTP_PASS=",
+        "EMAIL_FROM=",
+        "GOOGLE_CLIENT_ID=",
+        "node",
+        "server.js"
+      ],
       "port": 3001
     }
   ]
