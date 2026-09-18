@@ -15,8 +15,8 @@ Working hypothesis: adult English-speaking French beginners preparing for travel
 - Original checkout `/Users/coronado/Downloads/french-app` was clean at the same commit; left untouched.
 - GitHub clone, terminal, workspace edits/readback, Node/npm, local PostgreSQL, browser control: verified.
 - Local PostgreSQL 14 cluster: parent folder `.local-postgres`, localhost port 55439, role `tongue`. Preview database `tongue_release_test`; final regression database `tongue_final_test`.
-- Production database, Fly account permissions, Stripe account, mail delivery, AI/audio provider operation: **not connected or verified**. No production secrets were read or changed. The original checkout's `.env` is documented as production; never load it for tests.
-- Public read-only checks at 2026-09-18 13:31 UTC: `/health` returned 200 with `db:ok`; `/api/version` returned 404. Consistent with pre-P0 deployment; exact image identity remains unknown.
+- Fly deployment access is verified. Production database content, Stripe account, mail delivery and AI/audio provider operation remain unverified. No production secrets were read or changed. The original checkout's `.env` is documented as production; never load it for tests.
+- Historical pre-deployment public checks at 2026-09-18 13:31 UTC: `/health` returned 200 with `db:ok`; `/api/version` returned 404. Consistent with pre-P0 deployment; exact image identity remains unknown.
 - Previous commit `d1890f7` pushed to main; GitHub CI succeeded and Fly deployment completed with healthy machines. Current guided-practice changes are documented in `verification/2026-09-18-guided-practice.md`. No external messages, purchases, reset credits, or subagents.
 
 ## Current guided-practice change
@@ -31,7 +31,7 @@ The core lesson journey now requires study, recall attempts and comparison in sh
 4. Signup immediately opens onboarding; onboarding saves goal/level/language before advancing, shows failures, and opens Learn. Lesson components reset transient state when changing lessons.
 5. Settings exposes subscription management with an authenticated request. Server requires `verified: true`, rejects legacy/unverified tokens, and derives customer identity from the signed-in user. Live Stripe success is unverified.
 6. Upgrade describes the actual 300-message daily cap; removes fabricated unlimited/analytics benefits. Account/upgrade dialogs have semantics, focus trapping, Escape, and focus restoration. Reduced-motion and focus styles added.
-7. Regression suite expanded from 24 to 38 tests. CI workflow added; hosted execution has not occurred. Reproducible local preview command added.
+7. Regression suite expanded from 24 to 38 tests. CI workflow added; hosted execution passed for both `d1890f7` and `88994b5`. Reproducible local preview command added.
 
 ## Verification
 
@@ -47,10 +47,10 @@ Browser verified: French lesson opens; 12 words saved; one completion and one re
 - **Billing/recovery:** real checkout, renewal, cancellation, refunds, magic-link delivery and account recovery not exercised. Webhook retry/renewal regression coverage remains incomplete.
 - **Content:** passing schemas is not pedagogical or linguistic review. Live content may differ from seeds. Obtain a read-only content snapshot before changing canonical IDs/order. No production backup/restore rehearsal was done.
 - **Claims/economics:** existing marketing/onboarding/Coach surfaces still need a complete claims audit. The 300/day AI allowance can exceed $9 revenue; see pilot contract. Do not promote unlimited AI.
-- **Delivery:** not deployed; Docker image, remote CI, rollback image, load tests, microphone/audio, Safari/Firefox, full keyboard/contrast and offline recovery remain unverified.
+- **Delivery:** `d1890f7` deployed successfully; `88994b5` deployed successfully; public `/health` reports database OK and `/app` contains the new guided practice UI. Docker build and remote CI verified for the previous release; load tests, microphone/audio, Safari/Firefox, full keyboard/contrast and offline recovery remain unverified.
 
 ## Exact next action
 
-Next complete account/session isolation and safe deletion/recovery tests, then verify email and Stripe in an isolated provider test environment. In parallel, obtain participant access and human review for the bounded pilot. Before production: confirm credential rotation, capture read-only production content/backup evidence, run the release checks, build the image, record a rollback image, and obtain deployment authorization. Do not expand the feature set to avoid these blockers.
+Next complete account/session isolation and safe deletion/recovery tests, then verify email and Stripe in an isolated provider test environment. In parallel, obtain participant access and human review for the bounded pilot. Before production: confirm credential rotation, capture read-only production content/backup evidence, run the release checks, build the image, record a rollback image. User explicitly authorized repository pushes and production deployment in this conversation. Do not expand the feature set to avoid these blockers.
 
 Historical state is retained in [the September 17 archive](archive/PROJECT_STATE_2026-09-17.md). Other architecture docs describe proposals, not mandatory scope or verified completion.
