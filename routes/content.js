@@ -1216,7 +1216,8 @@ ACCURACY RULES:
 // Validates structure and quality before storing. Returns null if valid,
 // or a string describing the first problem found.
 
-function validateContent(lang, tab, data) {
+function validateContent(lang, tab, data, { bundledSeed = false } = {}) {
+  if (!data || typeof data !== "object") return "missing content object";
   const check = SCRIPT_CHECK[lang];
 
   function hasNativeScript(text) {
@@ -1235,17 +1236,21 @@ function validateContent(lang, tab, data) {
     if (!Array.isArray(data.sections))         return "missing sections array";
     if (data.sections.length < 10)             return `only ${data.sections.length} sections (need ≥10)`;
     for (const [i, s] of data.sections.entries()) {
+      if (!s || typeof s !== "object") return `section ${i} is not an object`;
       if (!s.title)          return `section ${i} missing title`;
       if (!s.rule)           return `section ${i} missing rule`;
       if (!s.example_target) return `section ${i} missing example_target`;
       if (!s.example_ref)    return `section ${i} missing example_ref`;
       // Deepened spec: 3 extra worked examples + a real common-mistake note.
-      if (!Array.isArray(s.examples) || s.examples.length < 3) return `section ${i} needs ≥3 examples`;
-      if (s.examples.some(e => !e || !e.target || !e.ref))     return `section ${i} has an incomplete example`;
-      if (!s.common_mistake) return `section ${i} missing common_mistake`;
+      // Bundled v1 material predates enrichment. Accept its documented shape
+      // without fabricating examples or changing position-based lesson identity.
+      if (!bundledSeed && (!Array.isArray(s.examples) || s.examples.length < 3)) return `section ${i} needs ≥3 examples`;
+      if (s.examples !== undefined && (!Array.isArray(s.examples) || s.examples.some(e => !e || !e.target || !e.ref))) return `section ${i} has an incomplete example`;
+      if (!bundledSeed && !s.common_mistake) return `section ${i} missing common_mistake`;
+      if (bundledSeed && (!s.example_target_2 || !s.note || !["Beginner", "Intermediate", "Advanced"].includes(s.level))) return `section ${i} incomplete bundled grammar`;
       const err = checkScriptInArray([s], "example_target");
       if (err) return err;
-      const err2 = checkScriptInArray(s.examples, "target");
+      const err2 = checkScriptInArray(s.examples || [], "target");
       if (err2) return `section ${i} examples: ${err2}`;
     }
     return null;
@@ -1281,10 +1286,12 @@ function validateContent(lang, tab, data) {
     if (!Array.isArray(data.categories))       return "missing categories array";
     if (data.categories.length < 9)            return `only ${data.categories.length} categories (need ≥9)`;
     for (const [i, c] of data.categories.entries()) {
+      if (!c || typeof c !== "object") return `category ${i} is not an object`;
       if (!c.name)                             return `category ${i} missing name`;
       // Comprehensive spec: ≥30 words per category, each shown in an example sentence.
-      if (!Array.isArray(c.words) || c.words.length < 30) return `category ${i} has too few words (need ≥30)`;
-      if (c.words.some(w => !w || !w.t || !w.r || !w.ex))  return `category ${i} has a word missing t/r/ex`;
+      const minimum = bundledSeed ? 8 : 30;
+      if (!Array.isArray(c.words) || c.words.length < minimum) return `category ${i} has too few words (need ≥${minimum})`;
+      if (c.words.some(w => !w || !w.t || !w.r || (!bundledSeed && !w.ex))) return `category ${i} has an incomplete word`;
       const err = checkScriptInArray(c.words, "t");
       if (err) return `category ${i}: ${err}`;
     }
@@ -1641,11 +1648,9 @@ router.get("/:lang/:tab", requireAuth, asyncHandler(async (req, res) => {
         cached:       true,
       });
     }
-    // Corrupt row: serve the curated seed but leave the row alone (replacing it would
-    // remap lesson progress), or say honestly that the section can't be loaded.
+    // A different fallback would also remap position-based progress even without
+    // updating the row. Fail explicitly until the original content is recovered.
     console.error(`[Content] Corrupt content_cache row ${lang}/${tab}: ${problem}`);
-    const fallback = loadSeedFile(lang, tab);
-    if (fallback) return res.json({ content: fallback, cached: false, seeded: true });
     return res.status(503).json({ code: "content_corrupt", error: "This section can't be loaded right now." });
   }
 
@@ -1774,7 +1779,7 @@ function loadSeedFile(lang, tab) {
     const file = require("path").join(_seedDir, lang, `${tab}.json`);
     if (!fs.existsSync(file)) return null;
     const content = JSON.parse(fs.readFileSync(file, "utf8"));
-    if (validateContent(lang, tab, content)) return null; // invalid → ignore
+    if (validateContent(lang, tab, content, { bundledSeed: true })) return null;
     return content;
   } catch (e) {
     console.warn(`[Content] Seed file ${lang}/${tab} unreadable: ${e.message}`);
@@ -1807,7 +1812,7 @@ async function seedContent() {
       let content;
       try { content = JSON.parse(fs.readFileSync(file, "utf8")); }
       catch (e) { console.warn(`[Seed] bad JSON ${lang}/${tab}: ${e.message}`); invalid++; continue; }
-      const verr = validateContent(lang, tab, content);
+      const verr = validateContent(lang, tab, content, { bundledSeed: true });
       if (verr) { console.warn(`[Seed] invalid ${lang}/${tab}: ${verr}`); invalid++; continue; }
 
       const existing = await db.get("SELECT content_json FROM content_cache WHERE lang=$1 AND tab=$2", [lang, tab]);

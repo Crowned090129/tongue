@@ -16,7 +16,7 @@ for (const lang of VALID_LANGS) {
     let data;
     try { data = JSON.parse(fs.readFileSync(f, "utf8")); }
     catch (e) { bad++; problems.push(`BADJSON  ${lang}/${tab}: ${e.message}`); continue; }
-    const err = validateContent(lang, tab, data);
+    const err = validateContent(lang, tab, data, { bundledSeed: true });
     if (err) { bad++; problems.push(`INVALID  ${lang}/${tab}: ${err}`); }
     else {
       // Report the depth so we can see how rich each file is.
@@ -29,4 +29,4 @@ for (const lang of VALID_LANGS) {
 
 if (problems.length) { console.log(problems.join("\n")); console.log(""); }
 console.log(`${ok} valid, ${bad} invalid, ${missing} missing  (of ${VALID_LANGS.length * VALID_TABS.length})`);
-process.exit(bad ? 1 : 0);
+process.exit(bad || missing ? 1 : 0);

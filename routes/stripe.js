@@ -82,6 +82,10 @@ router.post("/create-checkout", asyncHandler(async (req, res) => {
 // Signed-in users only, and only for their own Stripe customer. The request body
 // is ignored: the customer comes from the verified session, never from input.
 router.post("/create-portal", requireAuth, asyncHandler(async (req, res) => {
+  // Older tokens have no proof-of-ownership claim; require a fresh verified login.
+  if (req.user.verified !== true) {
+    return res.status(403).json({ code: "verification_required", error: "Sign in with your email link or Google before managing billing." });
+  }
   const user = await db.get("SELECT stripe_customer_id FROM users WHERE id = $1", [req.user.userId]);
   if (!user?.stripe_customer_id) {
     return res.status(404).json({ code: "no_billing_account", error: "No billing account found for this account." });

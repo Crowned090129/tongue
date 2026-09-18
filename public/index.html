@@ -221,7 +221,9 @@
        that actually show it (mobile home), so it never covers the menu — and
        stays low on every other screen. */
     body.has-bottom-dock .support-fab{bottom:calc(96px + env(safe-area-inset-bottom))}
-  </style>
+  button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid #C0153E; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+</style>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
@@ -2603,7 +2605,7 @@ const UI_NAV = {
     wrap_grammar_sub:"Every conjugation and rule, laid out in full tables",
     wrap_vocab_sub:"Every word by theme — with audio and example sentences",
     wrap_dialogues_sub:"Full conversations you'll actually have — read, listen, role-play",
-    wrap_flashcards_sub:"Reviews surface right before you'd forget — nothing wasted",
+    wrap_flashcards_sub:"Practise recalling words on a spaced schedule",
     wrap_drills_sub:"Fast reps that turn the rules into reflexes",
     wrap_structures_sub:"The skeletons of real sentences — swap in any words",
     wrap_wordspace_sub:"Type any word to see it translated, broken down, and voiced",
@@ -3333,7 +3335,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
               <>
                 <div style={{ fontSize:12.5, color:"#574C42", marginBottom:8, textAlign:"center", lineHeight:1.5 }}>This code isn't linked to an account yet. Enter the email you want to use — it'll be yours from now on.</div>
                 <input value={bindEmail} onChange={e=>setBindEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&login()}
-                  placeholder="your@email.com" type="email" autoFocus
+                  aria-label="Email address" placeholder="your@email.com" type="email" autoFocus
                   style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`2px solid ${err?"#dc2626":"#e2e8f0"}`, fontSize:16, marginBottom:10, boxSizing:"border-box" }}
                 />
               </>
@@ -3370,7 +3372,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
               <div>Flashcards &amp; Word Space</div>
             </div>
             <input value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&signupFree()}
-              placeholder="your@email.com" type="email" autoFocus
+              aria-label="Email address" placeholder="your@email.com" type="email" autoFocus
               style={{ width:"100%", padding:"12px 14px", borderRadius:10, border:`2px solid ${err?"#dc2626":"#e2e8f0"}`, fontSize:16, marginBottom:10, boxSizing:"border-box" }}
             />
             {err && <div style={{ color:"#dc2626", fontSize:13, marginBottom:10, textAlign:"center" }}>{err}</div>}
@@ -5287,7 +5289,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
         ? <Info text="Your flashcard deck is empty. Save words while using the Coach (New Word exercise → Save to Flashcards) or the Vocabulary tab. Then come back here each day to review." color={C.muted} />
         : dueCards.length === 0
           ? <Info text="All caught up! No cards due right now. Come back later or add new words from the Coach." color={C.green} />
-          : <Info text="Rate each card honestly — 'Again' brings it back immediately; 'Easy' schedules it days away. The algorithm does the rest. Daily review beats long sessions." color={C.muted} />
+          : <Info text="Try to recall the meaning before revealing it. Rate your recall honestly: 'Again' schedules tomorrow; other ratings use your review history. These ratings are not an assessment." color={C.muted} />
       }
 
       {/* Stats row */}
@@ -5295,7 +5297,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
         {[
           [t("fc_stat_total"), totalCards, C.blue],
           [t("fc_stat_due"), dueCards.length, dueCards.length > 0 ? C.muted : C.green],
-          [t("fc_stat_learned"), learnedCards, C.accent],
+          ["Practised", learnedCards, C.accent],
         ].map(([label, val, col]) => (
           <div key={label} style={{ background:C.card, borderRadius:10, padding:"10px 12px", textAlign:"center", border:`1px solid ${C.bdr}`, boxShadow:C.sh }}>
             <div style={{ fontWeight:900, fontSize:22, color:col }}>{val}</div>
@@ -5556,6 +5558,7 @@ function WordOfDay({ tLang }) {
 
 function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, dark, onToggleDark, streak, isDesktop, userLevel }) {
   useLucide([L.id, factIdx, dark]);
+  const review = fcDeckStats(fcLoad(), L.id, Date.now());
   const fact = L.facts[factIdx % L.facts.length];
   // Show the learner's own stored self-assessment when we have it, else the language's default CEFR band.
   const LEVEL_LABEL = { "beginner-zero":t("lvl_starting"), beginner:t("lvl_beginner"), intermediate:t("lvl_intermediate"), advanced:t("lvl_advanced") };
@@ -5602,10 +5605,10 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           </div>
         </button>
         <div style={{display:"flex",alignItems:"center",gap:7}}>
-          <button onClick={onToggleDark} style={{width:34,height:34,border:`1px solid ${C.line}`,background:C.surf2,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+          <button aria-label={dark ? "Light mode" : "Dark mode"} onClick={onToggleDark} style={{width:34,height:34,border:`1px solid ${C.line}`,background:C.surf2,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
             <Icon name={dark?"sun":"moon"} size={15}/>
           </button>
-          <button onClick={onOpenSettings} style={{width:34,height:34,border:`1px solid ${C.line}`,background:C.surf2,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
+          <button aria-label="Settings" onClick={onOpenSettings} style={{width:34,height:34,border:`1px solid ${C.line}`,background:C.surf2,borderRadius:9,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
             <Icon name="settings" size={15}/>
           </button>
         </div>
@@ -5614,39 +5617,15 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
 
       {/* Scrollable body */}
       <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "16px 18px 10px"}}>
-        {/* Real progress strip — replaces the old filler pills */}
-        {(() => {
-          let words = 0, lessons = 0;
-          try { words = fcLoad().filter(c => c.lang === L.id).length; } catch(e) {}
-          try { lessons = lpLoad(L.id).size; } catch(e) {}
-          const stats = [
-            { icon:"flame",        color:"#E8902B", val: streak,  label: streak === 1 ? "day streak" : "day streak", empty: streak === 0 ? t("home_start_streak") : null },
-            { icon:"layers",       color:C.accent,  val: words,   label: words === 1 ? "word saved" : "words saved" },
-            { icon:"circle-check", color:"#22A06B", val: lessons, label: lessons === 1 ? "lesson done" : "lessons done" },
-          ];
-          return (
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
-              {stats.map((s,i) => (
-                <div key={i} style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"12px 14px",boxShadow:C.sh}}>
-                  <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:5}}>
-                    <div style={{width:26,height:26,borderRadius:8,background:s.color+"1a",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                      <Icon name={s.icon} size={15} color={s.color}/>
-                    </div>
-                  </div>
-                  {s.empty ? (
-                    <div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>{s.empty}</div>
-                  ) : (
-                    <div style={{display:"flex",alignItems:"baseline",gap:5}}>
-                      <span style={{fontSize:22,fontWeight:900,color:C.text,fontFamily:"var(--serif)"}}>{s.val}</span>
-                      <span style={{fontSize:11.5,fontWeight:600,color:C.muted}}>{s.label}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          );
-        })()}
-
+        <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:20,padding:isDesktop?"36px":"24px",marginBottom:22}}>
+          <div style={{fontSize:12,fontWeight:600,color:C.accent,marginBottom:12}}>{L.name} · one useful session</div>
+          <h1 style={{fontFamily:"var(--serif)",fontSize:isDesktop?36:28,fontWeight:600,lineHeight:1.15,color:C.text,margin:"0 0 14px"}}>{review.due.length ? "Bring your words back." : "Make room for a little learning."}</h1>
+          <p style={{fontSize:15,color:C.muted,lineHeight:1.6,maxWidth:520,margin:"0 0 22px"}}>{review.due.length ? `${review.due.length} saved words are ready to review. Try each answer before revealing it.` : "Start with one lesson. Read, listen, then save useful words to practise later."}</p>
+          <button onClick={()=>nav(review.due.length ? "review" : "learn")} style={{minHeight:48,background:C.accent,color:"#fff",border:0,borderRadius:11,padding:"13px 22px",fontFamily:"inherit",fontWeight:700,fontSize:15,cursor:"pointer"}}>{review.due.length ? "Review your words" : "Continue learning"}</button>
+          <p style={{fontSize:12,color:C.muted,margin:"20px 0 0"}}>{review.total} saved words · {lpLoad(L.id).size} lessons marked complete · stored in this browser</p>
+        </section>
+        <details style={{color:C.text,marginBottom:20}}>
+          <summary style={{cursor:"pointer",padding:"14px 0",fontSize:15,fontWeight:600}}>Explore lessons and tools</summary>
         {/* Dashboard row: today's word · a fact · the coach */}
         <div style={{display:"grid", gridTemplateColumns: isDesktop ? "repeat(auto-fit, minmax(300px, 1fr))" : "1fr", gap:12, marginBottom:14, alignItems:"start"}}>
         <WordOfDay tLang={L.id}/>
@@ -5677,24 +5656,6 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
           <Icon name="arrow-up-right" size={16} color={C.faint}/>
         </button>
         </div>
-
-        {/* Continue card — reflects the last thing you actually opened (no fake progress) */}
-        {(() => {
-          let last = null;
-          try { last = JSON.parse(localStorage.getItem("tongue_last") || "null"); } catch(e) {}
-          const hasLast = last && last.view && last.label;
-          return (
-            <button onClick={() => nav(hasLast ? last.view : "learn")} style={{width:"100%",textAlign:"left",borderRadius:16,padding:"15px 16px",background:GRAD,color:"#fff",cursor:"pointer",border:"none",boxShadow:"0 14px 28px -12px rgba(192,21,62,.45)",marginBottom:18,fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-              <div style={{minWidth:0}}>
-                <div style={{fontSize:9,fontWeight:700,letterSpacing:".14em",textTransform:"uppercase",opacity:.85}}>{hasLast ? t("home_resume_label") : t("home_new_here")}</div>
-                <div style={{fontWeight:700,fontSize:17,marginTop:5}}>{hasLast ? last.label : t("home_start_essentials")}</div>
-              </div>
-              <span style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,fontSize:13,flexShrink:0,background:"rgba(255,255,255,.18)",borderRadius:10,padding:"9px 14px"}}>
-                <Icon name={hasLast ? "play" : "sparkles"} size={14} color="#fff"/>{hasLast ? t("home_resume") : t("home_start")}
-              </span>
-            </button>
-          );
-        })()}
 
         {/* What do you want to do? — intent-first navigation */}
         <div style={{fontSize:9,fontWeight:700,letterSpacing:".15em",textTransform:"uppercase",color:C.faint,marginBottom:11}}>{t("home_what")}</div>
@@ -5731,6 +5692,7 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
             </button>
           ))}
         </div>
+        </details>
       </div>
 
       {/* Helper dock — mobile bottom nav; on desktop the sidebar covers these */}
@@ -6062,12 +6024,12 @@ function VocabLesson({ cat, tLang }){
   const [msg,setMsg]=useState("");
   if(!cat) return <Info text="This lesson isn't available yet." color={C.muted}/>;
   const words=cat.words||[];
-  const addAll=()=>{ let n=0; words.forEach(w=>{ if(w.t && fcAdd({lang:tLang,front:w.t,back:w.r||"",pronunciation:w.p||"",example:""})) n++; }); setMsg(n?("Added "+n+" to Flashcards."):"Already in your Flashcards."); setTimeout(()=>setMsg(""),2500); };
+  const addAll=()=>{ let n=0; words.forEach(w=>{ if(w.t && fcAdd({lang:tLang,front:w.t,back:w.r||"",pronunciation:w.p||"",example:""})) n++; }); setMsg(n?("Added "+n+" to Flashcards. Open Flashcards to practise recalling them."):"Already in your Flashcards."); };
   return (
     <div>
       <div style={{fontFamily:"var(--serif)",fontSize:22,fontWeight:600,color:C.text,marginBottom:4}}>{cat.name}</div>
       <div style={{fontSize:12.5,color:C.muted,marginBottom:14}}>Learn these {words.length} words — tap the speaker to hear each one.</div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))",gap:10,alignItems:"start"}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(min(100%, 300px), 1fr))",gap:10,alignItems:"start"}}>
         {words.map((w,i)=>(
           <div key={i} style={{background:C.card,border:`1px solid ${C.bdr}`,borderRadius:12,padding:"11px 14px"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
@@ -6377,14 +6339,15 @@ function LearnPath({ L, tLang, onStreakUpdate }){
       if(!alive) return;
       const part=(r,key)=>(r.status==="fulfilled" && r.value && r.value.content && r.value.content[key]) || [];
       const grammar=part(g,"sections"), vocab=part(v,"categories"), dialogues=part(di,"dialogues");
-      if(!grammar.length && !vocab.length){
+      if(!grammar.length && !vocab.length && !dialogues.length){
         // Say what actually went wrong: the server's reason, offline, or simply no content yet.
         const failed=[g,v].find(r=>r.status==="rejected");
         if(failed) console.error("[learn] course load "+tLang+" failed:", failed.reason && (failed.reason.code || failed.reason.message));
         setD({loading:false, err: failed ? contentErrorMessage(failed.reason) : "This course isn't available for "+tName+" yet.", grammar:[],vocab:[],dialogues:[]});
         return;
       }
-      setD({loading:false,err:"",grammar,vocab,dialogues});
+      const partial = [g,v,di].some(r => r.status === "rejected");
+      setD({loading:false,err:"",partial,grammar,vocab,dialogues});
     });
     return ()=>{alive=false;};
   }, [tLang]);
@@ -6405,27 +6368,21 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   if (open){
     const idx = allLessons.findIndex(l=>l.id===open.id);
     const nx  = allLessons[idx+1] || null;
-    return <LessonView lesson={open} d={d} tLang={tLang} done={done.has(open.id)} hasNext={!!nx}
+    return <LessonView key={open.id} lesson={open} d={d} tLang={tLang} done={done.has(open.id)} hasNext={!!nx}
       onToggle={()=>toggle(open.id)} onClose={()=>setOpen(null)}
       onNext={()=>{ markDone(open.id); setOpen(nx); }}/>;
   }
 
   return (
     <div style={{paddingBottom:24}}>
-      {/* Course dashboard — the journey at a glance */}
-      <div style={{background:GRAD, borderRadius:20, padding:"20px 22px", marginBottom:24, color:"#fff", boxShadow:"0 20px 40px -20px rgba(0,0,0,.35)"}}>
-        <div style={{display:"flex", alignItems:"center", gap:20, flexWrap:"wrap"}}>
-          <ProgressRing pct={pct} size={78}/>
-          <div style={{flex:1, minWidth:200}}>
-            <div style={{fontSize:10.5, fontWeight:700, letterSpacing:".14em", textTransform:"uppercase", opacity:.85}}>Your {tName} journey</div>
-            <div style={{fontFamily:"var(--serif)", fontSize:26, fontWeight:600, margin:"3px 0 4px", lineHeight:1.1}}>{doneCount} of {total} lessons</div>
-            <div style={{fontSize:13, opacity:.9}}>{units.length} stages · from first words to real conversations</div>
-          </div>
-          {nextLesson
-            ? <button onClick={()=>setOpen(nextLesson)} style={{background:"#fff", color:C.accent, border:"none", borderRadius:12, padding:"13px 20px", fontWeight:800, fontSize:14, cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center", gap:8, boxShadow:"0 8px 20px -8px rgba(0,0,0,.4)"}}>{doneCount?"Continue":"Start learning"} <Icon name="arrow-right" size={16} color={C.accent}/></button>
-            : <div style={{background:"rgba(255,255,255,.2)", borderRadius:12, padding:"12px 18px", fontWeight:700, fontSize:14}}>Course complete — keep reviewing!</div>}
-        </div>
-      </div>
+      <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:18,padding:"24px",marginBottom:24}}>
+        <div style={{fontSize:12,color:C.muted,fontWeight:600,marginBottom:8}}>{tName} · your next step</div>
+        <h2 style={{fontFamily:"var(--serif)",fontSize:28,fontWeight:600,color:C.text,lineHeight:1.2,margin:"0 0 12px"}}>{nextLesson ? lpTitle(nextLesson,d,tName) : "Keep what you've learned"}</h2>
+        <p style={{fontSize:14,color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>Read and listen, then save words for recall practice. Work through one lesson at a time.</p>
+        {nextLesson && <button onClick={()=>setOpen(nextLesson)} style={{background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"14px 20px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>{doneCount ? "Continue learning" : "Start learning"}</button>}
+        <p style={{fontSize:12,color:C.muted,margin:"16px 0 0"}}>{doneCount} of {total} lessons marked complete · saved in this browser. Completion is self-reported, not a proficiency score.</p>
+        {d.partial && <p role="status" style={{fontSize:13,color:C.text}}>Some sections could not load. Available lessons are shown; reload to try the missing sections again.</p>}
+      </section>
 
       {/* Stages */}
       {units.map((u,ui)=>{
@@ -6598,15 +6555,15 @@ function CultureScreen({ L, goBack }) {
 function ReviewScreen({ nav, goBack, tLang }) {
   useLucide([]);
   const now = Date.now();
-  const allCards = fcLoad();
-  const dueCards = allCards.filter(c => (c.nextReview || 0) <= now);
-  const newCards  = allCards.filter(c => !c.nextReview);
+  const stats = fcDeckStats(fcLoad(), tLang, now);
+  const allCards = stats.deck;
+  const dueCards = stats.due;
   const totalDue  = dueCards.length;
   const totalAll  = allCards.length;
 
   const groups = [
     {label:"Flashcards due",   count:`${totalDue} card${totalDue===1?"":"s"}`,    icon:"layers",        onClick:()=>nav("cards")},
-    {label:"New cards",        count:`${newCards.length} unseen`,                  icon:"plus-circle",   onClick:()=>nav("cards")},
+    {label:"Not yet recalled", count:`${stats.newCount} cards`,                    icon:"plus-circle",   onClick:()=>nav("cards")},
     {label:"Grammar drills",   count:"Practice exercises",                         icon:"zap",           onClick:()=>nav("drills")},
     {label:"Sentence patterns",count:"Reinforce structures",                        icon:"layout-list",   onClick:()=>nav("structures")},
   ];
@@ -6620,12 +6577,12 @@ function ReviewScreen({ nav, goBack, tLang }) {
           <div style={{fontSize:11,fontWeight:500,color:C.muted}}>{t("due_today_sub")}</div>
         </div>
       </div>
-      <div style={{borderRadius:16,padding:"16px 18px",background:GRAD,color:"#fff",marginBottom:15}}>
-        <div style={{fontSize:10,fontWeight:700,letterSpacing:".1em",textTransform:"uppercase",opacity:.85}}>{t("todays_mix")}</div>
+      <div style={{borderRadius:16,padding:"24px",background:C.surf,border:`1px solid ${C.line}`,color:C.text,marginBottom:20}}>
+        <div style={{fontSize:12,fontWeight:600,color:C.muted}}>{TARGETS[tLang]?.name || "Your language"} · spaced review</div>
         <div style={{fontWeight:700,fontSize:24,margin:"5px 0 4px"}}>{totalDue} {totalDue===1?"card":"cards"} due</div>
-        <div style={{fontSize:12,opacity:.85,marginBottom:14}}>{totalAll} total · SM-2 spaced repetition</div>
-        <button onClick={() => nav("cards")} style={{display:"flex",alignItems:"center",gap:7,background:"#fff",color:"#C0153E",border:"none",borderRadius:11,padding:"10px 16px",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
-          <Icon name="play" size={15} color="#C0153E"/>Start review session
+        <div style={{fontSize:13,color:C.muted,marginBottom:18}}>{totalDue ? "Try to recall each answer before revealing it. Your own rating schedules the next review." : totalAll ? "You're up to date. Come back when your next cards are due, or practise your deck." : "Save words from a lesson or add a starter deck to begin."}</div>
+        <button onClick={() => nav("cards")} style={{display:"flex",alignItems:"center",gap:7,background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"13px 18px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>
+          <Icon name="play" size={15} color="#fff"/>{totalDue ? "Start review session" : totalAll ? "Open flashcards" : "Build your first deck"}
         </button>
       </div>
       <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -6644,7 +6601,8 @@ function ReviewScreen({ nav, goBack, tLang }) {
       </div>
       <div style={{marginTop:14,background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:"13px 15px"}}>
         <div style={{fontWeight:600,fontSize:13.5,color:C.text,marginBottom:4}}>{t("your_deck")}</div>
-        <div style={{fontSize:12,color:C.muted}}>{totalAll} cards · {totalDue} due · {allCards.filter(c=>c.nextReview && c.nextReview > now).length} upcoming</div>
+        <div style={{fontSize:12,color:C.muted}}>{totalAll} cards · {totalDue} due · {stats.upcoming.length} upcoming</div>
+        <div style={{fontSize:12,color:C.muted,marginTop:8}}>Saved in this browser. Review counts describe practice, not proficiency.</div>
         <div style={{height:5,background:C.surf2,borderRadius:99,overflow:"hidden",marginTop:10}}>
           <div style={{height:"100%",width:totalAll > 0 ? `${Math.round((totalAll-totalDue)/totalAll*100)}%` : "0%",background:GRAD,borderRadius:99}}/>
         </div>
@@ -6659,12 +6617,15 @@ function NewOnboarding({ onDone, onSetLang }) {
   const [step, setStep] = useState(0);
   const [selLang, setSelLang] = useState("fr");
   const [selLevel, setSelLevel] = useState(1);
+  const [goal, setGoal] = useState("conversation");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const FEATURES = [
     {icon:"compass",title:"Explore freely",desc:"Grammar, words, phrases, sounds — every door open from day one"},
     {icon:"sparkles",title:"Coach on tap",desc:"A coworking space for whatever you're curious about"},
     {icon:"layers",title:"Helpers everywhere",desc:"Cards & drills attach to any topic instantly"},
-    {icon:"globe",title:"12 languages",desc:"One subscription, all of them — switch anytime"},
+    {icon:"globe",title:"12 languages",desc:"Reference material is free — switch anytime"},
   ];
   const LEVELS = [
     {title:"Complete beginner",desc:"Starting from zero"},
@@ -6676,20 +6637,23 @@ function NewOnboarding({ onDone, onSetLang }) {
 
   const prog = ((step + 1) / 4 * 100) + "%";
   const LEVEL_CODES = ["beginner-zero", "beginner", "intermediate", "advanced"];
-  const saveAndFinish = () => {
-    onSetLang(selLang);
-    if (isLoggedIn()) {
-      fetch("/api/auth/onboarding", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
-        body: JSON.stringify({ level: LEVEL_CODES[selLevel] || "beginner", language: selLang }),
-      }).catch(() => {});
-    }
-    onDone();
+  const saveAndFinish = async () => {
+    setSaving(true); setSaveError("");
+    try {
+      let res;
+      try { res = await fetch("/api/auth/onboarding", {
+        method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+        body: JSON.stringify({ level: LEVEL_CODES[selLevel], language: selLang, goal }),
+      }); } catch (e) { throw new ApiRequestError("network"); }
+      if (!res.ok) throw await readApiError(res);
+      onSetLang(selLang);
+      onDone();
+    } catch (e) { setSaveError(aiErrorMessage(e)); }
+    finally { setSaving(false); }
   };
   const START_STEPS = [
-    { icon:"sparkles",   title:"Talk to your Coach",  desc:"The fastest way in — ask anything or get a bite-size exercise." },
-    { icon:"sun",        title:"Do Today's Practice",     desc:"A short daily rep. A little every day beats cramming." },
+    { icon:"book-open", title:"Start with one lesson", desc:"Read and listen to useful words. Save the ones you want to remember." },
+    { icon:"layers", title:"Recall before you reveal", desc:"Use Flashcards to try each answer, check it, and schedule your next review." },
     { icon:"compass",    title:"Explore when you're ready", desc:"Grammar, vocab, dialogues, flashcards — all in the menu, no rush." },
   ];
 
@@ -6740,7 +6704,12 @@ function NewOnboarding({ onDone, onSetLang }) {
         {step === 2 && (
           <>
             <div style={{fontSize:24,fontWeight:700,color:C.text,marginBottom:6}}>Your level?</div>
-            <div style={{fontSize:13.5,fontWeight:500,color:C.muted,marginBottom:20}}>The coach adapts from here.</div>
+            <div style={{fontSize:13.5,fontWeight:500,color:C.muted,marginBottom:20}}>Your starting point is self-reported. This is not a placement test.</div>
+            <label style={{display:"block",fontSize:14,color:C.text,marginBottom:16}}>What are you learning for?
+              <select value={goal} onChange={e=>setGoal(e.target.value)} style={{display:"block",marginTop:8,minHeight:44,width:"100%",maxWidth:420,background:C.surf,color:C.text,border:`1px solid ${C.line}`,borderRadius:10,padding:10,fontFamily:"inherit"}}>
+                <option value="conversation">Everyday conversation</option><option value="travel">An upcoming trip</option><option value="family">Family and friends</option><option value="work">Work</option><option value="personal">Personal interest</option>
+              </select>
+            </label>
             <div style={{display:"flex",flexDirection:"column",gap:11}}>
               {LEVELS.map((l,i)=>(
                 <button key={i} onClick={() => setSelLevel(i)} style={{display:"flex",alignItems:"center",gap:12,textAlign:"left",background:selLevel===i?C.accentSoft:C.surf,border:`1.5px solid ${selLevel===i?C.accent:C.line}`,borderRadius:14,padding:14,cursor:"pointer",fontFamily:"inherit"}}>
@@ -6777,15 +6746,16 @@ function NewOnboarding({ onDone, onSetLang }) {
           </>
         )}
       </div>
+      {saveError && <p role="alert" style={{color:C.red,fontSize:14}}>{saveError}</p>}
       <div style={{display:"flex",gap:10,marginTop:16}}>
         {step > 0 && (
-          <button onClick={() => setStep(s=>s-1)} style={{flexShrink:0,background:C.surf,border:`1px solid ${C.line}`,color:C.text,borderRadius:13,padding:"14px 20px",fontWeight:600,fontSize:14.5,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
+          <button disabled={saving} onClick={() => setStep(s=>s-1)} style={{flexShrink:0,background:C.surf,border:`1px solid ${C.line}`,color:C.text,borderRadius:13,padding:"14px 20px",fontWeight:600,fontSize:14.5,cursor:"pointer",fontFamily:"inherit"}}>Back</button>
         )}
-        <button onClick={() => {
+        <button disabled={saving} onClick={() => {
           if (step === 3) { saveAndFinish(); }
           else setStep(s=>s+1);
         }} style={{flex:1,background:GRAD,border:"none",color:"#fff",borderRadius:13,padding:14,fontWeight:600,fontSize:15,cursor:"pointer",fontFamily:"inherit"}}>
-          {step === 3 ? "Start learning" : "Continue"}
+          {saving ? "Saving…" : step === 3 ? "Start learning" : "Continue"}
         </button>
       </div>
     </div>
@@ -6819,17 +6789,61 @@ function LangSwitchOverlay({ current, onPick, onClose }) {
   );
 }
 
+// Modal keyboard behavior shared by account and upgrade dialogs.
+function useDialog(onClose) {
+  const ref = useRef(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+  useEffect(() => {
+    const previous = document.activeElement;
+    const dialog = ref.current;
+    const focusables = () => Array.from(dialog.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), [tabindex="0"]')).filter(el => el.getClientRects().length);
+    (focusables()[0] || dialog).focus();
+    const keydown = e => {
+      if (e.key === "Escape") { e.preventDefault(); closeRef.current(); }
+      if (e.key !== "Tab") return;
+      const nodes = focusables();
+      const first = nodes[0], last = nodes[nodes.length - 1];
+      if (!first) { e.preventDefault(); dialog.focus(); }
+      else if (e.shiftKey && (document.activeElement === first || document.activeElement === dialog || !dialog.contains(document.activeElement))) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", keydown);
+    return () => { document.removeEventListener("keydown", keydown); if (previous?.isConnected) previous.focus(); };
+  }, []);
+  return ref;
+}
+
 // ── SETTINGS OVERLAY (new design) ─────────────────────────────────────────────
 function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFree, onOpenVoice, dark, onToggleDark, themeChoice, onPickTheme, tLang }) {
   useLucide([nativeLang, themeChoice]);
+  const dialogRef = useDialog(onClose);
+  const [billingBusy, setBillingBusy] = useState(false);
+  const [billingError, setBillingError] = useState("");
+  const openBilling = async () => {
+    setBillingBusy(true); setBillingError("");
+    try {
+      let res;
+      try { res = await fetch("/api/stripe/create-portal", { method:"POST", headers:{"Authorization":"Bearer " + getToken()} }); }
+      catch (e) { throw new ApiRequestError("network"); }
+      if (!res.ok) throw await readApiError(res);
+      const data = await res.json();
+      const destination = new URL(data.url);
+      if (destination.protocol !== "https:" || destination.hostname !== "billing.stripe.com") throw new Error("Invalid billing destination");
+      window.location.assign(destination.href);
+    } catch (e) {
+      setBillingError(aiErrorMessage(e));
+      setBillingBusy(false);
+    }
+  };
   const NATIVES = [{code:"en",name:"English"},{code:"es",name:"Español"},{code:"fr",name:"Français"},{code:"de",name:"Deutsch"},{code:"ja",name:"日本語"},{code:"zh",name:"中文"},{code:"pt",name:"Português"},{code:"it",name:"Italiano"}];
   const activeKey = resolveThemeKey(tLang, themeChoice);
   const swatch = (k) => (THEMES[k] ? (dark ? THEMES[k].dark : THEMES[k].light) : "#C0153E");
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.55)",zIndex:80,display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-      <div className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"82%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"var(--font)"}}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="account-title" tabIndex={-1} className="sheet-slide" onClick={e=>e.stopPropagation()} style={{background:C.bg,borderRadius:"24px 24px 0 0",borderTop:`1px solid ${C.line}`,maxHeight:"82%",overflowY:"auto",padding:"12px 20px 28px",fontFamily:"var(--font)"}}>
         <div style={{width:38,height:4,borderRadius:99,background:C.surf2,margin:"0 auto 16px"}}/>
-        <div style={{fontSize:19,fontWeight:700,color:C.text,marginBottom:14}}>Your Account</div>
+        <div id="account-title" style={{fontSize:19,fontWeight:700,color:C.text,marginBottom:14}}>Your Account</div>
         <div style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:14,padding:14,display:"flex",alignItems:"center",gap:12,marginBottom:16}}>
           <div style={{width:38,height:38,borderRadius:10,background:C.accentSoft,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <Icon name="user" size={19} color={C.accent}/>
@@ -6841,6 +6855,9 @@ function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFre
           {isFree && <a href="/subscribe" style={{background:GRAD,border:"none",color:"#fff",borderRadius:9,padding:"8px 12px",fontWeight:600,fontSize:12,cursor:"pointer",textDecoration:"none",fontFamily:"inherit"}}>Upgrade</a>}
         </div>
 
+        <button disabled={billingBusy} onClick={openBilling} style={{width:"100%",minHeight:44,background:C.surf,border:`1px solid ${C.line}`,color:C.text,borderRadius:12,padding:12,marginBottom:8,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>{billingBusy ? "Opening billing…" : "Manage subscription / cancel"}</button>
+        <p style={{fontSize:12,color:C.muted,margin:"0 0 16px"}}>Billing opens in Stripe after a verified sign-in. Lesson progress and cards are stored in this browser.</p>
+        {billingError && <p role="alert" style={{fontSize:13,color:C.red}}>{billingError}</p>}
         <div style={{fontSize:12,fontWeight:600,color:C.muted,marginBottom:9}}>Explanations in</div>
         <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:16}}>
           {NATIVES.map(n=>(
@@ -6880,15 +6897,16 @@ function SettingsOverlay({ onClose, onLogout, nativeLang, onSetNativeLang, isFre
 // ── UPGRADE OVERLAY (new design) ───────────────────────────────────────────────
 function UpgradeOverlay({ onClose }) {
   useLucide([]);
-  const FEATS = [{icon:"infinity",title:"Unlimited coaching"},{icon:"globe",title:"All 12 languages"},{icon:"layers",title:"Unlimited cards"},{icon:"trending-up",title:"Deep analytics"}];
+  const dialogRef = useDialog(onClose);
+  const FEATS = [{icon:"messages-square",title:"Up to 300 Coach messages a day"},{icon:"settings",title:"Manage or cancel through Stripe"}];
   return (
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.65)",zIndex:90,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:C.bg,border:`1px solid ${C.line}`,borderRadius:22,padding:24,width:"100%",maxWidth:380,boxShadow:"0 30px 70px -20px rgba(0,0,0,.7)",fontFamily:"var(--font)"}}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="upgrade-title" tabIndex={-1} onClick={e=>e.stopPropagation()} style={{background:C.bg,border:`1px solid ${C.line}`,borderRadius:22,padding:24,width:"100%",maxWidth:380,boxShadow:"0 30px 70px -20px rgba(0,0,0,.7)",fontFamily:"var(--font)"}}>
         <div style={{width:54,height:54,borderRadius:16,background:GRAD,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px",boxShadow:"0 12px 30px -6px rgba(192,21,62,.55)"}}>
           <Icon name="rocket" size={27} color="#fff"/>
         </div>
-        <div style={{textAlign:"center",fontSize:21,fontWeight:700,color:C.text}}>Go Premium</div>
-        <div style={{textAlign:"center",fontSize:13,fontWeight:500,color:C.muted,margin:"6px 0 18px",lineHeight:1.5}}>Unlimited coaching, all languages, deeper everything — $9/month.</div>
+        <div id="upgrade-title" style={{textAlign:"center",fontSize:21,fontWeight:700,color:C.text}}>Go Premium</div>
+        <div style={{textAlign:"center",fontSize:13,fontWeight:500,color:C.muted,margin:"6px 0 18px",lineHeight:1.5}}>More Coach practice — $9/month. Lessons, all 12 languages and flashcards remain free. AI availability may vary; short-term request limits apply.</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:18}}>
           {FEATS.map((u,i)=>(
             <div key={i} style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:13,padding:13}}>
@@ -6899,7 +6917,7 @@ function UpgradeOverlay({ onClose }) {
         </div>
         <a href="/subscribe" style={{display:"block",width:"100%",background:GRAD,border:"none",color:"#fff",borderRadius:13,padding:14,fontWeight:600,fontSize:15,cursor:"pointer",textAlign:"center",textDecoration:"none",fontFamily:"inherit"}}>Upgrade — from $9/month →</a>
         <div style={{textAlign:"center",marginTop:12}}>
-          <span onClick={onClose} style={{fontSize:13,fontWeight:500,color:C.faint,cursor:"pointer"}}>Maybe later</span>
+          <button onClick={onClose} style={{fontSize:14,fontWeight:500,color:C.text,cursor:"pointer",minHeight:44,background:"none",border:"none",fontFamily:"inherit"}}>Maybe later</button>
         </div>
       </div>
     </div>
@@ -7153,7 +7171,7 @@ function HowToUseModal({ onClose, tLang, onSetTab }) {
         "Tap <strong>Flashcards</strong> to review words you've saved.",
         "Words are shown on a card — tap to flip and reveal the meaning.",
         "Rate yourself: <strong>Again</strong>, <strong>Hard</strong>, <strong>Good</strong>, or <strong>Easy</strong> — the app uses spaced repetition to schedule the next review.",
-        "Cards you mark <em>Easy</em> come back in days; cards you mark <em>Again</em> come back immediately.",
+        "Cards you mark <em>Easy</em> come back in days; cards you mark <em>Again</em> are scheduled for tomorrow.",
         "<strong>Pro tip:</strong> Save 2-3 new words per day from the Coach and review all due cards — you'll memorize them permanently.",
       ]
     },
@@ -8293,7 +8311,7 @@ function App() {
       </div>
     );
   }
-  if (!loggedIn) return <AccessCodeLogin onLogin={() => setLoggedIn(true)} renewedBanner={renewedBanner} magicError={magicError} />;
+  if (!loggedIn) return <AccessCodeLogin onLogin={() => { setIsFree(getUserPlan() === "free"); setShowOnboarding(localStorage.getItem("_new_login") === "1"); setLoggedIn(true); }} renewedBanner={renewedBanner} magicError={magicError} />;
 
   if (showOnboarding) {
     return (
@@ -8302,6 +8320,7 @@ function App() {
         onDone={() => {
           try { localStorage.removeItem("_new_login"); localStorage.setItem("_seen_onboard","1"); } catch(e){}
           setShowOnboarding(false);
+          setView("learn");
         }}
       />
     );

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "NODE_ENV=test node --test tests/smoke.test.js",
+    "test": "NODE_ENV=test node --test --test-concurrency=1 tests/*.test.js",
     "icons": "node assets/generate-icons.js",
     "cap:init": "npm install && npx cap add ios && npx cap add android",
     "cap:sync": "npx cap sync",
@@ -14,7 +14,9 @@
     "cap:android": "npx cap open android",
     "cap:build": "node assets/generate-icons.js && npx @capacitor/assets generate && npx cap sync",
     "prewarm": "node scripts/prewarm-content.js",
-    "prewarm:force": "node scripts/prewarm-content.js --force"
+    "prewarm:force": "node scripts/prewarm-content.js --force",
+    "validate:seed": "node scripts/validate_seed.js",
+    "preview:local": "node scripts/preview-local.js"
   },
   "engines": {
     "node": ">=20.0.0"

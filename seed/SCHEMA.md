@@ -1,5 +1,7 @@
 # Tongue — curated seed content authoring spec
 
+Bundled v1 files use `validateContent(..., { bundledSeed: true })`. Existing examples and word arrays are preserved. New AI generation uses the stricter default: grammar needs three additional `examples` and `common_mistake`; vocabulary needs at least 30 words per category with `ex`. Never pad, reorder or replace existing content to meet that enrichment target without an identity/migration plan. Schema validation is not linguistic review.
+
 You are authoring **real, accurate, curated language-learning reference content** for the Tongue app.
 This is shipped content that real learners depend on — it must be **factually and grammatically correct**.
 Write one file per tab at `seed/content/<lang>/<tab>.json`. Each file contains ONLY the JSON object for that tab (no wrapper, no markdown).

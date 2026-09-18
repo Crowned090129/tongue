@@ -1,5 +1,7 @@
 # Astra Handoff — operating brief for Tongue
 
+Historical brief. Read [current project state](PROJECT_STATE.md) first; this file describes the September 17 baseline, not the latest branch or verification.
+
 **Written:** 2026-09-17, against git HEAD `b3f6504` ("P0: crash-proof the server, freeze content regeneration, fix security and billing, honest AI errors"), pushed to `origin/main`.
 
 You are picking this project up cold. Read sections 1–3 before you touch anything, then section 4 to know where the work actually stands, then section 5 for what to do first. Everything here was checked against the code at `b3f6504`, not against the older design documents. Where something is unverified, it says so in those words.
