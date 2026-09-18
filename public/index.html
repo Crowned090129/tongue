@@ -5619,8 +5619,8 @@ function ExploreHome({ L, nav, factIdx, onNextFact, onOpenSettings, onOpenLang, 
       <div style={{flex:1,overflowY:"auto",padding: isDesktop ? "22px 28px 12px" : "16px 18px 10px"}}>
         <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:20,padding:isDesktop?"36px":"24px",marginBottom:22}}>
           <div style={{fontSize:12,fontWeight:600,color:C.accent,marginBottom:12}}>{L.name} · one useful session</div>
-          <h1 style={{fontFamily:"var(--serif)",fontSize:isDesktop?36:28,fontWeight:600,lineHeight:1.15,color:C.text,margin:"0 0 14px"}}>{review.due.length ? "Bring your words back." : "Make room for a little learning."}</h1>
-          <p style={{fontSize:15,color:C.muted,lineHeight:1.6,maxWidth:520,margin:"0 0 22px"}}>{review.due.length ? `${review.due.length} saved words are ready to review. Try each answer before revealing it.` : "Start with one lesson. Read, listen, then save useful words to practise later."}</p>
+          <h1 style={{fontFamily:"var(--serif)",fontSize:isDesktop?36:28,fontWeight:600,lineHeight:1.15,color:C.text,margin:"0 0 14px"}}>{review.due.length ? "Bring your words back." : "Turn understanding into practice."}</h1>
+          <p style={{fontSize:15,color:C.muted,lineHeight:1.6,maxWidth:520,margin:"0 0 22px"}}>{review.due.length ? `${review.due.length} saved words are ready to review. Try each answer before revealing it.` : "Learn in short rounds: understand an example, try it from memory, then return to the words that need practice."}</p>
           <button onClick={()=>nav(review.due.length ? "review" : "learn")} style={{minHeight:48,background:C.accent,color:"#fff",border:0,borderRadius:11,padding:"13px 22px",fontFamily:"inherit",fontWeight:700,fontSize:15,cursor:"pointer"}}>{review.due.length ? "Review your words" : "Continue learning"}</button>
           <p style={{fontSize:12,color:C.muted,margin:"20px 0 0"}}>{review.total} saved words · {lpLoad(L.id).size} lessons marked complete · stored in this browser</p>
         </section>
@@ -6279,24 +6279,66 @@ function DialogueLesson({ dl, tLang }){
     </div>
   );
 }
+// Build practice only from existing paired content; never invent translations.
+function lessonPracticeItems(lesson,d){
+  if(lesson.kind==="vocab") return (d.vocab[lesson.idx]?.words||[]).filter(w=>w.t&&w.r).map(w=>({target:w.t,ref:w.r,note:w.ex||"",pronunciation:w.p||""}));
+  if(lesson.kind==="dialogue") return (d.dialogues[lesson.idx]?.lines||[]).filter(w=>w.target&&w.ref).map((w,i,lines)=>({...w,note:i ? lines[i-1].target : d.dialogues[lesson.idx].scene}));
+  const g=d.grammar[lesson.idx];
+  if(!g) return [];
+  // Legacy grammar references translate both base examples together.
+  const base=g.example_target&&g.example_ref ? [{target:[g.example_target,g.example_target_2].filter(Boolean).join(" "),ref:g.example_ref,note:g.rule}] : [];
+  return base.concat((g.examples||[]).filter(e=>e.target&&e.ref).map(e=>({...e,note:g.rule})));
+}
 function LessonView({ lesson, d, tLang, done, onToggle, onClose, onNext, hasNext }){
-  useLucide([lesson.id]);
-  return (
-    <div>
-      <button onClick={onClose} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:C.muted,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:14,padding:0}}>
-        <Icon name="arrow-left" size={16} color={C.muted}/> Back to course
-      </button>
-      {lesson.kind==="vocab"    && <VocabLesson cat={d.vocab[lesson.idx]} tLang={tLang}/>}
-      {lesson.kind==="grammar"  && <GrammarLesson s={d.grammar[lesson.idx]} tLang={tLang}/>}
+  const items=lessonPracticeItems(lesson,d);
+  const [stage,setStage]=useState("study");
+  const [index,setIndex]=useState(0);
+  const [revealed,setRevealed]=useState(false);
+  const [draft,setDraft]=useState("");
+  const [missed,setMissed]=useState([]);
+  const [saved,setSaved]=useState("");
+  const [round,setRound]=useState(0);
+  const batch=items.slice(round*5,round*5+5);
+  const item=batch[index];
+  const title=lpTitle(lesson,d,TARGETS[tLang]?.name);
+  useLucide([lesson.id,stage,index]);
+  const primary={background:C.accent,color:"#fff",border:0,borderRadius:12,padding:"14px 22px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"};
+  const secondary={...primary,background:C.surf2,color:C.text,border:`1px solid ${C.line}`};
+  const next=()=>{setRevealed(false);setDraft("");if(index+1<batch.length)setIndex(index+1);else {setIndex(0);setStage(stage==="study"?"recall":"summary");}};
+  const rate=(needsWork)=>{if(needsWork)setMissed(v=>[...new Set([...v,index])]);next();};
+  const save=()=>{let added=0;batch.forEach(w=>{if(fcAdd({lang:tLang,front:w.target,back:w.ref,example:w.note||""}))added++;});setSaved(added+" added. These items are ready in Flashcards; existing cards keep their schedule.");};
+  return <div style={{maxWidth:760,margin:"0 auto",paddingBottom:30}}>
+    <button onClick={onClose} style={{...secondary,padding:"8px 12px",marginBottom:20}}>← Back to course</button>
+    <div style={{display:"flex",gap:8,marginBottom:22,flexWrap:"wrap"}}>{["study","recall","summary"].map((step,i)=><span key={step} style={{padding:"7px 13px",borderRadius:99,fontSize:12,fontWeight:700,background:stage===step?C.accentSoft:C.surf2,color:stage===step?C.accent:C.muted}}>{i+1} · {step==="study"?"Understand":step==="recall"?"Try from memory":"Your next step"}</span>)}</div>
+    <h1 style={{fontFamily:"var(--serif)",fontSize:32,color:C.text,margin:"0 0 8px"}}>{title}</h1>
+    <p style={{color:C.muted,lineHeight:1.6,margin:"0 0 24px"}}>{lesson.kind==="dialogue"?"Listen to the exchange, then try saying each reply yourself.":lesson.kind==="grammar"?"See the pattern in context, then reconstruct the examples.":"A few words at a time. Understand them first, then try producing them without looking."}</p>
+    {item && stage!=="summary" && <section style={{background:C.card,border:`1px solid ${C.line}`,borderRadius:24,padding:"clamp(20px, 5vw, 40px)",boxShadow:C.sh}}>
+      <div style={{display:"flex",justifyContent:"space-between",color:C.muted,fontSize:12,marginBottom:20}}><span>Round {round+1} · {stage==="study"?"Explore":"Recall"}</span><span>{index+1} / {batch.length}</span></div>
+      <div style={{height:4,background:C.surf2,borderRadius:4,marginBottom:28}}><div style={{width:((index+1)/batch.length*100)+"%",height:4,background:C.accent,borderRadius:4}}/></div>
+      {item.speaker && <div style={{color:C.accent,fontSize:12,fontWeight:700,marginBottom:10}}>{item.speaker}</div>}
+      {item.note && <p style={{color:C.muted,fontSize:14,lineHeight:1.6,borderLeft:`3px solid ${C.accentLine}`,paddingLeft:14}}>{item.note}</p>}
+      <h2 style={{fontFamily:"var(--serif)",fontSize:30,lineHeight:1.4,color:C.text,overflowWrap:"anywhere"}}>{stage==="study"?item.target:item.ref}</h2>
+      {stage==="study" ? <><p style={{fontSize:18,color:C.muted,lineHeight:1.6}}>{item.ref}</p><PlayBtn text={item.target}/><p style={{fontSize:13,color:C.muted}}>Listen if audio is available. Say it aloud once, then move on.</p><button style={primary} onClick={next}>{index+1===batch.length?"Ready to try from memory":"Next example"}</button></> : <>
+        <label style={{display:"block",color:C.text,fontWeight:600,marginBottom:10}} htmlFor="recall-answer">How would you say this?</label>
+        <textarea id="recall-answer" value={draft} onChange={e=>setDraft(e.target.value)} placeholder="Try typing it, or say your answer aloud…" style={{boxSizing:"border-box",width:"100%",minHeight:110,resize:"vertical",padding:16,borderRadius:12,border:`1px solid ${C.bdr}`,background:C.bg,color:C.text,fontFamily:"inherit",fontSize:17}}/>
+        {!revealed ? <button style={{...primary,marginTop:16}} onClick={()=>setRevealed(true)}>Compare with the example</button> : <div aria-live="polite" style={{marginTop:20}}><div style={{padding:20,background:C.accentSoft,borderRadius:14,color:C.text}}><b>{item.target}</b><div style={{marginTop:12}}><PlayBtn text={item.target}/></div></div><p style={{color:C.muted,fontSize:13,lineHeight:1.6}}>Compare the meaning and wording. This is one example, not the only possible answer. Your rating is self-assessed; speech and writing are not automatically graded.</p><div style={{display:"flex",gap:10,flexWrap:"wrap"}}><button style={secondary} onClick={()=>rate(true)}>I need another try</button><button style={primary} onClick={()=>rate(false)}>I recalled it</button></div></div>}
+      </>}
+    </section>}
+    {stage==="summary" && <section style={{background:C.card,border:`1px solid ${C.line}`,borderRadius:24,padding:30}}>
+      <div style={{color:C.accent,fontSize:12,fontWeight:700}}>ROUND COMPLETE</div><h2 style={{fontFamily:"var(--serif)",fontSize:28,color:C.text}}>You did more than read.</h2>
+      <p style={{color:C.muted,lineHeight:1.7}}>You attempted {batch.length} {batch.length===1?"example":"examples"} from memory. {missed.length ? missed.length+" felt difficult. Revisit those examples before moving on." : "You rated each one as recalled. Try them again on another day to see what sticks."}</p>
+      {missed.length>0 && <div style={{color:C.text,marginBottom:20}}>{missed.map(i=><p key={i}><b>{batch[i].target}</b> — {batch[i].ref}</p>)}</div>}
+      <div style={{display:"flex",gap:10,flexWrap:"wrap"}}><button style={secondary} onClick={()=>{setIndex(0);setMissed([]);setRevealed(false);setStage("recall");}}>Try this round again</button><button style={secondary} onClick={save}>Save this round for review</button>
+      {((round+1)*5<items.length) ? <button style={primary} onClick={()=>{setRound(round+1);setIndex(0);setMissed([]);setSaved("");setStage("study");}}>Next short round</button> : <button style={primary} onClick={onNext}>{hasNext?"Finish lesson & continue":"Finish lesson"}</button>}</div>
+      {saved && <p role="status" style={{color:C.muted}}>{saved}</p>}
+    </section>}
+    {!items.length && <Info text="Practice isn't available for this material yet. You can still read the reference below." color={C.muted}/>}
+    <details style={{marginTop:28,color:C.muted}}><summary style={{cursor:"pointer",padding:"12px 0",fontWeight:600}}>Open the full lesson reference</summary><div style={{marginTop:16}}>
+      {lesson.kind==="vocab" && <VocabLesson cat={d.vocab[lesson.idx]} tLang={tLang}/>}
+      {lesson.kind==="grammar" && <GrammarLesson s={d.grammar[lesson.idx]} tLang={tLang}/>}
       {lesson.kind==="dialogue" && <DialogueLesson dl={d.dialogues[lesson.idx]} tLang={tLang}/>}
-      <div style={{display:"flex",gap:10,marginTop:20,flexWrap:"wrap"}}>
-        <button onClick={onNext} style={{flex:1,minWidth:170,padding:"13px",background:C.accent,color:"#fff",border:"none",borderRadius:11,fontWeight:700,fontSize:14,cursor:"pointer"}}>
-          {hasNext ? "Mark complete & continue" : "Mark complete"}
-        </button>
-        <button onClick={onToggle} style={{padding:"13px 18px",background:C.card,color:done?C.green:C.text,border:`1px solid ${done?C.green:C.bdr}`,borderRadius:11,fontWeight:700,fontSize:13.5,cursor:"pointer"}}>{done?"✓ Completed":"Mark done"}</button>
-      </div>
-    </div>
-  );
+    </div></details>
+  </div>;
 }
 const LESSON_KIND = {
   vocab:    { color:"#1E82C4", icon:"type",             label:"Words" },
@@ -6378,13 +6420,19 @@ function LearnPath({ L, tLang, onStreakUpdate }){
       <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:18,padding:"24px",marginBottom:24}}>
         <div style={{fontSize:12,color:C.muted,fontWeight:600,marginBottom:8}}>{tName} · your next step</div>
         <h2 style={{fontFamily:"var(--serif)",fontSize:28,fontWeight:600,color:C.text,lineHeight:1.2,margin:"0 0 12px"}}>{nextLesson ? lpTitle(nextLesson,d,tName) : "Keep what you've learned"}</h2>
-        <p style={{fontSize:14,color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>Read and listen, then save words for recall practice. Work through one lesson at a time.</p>
+        <p style={{fontSize:14,color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>Understand a few examples, try them from memory, and decide what needs another round. Every lesson now includes guided practice.</p>
         {nextLesson && <button onClick={()=>setOpen(nextLesson)} style={{background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"14px 20px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>{doneCount ? "Continue learning" : "Start learning"}</button>}
         <p style={{fontSize:12,color:C.muted,margin:"16px 0 0"}}>{doneCount} of {total} lessons marked complete · saved in this browser. Completion is self-reported, not a proficiency score.</p>
         {d.partial && <p role="status" style={{fontSize:13,color:C.text}}>Some sections could not load. Available lessons are shown; reload to try the missing sections again.</p>}
       </section>
 
-      {/* Stages */}
+      {d.dialogues.length>0 && <section style={{background:C.card,border:`1px solid ${C.line}`,borderRadius:20,padding:24,marginBottom:24}}>
+        <div style={{color:C.accent,fontSize:12,fontWeight:700,marginBottom:8}}>PUT IT INTO A CONVERSATION</div>
+        <h2 style={{fontFamily:"var(--serif)",fontSize:24,color:C.text,margin:"0 0 10px"}}>Practise a real exchange</h2>
+        <p style={{color:C.muted,lineHeight:1.6}}>Work through a conversation. Read the preceding line, then try the next line before revealing the example.</p>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(min(100%,220px),1fr))",gap:12}}>{d.dialogues.slice(0,3).map((dl,i)=><button key={i} onClick={()=>setOpen(allLessons.find(l=>l.kind==="dialogue"&&l.idx===i))} style={{textAlign:"left",background:C.surf2,border:`1px solid ${C.line}`,padding:18,borderRadius:14,color:C.text,cursor:"pointer",fontFamily:"inherit"}}><b style={{display:"block",fontSize:15,marginBottom:8}}>{dl.title}</b><span style={{fontSize:13,lineHeight:1.6,color:C.muted}}>{dl.scene}</span><span style={{display:"block",marginTop:14,color:C.accent,fontWeight:700}}>Practise this scene →</span></button>)}</div>
+      </section>}
+      <details style={{color:C.text}}><summary style={{cursor:"pointer",fontWeight:700,padding:"12px 0 20px"}}>Browse the full course · {total} lessons</summary>
       {units.map((u,ui)=>{
         const uLessons = u.lessons;
         const uDone = uLessons.filter(l=>done.has(l.id)).length;
@@ -6435,6 +6483,7 @@ function LearnPath({ L, tLang, onStreakUpdate }){
           </div>
         );
       })}
+    </details>
     </div>
   );
 }
@@ -8341,6 +8390,7 @@ function App() {
   // Shorthand for wrapping old components with a back-btn header
   const wrap = (title, subtitle, content, noPad) => (
     <WrappedScreen title={title} subtitle={subtitle} goBack={goBack} noPad={noPad}>
+      {["grammar","grammar-full","vocab-full","dialogues","structures","analyzer","wordspace"].includes(view) && <aside style={{margin:"16px",padding:"16px 18px",borderRadius:14,background:C.accentSoft,color:C.text,display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}><div style={{flex:1,minWidth:180}}><b>Look it up. Then put it to use.</b><p style={{margin:"5px 0 0",fontSize:13,lineHeight:1.5}}>This is a reference tool. For a session with prompts, recall and a next step, open guided practice.</p></div><button onClick={()=>nav("learn")} style={{padding:"11px 15px",border:0,borderRadius:10,background:C.accent,color:"#fff",fontWeight:700,cursor:"pointer"}}>Start guided practice →</button></aside>}
       {content}
     </WrappedScreen>
   );

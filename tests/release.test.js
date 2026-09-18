@@ -176,3 +176,36 @@ test('rating schedules review without changing card identity or the original car
   assert.ok(result.next_review >= start+86400000);
   assert.equal(JSON.stringify(card),before);
 });
+
+test('guided practice retains paired material and requires every round before completion',()=>{
+  let states=[], cursor=0, completed=0, saved=[];
+  const context={React:{createElement:(tag,props,...children)=>({tag,props:props||{},children:children.flat(Infinity)})},
+    useState:initial=>{const i=cursor++;if(!(i in states))states[i]=typeof initial==='function'?initial():initial;return [states[i],value=>{states[i]=typeof value==='function'?value(states[i]):value;}];},
+    useLucide:()=>{},C:{},TARGETS:{fr:{name:'French'}},lpTitle:()=> 'Test lesson',PlayBtn:()=>{},VocabLesson:()=>{},GrammarLesson:()=>{},DialogueLesson:()=>{},Info:()=>{},fcAdd:card=>{saved.push(card);return true;}};
+  vm.createContext(context);
+  vm.runInContext(babel.transform(script.slice(script.indexOf('function lessonPracticeItems('),script.indexOf('const LESSON_KIND')),{presets:['react']}).code,context);
+  const words=Array.from({length:12},(_,i)=>({t:'word'+i,r:'meaning'+i}));
+  const data={vocab:[{words}],grammar:[{example_target:'one',example_target_2:'two',example_ref:'both translations',rule:'rule'}],dialogues:[{scene:'scene',lines:[{target:'hello',ref:'greeting'},{target:'reply',ref:'response'}]}]};
+  assert.equal(context.lessonPracticeItems({kind:'grammar',idx:0},data)[0].target,'one two');
+  assert.equal(context.lessonPracticeItems({kind:'dialogue',idx:0},data)[1].note,'hello');
+  const props={lesson:{id:'v0',kind:'vocab',idx:0},d:data,tLang:'fr',onNext:()=>completed++,onClose:()=>{},hasNext:true};
+  function render(){cursor=0;return context.LessonView(props);}
+  function nodes(node){return node&&typeof node==='object'?[node,...node.children.flatMap(nodes)]:[];}
+  function label(node){return node.children.map(c=>typeof c==='object'?'':String(c)).join('');}
+  function click(name){const button=nodes(render()).find(n=>n.tag==='button'&&label(n)===name);assert.ok(button,'button '+name);button.props.onClick();}
+  for(let round=0;round<3;round++){
+    const length=round===2?2:5;
+    for(let i=0;i<length-1;i++)click('Next example');
+    click('Ready to try from memory');
+    assert.equal(nodes(render()).some(n=>n.tag==='button'&&label(n)==='Finish lesson & continue'),false);
+    for(let i=0;i<length;i++){click('Compare with the example');click(i===0?'I need another try':'I recalled it');}
+    click('Save this round for review');
+    assert.equal(completed,0);
+    click(round===2?'Finish lesson & continue':'Next short round');
+  }
+  assert.equal(completed,1);
+  assert.equal(saved.length,12);
+  assert.equal(new Set(saved.map(c=>c.front)).size,12);
+  assert.ok(saved.every(c=>c.lang==='fr'));
+  assert.deepEqual(words, data.vocab[0].words);
+});
