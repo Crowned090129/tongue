@@ -9,8 +9,9 @@
 - Last **verified deployed code**: `88994b5`. Documentation commit `0f73452` followed it.
 - Production image: `registry.fly.io/tongue-app:deployment-01M2VDYVWAMWF0GT16ZGW52P1W`.
 - Verified production at 23:35 UTC: health/database OK, version image above, public HTML contains guided-practice code. Authenticated production journey was not repeated.
-- Latest hardening candidate: changes described below. **Not deployed.** Local build and 46 tests pass; browser/runtime release checks remain.
-- Work stopped when automatic approval review could not run because the account usage limit was reached. This was not an unsafe-action rejection. Do not bypass approval. User then requested this repository handoff.
+- **Superseded on 2026-09-19.** The candidate below was finished, corrected and verified; branch head is now `7484370`. Read [PROJECT_STATE.md](PROJECT_STATE.md) and
+  [verification/2026-09-19-mission-and-hardening.md](verification/2026-09-19-mission-and-hardening.md) for current truth. The sections below are kept as the record of what the candidate contained and why.
+- Still **not deployed**. Deployed code remains `88994b5`.
 
 ## User intent and operating constraints
 
@@ -26,7 +27,10 @@ No subagents were used or requested. User is sensitive to quota consumption. Do 
 
 `88994b5`: vocabulary, grammar and dialogue lessons use rounds of at most five paired items. Study/listen → type or speak from memory → reveal → self-rate → retry/save/continue. No completion button before the final round. Course entry features conversation scenes; catalogue and full lesson references are collapsed. Reference tools point back to guided practice. Canonical data/order unchanged. 39 local tests and hosted CI passed; local browser round and dialogue entry verified. This is self-assessment, not automatic correction or evidence of learning effectiveness.
 
-## Current unfinished hardening candidate
+## The hardening candidate (now finished — see the 2026-09-19 verification record)
+
+Items 1–8 below are implemented and verified. Item 9's runtime-only audit has since run: **9 moderate, 0 high, 0 critical**, all one `uuid` advisory reachable only via `node-cron` and optional `firebase-admin`. Two account-isolation defects found during verification (device-wide onboarding/profile state, and a session-expiry banner that never recomputed) were fixed. React/ReactDOM/lucide are no longer loaded from unpkg: they are pinned in `package-lock.json` and vendored at build time.
+
 
 1. `routes/auth.js`: existing-email signup returns 409 rather than issuing a session. `INSERT ... ON CONFLICT DO NOTHING` closes the signup race. New initial unverified sessions have `signupOwner:true`; old unverified/legacy sessions must sign in again. Every authenticated request checks current account existence/suspension/deletion and paid-code nonce/expiry. Sensitive verification now requires `verified === true`. Deleted status is preserved by sign-in upsert.
 2. Deletion fails closed when a billing customer exists but Stripe is unavailable or cancellation fails. It iterates all subscriptions and cancels nonterminal statuses. Database cleanup is transactional. **Still not complete data erasure:** audit all user-associated tables, retention obligations, concurrent webhooks and partial external cancellation. No real Stripe deletion was tested.
@@ -74,14 +78,12 @@ PORT=3003 SERVE_BUILT_CLIENT=on TEST_DATABASE_URL=postgres://tongue@127.0.0.1:55
 
 Use http://127.0.0.1:3003/app. Starting that preview was blocked before execution. Old port3001 preview may still be running stale server code: restart deliberately or use3003. Browser controls through `cua_repl`; read current documentation/state before use. Terminal/sandbox escalations are required for localhost networking here. Do not circumvent a failed approval.
 
-## Efficient next sequence
+## Next sequence (2026-09-19)
 
-1. Read this handoff, inspect `git status`/diff, run clean install + build + tests + runtime audit once. Review auth middleware, token compatibility and lock changes. Verify Node/cron compatibility after dependency updates. Add focused tests for new findings, not tests that merely mirror code.
-2. Browser-test two local accounts: signup, existing-email rejection, explicit verified test login, logout and reload, language switch, legacy migration, no cross-account cards, draft resume and completion cleanup. Check storage unavailable and changed-content cases. Do not inject or use production credentials. Confirm old signup sessions recover to a usable sign-in screen. Test built HTML, not only raw JSX preview.
-3. Returning-user recovery is now dependent on real email/Google/access-code login. Confirm configured sender and provider operation in an authorized test environment before broad rollout. A dangerous signup bypass is not an acceptable fallback for broken email.
-4. Complete a single authored restaurant mission: outcome “order a meal and ask for the bill,” a small set of useful examples, an attempt in context, explanation of errors and a retry. Accept valid alternatives. Deterministic authored feedback can cover bounded tasks; an AI assessor needs schema validation, uncertainty/fallback, cost caps and quality evaluation. Do not mark an unfamiliar correct response wrong just because it differs from the reference. No claims of pronunciation assessment without actual evidence.
-5. Persist account-owned progress server-side only after verified identity and conflict/recovery rules are defined. Local keys are an interim fix. Stable lesson/content versions must precede regenerated curricula; frozen positional IDs currently protect existing users.
-6. Close launch gates below, then one reviewed deployment. Capture previous image, check hosted CI, rolling health, `/api/version`, public asset contents, and one authenticated critical journey. Update PROJECT_STATE after, keeping exact code/image identity distinct from docs-only commits.
+Steps 1–5 of the original sequence are done. What remains is in
+[PROJECT_STATE.md](PROJECT_STATE.md) under "Exact next action": confirm real
+email delivery, get the capacity/budget numbers, build the container where
+Docker exists, then one reviewed deployment.
 
 ## Launch gates — not yet satisfied
 
