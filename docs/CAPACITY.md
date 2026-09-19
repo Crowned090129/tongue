@@ -33,6 +33,30 @@ mean authenticated traffic is now database-bound rather than free.
 
 ## What "millions" costs
 
+### Measured 2026-09-19 — and it contradicts the estimate below
+
+`scripts/ai-usage.js` was run against production. The result:
+
+> **6 AI calls from 4 learners in 30 days. $0.01 total. Average message 265
+> input / 65 output tokens. Busiest learner-day: 2 messages.**
+
+At those token counts a message costs about **$0.0012**, not the $0.008 estimated
+below — roughly **seven times cheaper**. On that figure, break-even against ~$9/month
+is around 250 messages/day, which makes the existing 300/day cap far more
+defensible than the estimate suggested.
+
+**Do not act on that yet.** Six calls is not a sample. They are almost certainly
+short test calls, not real learner conversations — the `/chat` path resends up to
+20 turns of up to 2,000 characters each, which would dwarf a 265-token average.
+The honest reading is: *nobody is using the AI features, so the cost question
+cannot be answered yet.* What has changed is that it is now answerable — run the
+script again once testers have had real conversations, and set the allowance from
+that number.
+
+The estimate below is retained because it is the right shape of analysis, and
+because it is the thing the measurement should replace. Treat every dollar figure
+in it as superseded the moment there is real usage to measure.
+
 ### AI is the binding constraint, and it binds long before infrastructure does
 
 `routes/claude.js` uses `claude-sonnet-4-5` with `max_tokens` capped at 2000
