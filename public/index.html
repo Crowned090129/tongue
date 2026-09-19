@@ -2781,13 +2781,32 @@ function Tabs({ items, current, onChange, color }) {
 }
 
 // ─── FLASHCARD HELPERS ───────────────────────────────────────────────────────
+// Browser-only learner data is partitioned by the signed-in account ID.
+// This is storage routing, never server authentication or authorization.
+function learnerId(token){
+  try { const claims=JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/"))); return Number.isSafeInteger(claims.userId)&&claims.userId>0 ? String(claims.userId) : "guest"; } catch { return "guest"; }
+}
+function learnerKey(key){ return "learner:"+learnerId(getToken())+":"+key; }
+function learnerGet(key){
+  const scoped=localStorage.getItem(learnerKey(key));
+  if(scoped!==null) return scoped;
+  // Only the account present when this upgrade first loaded may claim legacy data.
+  // If no account was present, retain the old bytes without exposing them to a new login.
+  if(localStorage.getItem("learner_legacy_owner")===learnerId(getToken()) && learnerId(getToken())!=="guest") {
+    const old=localStorage.getItem(key);
+    if(old!==null) { localStorage.setItem(learnerKey(key),old); return old; }
+  }
+  return null;
+}
+function learnerSet(key,value){localStorage.setItem(learnerKey(key),value);}
+
 const FC_KEY = "fc_cards_v2";
 
 function fcLoad() {
-  try { return JSON.parse(localStorage.getItem(FC_KEY) || "[]"); } catch(e) { return []; }
+  try { return JSON.parse(learnerGet(FC_KEY) || "[]"); } catch(e) { return []; }
 }
 function fcSave(cards) {
-  try { localStorage.setItem(FC_KEY, JSON.stringify(cards)); } catch(e) {}
+  try { learnerSet(FC_KEY, JSON.stringify(cards)); } catch(e) {}
 }
 
 function fcAdd(card) {
@@ -2889,6 +2908,9 @@ try {
 } catch(e) {}
 
 const getToken = () => _authToken;
+try {
+  if(localStorage.getItem("learner_legacy_owner")===null) localStorage.setItem("learner_legacy_owner",learnerId(_authToken));
+} catch {}
 const isLoggedIn = () => !!(
   _authToken && _authExpiry && new Date(_authExpiry) > new Date()
 );
@@ -2912,7 +2934,7 @@ const logout = () => {
     window.__unregisterPushToken(_authToken).catch(() => {});
   }
   _authToken = ""; _authExpiry = null; _userEmail = ""; _userPlan = "";
-  try { ["auth_token","auth_expiry","auth_email","auth_plan"].forEach(k => localStorage.removeItem(k)); } catch(e) {}
+  try { ["auth_token","auth_expiry","auth_email","auth_plan","tongue_code"].forEach(k => localStorage.removeItem(k)); } catch(e) {}
 };
 const getUserEmail = () => _userEmail;
 const getUserPlan = () => _userPlan;
@@ -2924,10 +2946,10 @@ const _streak = {
   get() {
     try {
       return {
-        count:   parseInt(localStorage.getItem("streak_count")   || "0"),
-        longest: parseInt(localStorage.getItem("streak_longest") || "0"),
-        total:   parseInt(localStorage.getItem("streak_total")   || "0"),
-        last:    localStorage.getItem("streak_last") || "",
+        count:   parseInt(learnerGet("streak_count")   || "0"),
+        longest: parseInt(learnerGet("streak_longest") || "0"),
+        total:   parseInt(learnerGet("streak_total")   || "0"),
+        last:    learnerGet("streak_last") || "",
       };
     } catch(e) { return { count:0, longest:0, total:0, last:"" }; }
   },
@@ -2939,10 +2961,10 @@ const _streak = {
       if (s.last === today) return s.count; // Already logged today
       const newCount   = (s.last === yesterday) ? s.count + 1 : 1;
       const newLongest = Math.max(newCount, s.longest);
-      localStorage.setItem("streak_count",   String(newCount));
-      localStorage.setItem("streak_longest", String(newLongest));
-      localStorage.setItem("streak_total",   String(s.total + 1));
-      localStorage.setItem("streak_last",    today);
+      learnerSet("streak_count",   String(newCount));
+      learnerSet("streak_longest", String(newLongest));
+      learnerSet("streak_total",   String(s.total + 1));
+      learnerSet("streak_last",    today);
       // Notify App component to refresh streak display
       window.dispatchEvent(new CustomEvent("streak-updated", { detail: { count: newCount } }));
       // Also sync to server (async, non-blocking)
@@ -4618,7 +4640,7 @@ function Dialogues({ tLang }) {
 
 function Roadmap({ tLang }) {
   const [done, setDone] = useState(() => {
-    try { return new Set(JSON.parse(localStorage.getItem("roadmap_" + tLang) || "[]")); } catch(e) { return new Set(); }
+    try { return new Set(JSON.parse(learnerGet("roadmap_" + tLang) || "[]")); } catch(e) { return new Set(); }
   });
   const tName = TARGETS[tLang]?.name || "French";
   const { content, loading, err, reload } = useApiContent(tLang, "roadmap");
@@ -4631,7 +4653,7 @@ function Roadmap({ tLang }) {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
-      try { localStorage.setItem("roadmap_" + tLang, JSON.stringify([...next])); } catch(e) {}
+      try { learnerSet("roadmap_" + tLang, JSON.stringify([...next])); } catch(e) {}
       return next;
     });
   };
@@ -4967,7 +4989,7 @@ function WordSpace({ tLang, rLangs }) {
   const [result,   setResult]   = useState(null);
   const [loading,  setLoading]  = useState(false);
   const [saved,    setSaved]    = useState(() => {
-    try { return JSON.parse(localStorage.getItem("ws_saved") || "[]"); } catch(e) { return []; }
+    try { return JSON.parse(learnerGet("ws_saved") || "[]"); } catch(e) { return []; }
   });
 
   // Debounced auto-translate
@@ -5003,13 +5025,13 @@ function WordSpace({ tLang, rLangs }) {
     };
     const updated = [entry, ...saved].slice(0, 100);
     setSaved(updated);
-    try { localStorage.setItem("ws_saved", JSON.stringify(updated)); } catch(e) {}
+    try { learnerSet("ws_saved", JSON.stringify(updated)); } catch(e) {}
   };
 
   const deleteEntry = (id) => {
     const updated = saved.filter(s => s.id !== id);
     setSaved(updated);
-    try { localStorage.setItem("ws_saved", JSON.stringify(updated)); } catch(e) {}
+    try { learnerSet("ws_saved", JSON.stringify(updated)); } catch(e) {}
   };
 
   return (
@@ -5220,7 +5242,7 @@ function Flashcards({ tLang, onStreakUpdate }) {
 
   const importFromWordSpace = () => {
     try {
-      const ws = JSON.parse(localStorage.getItem("ws_saved") || "[]");
+      const ws = JSON.parse(learnerGet("ws_saved") || "[]");
       let added = 0;
       ws.forEach(entry => {
         if (fcAdd({ lang: tLang, front: entry.fr, back: entry.ref || entry.input || "", pronunciation: entry.pronunciation || "", example: "" })) added++;
@@ -5530,7 +5552,7 @@ function WordOfDay({ tLang }) {
     if (_wodCache[tLang]) { setW(_wodCache[tLang]); return; }
     let alive = true;
     fetch(`/api/content/${tLang}/vocab`, { headers:{ "Authorization":"Bearer "+getToken() } })
-      .then(r => r.ok ? r.json() : null)
+      .then(r => { if(r.status===401 || r.status===403){ logout(); setLoggedIn(false); return null; } return r.ok ? r.json() : null; })
       .then(d => {
         const words = ((d && d.content && d.content.categories) || []).flatMap(c => (c.words || []));
         if (!words.length) return;
@@ -5987,8 +6009,8 @@ function PhrasesScreen({ L, nav, goBack }) {
 // languages, not just the ones with rich hardcoded data. Progress is per-language
 // and persists locally. This is the "teach me from the start" spine of the app.
 function lpKey(lang){ return "learn_progress_" + lang; }
-function lpLoad(lang){ try { return new Set(JSON.parse(localStorage.getItem(lpKey(lang)) || "[]")); } catch(e){ return new Set(); } }
-function lpSave(lang, set){ try { localStorage.setItem(lpKey(lang), JSON.stringify([...set])); } catch(e){} }
+function lpLoad(lang){ try { return new Set(JSON.parse(learnerGet(lpKey(lang)) || "[]")); } catch(e){ return new Set(); } }
+function lpSave(lang, set){ try { learnerSet(lpKey(lang), JSON.stringify([...set])); } catch(e){} }
 
 function buildUnits(grammar, vocab, dialogues, tName){
   const gAt = (lvl) => grammar.map((s,i)=>({s,i})).filter(x=>x.s.level===lvl);
@@ -6291,13 +6313,22 @@ function lessonPracticeItems(lesson,d){
 }
 function LessonView({ lesson, d, tLang, done, onToggle, onClose, onNext, hasNext }){
   const items=lessonPracticeItems(lesson,d);
-  const [stage,setStage]=useState("study");
-  const [index,setIndex]=useState(0);
-  const [revealed,setRevealed]=useState(false);
-  const [draft,setDraft]=useState("");
-  const [missed,setMissed]=useState([]);
+  const attemptKey="lesson_attempt_"+tLang+"_"+lesson.id;
+  const signature=JSON.stringify(items.map(w=>[w.target,w.ref]));
+  const [resume]=useState(()=>{
+    try { const value=JSON.parse(learnerGet(attemptKey)||"null");
+      if(value?.signature===signature && ["study","recall","summary"].includes(value.stage) && Number.isInteger(value.round) && value.round>=0 && value.round*5<items.length && Number.isInteger(value.index) && value.index>=0 && value.index<Math.min(5,items.length-value.round*5)) return value;
+    } catch {} return null;
+  });
+  const [stage,setStage]=useState(resume?.stage||"study");
+  const [index,setIndex]=useState(resume?.index||0);
+  const [revealed,setRevealed]=useState(resume?.revealed===true);
+  const [draft,setDraft]=useState(typeof resume?.draft==="string"?resume.draft:"");
+  const [missed,setMissed]=useState(Array.isArray(resume?.missed)?resume.missed.filter(i=>Number.isInteger(i)&&i>=0&&i<Math.min(5,items.length-resume.round*5)):[]);
   const [saved,setSaved]=useState("");
-  const [round,setRound]=useState(0);
+  const [round,setRound]=useState(resume?.round||0);
+  const [storageError,setStorageError]=useState("");
+  useEffect(()=>{try{learnerSet(attemptKey,JSON.stringify({signature,stage,index,revealed,draft,missed,round}));setStorageError("");}catch{setStorageError("This browser could not save your place. Keep this page open to finish the round.");}},[attemptKey,signature,stage,index,revealed,draft,missed,round]);
   const batch=items.slice(round*5,round*5+5);
   const item=batch[index];
   const title=lpTitle(lesson,d,TARGETS[tLang]?.name);
@@ -6310,6 +6341,7 @@ function LessonView({ lesson, d, tLang, done, onToggle, onClose, onNext, hasNext
   return <div style={{maxWidth:760,margin:"0 auto",paddingBottom:30}}>
     <button onClick={onClose} style={{...secondary,padding:"8px 12px",marginBottom:20}}>← Back to course</button>
     <div style={{display:"flex",gap:8,marginBottom:22,flexWrap:"wrap"}}>{["study","recall","summary"].map((step,i)=><span key={step} style={{padding:"7px 13px",borderRadius:99,fontSize:12,fontWeight:700,background:stage===step?C.accentSoft:C.surf2,color:stage===step?C.accent:C.muted}}>{i+1} · {step==="study"?"Understand":step==="recall"?"Try from memory":"Your next step"}</span>)}</div>
+    {storageError && <p role="alert" style={{color:C.red}}>{storageError}</p>}
     <h1 style={{fontFamily:"var(--serif)",fontSize:32,color:C.text,margin:"0 0 8px"}}>{title}</h1>
     <p style={{color:C.muted,lineHeight:1.6,margin:"0 0 24px"}}>{lesson.kind==="dialogue"?"Listen to the exchange, then try saying each reply yourself.":lesson.kind==="grammar"?"See the pattern in context, then reconstruct the examples.":"A few words at a time. Understand them first, then try producing them without looking."}</p>
     {item && stage!=="summary" && <section style={{background:C.card,border:`1px solid ${C.line}`,borderRadius:24,padding:"clamp(20px, 5vw, 40px)",boxShadow:C.sh}}>
@@ -6329,7 +6361,7 @@ function LessonView({ lesson, d, tLang, done, onToggle, onClose, onNext, hasNext
       <p style={{color:C.muted,lineHeight:1.7}}>You attempted {batch.length} {batch.length===1?"example":"examples"} from memory. {missed.length ? missed.length+" felt difficult. Revisit those examples before moving on." : "You rated each one as recalled. Try them again on another day to see what sticks."}</p>
       {missed.length>0 && <div style={{color:C.text,marginBottom:20}}>{missed.map(i=><p key={i}><b>{batch[i].target}</b> — {batch[i].ref}</p>)}</div>}
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}><button style={secondary} onClick={()=>{setIndex(0);setMissed([]);setRevealed(false);setStage("recall");}}>Try this round again</button><button style={secondary} onClick={save}>Save this round for review</button>
-      {((round+1)*5<items.length) ? <button style={primary} onClick={()=>{setRound(round+1);setIndex(0);setMissed([]);setSaved("");setStage("study");}}>Next short round</button> : <button style={primary} onClick={onNext}>{hasNext?"Finish lesson & continue":"Finish lesson"}</button>}</div>
+      {((round+1)*5<items.length) ? <button style={primary} onClick={()=>{setRound(round+1);setIndex(0);setMissed([]);setSaved("");setStage("study");}}>Next short round</button> : <button style={primary} onClick={()=>{try{localStorage.removeItem(learnerKey(attemptKey));}catch{}onNext();}}>{hasNext?"Finish lesson & continue":"Finish lesson"}</button>}</div>
       {saved && <p role="status" style={{color:C.muted}}>{saved}</p>}
     </section>}
     {!items.length && <Info text="Practice isn't available for this material yet. You can still read the reference below." color={C.muted}/>}
@@ -8260,7 +8292,7 @@ function App() {
   useEffect(() => {
     if (!isLoggedIn()) return;
     fetch("/api/auth/validate", { headers: { "Authorization": "Bearer " + getToken() } })
-      .then(r => r.ok ? r.json() : null)
+      .then(r => { if(r.status===401 || r.status===403){ logout(); setLoggedIn(false); return null; } return r.ok ? r.json() : null; })
       .then(d => {
         if (!d || !d.valid) return;
         if (d.plan && d.plan !== getUserPlan()) {
@@ -8339,7 +8371,7 @@ function App() {
     setView(ns.view);
     setStack(ns.stack);
     if (RESUMABLE[ns.view]) {
-      try { localStorage.setItem("tongue_last", JSON.stringify({ view: ns.view, label: RESUMABLE[ns.view] })); } catch(e){}
+      try { learnerSet("tongue_last", JSON.stringify({ view: ns.view, label: RESUMABLE[ns.view] })); } catch(e){}
     }
   };
   const goBack = () => {

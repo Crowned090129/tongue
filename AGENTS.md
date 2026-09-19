@@ -1,6 +1,6 @@
 # Tongue working instructions
 
-Read `docs/PROJECT_STATE.md` first. It identifies the active branch, verification, finite scope and blockers. Prior architecture/handoff documents are historical evidence, not authority to claim completion or expand scope.
+Read `docs/PROJECT_STATE.md` first, then `docs/LAUNCH_HANDOFF.md` for the active unfinished candidate. `docs/NEXT_MODEL_PROMPT.md` is the current pickup prompt. It identifies the active branch, verification, finite scope and blockers. Prior architecture/handoff documents are historical evidence, not authority to claim completion or expand scope.
 
 Optimize for truth and useful action. Separate verified behavior, inference, assumptions and unknowns. Challenge the premise and your own conclusion. Update records when evidence changes. Do not invent learner, revenue, retention or effectiveness results.
 

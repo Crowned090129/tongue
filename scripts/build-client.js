@@ -1,0 +1,18 @@
+'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const crypto=require('node:crypto');
+const babel=require('@babel/standalone');
+const root=path.join(__dirname,'..');
+const input=fs.readFileSync(path.join(root,'public/index.html'),'utf8');
+const pattern=/<script[^>]*type="text\/babel"[^>]*>([\s\S]*?)<\/script>/;
+const match=input.match(pattern);
+if(!match) throw new Error('Expected exactly one JSX entry point');
+const js=babel.transform(match[1],{presets:['react'],comments:false,compact:true}).code;
+const hash=crypto.createHash('sha256').update(js).digest('hex').slice(0,16);
+const dir=path.join(root,'public/build');
+fs.mkdirSync(dir,{recursive:true});
+fs.writeFileSync(path.join(dir,`app.${hash}.js`),js);
+const html=input.replace(/\s*<script src="https:\/\/unpkg.com\/@babel\/standalone[^>]*><\/script>/,'').replace(pattern,`<script src="/build/app.${hash}.js"></script>`);
+fs.writeFileSync(path.join(dir,'index.html'),html);
+console.log(`Built app.${hash}.js (${Buffer.byteLength(js)} bytes); no browser JSX compilation.`);

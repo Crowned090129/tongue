@@ -132,7 +132,7 @@ async function start() {
     }
   }
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`\nTongue server running on port ${PORT}`);
     console.log(`  App:       http://localhost:${PORT}`);
     console.log(`  Admin:     http://localhost:${PORT}/admin`);
@@ -149,6 +149,26 @@ async function start() {
       );
     }
   });
+  server.requestTimeout = 120_000;
+  server.headersTimeout = 15_000;
+  server.keepAliveTimeout = 5_000;
+  let draining = false;
+  const shutdown = signal => {
+    if (draining) return;
+    draining = true;
+    app.locals.draining = true;
+    console.log(`[Server] ${signal}: draining active requests`);
+    for (const task of cron.getTasks().values()) task.stop();
+    const deadline = setTimeout(() => process.exit(1), 25_000);
+    deadline.unref();
+    server.close(async () => {
+      try { await db.pool.end(); clearTimeout(deadline); process.exit(0); }
+      catch (error) { console.error("[Server] Shutdown failed:",error.message); process.exit(1); }
+    });
+    server.closeIdleConnections();
+  };
+  process.once("SIGTERM", shutdown);
+  process.once("SIGINT", shutdown);
 }
 
 start().catch(err => {

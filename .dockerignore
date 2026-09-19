@@ -23,3 +23,5 @@ docs/
 *.orig
 *.swp
 coverage/
+
+public/build/

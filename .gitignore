@@ -21,3 +21,6 @@ native/android/local.properties
 native/android/app/google-services.json
 native/android/.idea/
 *.iml
+
+# Generated production client
+public/build/

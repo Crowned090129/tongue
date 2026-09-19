@@ -3,6 +3,8 @@
 # Docs: https://fly.io/docs/reference/configuration/
 
 app            = "tongue-app"
+kill_signal = "SIGTERM"
+kill_timeout = "30s"
 primary_region = "iad"   # US East (Ashburn) — closest to most English-speaking users
 
 [build]

@@ -45,14 +45,10 @@ const ACCOUNT_SUSPENDED = {
 // unverified sessions; everything else accepts them (no lockout while production
 // email delivery is unverified).
 //
-// Tokens issued before this claim existed have no `verified` field and are
-// treated as verified. They can't be told apart from existing magic-link and
-// Google sessions, and treating them as unverified would stop every signed-in
-// user from deleting their account until they signed in again. The remaining
-// exposure (a pre-existing /signup token) ends when those tokens expire
-// (90 days) or when JWT_SECRET is rotated (gate G5).
+// Legacy sessions do not establish email ownership. Sensitive actions require
+// an explicit verified claim from magic-link, Google or access-code login.
 function isVerifiedSession(user) {
-  return !!user && user.verified !== false;
+  return !!user && user.verified === true;
 }
 
 // Log a (verified) email in at its REAL tier — paid if the account holds a live
@@ -65,7 +61,7 @@ async function issueSessionForEmail(email) {
     INSERT INTO users (email, plan, status)
     VALUES ($1, 'free', 'active')
     ON CONFLICT(email) DO UPDATE
-      SET status = CASE WHEN users.status = 'suspended' THEN users.status ELSE 'active' END
+      SET status = CASE WHEN users.status IN ('suspended', 'deleted') THEN users.status ELSE 'active' END
   `, [email]);
 
   const user = await db.get(
@@ -226,32 +222,21 @@ router.post("/signup", asyncHandler(async (req, res) => {
     });
   }
 
-  // Reusing an existing address still signs in (gate G4 default: no lockout), but
-  // it is throttled per address (5 per hour) and recorded. The session is unverified.
-  if (existing) {
-    const { allowed } = await db.checkIpRateLimit(`signup_email:${normalized}`, 5, 60 * 60 * 1000);
-    db.trackEvent(existing.id, "signup_existing_email", { status: existing.status, plan: existing.plan, allowed });
-    if (!allowed) {
-      return res.status(429).json({ code: "rate_limited", error: "Too many sign-in attempts for this email. Please try again later." });
-    }
-  }
-
-  // Upsert free user. A suspension that lands after the check above still sticks.
-  // (xmax = 0) is true only when this statement inserted the row.
+  // Signup never authenticates an existing account. Resolve races in SQL too:
+  // only the request that actually inserted the account can receive a session.
+  if (existing) return res.status(409).json({
+    code: "sign_in_required", error: "Use the email sign-in link or Google to access this account."
+  });
   const user = await db.get(`
-    INSERT INTO users (email, plan, status)
-    VALUES ($1, 'free', 'active')
-    ON CONFLICT(email) DO UPDATE
-      SET plan   = CASE WHEN users.plan <> 'free' THEN users.plan ELSE 'free' END,
-          status = CASE WHEN users.status = 'suspended' THEN users.status ELSE 'active' END
-    RETURNING id, status, (xmax = 0) AS inserted
+    INSERT INTO users (email, plan, status) VALUES ($1, 'free', 'active')
+    ON CONFLICT(email) DO NOTHING RETURNING id, TRUE AS inserted
   `, [normalized]);
-  if (user.status === "suspended") {
-    return res.status(403).json(ACCOUNT_SUSPENDED);
-  }
+  if (!user) return res.status(409).json({
+    code: "sign_in_required", error: "Use the email sign-in link or Google to access this account."
+  });
 
   const token = jwt.sign(
-    { userId: user.id, email: normalized, plan: "free", verified: false },
+    { userId: user.id, email: normalized, plan: "free", verified: false, signupOwner: true },
     JWT_SECRET(),
     { expiresIn: "90d" }
   );
@@ -381,7 +366,7 @@ router.post("/magic-link/request", asyncHandler(async (req, res) => {
   const link = `${APP_URL}/app?magic=${token}`;
   try {
     const { sendEmail } = require("../utils/email");
-    await sendEmail(
+    const sent = await sendEmail(
       normalized,
       "Your Tongue login link",
       `<div style="font-family:system-ui,sans-serif;max-width:500px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.08)">
@@ -399,8 +384,11 @@ router.post("/magic-link/request", asyncHandler(async (req, res) => {
         </div>
       </div>`
     );
+    if (!sent) throw new Error("No email transport confirmed delivery");
   } catch (e) {
     console.error("[Auth] Magic-link email failed:", e.message);
+    await db.run("DELETE FROM magic_links WHERE token_hash=$1",[tokenHash]);
+    return res.status(503).json({code:"email_unavailable",error:"We could not send your sign-in link. Please try again later or use Google or your access code."});
   }
 
   res.json({ sent: true });
@@ -631,22 +619,28 @@ router.delete("/account", requireAuth, asyncHandler(async (req, res) => {
   const user = await db.get("SELECT id, email, stripe_customer_id FROM users WHERE id = $1", [userId]);
   if (!user) return res.status(404).json({ error: "Account not found." });
 
-  if (user.stripe_customer_id && process.env.STRIPE_SECRET_KEY) {
+  if (user.stripe_customer_id && !process.env.STRIPE_SECRET_KEY) return res.status(503).json({code:"billing_unavailable",error:"Account deletion is unavailable until billing can be checked. Your account has not been deleted."});
+  if (user.stripe_customer_id) {
     try {
       const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-      const subs = await stripe.subscriptions.list({ customer: user.stripe_customer_id, status: "active", limit: 5 });
-      for (const sub of subs.data) await stripe.subscriptions.cancel(sub.id);
+      for await (const sub of stripe.subscriptions.list({ customer: user.stripe_customer_id, status: "all", limit: 100 })) {
+        if (!["canceled","incomplete_expired"].includes(sub.status)) await stripe.subscriptions.cancel(sub.id);
+      }
     } catch (e) {
       console.error("Account deletion: Stripe cancellation failed:", e.message);
+      return res.status(503).json({code:"billing_cancellation_failed",error:"We could not confirm cancellation of every subscription. Your account has not been deleted. Please retry or contact support."});
     }
   }
 
-  await db.run("DELETE FROM access_codes WHERE user_id = $1", [userId]);
-  await db.run("UPDATE subscriptions SET status = 'deleted', updated_at = NOW() WHERE user_id = $1", [userId]);
-  await db.run(
+  await db.transaction(async tx => {
+  await tx.run("DELETE FROM access_codes WHERE user_id = $1", [userId]);
+  await tx.run("UPDATE subscriptions SET status = 'deleted', updated_at = NOW() WHERE user_id = $1", [userId]);
+  await tx.run(
     "UPDATE users SET email = $1, stripe_customer_id = NULL, status = 'deleted' WHERE id = $2",
     [`deleted_${userId}_${Date.now()}@deleted.invalid`, userId]
   );
+
+  });
 
   console.log(`[Auth] Account deleted: userId=${userId}`);
   res.json({ deleted: true });
@@ -654,20 +648,35 @@ router.delete("/account", requireAuth, asyncHandler(async (req, res) => {
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
-// Accepts any valid token, with or without the `verified` claim (see "Session
-// verification" above). Routes that destroy account data also check
-// isVerifiedSession(req.user).
-function requireAuth(req, res, next) {
+// Enforce revocation on every authenticated request, not just app startup.
+function requireAuth(req, res, next) { return checkSession(req, res, next); }
+const checkSession = asyncHandler(async (req, res, next) => {
   const header = req.headers.authorization || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
   if (!token) return res.status(401).json({ error: "Authentication required." });
-  try {
-    req.user = jwt.verify(token, JWT_SECRET());
-    next();
-  } catch {
-    res.status(401).json({ error: "Session expired. Please log in again." });
+  let claims;
+  try { claims = jwt.verify(token, JWT_SECRET(), { algorithms: ["HS256"] }); }
+  catch { return res.status(401).json({ error: "Session expired. Please log in again." }); }
+  if (!claims || !Number.isSafeInteger(claims.userId) || claims.userId <= 0) {
+    return res.status(401).json({ error: "Invalid session. Please log in again." });
   }
-}
+  // Previous signup allowed anyone who knew an email to get its user's token.
+  // Those unverified tokens must not survive this fix; verified sessions remain.
+  if (claims.verified !== true && !(claims.verified === false && claims.signupOwner === true)) {
+    return res.status(401).json({ code:"sign_in_required", error:"Please sign in again with your email link or Google." });
+  }
+  const user = await db.get("SELECT id, status FROM users WHERE id = $1", [claims.userId]);
+  if (!user || user.status === "deleted") return res.status(401).json({error:"Account not found."});
+  if (user.status === "suspended") return res.status(403).json(ACCOUNT_SUSPENDED);
+  if (claims.codeId) {
+    const code = await db.get("SELECT is_active, expires_at, session_nonce, session_nonce_2 FROM access_codes WHERE id = $1 AND user_id = $2", [claims.codeId, claims.userId]);
+    if (!code || !code.is_active || new Date(code.expires_at) <= new Date() || !claims.nonce || (code.session_nonce !== claims.nonce && code.session_nonce_2 !== claims.nonce)) {
+      return res.status(401).json({code:"session_revoked",error:"Session expired. Please sign in again."});
+    }
+  }
+  req.user = claims;
+  next();
+});
 
 const requirePaid = asyncHandler(async (req, res, next) => {
   if (!req.user) return res.status(401).json({ error: "Authentication required." });

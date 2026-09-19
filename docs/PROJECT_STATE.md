@@ -2,6 +2,10 @@
 
 Read this first. Historical handoff claims are not current verification.
 
+## Active handoff — unfinished hardening candidate
+
+Read [LAUNCH_HANDOFF.md](LAUNCH_HANDOFF.md) for exact changes, commands, risks and next steps; [NEXT_MODEL_PROMPT.md](NEXT_MODEL_PROMPT.md) is paste-ready. Last deployed code remains `88994b5`; the current auth/storage/resume/build/shutdown/dependency candidate is **not deployed**. Local build and **46/46 tests passed**. Browser, clean-install, container and post-fix runtime-audit checks remain pending. Approval review hit the account usage limit before those actions. User requested saving all work and an efficient next-model handoff. The older sections below describe the earlier release; current candidate details and open questions are in LAUNCH_HANDOFF.
+
 ## Decision and scope
 
 **Guided practice release; not a public-launch sign-off.** Preserve the existing product and learner history. Test whether guided content plus recall practice helps a specific learner before funding the P1–P14 migration or a broad redesign. No validated demand, educational effectiveness, or profitability evidence was available in this session. A request for existing learner/payment evidence remains unanswered.

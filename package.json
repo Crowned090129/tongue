@@ -1,7 +1,7 @@
 {
   "name": "tongue-app",
   "version": "1.0.0",
-  "description": "Tongue — AI-powered language learning. Speak every tongue.",
+  "description": "Tongue \u2014 AI-powered language learning. Speak every tongue.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -16,7 +16,8 @@
     "prewarm": "node scripts/prewarm-content.js",
     "prewarm:force": "node scripts/prewarm-content.js --force",
     "validate:seed": "node scripts/validate_seed.js",
-    "preview:local": "node scripts/preview-local.js"
+    "preview:local": "node scripts/preview-local.js",
+    "build": "node scripts/build-client.js"
   },
   "engines": {
     "node": ">=20.0.0"

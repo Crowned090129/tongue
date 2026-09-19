@@ -1,0 +1,13 @@
+# Paste this into the next model
+
+You are continuing Tongue in `Crowned090129/tongue`. Work only on this product. Read `AGENTS.md`, `docs/PROJECT_STATE.md`, then `docs/LAUNCH_HANDOFF.md` before editing. Historical ASTRA and architecture documents are background, not proof of current behavior or a requirement to execute every proposed migration.
+
+The user wants a useful, cohesive language-learning app, not lists of words and phrases with completion buttons. They want launch readiness and ultimately millions of users. They are especially frustrated by high token usage, repeated deployments, vague progress reports and claims that partial work is finished. Work economically: one focused model, narrow reads, no subagents unless explicitly requested, reuse verified evidence, and finish one coherent release before deploying. Explain concrete user-visible changes.
+
+First inspect branch/status and the handoff's release boundary. The deployed guided-practice version is `88994b5`; a later hardening candidate was built and passed 46 local tests but was NOT browser-verified, pushed to production, or cleared for launch. Its dependency lock changes require review. Do not confuse committed code with deployed code. Repository push and deployment were previously authorized, but do not deploy this candidate until the documented gates pass.
+
+Continue the unfinished candidate: verify session revocation and returning-user sign-in, account storage migration/isolation, resumable lesson drafts, production-built client, graceful shutdown, and the dependency audit. Then deliver one complete restaurant learning mission with a concrete outcome, useful feedback, retries and delayed review, using the existing app and content rather than a framework rewrite. The current self-rated recall flow is an improvement, not a complete teaching system. Preserve canonical content IDs/order and learner history.
+
+Treat “ready for millions” as a measurable capacity and operational question, not a claim. The user has not supplied peak concurrency, active-user target, provider budget, learner evidence or human-reviewed course outcomes. Complete safe local implementation and verification while recording external gates precisely. Do not buy services, send email to real people, run paid provider/load tests or provision major capacity merely to manufacture a launch sign-off.
+
+Maintain concise durable state and verification evidence in this repo. Never read the original production `.env` for tests. Use the isolated commands in the handoff. Report what changed, what was tested, what is actually deployed, and remaining material limitations. Be candid; never call the app perfect or scalable to millions without evidence.

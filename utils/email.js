@@ -57,7 +57,7 @@ async function sendEmail(to, subject, html) {
     }
   }
   if (!smtpTransport && !resend) {
-    console.log(`[EMAIL] (no transport configured) To: ${to}\nSubject: ${subject}\n${html.replace(/<[^>]+>/g, "")}\n`);
+    console.log("[EMAIL] No transport configured; message was not sent.");
   }
   console.error(`[EMAIL] ✗ ALL transports failed for ${to} — email NOT delivered`);
   return false;

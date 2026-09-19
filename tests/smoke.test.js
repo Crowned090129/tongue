@@ -124,13 +124,14 @@ describe("Auth — signup", () => {
     assert.ok(body.error);
   });
 
-  test("POST /api/auth/signup is idempotent — same email returns token again", async () => {
+  test("POST /api/auth/signup never authenticates an existing email", async () => {
     const email = testEmail();
     const r1 = await POST("/api/auth/signup", { email });
     const r2 = await POST("/api/auth/signup", { email });
     assert.equal(r1.status, 200);
-    assert.equal(r2.status, 200);
-    assert.equal(r2.body.plan, "free");
+    assert.equal(r2.status, 409);
+    assert.equal(r2.body.token, undefined);
+    assert.equal(r2.body.code, "sign_in_required");
   });
 
 });

@@ -71,6 +71,7 @@ app.use(express.json({ limit: "100kb" }));
 // ── Health check ──────────────────────────────────────────────────────────────
 // Fly's http_service check (fly.toml) calls this; 503 marks the machine unhealthy.
 app.get("/health", asyncHandler(async (_req, res) => {
+  if(app.locals.draining) return res.status(503).json({status:"draining",db:"unchecked"});
   let dbOk = false;
   try {
     await db.get("SELECT 1");
@@ -275,10 +276,12 @@ app.get("/", (_req, res) => {
 
 // React app at /app
 app.get("/app", (_req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.setHeader("Cache-Control", "no-cache");
+  res.sendFile(path.join(__dirname, "public", (process.env.NODE_ENV === "production" || process.env.SERVE_BUILT_CLIENT === "on") ? "build/index.html" : "index.html"));
 });
 
 // ── Static frontend ───────────────────────────────────────────────────────────
+app.use("/build", express.static(path.join(__dirname, "public/build"), { maxAge:"1y", immutable:true, index:false, setHeaders:(res,file)=>{if(file.endsWith(".html"))res.setHeader("Cache-Control","no-cache");} }));
 app.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] }));
 
 // 404 fallback

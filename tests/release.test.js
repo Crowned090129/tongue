@@ -74,11 +74,12 @@ test('billing refuses missing, unverified and legacy sessions before contacting 
   let calls=0;
   billing.__setStripeClientForTests(()=>({billingPortal:{sessions:{create:async()=>{calls++; return {url:'https://billing.stripe.com/p/session/test'};}}}}));
   assert.equal((await post('/api/stripe/create-portal')).status,401);
-  for(const claims of [{verified:false},{}]) {
+  for(const claims of [{verified:false,signupOwner:true}]) {
     const res=await post('/api/stripe/create-portal',claims,{email:'someone-else@example.invalid'});
     assert.equal(res.status,403);
     assert.equal((await res.json()).code,'verification_required');
   }
+  assert.equal((await post('/api/stripe/create-portal',{})).status,401);
   assert.equal(calls,0);
 });
 
@@ -181,7 +182,7 @@ test('guided practice retains paired material and requires every round before co
   let states=[], cursor=0, completed=0, saved=[];
   const context={React:{createElement:(tag,props,...children)=>({tag,props:props||{},children:children.flat(Infinity)})},
     useState:initial=>{const i=cursor++;if(!(i in states))states[i]=typeof initial==='function'?initial():initial;return [states[i],value=>{states[i]=typeof value==='function'?value(states[i]):value;}];},
-    useLucide:()=>{},C:{},TARGETS:{fr:{name:'French'}},lpTitle:()=> 'Test lesson',PlayBtn:()=>{},VocabLesson:()=>{},GrammarLesson:()=>{},DialogueLesson:()=>{},Info:()=>{},fcAdd:card=>{saved.push(card);return true;}};
+    useEffect:()=>{},learnerGet:()=>null,learnerSet:()=>{},learnerKey:k=>k,localStorage:{removeItem:()=>{}},useLucide:()=>{},C:{},TARGETS:{fr:{name:'French'}},lpTitle:()=> 'Test lesson',PlayBtn:()=>{},VocabLesson:()=>{},GrammarLesson:()=>{},DialogueLesson:()=>{},Info:()=>{},fcAdd:card=>{saved.push(card);return true;}};
   vm.createContext(context);
   vm.runInContext(babel.transform(script.slice(script.indexOf('function lessonPracticeItems('),script.indexOf('const LESSON_KIND')),{presets:['react']}).code,context);
   const words=Array.from({length:12},(_,i)=>({t:'word'+i,r:'meaning'+i}));
@@ -208,4 +209,73 @@ test('guided practice retains paired material and requires every round before co
   assert.equal(new Set(saved.map(c=>c.front)).size,12);
   assert.ok(saved.every(c=>c.lang==='fr'));
   assert.deepEqual(words, data.vocab[0].words);
+});
+
+test('account status and legacy signup revocation apply on every authenticated route',async()=>{
+  for(const claims of [{verified:false},{}]) assert.equal((await post('/api/auth/preferences',claims,{language:'fr'})).status,401);
+  const res=await post('/api/auth/preferences',{verified:false,signupOwner:true},{language:'fr'});
+  assert.equal(res.status,200);
+  try {
+    await db.run("UPDATE users SET status='suspended' WHERE id=$1",[user.id]);
+    assert.equal((await post('/api/streaks/log',{verified:true})).status,403);
+    assert.equal((await post('/api/auth/preferences',{verified:true},{language:'es'})).status,403);
+    await db.run("UPDATE users SET status='deleted' WHERE id=$1",[user.id]);
+    assert.equal((await post('/api/streaks/log',{verified:true})).status,401);
+  } finally {await db.run("UPDATE users SET status='active' WHERE id=$1",[user.id]);}
+});
+
+test('concurrent signup issues exactly one session for a new email',async()=>{
+  const email=`race_${suffix}@tongue-test.invalid`;
+  const replies=await Promise.all(Array.from({length:4},()=>post('/api/auth/signup',null,{email})));
+  assert.equal(replies.filter(r=>r.status===200).length,1);
+  assert.equal(replies.filter(r=>r.status===409).length,3);
+});
+
+test('revoked paid nonce is rejected outside the startup validation endpoint',async()=>{
+  const code=await db.get("INSERT INTO access_codes(user_id,code,expires_at,session_nonce) VALUES($1,$2,NOW()+INTERVAL '1 day','current') RETURNING id",[user.id,'NONCE_'+suffix]);
+  assert.equal((await post('/api/auth/preferences',{verified:true,codeId:code.id,nonce:'old'},{language:'fr'})).status,401);
+  assert.equal((await post('/api/auth/preferences',{verified:true,codeId:code.id,nonce:'current'},{language:'fr'})).status,200);
+});
+
+test('deletion fails closed when billing is not configured, retaining account and access',async()=>{
+  const key=process.env.STRIPE_SECRET_KEY; delete process.env.STRIPE_SECRET_KEY;
+  try {
+    const res=await fetch(base+'/api/auth/account',{method:'DELETE',headers:{Authorization:'Bearer '+token({verified:true})}});
+    assert.equal(res.status,503);
+    assert.equal((await db.get('SELECT status FROM users WHERE id=$1',[user.id])).status,'active');
+  } finally {if(key!==undefined)process.env.STRIPE_SECRET_KEY=key;}
+});
+
+test('browser learner storage isolates accounts and only migrates legacy data to its assigned owner',()=>{
+  const data=new Map([['learner_legacy_owner','1'],['fc_cards_v2','legacy-one']]);
+  let current=jwt.sign({userId:1},'test');
+  const context={atob:x=>Buffer.from(x,'base64').toString('utf8'),getToken:()=>current,localStorage:{getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v)}};
+  vm.createContext(context);
+  vm.runInContext(script.slice(script.indexOf('function learnerId('),script.indexOf('const FC_KEY')),context);
+  assert.equal(context.learnerGet('fc_cards_v2'),'legacy-one');
+  current=jwt.sign({userId:2},'test');
+  assert.equal(context.learnerGet('fc_cards_v2'),null);
+  context.learnerSet('fc_cards_v2','two');
+  assert.equal(context.learnerGet('fc_cards_v2'),'two');
+  current=jwt.sign({userId:1},'test');
+  assert.equal(context.learnerGet('fc_cards_v2'),'legacy-one');
+  assert.equal(data.get('fc_cards_v2'),'legacy-one');
+});
+
+test('failed magic-link delivery is reported honestly and the unsent link is invalidated',async()=>{
+  const mail=require('../utils/email');const original=mail.sendEmail;mail.sendEmail=async()=>false;
+  const email=`unsent_${suffix}@tongue-test.invalid`;
+  try {
+    const res=await post('/api/auth/magic-link/request',null,{email});
+    assert.equal(res.status,503);
+    assert.equal((await res.json()).code,'email_unavailable');
+    assert.equal(Number((await db.get('SELECT COUNT(*) AS n FROM magic_links WHERE email=$1',[email])).n),0);
+  } finally {mail.sendEmail=original;}
+});
+
+test('health refuses new traffic while the server is draining',async()=>{
+  app.locals.draining=true;
+  try {assert.equal((await fetch(base+'/health')).status,503);}
+  finally {app.locals.draining=false;}
+  assert.equal((await fetch(base+'/health')).status,200);
 });
