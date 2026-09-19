@@ -194,4 +194,55 @@ function paymentFailedEmail(email) {
   );
 }
 
-module.exports = { sendEmail, welcomeEmail, renewalEmail, cancellationEmail, paymentFailedEmail };
+// Answers "can this deployment actually deliver a login link?" WITHOUT sending
+// anything to anybody. nodemailer's verify() opens the SMTP connection and
+// authenticates, then disconnects — no message, no recipient, no quota used.
+// Account recovery depends entirely on mail working, so an unverified transport
+// is an outage nobody notices until a learner is locked out.
+//
+// Never returns credential values. Only whether each transport is present and,
+// for SMTP, whether the server accepted the credentials.
+async function verifyTransport() {
+  const result = {
+    smtpConfigured: !!smtpTransport,
+    smtpVerified: null,          // true | false | null (not configured)
+    smtpError: null,
+    resendConfigured: !!resend,  // Resend has no authenticate-only probe
+    from: FROM.replace(/<.*>/, "<redacted>"),
+    canDeliver: false,
+  };
+  if (smtpTransport) {
+    try {
+      await smtpTransport.verify();
+      result.smtpVerified = true;
+    } catch (e) {
+      result.smtpVerified = false;
+      // Message only — never the stack, which can echo configuration.
+      result.smtpError = `${e.message}${e.code ? ` [${e.code}]` : ""}`;
+    }
+  }
+  // Resend cannot be probed without sending, so its key being present is the
+  // most we can claim. Do not report it as working.
+  result.canDeliver = result.smtpVerified === true || result.resendConfigured;
+  return result;
+}
+
+// Logged once at startup so a broken transport shows up in deploy logs rather
+// than in a support request.
+async function logTransportStatus() {
+  const s = await verifyTransport();
+  if (s.smtpVerified === true) {
+    console.log("[EMAIL] SMTP transport authenticated — login links can be delivered.");
+  } else if (s.smtpVerified === false) {
+    console.error(`[EMAIL] SMTP transport FAILED to authenticate: ${s.smtpError}`);
+  }
+  if (!s.smtpConfigured && s.resendConfigured) {
+    console.log("[EMAIL] No SMTP transport; Resend key present (cannot be verified without sending).");
+  }
+  if (!s.canDeliver) {
+    console.error("[EMAIL] NO WORKING TRANSPORT — account recovery by email will fail.");
+  }
+  return s;
+}
+
+module.exports = { sendEmail, welcomeEmail, renewalEmail, cancellationEmail, paymentFailedEmail, verifyTransport, logTransportStatus };

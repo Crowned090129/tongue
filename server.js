@@ -132,6 +132,14 @@ async function start() {
     }
   }
 
+  // Account recovery depends on email. Surface a broken transport in the deploy
+  // log instead of discovering it when someone cannot sign back in. Probe only —
+  // authenticates and disconnects, sends nothing.
+  if (process.env.NODE_ENV !== "test") {
+    require("./utils/email").logTransportStatus().catch(e =>
+      console.error("[EMAIL] transport check failed to run:", e.message));
+  }
+
   const server = app.listen(PORT, () => {
     console.log(`\nTongue server running on port ${PORT}`);
     console.log(`  App:       http://localhost:${PORT}`);

@@ -364,3 +364,87 @@ test('missions are only authored for languages that actually have them', () => {
   assert.ok(missionCtx.MISSIONS.fr, 'French mission missing');
   assert.equal(missionCtx.MISSIONS.zz, undefined);
 });
+
+// ── Mail transport verification ───────────────────────────────────────────────
+// Account recovery depends entirely on email. The dangerous failure is reporting
+// a working transport when there is none, so these assert the failure direction
+// and that no credential value is ever echoed back.
+const freshEmailModule = env => {
+  const path = require.resolve('../utils/email');
+  const saved = {};
+  for (const k of ['SMTP_HOST','SMTP_PORT','SMTP_USER','SMTP_PASS','RESEND_API_KEY','EMAIL_FROM']) {
+    saved[k] = process.env[k];
+    if (env[k] === undefined) delete process.env[k]; else process.env[k] = env[k];
+  }
+  delete require.cache[path];
+  const mod = require('../utils/email');
+  return { mod, restore() {
+    for (const [k, v] of Object.entries(saved)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+    delete require.cache[path];
+  }};
+};
+
+test('with no transport at all, email delivery is reported as impossible', async () => {
+  const { mod, restore } = freshEmailModule({});
+  try {
+    const status = await mod.verifyTransport();
+    assert.equal(status.smtpConfigured, false);
+    assert.equal(status.smtpVerified, null);
+    assert.equal(status.resendConfigured, false);
+    assert.equal(status.canDeliver, false, 'claimed delivery is possible with no transport');
+  } finally { restore(); }
+});
+
+test('an SMTP server that cannot be reached is reported as unable to deliver', async () => {
+  // Port 1 is reserved and never listening, so this exercises a real failure.
+  const { mod, restore } = freshEmailModule({
+    SMTP_HOST: '127.0.0.1', SMTP_PORT: '1', SMTP_USER: 'probe@tongue-test.invalid', SMTP_PASS: 'hunter2-should-never-appear',
+  });
+  try {
+    const status = await mod.verifyTransport();
+    assert.equal(status.smtpConfigured, true);
+    assert.equal(status.smtpVerified, false, 'an unreachable SMTP server was reported as verified');
+    assert.equal(status.canDeliver, false);
+    assert.ok(status.smtpError, 'no diagnostic recorded for the failure');
+    assert.doesNotMatch(JSON.stringify(status), /hunter2/, 'credential leaked into the status payload');
+  } finally { restore(); }
+});
+
+test('a reachable SMTP server that accepts credentials is reported as verified', async () => {
+  // Minimal SMTP responder: enough of the protocol for nodemailer's verify(),
+  // which connects, greets, authenticates and disconnects without sending mail.
+  const net = require('node:net');
+  const server = net.createServer(socket => {
+    socket.write('220 localhost ESMTP test\r\n');
+    socket.on('data', chunk => {
+      for (const line of chunk.toString().split(/\r?\n/).filter(Boolean)) {
+        const verb = line.slice(0, 4).toUpperCase();
+        if (verb.startsWith('EHLO') || verb.startsWith('HELO')) socket.write('250-localhost\r\n250 AUTH PLAIN LOGIN\r\n');
+        else if (verb.startsWith('AUTH')) socket.write('235 2.7.0 Accepted\r\n');
+        else if (verb.startsWith('QUIT')) { socket.write('221 Bye\r\n'); socket.end(); }
+        else socket.write('250 OK\r\n');
+      }
+    });
+    socket.on('error', () => {});
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const { mod, restore } = freshEmailModule({
+    SMTP_HOST: '127.0.0.1', SMTP_PORT: String(server.address().port),
+    SMTP_USER: 'probe@tongue-test.invalid', SMTP_PASS: 'accepted',
+  });
+  try {
+    const status = await mod.verifyTransport();
+    assert.equal(status.smtpVerified, true, `verify() rejected a working server: ${status.smtpError}`);
+    assert.equal(status.canDeliver, true);
+  } finally { restore(); await new Promise(r => server.close(r)); }
+});
+
+test('a Resend key alone is reported as unverified, not as working', async () => {
+  const { mod, restore } = freshEmailModule({ RESEND_API_KEY: 're_test_key_never_used' });
+  try {
+    const status = await mod.verifyTransport();
+    assert.equal(status.resendConfigured, true);
+    assert.equal(status.smtpVerified, null, 'claimed an SMTP result with no SMTP configured');
+    assert.doesNotMatch(JSON.stringify(status), /re_test_key/, 'API key leaked into the status payload');
+  } finally { restore(); }
+});

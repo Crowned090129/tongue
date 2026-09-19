@@ -152,6 +152,13 @@ router.get("/api/stats", adminAuth, asyncHandler(async (req, res) => {
 }));
 
 // GET /admin/api/users
+// Whether this deployment can actually deliver a login link. Probe only: it
+// authenticates against SMTP and disconnects, sending no message to anyone.
+// Reports presence and outcome, never credential values.
+router.get("/api/email-status", adminAuth, asyncHandler(async (_req, res) => {
+  res.json(await require("../utils/email").verifyTransport());
+}));
+
 router.get("/api/users", adminAuth, asyncHandler(async (req, res) => {
   const users = await db.all(`
     SELECT u.id, u.email, u.plan, u.status, u.created_at,
