@@ -2942,6 +2942,20 @@ const hasApiKey = () => isLoggedIn();
 
 // ── STREAK SYSTEM ─────────────────────────────────────────────────────────────
 // Client-side streak tracking (localStorage) + server sync on every new day.
+// The "re-enter your code" warning only applies to access-code sessions, and it
+// must be recomputed per sign-in: a value captured for a previous account would
+// otherwise report the wrong expiry after an account switch in the same tab.
+function codeSessionExpiryWarning(){
+  try {
+    const token = getToken();
+    if (!token || !_authExpiry) return null;
+    const claims = JSON.parse(atob(token.split(".")[1].replace(/-/g,"+").replace(/_/g,"/")));
+    if (!claims || !claims.codeId) return null;
+    const days = Math.floor((new Date(_authExpiry) - new Date()) / 86400000);
+    return (days >= 0 && days <= 3) ? days : null;
+  } catch { return null; }
+}
+
 const _streak = {
   get() {
     try {
@@ -3222,7 +3236,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
       const data = await res.json();
       if (!res.ok) { setErr(data.error || "Google sign-in failed."); setLoading(false); return; }
       saveSession(data.token, data.expiresAt, data.email, data.plan);
-      try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+      try { if (!learnerGet("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
       if (onLogin) onLogin();
     } catch(e) { setErr("Connection error. Please try again."); }
     setLoading(false);
@@ -3270,7 +3284,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
       }
       saveSession(data.token, data.expiresAt, data.email, data.plan);
       try { localStorage.setItem("tongue_code", code.trim().toUpperCase()); } catch(e){}
-      try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+      try { if (!learnerGet("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
       if (onLogin) onLogin();
     } catch(e) { setErr("Connection error. Please try again."); }
     setLoading(false);
@@ -3291,7 +3305,7 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
         setErr(data.error || "Signup failed."); setLoading(false); return;
       }
       saveSession(data.token, data.expiresAt, data.email, data.plan);
-      try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+      try { if (!learnerGet("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
       if (onLogin) onLogin();
     } catch(e) { setErr("Connection error. Please try again."); }
     setLoading(false);
@@ -6302,6 +6316,292 @@ function DialogueLesson({ dl, tLang }){
   );
 }
 // Build practice only from existing paired content; never invent translations.
+// ─── MISSIONS ────────────────────────────────────────────────────────────────
+// A mission is a short authored task with a concrete outcome ("order a meal and
+// ask for the bill"). It differs from the recall rounds in one important way:
+// the recall rounds ask the learner to rate themselves, a mission CHECKS what
+// the learner wrote against authored alternatives and explains what a near miss
+// would actually communicate to the person they are speaking to.
+//
+// Authored coverage is deliberately narrow and honest. French has many correct
+// ways to order a soup. When an answer matches no authored pattern we say we
+// could not check it and show the model answer — we never mark an unrecognised
+// sentence wrong, and we never report a pronunciation or proficiency score.
+function missionNormalize(s){
+  return String(s == null ? "" : s)
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")  // compare without accents
+    .replace(/[’'`´]/g, " ")                            // l'addition ≡ l addition
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+// True when the reference is written with accents but the learner used none.
+function missionDroppedAccents(answer, reference){
+  const refMarks = reference.normalize("NFD").match(/[̀-ͯ]/g);
+  if (!refMarks) return false;
+  return !/[̀-ͯ]/.test(answer.normalize("NFD"));
+}
+// Returns { verdict: "ok" | "close" | "unchecked", message, reference }
+function missionCheck(step, answer){
+  const said = missionNormalize(answer);
+  if (!said) return { verdict:"unchecked", message:"Write your answer first — even a rough attempt is worth checking." };
+  const hit = step.accept.find(a => said.includes(missionNormalize(a)));
+  if (hit) {
+    const refinements = [];
+    if (missionDroppedAccents(answer, step.reference)) {
+      refinements.push(`Accents are part of the spelling here: “${step.reference.replace(/\.$/, "")}”.`);
+    }
+    (step.refine || []).forEach(r => { if (!r.test.test(said)) refinements.push(r.message); });
+    // A correct phrase can sit next to a clumsy one. Precise rules (register,
+    // gender, English words) still apply; the broad catch-all rules do not,
+    // because the answer already contains an authored pattern.
+    (step.diagnose || []).forEach(r => { if (r.always && r.test.test(said)) refinements.push(r.message); });
+    return { verdict:"ok", message: step.success, refinements };
+  }
+  const miss = (step.diagnose || []).find(r => r.test.test(said));
+  if (miss) return { verdict:"close", message: miss.message };
+  return { verdict:"unchecked", message:`We could not check this one automatically — it may still be correct. Compare it with a sentence that works here: “${step.reference}”.` };
+}
+
+const MISSIONS = {
+  fr: [{
+    id: "fr-restaurant",
+    title: "Order a meal and ask for the bill",
+    outcome: "Order a starter, a main course and a drink in a French restaurant, then ask for the bill.",
+    where: "A sit-down restaurant in France, evening service. The waiter speaks first.",
+    minutes: 8,
+    phrases: [
+      { target:"Je voudrais…", ref:"I would like…", note:"The ordering phrase. “Je veux” means “I want” and sounds blunt to a waiter." },
+      { target:"…, s'il vous plaît.", ref:"…, please.", note:"Goes at the end. Use the “vous” form with restaurant staff, not “s'il te plaît”." },
+      { target:"Comme entrée / comme plat principal", ref:"as a starter / as a main course", note:"In France “entrée” is the starter, not the main dish — a common and expensive mix-up." },
+      { target:"Une carafe d'eau", ref:"a jug of tap water", note:"Free at any French restaurant. Ask for “de l'eau” and you will usually be sold a bottle." },
+      { target:"L'addition, s'il vous plaît.", ref:"The bill, please.", note:"“La facture” is a business invoice. In a restaurant it is always “l'addition”." },
+    ],
+    steps: [
+      {
+        id:"entree",
+        speaker:"Waiter",
+        cue:"Bonsoir, vous avez choisi ?",
+        cueRef:"Good evening, have you decided?",
+        task:"Say you would like the onion soup to start.",
+        reference:"Je voudrais la soupe à l'oignon, s'il vous plaît.",
+        accept:["je voudrais la soupe à l'oignon","je prends la soupe à l'oignon","je vais prendre la soupe à l'oignon","pour moi la soupe à l'oignon","la soupe à l'oignon s'il vous plaît","comme entrée la soupe à l'oignon"],
+        success:"That orders the onion soup politely, and the waiter knows it is your starter.",
+        refine:[{ test:/s il vous plait/, message:"Add “s'il vous plaît” at the end and it lands warmer: “Je voudrais la soupe à l'oignon, s'il vous plaît.”" }],
+        diagnose:[
+          { test:/\bje veux\b/, message:"“Je veux” means “I want”. It is grammatical but blunt — to a waiter it reads as demanding. Use “Je voudrais” (“I would like”).", always:true },
+          { test:/\bonion\b/, message:"“Onion” is the English word. The dish is “la soupe à l'oignon”.", always:true },
+          { test:/soupe/, message:"Name the dish with its article: “la soupe à l'oignon”. French nouns nearly always travel with an article, and dropping it sounds like a telegram." },
+        ],
+        card:{ front:"Je voudrais la soupe à l'oignon.", back:"I'd like the onion soup." },
+      },
+      {
+        id:"plat",
+        speaker:"Waiter",
+        cue:"Très bien. Et comme plat principal ?",
+        cueRef:"Very good. And for the main course?",
+        task:"Order the steak and fries, politely.",
+        reference:"Le steak-frites, s'il vous plaît.",
+        accept:["le steak frites s'il vous plaît","je voudrais le steak frites","je prends le steak frites","je vais prendre le steak frites","un steak frites","pour moi le steak frites"],
+        success:"Clear and polite — the waiter has your main course.",
+        refine:[{ test:/s il vous plait/, message:"With a bare dish name, “s'il vous plaît” is what keeps it from sounding curt: “Le steak-frites, s'il vous plaît.”" }],
+        diagnose:[
+          { test:/\bje veux\b/, message:"“Je veux” (“I want”) is too blunt here. “Je voudrais le steak-frites” or simply “Le steak-frites, s'il vous plaît”.", always:true },
+          { test:/steak/, message:"On a French menu the dish is “le steak-frites” — steak and fries together, as one item. Asking for “le steak” alone can arrive without the fries." },
+          { test:/\bfries\b|\bbeef\b/, message:"That is the English name. The menu item is “le steak-frites”.", always:true },
+        ],
+        card:{ front:"Le steak-frites, s'il vous plaît.", back:"The steak and fries, please." },
+      },
+      {
+        id:"boisson",
+        speaker:"Waiter",
+        cue:"Et comme boisson ?",
+        cueRef:"And to drink?",
+        task:"Ask for a jug of tap water.",
+        reference:"Une carafe d'eau, s'il vous plaît.",
+        accept:["une carafe d'eau","je voudrais une carafe d'eau","on peut avoir une carafe d'eau","une carafe s'il vous plaît"],
+        success:"That is exactly the phrase that gets you free tap water rather than a bottle you pay for.",
+        refine:[{ test:/s il vous plait/, message:"Finish with “s'il vous plaît”: “Une carafe d'eau, s'il vous plaît.”" }],
+        diagnose:[
+          { test:/\bun carafe\b/, message:"“Carafe” is feminine, so it takes “une”, not “un”: “une carafe d'eau”.", always:true },
+          { test:/\beau\b/, message:"Just “de l'eau” usually gets you a bottle of mineral water on the bill. “Une carafe d'eau” is the free jug of tap water." },
+          { test:/\bwater\b/, message:"That is English. Ask for “une carafe d'eau”.", always:true },
+        ],
+        card:{ front:"Une carafe d'eau, s'il vous plaît.", back:"A jug of tap water, please." },
+      },
+      {
+        id:"dessert",
+        speaker:"Waiter",
+        cue:"Vous prendrez un dessert ?",
+        cueRef:"Will you have a dessert?",
+        task:"Say yes — a crème brûlée.",
+        reference:"Oui, une crème brûlée, s'il vous plaît.",
+        accept:["oui une crème brûlée","une crème brûlée","je voudrais une crème brûlée","oui je prends une crème brûlée","oui je vais prendre une crème brûlée"],
+        success:"Accepted and ordered in one short sentence — that is how it is usually done.",
+        refine:[{ test:/s il vous plait/, message:"“Oui, une crème brûlée, s'il vous plaît” is the complete, polite version." }],
+        diagnose:[
+          { test:/\bun creme\b/, message:"“Crème” is feminine: “une crème brûlée”.", always:true },
+          { test:/\bcreme\b|\bcrème\b/, message:"You have the dessert right. Order it with its article: “une crème brûlée”." },
+          { test:/\byes\b/, message:"“Yes” is English — “oui”. Then name the dessert: “Oui, une crème brûlée”.", always:true },
+        ],
+        card:{ front:"Oui, une crème brûlée.", back:"Yes, a crème brûlée." },
+      },
+      {
+        id:"addition",
+        speaker:"You have finished eating",
+        cue:"(The waiter passes your table.)",
+        cueRef:"Nothing is said to you — you have to start this one.",
+        task:"Ask for the bill.",
+        reference:"L'addition, s'il vous plaît.",
+        accept:["l'addition","je voudrais l'addition","on peut avoir l'addition","je vais payer","est-ce que je peux avoir l'addition"],
+        success:"That is the phrase. In France the bill is not brought until you ask for it, so this is the step that ends the meal.",
+        refine:[{ test:/s il vous plait/, message:"This one is nearly always said with “s'il vous plaît”: “L'addition, s'il vous plaît.”" }],
+        diagnose:[
+          { test:/facture/, message:"“La facture” is a business invoice. In a restaurant you ask for “l'addition”.", always:true },
+          { test:/\bnote\b/, message:"“La note” is what you ask for in a hotel. At a restaurant table it is “l'addition”." },
+          { test:/\bbill\b|\bcheck\b/, message:"That is the English word. Ask for “l'addition, s'il vous plaît”.", always:true },
+        ],
+        card:{ front:"L'addition, s'il vous plaît.", back:"The bill, please." },
+      },
+    ],
+  }],
+};
+
+function MissionView({ mission, tLang, onClose, onFinished }){
+  const storeKey = "mission_" + mission.id;
+  const [saved] = useState(() => {
+    try {
+      const v = JSON.parse(learnerGet(storeKey) || "null");
+      if (v && ["brief","steps","done"].includes(v.stage) && Number.isInteger(v.stepIdx) && v.stepIdx >= 0 && v.stepIdx < mission.steps.length) return v;
+    } catch(e) {}
+    return null;
+  });
+  const [stage, setStage]     = useState(saved?.stage || "brief");
+  const [stepIdx, setStepIdx] = useState(saved?.stepIdx || 0);
+  const [answer, setAnswer]   = useState(typeof saved?.answer === "string" ? saved.answer : "");
+  const [result, setResult]   = useState(null);
+  const [cleared, setCleared] = useState(() => Array.isArray(saved?.cleared) ? saved.cleared.filter(i => Number.isInteger(i)) : []);
+  const [savedMsg, setSavedMsg] = useState("");
+  const [storageError, setStorageError] = useState("");
+  const inputRef = useRef(null);
+  const feedbackRef = useRef(null);
+  const step = mission.steps[stepIdx];
+
+  useEffect(() => {
+    try { learnerSet(storeKey, JSON.stringify({ stage, stepIdx, answer, cleared })); setStorageError(""); }
+    catch(e) { setStorageError("This browser could not save your place in the mission. Finish it in this tab or your progress will be lost."); }
+  }, [storeKey, stage, stepIdx, answer, cleared]);
+
+  // Move focus to the feedback so a screen reader announces the result, and so
+  // keyboard users are not left at the bottom of the page after checking.
+  useEffect(() => { if (result && feedbackRef.current) feedbackRef.current.focus(); }, [result]);
+  useEffect(() => { if (stage === "steps" && !result && inputRef.current) inputRef.current.focus(); }, [stage, stepIdx, result]);
+
+  const P = { background:C.accent, color:"#fff", border:0, borderRadius:12, padding:"14px 22px", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit" };
+  const S = { ...P, background:C.surf2, color:C.text, border:`1px solid ${C.line}` };
+  const card = { background:C.card, border:`1px solid ${C.line}`, borderRadius:20, padding:"clamp(18px, 4vw, 32px)", boxShadow:C.sh };
+
+  const check = () => setResult(missionCheck(step, answer));
+  const advance = () => {
+    const done = [...new Set([...cleared, stepIdx])];
+    setCleared(done);
+    setResult(null); setAnswer("");
+    if (stepIdx + 1 < mission.steps.length) setStepIdx(stepIdx + 1);
+    else setStage("done");
+  };
+  const saveForReview = () => {
+    let added = 0;
+    mission.steps.forEach(s => { if (fcAdd({ lang:tLang, front:s.card.front, back:s.card.back, example:s.cue })) added++; });
+    setSavedMsg(added
+      ? `${added} ${added === 1 ? "phrase" : "phrases"} added to your review deck, due today. Cards you already had keep their existing schedule.`
+      : "These phrases are already in your review deck — their schedule is unchanged.");
+  };
+  const finish = () => { try { localStorage.removeItem(learnerKey(storeKey)); } catch(e) {} onFinished && onFinished(); };
+
+  return <div style={{maxWidth:760,margin:"0 auto",paddingBottom:30}}>
+    <button onClick={onClose} style={{...S,padding:"8px 12px",marginBottom:20}}>← Back</button>
+    {storageError && <p role="alert" style={{color:C.red}}>{storageError}</p>}
+
+    {stage === "brief" && <section style={card}>
+      <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:10}}>MISSION · ABOUT {mission.minutes} MINUTES</div>
+      <h1 style={{fontFamily:"var(--serif)",fontSize:"clamp(26px, 5vw, 34px)",color:C.text,margin:"0 0 12px",lineHeight:1.2}}>{mission.title}</h1>
+      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px",fontSize:16}}><b>By the end:</b> {mission.outcome}</p>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 24px"}}><b>Where you would use it:</b> {mission.where}</p>
+      <h2 style={{fontSize:15,color:C.text,margin:"0 0 14px"}}>The five things worth knowing first</h2>
+      <ol style={{margin:"0 0 26px",padding:"0 0 0 20px",color:C.text}}>
+        {mission.phrases.map((p,i) => <li key={i} style={{marginBottom:14,lineHeight:1.65}}>
+          <b>{p.target}</b> — {p.ref}
+          <span style={{display:"block",color:C.muted,fontSize:13,marginTop:3}}>{p.note}</span>
+        </li>)}
+      </ol>
+      <button style={P} onClick={()=>setStage("steps")}>Start the mission</button>
+      <p style={{fontSize:12,color:C.muted,margin:"16px 0 0",lineHeight:1.6}}>You will write your answers. We check them against the phrases this mission teaches and explain the difference — we do not score pronunciation and we do not grade your French overall.</p>
+    </section>}
+
+    {stage === "steps" && step && <section style={card}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,flexWrap:"wrap",marginBottom:18}}>
+        <span style={{color:C.accent,fontSize:12,fontWeight:700}}>{mission.title.toUpperCase()}</span>
+        <span style={{color:C.muted,fontSize:12,fontWeight:600}}>Step {stepIdx+1} of {mission.steps.length}</span>
+      </div>
+      <div style={{height:4,background:C.surf2,borderRadius:99,marginBottom:22,overflow:"hidden"}}>
+        <div style={{height:"100%",width:`${(stepIdx/mission.steps.length)*100}%`,background:C.accent,borderRadius:99}}/>
+      </div>
+      <div style={{background:C.surf2,borderRadius:14,padding:"16px 18px",marginBottom:22}}>
+        <div style={{fontSize:12,color:C.muted,fontWeight:700,marginBottom:6}}>{step.speaker}</div>
+        <p style={{fontSize:19,color:C.text,margin:"0 0 4px",fontFamily:"var(--serif)"}}>{step.cue}</p>
+        <p style={{fontSize:13,color:C.muted,margin:0}}>{step.cueRef}</p>
+      </div>
+      <label htmlFor="mission-answer" style={{display:"block",fontSize:16,color:C.text,fontWeight:600,marginBottom:10,lineHeight:1.5}}>{step.task}</label>
+      <textarea id="mission-answer" ref={inputRef} value={answer} onChange={e=>{setAnswer(e.target.value); if(result) setResult(null);}}
+        onKeyDown={e=>{ if(e.key==="Enter" && (e.metaKey||e.ctrlKey)) { e.preventDefault(); check(); } }}
+        placeholder="Write what you would say…" rows={3}
+        style={{width:"100%",boxSizing:"border-box",padding:14,borderRadius:12,border:`1px solid ${C.line}`,background:C.surf,color:C.text,fontSize:16,fontFamily:"inherit",lineHeight:1.5,resize:"vertical"}}/>
+
+      {!result && <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:16}}>
+        <button style={P} onClick={check}>Check my answer</button>
+        <button style={S} onClick={()=>setResult({verdict:"unchecked",message:`No problem — here is a sentence that works: “${step.reference}”. Try writing it yourself before moving on.`})}>I don't know — show me</button>
+      </div>}
+
+      {result && <div ref={feedbackRef} tabIndex={-1} role="status" style={{marginTop:18,padding:"16px 18px",borderRadius:14,outline:"none",
+        background: result.verdict==="ok" ? C.accentSoft : C.surf2,
+        border:`1px solid ${result.verdict==="ok" ? C.accent : C.line}`}}>
+        <div style={{fontWeight:700,color: result.verdict==="ok" ? C.accent : C.text, marginBottom:6,fontSize:14}}>
+          {result.verdict==="ok" ? "That works" : result.verdict==="close" ? "Close — one thing to fix" : "We could not check this one"}
+        </div>
+        <p style={{color:C.text,lineHeight:1.65,margin:0}}>{result.message}</p>
+        {(result.refinements || []).map((r,i) => <p key={i} style={{color:C.muted,lineHeight:1.65,margin:"8px 0 0",fontSize:14}}>{r}</p>)}
+        {result.verdict !== "ok" && <p style={{color:C.muted,fontSize:13,lineHeight:1.6,margin:"10px 0 0"}}>Edit your answer and check it again, or move on and come back to it.</p>}
+        <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:16}}>
+          {result.verdict === "ok"
+            ? <button style={P} onClick={advance}>{stepIdx+1 < mission.steps.length ? "Next step" : "Finish the mission"}</button>
+            : <><button style={P} onClick={()=>{setResult(null); if(inputRef.current) inputRef.current.focus();}}>Try again</button>
+               <button style={S} onClick={advance}>Move on for now</button></>}
+        </div>
+      </div>}
+    </section>}
+
+    {stage === "done" && <section style={card}>
+      <div style={{color:C.accent,fontSize:12,fontWeight:700,marginBottom:10}}>MISSION COMPLETE</div>
+      <h1 style={{fontFamily:"var(--serif)",fontSize:"clamp(24px, 5vw, 32px)",color:C.text,margin:"0 0 12px"}}>{mission.title}</h1>
+      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px"}}>You worked through all {mission.steps.length} steps. You cleared {cleared.length} of {mission.steps.length} on your own answer.</p>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 22px",fontSize:14}}>That is a record of this attempt, not a measure of your French. The real test is saying it in a restaurant.</p>
+      <div style={{background:C.surf2,borderRadius:14,padding:"16px 18px",marginBottom:22}}>
+        <h2 style={{fontSize:14,color:C.text,margin:"0 0 12px"}}>What you can now say</h2>
+        {mission.steps.map((s,i) => <p key={i} style={{margin:"0 0 8px",lineHeight:1.6,color:C.text,fontSize:14}}><b>{s.card.front}</b> <span style={{color:C.muted}}>— {s.card.back}</span></p>)}
+      </div>
+      <h2 style={{fontSize:15,color:C.text,margin:"0 0 10px"}}>Come back to it</h2>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 14px",fontSize:14}}>You will forget most of this within a few days unless you meet it again. Save these five phrases and they will come back to you in Review on a spaced schedule.</p>
+      <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+        <button style={S} onClick={saveForReview}>Save these phrases for review</button>
+        <button style={P} onClick={finish}>Done</button>
+      </div>
+      {savedMsg && <p role="status" style={{color:C.muted,marginTop:14,fontSize:14,lineHeight:1.6}}>{savedMsg}</p>}
+      <p style={{fontSize:12,color:C.muted,margin:"18px 0 0",lineHeight:1.6}}>Review cards are stored in this browser only. Clearing site data or switching device loses them.</p>
+    </section>}
+  </div>;
+}
+
 function lessonPracticeItems(lesson,d){
   if(lesson.kind==="vocab") return (d.vocab[lesson.idx]?.words||[]).filter(w=>w.t&&w.r).map(w=>({target:w.t,ref:w.r,note:w.ex||"",pronunciation:w.p||""}));
   if(lesson.kind==="dialogue") return (d.dialogues[lesson.idx]?.lines||[]).filter(w=>w.target&&w.ref).map((w,i,lines)=>({...w,note:i ? lines[i-1].target : d.dialogues[lesson.idx].scene}));
@@ -6401,8 +6701,14 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   const [d, setD]       = useState({ loading:true, err:"", grammar:[], vocab:[], dialogues:[] });
   const [done, setDone] = useState(() => lpLoad(tLang));
   const [open, setOpen] = useState(null);
+  // Missions are authored per language; only offer one where it actually exists.
+  const missions = MISSIONS[tLang] || [];
+  const [openMission, setOpenMission] = useState(null);
+  const [missionsDone, setMissionsDone] = useState(() => { try { return new Set(JSON.parse(learnerGet("missions_done_"+tLang) || "[]")); } catch(e) { return new Set(); } });
 
-  useEffect(()=>{ setDone(lpLoad(tLang)); setOpen(null); }, [tLang]);
+  useEffect(()=>{ setDone(lpLoad(tLang)); setOpen(null); setOpenMission(null);
+    try { setMissionsDone(new Set(JSON.parse(learnerGet("missions_done_"+tLang) || "[]"))); } catch(e) { setMissionsDone(new Set()); }
+  }, [tLang]);
   useEffect(()=>{
     let alive=true; setD(x=>({...x, loading:true, err:""}));
     Promise.allSettled([
@@ -6439,6 +6745,15 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   const pct = total ? Math.round(doneCount/total*100) : 0;
   const nextLesson = allLessons.find(l=>!done.has(l.id));
 
+  if (openMission) return <MissionView mission={openMission} tLang={tLang}
+    onClose={()=>setOpenMission(null)}
+    onFinished={()=>{
+      const next=new Set([...missionsDone, openMission.id]);
+      setMissionsDone(next);
+      try { learnerSet("missions_done_"+tLang, JSON.stringify([...next])); } catch(e) {}
+      setOpenMission(null);
+    }}/>;
+
   if (open){
     const idx = allLessons.findIndex(l=>l.id===open.id);
     const nx  = allLessons[idx+1] || null;
@@ -6449,6 +6764,15 @@ function LearnPath({ L, tLang, onStreakUpdate }){
 
   return (
     <div style={{paddingBottom:24}}>
+      {missions.map(m => <section key={m.id} style={{background:C.card,border:`1px solid ${C.accent}`,borderRadius:20,padding:24,marginBottom:24}}>
+        <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:8}}>MISSION · SOMETHING YOU CAN DO</div>
+        <h2 style={{fontFamily:"var(--serif)",fontSize:24,color:C.text,margin:"0 0 10px"}}>{m.title}</h2>
+        <p style={{color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>{m.outcome} You write each answer and we tell you what it would communicate — including when we cannot check it.</p>
+        <button onClick={()=>setOpenMission(m)} style={{background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"14px 20px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>{missionsDone.has(m.id) ? "Practise it again" : "Start the mission"}</button>
+        <span style={{color:C.muted,fontSize:13,marginLeft:14}}>About {m.minutes} minutes</span>
+        {missionsDone.has(m.id) && <p style={{fontSize:12,color:C.muted,margin:"14px 0 0"}}>You have completed this mission once. Repeating it is the point — the phrases are in your review deck if you saved them.</p>}
+      </section>)}
+
       <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:18,padding:"24px",marginBottom:24}}>
         <div style={{fontSize:12,color:C.muted,fontWeight:600,marginBottom:8}}>{tName} · your next step</div>
         <h2 style={{fontFamily:"var(--serif)",fontSize:28,fontWeight:600,color:C.text,lineHeight:1.2,margin:"0 0 12px"}}>{nextLesson ? lpTitle(nextLesson,d,tName) : "Keep what you've learned"}</h2>
@@ -7370,7 +7694,7 @@ function Conversation({ tLang, rLangs, nativeLang }) {
   const tName   = TARGETS[tLang]?.name || "French";
   const tTts    = TARGETS[tLang]?.tts  || "fr-FR";
   const refName = rLangs[0] ? (REFS?.[rLangs[0]]?.name || TARGETS[rLangs[0]]?.name || "English") : "English";
-  const level   = (() => { try { return localStorage.getItem("user_level") || "beginner"; } catch(e){ return "beginner"; } })();
+  const level   = (() => { try { return learnerGet("user_level") || "beginner"; } catch(e){ return "beginner"; } })();
   const hasSR   = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 
   const SCENARIOS = [
@@ -8180,7 +8504,7 @@ function App() {
   const [themeChoice, setThemeChoice] = useState(() => themeChoiceGet());
   const [factIdx, setFactIdx]       = useState(0);
   // ── auth / plan ────────────────────────────────────────────────────────────
-  const [tLang, setTLang]           = useState(() => { try { return localStorage.getItem("target_lang") || "fr"; } catch(e) { return "fr"; } });
+  const [tLang, setTLang]           = useState(() => { try { return learnerGet("target_lang") || "fr"; } catch(e) { return "fr"; } });
   const [nativeLang, setNativeLang] = useState(() => _nativeLang);
   // Explanations/comparisons are given in the learner's own language — keep the
   // reference language in lockstep with nativeLang (was hardcoded to English).
@@ -8202,13 +8526,9 @@ function App() {
     try { return localStorage.getItem("_new_login") === "1"; } catch(e) { return false; }
   });
   const [isFree, setIsFree]         = useState(getUserPlan() === "free");
-  const [expiryWarning, setExpiryWarning] = useState(() => {
-    if (!_authExpiry) return null;
-    const days = Math.floor((new Date(_authExpiry) - new Date()) / 86400000);
-    return (days >= 0 && days <= 3) ? days : null;
-  });
+  const [expiryWarning, setExpiryWarning] = useState(() => codeSessionExpiryWarning());
   const [streak, setStreak] = useState(() => _streak.get().count);
-  const [userLevel, setUserLevel] = useState(() => { try { return localStorage.getItem("user_level") || ""; } catch(e) { return ""; } });
+  const [userLevel, setUserLevel] = useState(() => { try { return learnerGet("user_level") || ""; } catch(e) { return ""; } });
 
   // ── event listeners (unchanged) ──────────────────────────────────────────
   useEffect(() => {
@@ -8216,6 +8536,18 @@ function App() {
     window.addEventListener("session-renewed", handler);
     return () => window.removeEventListener("session-renewed", handler);
   }, []);
+
+  // Signing in switches accounts inside the same tab. Every piece of learner
+  // state captured in a useState initializer belongs to whoever was signed in
+  // when this component mounted, so re-read it from account-scoped storage
+  // instead of showing the previous account's streak, level or language.
+  useEffect(() => {
+    setExpiryWarning(codeSessionExpiryWarning());
+    if (!loggedIn) return;
+    setStreak(_streak.get().count);
+    try { setUserLevel(learnerGet("user_level") || ""); } catch(e) {}
+    try { const saved = learnerGet("target_lang"); if (saved && TARGETS[saved]) setTLang(saved); } catch(e) {}
+  }, [loggedIn]);
 
   useEffect(() => {
     const handler = (e) => setStreak(e.detail?.count ?? _streak.get().count);
@@ -8245,7 +8577,7 @@ function App() {
         const data = await res.json();
         if (res.ok && data.token) {
           saveSession(data.token, data.expiresAt, data.email, data.plan);
-          try { if (!localStorage.getItem("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
+          try { if (!learnerGet("_seen_onboard")) localStorage.setItem("_new_login","1"); } catch(e){}
           if (!cancelled) { setShowOnboarding((()=>{try{return localStorage.getItem("_new_login")==="1";}catch(e){return false;}})()); setLoggedIn(true); }
         } else if (!cancelled) {
           setMagicError(data.error || "This login link is invalid or has expired. Please request a new one.");
@@ -8302,11 +8634,11 @@ function App() {
         // Restore the learner's stored profile so level + language follow the account.
         if (d.userLevel) {
           setUserLevel(d.userLevel);
-          try { localStorage.setItem("user_level", d.userLevel); } catch(_) {}
+          try { learnerSet("user_level", d.userLevel); } catch(_) {}
         }
         if (d.targetLang && TARGETS[d.targetLang] && d.targetLang !== tLang) {
           setTLang(d.targetLang);
-          try { localStorage.setItem("target_lang", d.targetLang); } catch(_) {}
+          try { learnerSet("target_lang", d.targetLang); } catch(_) {}
         }
         if (d.needsRelogin) window.dispatchEvent(new CustomEvent("show-upgrade", { detail: { upgraded: true } }));
       })
@@ -8340,7 +8672,7 @@ function App() {
   }, [nativeLang]);
 
   useEffect(() => {
-    try { localStorage.setItem("target_lang", tLang); } catch(e) {}
+    try { learnerSet("target_lang", tLang); } catch(e) {}
     activeLang  = TARGETS[tLang]?.tts || "fr-FR";
     activeVoice = "";
   }, [tLang]);
@@ -8397,9 +8729,9 @@ function App() {
   if (showOnboarding) {
     return (
       <NewOnboarding
-        onSetLang={(code) => { setTLang(code); try { localStorage.setItem("target_lang", code); } catch(e){} }}
+        onSetLang={(code) => { setTLang(code); try { learnerSet("target_lang", code); } catch(e){} }}
         onDone={() => {
-          try { localStorage.removeItem("_new_login"); localStorage.setItem("_seen_onboard","1"); } catch(e){}
+          try { localStorage.removeItem("_new_login"); learnerSet("_seen_onboard","1"); } catch(e){}
           setShowOnboarding(false);
           setView("learn");
         }}
@@ -8542,7 +8874,7 @@ function App() {
           current={tLang}
           onPick={(code) => {
             setTLang(code); setView("explore"); setStack([]);
-            try { localStorage.setItem("target_lang", code); } catch(_) {}
+            try { learnerSet("target_lang", code); } catch(_) {}
             // Persist to the account so the choice follows the user across devices
             if (isLoggedIn()) {
               fetch("/api/auth/preferences", {

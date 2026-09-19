@@ -279,3 +279,88 @@ test('health refuses new traffic while the server is draining',async()=>{
   finally {app.locals.draining=false;}
   assert.equal((await fetch(base+'/health')).status,200);
 });
+
+// ── Mission answer checking ───────────────────────────────────────────────────
+// A mission tells the learner what their sentence would communicate. Bad
+// authoring here teaches wrong French silently, so the authored data is checked
+// against its own rules, and the honesty property (an unrecognised sentence is
+// never reported as an error) is asserted directly.
+const missionCtx = (() => {
+  const context = {};
+  vm.createContext(context);
+  const source = script.slice(script.indexOf('// ─── MISSIONS'), script.indexOf('function MissionView('));
+  assert.ok(source.includes('const MISSIONS'), 'mission source block not found in the client');
+  vm.runInContext(source, context);
+  return {
+    MISSIONS: vm.runInContext('MISSIONS', context),
+    missionCheck: vm.runInContext('missionCheck', context),
+  };
+})();
+const missionSteps = () => missionCtx.MISSIONS.fr[0].steps;
+const checkStep = (id, answer) => {
+  const step = missionSteps().find(s => s.id === id);
+  assert.ok(step, `no authored step ${id}`);
+  return missionCtx.missionCheck(step, answer);
+};
+
+test('every authored mission step accepts its own model answer and every listed alternative', () => {
+  const missions = Object.values(missionCtx.MISSIONS).flat();
+  assert.ok(missions.length > 0);
+  for (const mission of missions) {
+    assert.ok(mission.steps.length > 0, `${mission.id} has no steps`);
+    for (const step of mission.steps) {
+      assert.equal(missionCtx.missionCheck(step, step.reference).verdict, 'ok',
+        `${mission.id}/${step.id}: its own reference answer is not accepted`);
+      for (const alternative of step.accept) {
+        assert.equal(missionCtx.missionCheck(step, alternative).verdict, 'ok',
+          `${mission.id}/${step.id}: authored alternative rejected — ${alternative}`);
+      }
+      assert.ok(step.card && step.card.front && step.card.back, `${mission.id}/${step.id}: incomplete review card`);
+      assert.ok(step.task && step.reference && step.success, `${mission.id}/${step.id}: incomplete prompt`);
+    }
+  }
+});
+
+test('a correct answer written without accents is accepted, with the spelling noted', () => {
+  const result = checkStep('dessert', 'oui, une creme brulee');
+  assert.equal(result.verdict, 'ok');
+  assert.ok(result.refinements.some(r => /Accents are part of the spelling/.test(r)));
+});
+
+test('near misses are diagnosed specifically rather than marked wrong', () => {
+  const register = checkStep('entree', "Je veux la soupe à l'oignon");
+  assert.equal(register.verdict, 'close');
+  assert.match(register.message, /Je voudrais/);
+
+  const gender = checkStep('boisson', "un carafe d'eau");
+  assert.equal(gender.verdict, 'close');
+  assert.match(gender.message, /feminine/);
+
+  const wrongWord = checkStep('addition', 'la facture, merci');
+  assert.equal(wrongWord.verdict, 'close');
+  assert.match(wrongWord.message, /addition/);
+});
+
+test('an unrecognised but plausible sentence is reported as unchecked, never as an error', () => {
+  const result = checkStep('entree', 'Je voudrais le poulet rôti');
+  assert.equal(result.verdict, 'unchecked');
+  assert.match(result.message, /could not check/);
+  assert.doesNotMatch(result.message, /wrong|incorrect|mistake/i);
+  assert.equal(checkStep('entree', '   ').verdict, 'unchecked');
+});
+
+test('an accepted answer still reports a blunt or English phrase sitting next to it', () => {
+  const blended = checkStep('entree', "Je veux la soupe à l'oignon, enfin, je voudrais la soupe à l'oignon, s'il vous plaît");
+  assert.equal(blended.verdict, 'ok');
+  assert.ok(blended.refinements.some(r => /Je voudrais/.test(r)), 'register note was dropped on an accepted answer');
+});
+
+test('a polite-form reminder appears only when the politeness marker is missing', () => {
+  assert.ok(checkStep('plat', 'je voudrais le steak-frites').refinements.some(r => /s'il vous plaît/.test(r)));
+  assert.ok(!checkStep('plat', "Le steak-frites, s'il vous plaît.").refinements.some(r => /s'il vous plaît/.test(r)));
+});
+
+test('missions are only authored for languages that actually have them', () => {
+  assert.ok(missionCtx.MISSIONS.fr, 'French mission missing');
+  assert.equal(missionCtx.MISSIONS.zz, undefined);
+});
