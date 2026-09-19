@@ -142,7 +142,15 @@ registered vs active user counts (the production database read was blocked),
 the real subscription price, and any infrastructure budget. Per-message token
 usage is **not** unknown — it is in `ai_usage_logs` and only needs to be read.
 
-**Next measurement worth making:** run
-`SELECT feature_type, COUNT(*), AVG(input_length), AVG(output_length) FROM ai_usage_logs GROUP BY feature_type;`
-against production. That replaces every estimate in this document with measured
-cost per learner. The instrumentation already exists; nobody has looked at it.
+**Next measurement worth making:** run `scripts/ai-usage.js`, which reads the
+token counts already recorded in `ai_usage_logs` and reports cost per message,
+cost per learner, and — the figure that should set the daily cap — how many
+messages the heaviest learners actually send in a day:
+
+```sh
+fly ssh console -a tongue-app -C "node /app/scripts/ai-usage.js"
+```
+
+It recomputes cost from the token columns at a rate you pass in, and prints the
+rate used. It deliberately ignores the stored `estimated_cost` column, which was
+written with a hardcoded $3/$15 that may not be the deployed model's price.
