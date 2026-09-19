@@ -3185,7 +3185,7 @@ function getClientConfig() {
 }
 
 // ── ACCESS CODE LOGIN ─────────────────────────────────────────────────────────
-function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }) {
+function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess, signedOutNotice }) {
   // Remember the last-used code/email so returning users never have to look it up.
   const savedCode  = (() => { try { return localStorage.getItem("tongue_code")  || ""; } catch(e) { return ""; } })();
   const savedEmail = (() => { try { return localStorage.getItem("auth_email")   || ""; } catch(e) { return ""; } })();
@@ -3347,6 +3347,12 @@ function AccessCodeLogin({ onLogin, renewedBanner, magicError, checkoutSuccess }
         {checkoutSuccess && (
           <div style={{ background:"#dcfce7", border:"1px solid #86efac", borderRadius:10, padding:"12px 14px", marginBottom:16, textAlign:"center" }}>
             <div style={{ color:"#15803d", fontSize:12.5, fontWeight:600, lineHeight:1.5 }}>Thanks — your payment went through. Check your email for how to sign in to Premium.</div>
+          </div>
+        )}
+        {signedOutNotice && (
+          <div role="status" style={{ background:C.accentSoft, border:`1px solid ${C.accent}`, borderRadius:10, padding:"12px 14px", marginBottom:16 }}>
+            <div style={{ fontWeight:700, color:C.accent, fontSize:13, marginBottom:3 }}>Please sign in again</div>
+            <div style={{ color:C.text, fontSize:12, lineHeight:1.55 }}>{signedOutNotice}</div>
           </div>
         )}
         {renewedBanner && (
@@ -8522,6 +8528,7 @@ function App() {
   });
   const [magicError, setMagicError] = useState("");
   const [renewedBanner, setRenewedBanner] = useState(false);
+  const [signedOutNotice, setSignedOutNotice] = useState("");
   const [showOnboarding, setShowOnboarding] = useState(() => {
     try { return localStorage.getItem("_new_login") === "1"; } catch(e) { return false; }
   });
@@ -8624,7 +8631,20 @@ function App() {
   useEffect(() => {
     if (!isLoggedIn()) return;
     fetch("/api/auth/validate", { headers: { "Authorization": "Bearer " + getToken() } })
-      .then(r => { if(r.status===401 || r.status===403){ logout(); setLoggedIn(false); return null; } return r.ok ? r.json() : null; })
+      .then(async r => {
+        if (r.status === 401 || r.status === 403) {
+          // Sessions that never proved they own the address are no longer
+          // accepted. Say so, rather than showing a bare welcome screen to
+          // someone who believed they were signed in.
+          let code = "";
+          try { code = (await r.clone().json()).code || ""; } catch(e) {}
+          setSignedOutNotice(code === "sign_in_required"
+            ? "We tightened how accounts are protected, so this sign-in is no longer enough on its own. Use your email login link, Google, or your access code to get back to your account — your saved words and lessons are untouched."
+            : "Your session has ended. Sign in again to pick up where you left off.");
+          logout(); setLoggedIn(false); return null;
+        }
+        return r.ok ? r.json() : null;
+      })
       .then(d => {
         if (!d || !d.valid) return;
         if (d.plan && d.plan !== getUserPlan()) {
@@ -8724,7 +8744,7 @@ function App() {
       </div>
     );
   }
-  if (!loggedIn) return <AccessCodeLogin onLogin={() => { setIsFree(getUserPlan() === "free"); setShowOnboarding(localStorage.getItem("_new_login") === "1"); setLoggedIn(true); }} renewedBanner={renewedBanner} magicError={magicError} />;
+  if (!loggedIn) return <AccessCodeLogin onLogin={() => { setIsFree(getUserPlan() === "free"); setShowOnboarding(localStorage.getItem("_new_login") === "1"); setLoggedIn(true); }} renewedBanner={renewedBanner} magicError={magicError} signedOutNotice={signedOutNotice} />;
 
   if (showOnboarding) {
     return (
