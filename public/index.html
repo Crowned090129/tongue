@@ -3059,14 +3059,14 @@ function contentErrorMessage(err) {
   return "Couldn't load this content. Please try again.";
 }
 
-async function askClaude(prompt, maxTokens, lang, nativeLang) {
+async function askClaude(prompt, maxTokens, lang, nativeLang, featureType) {
   if (!isLoggedIn()) throw new ApiRequestError("not_logged_in", { status: 401, serverMessage: "Please sign in to use the AI tutor.", legacy: "NOT_LOGGED_IN" });
   let res;
   try {
     res = await fetch("/api/claude", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
-      body: JSON.stringify({ prompt, maxTokens: maxTokens || 1000, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en" }),
+      body: JSON.stringify({ prompt, maxTokens: maxTokens || 1000, language: lang || "fr", nativeLang: nativeLang || _nativeLang || "en", featureType: featureType || "unlabelled" }),
     });
   } catch (e) {
     throw new ApiRequestError("network", { legacy: "NETWORK" });
@@ -3474,7 +3474,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
     };
 
     try {
-      const result = await askClaude(prompts[exType], 1000, tLang, nativeLang);
+      const result = await askClaude(prompts[exType], 1000, tLang, nativeLang, "coach_exercise");
       setEx(result);
     } catch (err) {
       if (err.message !== "FREE_LIMIT") {
@@ -3499,7 +3499,7 @@ function AICoach({ tLang, rLangs, nativeLang }) {
     }
 
     try {
-      setFb(await askClaude(prompt, 1000, tLang, nativeLang));
+      setFb(await askClaude(prompt, 1000, tLang, nativeLang, "coach_feedback"));
     } catch (err) {
       if (err.message !== "FREE_LIMIT") {
         setFb({ error: aiErrorMessage(err) });
@@ -4037,7 +4037,7 @@ function AITabContent({ tLang, tabName, color, hideHeading }) {
     try {
       const r = await askClaude(
         `You are a ${tName} vocabulary teacher. Give 8 more useful, real ${tName} words for the category "${cat.name}" that are NOT already in this list: ${have.join(", ")}. Return ONLY valid JSON: {"words":[{"t":"the ${tName} word","p":"pronunciation guide","r":"English meaning"}]}`,
-        700, tLang, nativeL
+        700, tLang, nativeL, "vocab_more_words"
       );
       const fresh = (r && Array.isArray(r.words) ? r.words : []).filter(w => w && w.t && !have.includes(w.t));
       if (fresh.length) setMoreWords(m => ({ ...m, [i]: [...(m[i] || []), ...fresh] }));
@@ -4428,7 +4428,7 @@ function VocabCard({ fr, en, tLang, rLangs }) {
     try {
       const prompt = `You are a ${tName} teacher for ${refNames} speakers. Give a rich explanation of: "${displayFr}" (meaning: ${en}). Return ONLY valid JSON: {"pronunciation":"phonetic guide using simple English sounds","register":"formal / informal / neutral — when is this used?","explanation":"clear explanation of meaning and how/when to use it in real life","ref_connection":"how it compares to ${refNames} — same word? cognate? false friend? no equivalent?","examples":[{"fr":"natural ${tName} sentence","en":"English translation","ref":"${refNames} translation"},{"fr":"example 2","en":"English","ref":"ref"},{"fr":"example 3","en":"English","ref":"ref"}],"tip":"one memorable thing about this word","watch_out":"common mistake to avoid with this word"}`;
       if (!isLoggedIn()) { setData({ error: "NO_KEY" }); setLoading(false); return; }
-      const result = await askClaude(prompt, 700, tLang);
+      const result = await askClaude(prompt, 700, tLang, undefined, "vocab_card");
       setData(result);
     } catch(e) {
       console.error("[VocabCard] explanation failed:", e.code || e.message);
@@ -5024,7 +5024,7 @@ function WordSpace({ tLang, rLangs }) {
     try {
       const prompt = `You are a ${tName} language coach for ${refNames} speakers. The user typed: "${text}". This could be in any language. Detect the language, translate to ${tName} if not already in ${tName} (and also to ${refNames} if it was in ${tName}), and provide rich learning content. Return ONLY valid JSON: {"input_lang":"language detected","input_text":"${text}","translation_fr":"translation in ${tName}","translation_ref":"translation in ${refNames}","pronunciation":"phonetic guide for the ${tName} version","literal_breakdown":[{"word":"each ${tName} word","meaning":"what it means"}],"explanation":"grammar and usage explanation — why is it structured this way in ${tName}?","ref_comparison":"how does this compare to ${refNames}? same structure? different?","examples":[{"fr":"example 1 in ${tName}","en":"English","ref":"in ${refNames}"},{"fr":"example 2","en":"English","ref":"ref"},{"fr":"example 3","en":"English","ref":"ref"},{"fr":"example 4","en":"English","ref":"ref"}],"tip":"one key thing to remember about this word or phrase"}`;
       if (!isLoggedIn()) { setResult({ error: "NO_KEY" }); setLoading(false); return; }
-      const result = await askClaude(prompt, 900, tLang);
+      const result = await askClaude(prompt, 900, tLang, undefined, "word_space");
       setResult(result);
     } catch(e) {
       console.error("[WordSpace] translate failed:", e.code || e.message);
@@ -6119,7 +6119,7 @@ async function getBreakdown(lang, text){
   const prompt = `You are a ${name} teacher. Break this ${name} sentence into its parts for a learner, IN ORDER (each word, particle, grammatical ending, or punctuation as its own part). Sentence: "${text}"
 Return ONLY JSON: {"gist":"natural English translation of the whole sentence","parts":[{"s":"the surface form exactly as written, in ${name} script","r":"romanization/reading (empty string for Latin-script languages)","m":"short English meaning, 1-4 words","role":"noun|pronoun|verb|adjective|adverb|particle|preposition|conjunction|article|number|auxiliary|ending|interjection|punctuation"}],"related":[{"label":"a closely related grammar point OR a key word worth exploring next","note":"one short line on why it connects","kind":"grammar"}]}
 The parts, read left to right, MUST reconstruct the sentence exactly. Give 2-3 related items.`;
-  const data = await askClaude(prompt, 1300, lang, _nativeLang || "en");
+  const data = await askClaude(prompt, 1300, lang, _nativeLang || "en", "breakdown");
   if (!data || !Array.isArray(data.parts) || !data.parts.length) throw new Error("bad_breakdown");
   try { localStorage.setItem(key, JSON.stringify(data)); } catch(e){}
   return data;
@@ -6922,7 +6922,7 @@ function CultureScreen({ L, goBack }) {
     try {
       const res = await askClaude(
         `You are a ${L.name} culture and etiquette expert teaching a learner. Go deeper on this cultural point: "${c.title} — ${c.body}". Return ONLY JSON: {"detail":"2 short paragraphs explaining the nuance, history, and how it actually plays out day to day","examples":[{"phrase":"a real ${L.name} phrase or micro-situation","gloss":"English meaning"}],"dos":["one thing to do"],"donts":["one thing to avoid"]}`,
-        600, L.id, _nativeLang || "en"
+        600, L.id, _nativeLang || "en", "culture_detail"
       );
       setDeep(d => ({ ...d, [i]: { loading: false, data: res } }));
     } catch (e) {
@@ -7870,7 +7870,7 @@ function Conversation({ tLang, rLangs, nativeLang }) {
     if (!m || m.translation || m.translating) return;
     setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translating:true } : x));
     try {
-      const r = await askClaude(`Translate this ${tName} text into ${refName}. Return ONLY JSON: {"t":"the translation"}\n\nText: ${m.text}`, 250, tLang, nativeLang);
+      const r = await askClaude(`Translate this ${tName} text into ${refName}. Return ONLY JSON: {"t":"the translation"}\n\nText: ${m.text}`, 250, tLang, nativeLang, "conversation_translate");
       setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translation: (r && r.t) || "—", translating:false } : x));
     } catch(e) {
       setBoth(msgsRef.current.map((x,i) => i===idx ? { ...x, translating:false } : x));
@@ -7884,7 +7884,7 @@ function Conversation({ tLang, rLangs, nativeLang }) {
     setPhase("review"); phaseRef.current = "review"; setSummaryLoading(true);
     const transcript = msgsRef.current.map(m => `${m.who==="ai"?"Tutor":"You"}: ${m.text}`).join("\n");
     try {
-      const fb = await askClaude(`You were a ${tName} conversation tutor. Transcript:\n${transcript}\n\nGive honest, encouraging feedback in ${refName}. Return ONLY JSON: {"score":"A/B/C/D","strong":["point","point"],"fixes":[{"said":"exact quote","better":"correction","why":"brief reason"}],"next":"one thing to practice next"}`, 700, tLang, nativeLang);
+      const fb = await askClaude(`You were a ${tName} conversation tutor. Transcript:\n${transcript}\n\nGive honest, encouraging feedback in ${refName}. Return ONLY JSON: {"score":"A/B/C/D","strong":["point","point"],"fixes":[{"said":"exact quote","better":"correction","why":"brief reason"}],"next":"one thing to practice next"}`, 700, tLang, nativeLang, "conversation_feedback");
       setSummary(fb);
     } catch(e) { setSummary(null); }
     setSummaryLoading(false);
@@ -8062,7 +8062,7 @@ function TextAnalyzer({ tLang, rLangs, nativeLang }) {
     setLoading(true); setErr(""); setAnalysis(null);
     try {
       const prompt = `You are a ${tName} language expert. A learner who speaks ${refName} pasted this text:\n\n"${text.slice(0,600)}"\n\nAnalyze it deeply. Return JSON:\n{"language":"${tName} or note if different","translation":"natural ${refName} translation","summary":"what this is in 1 sentence","difficulty":"A1/A2/B1/B2/C1/C2","words":[{"word":"target word or phrase","meaning":"${refName} meaning","grammar":"part of speech and grammatical form explanation","ref":"how this relates to ${refName} — cognate? false friend? no equivalent?"}],"grammar_points":[{"pattern":"grammar structure used","explanation":"what it is and how it works — 2-3 sentences","example":"new example using the same structure"}],"tip":"one cultural or linguistic insight"}`;
-      const res = await askClaude(prompt, 900, tLang, nativeLang);
+      const res = await askClaude(prompt, 900, tLang, nativeLang, "text_analyzer");
       setAnalysis(res);
     } catch(e) {
       setErr("Could not analyze. Check your connection and try again.");
