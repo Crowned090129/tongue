@@ -38,9 +38,28 @@ mean authenticated traffic is now database-bound rather than free.
 `routes/claude.js` uses `claude-sonnet-4-5` with `max_tokens` capped at 2000
 (default 1000). Quotas: **free 5 messages/day, paid 300 messages/day.**
 
-**There is no prompt caching anywhere in the AI path** (`cache_control` appears
-zero times in `routes/claude.js`). Every turn resends the system prompt and the
-whole conversation at full input price.
+**Corrected 2026-09-19 after measuring the actual requests.** An earlier draft
+of this document claimed the AI path resends whole conversations uncached and
+logs no token usage. Both were wrong, and the caching recommendation that
+followed from them was wrong too. What is actually true:
+
+- `POST /api/claude` (one-shot generation) sends **one** user message, capped at
+  6,000 characters, plus a system prompt. No history is resent.
+- `POST /api/claude/chat` (the conversational Coach) **does** resend history —
+  up to 20 turns of up to 2,000 characters each, so roughly 10,000 tokens at the
+  cap — with `max_tokens: 400`.
+- Token usage **is already recorded.** `logUsage()` writes real
+  `usage.input_tokens` / `usage.output_tokens` per call into `ai_usage_logs`.
+  Its `estimated_cost` column, however, is hardcoded at $3/$15 per MTok, which
+  is not necessarily the deployed model's rate — treat the token columns as
+  measured and the cost column as an assumption.
+- Measured system prompt sizes: **236 tokens** (one-shot) and **335 tokens**
+  (chat). Both are **below the minimum cacheable prefix** (512–4096 tokens,
+  model-dependent), so caching the system prompt **cannot engage at all**.
+  Caching could only help the chat path once a conversation's history is long
+  enough to clear that floor, and only within the cache TTL. That is a real but
+  much narrower win than first claimed, and it is unverifiable here without
+  spending live provider budget.
 
 Estimating with current-generation Claude Sonnet 5 rates ($2/M input, $10/M
 output) — the deployed model is a previous generation and its rate should be
@@ -88,10 +107,11 @@ write per limited request. None of this is exotic. None of it is built.
 
 ## Recommended order — cheapest and most certain first
 
-1. **Add prompt caching to `routes/claude.js`.** No quality cost, no product
-   change. The system prompt and conversation prefix are resent in full on every
-   turn today. This is the only lever that reduces cost without reducing what a
-   learner gets.
+1. **Read `ai_usage_logs`.** The real per-message token counts are already
+   sitting in production. Querying that table replaces every estimate below with
+   a measurement, and costs nothing. Do this before changing any allowance.
+   (Correct the hardcoded $3/$15 rate in `logUsage()` to the deployed model's
+   actual rate at the same time, or recompute cost from the token columns.)
 2. **Set the paid allowance near break-even** (order of 50/day, not 300), or
    raise the price. 300/day is not a limit; it is an invitation to lose $72.
 3. **Reconsider the free allowance.** 5 messages/day × zero revenue is the entire
@@ -102,6 +122,10 @@ write per limited request. None of this is exotic. None of it is built.
    not assumed.
 5. **Only then** PgBouncer, replicas and horizontal scale — and only against a
    measured workload, not a target number.
+
+Prompt caching is **not** on this list. Measurement showed the system prompts
+are too small to cache, and the only candidate — a long Coach conversation — is
+both narrow and untestable without live provider spend.
 
 ## The honest summary
 
@@ -115,9 +139,10 @@ capacity before demand exists would be the expensive version of this mistake.
 
 Numbers that remain unknown because they need the owner or production access:
 registered vs active user counts (the production database read was blocked),
-actual per-message token usage (no `response.usage` logging exists), the real
-subscription price, and any infrastructure budget.
+the real subscription price, and any infrastructure budget. Per-message token
+usage is **not** unknown — it is in `ai_usage_logs` and only needs to be read.
 
-**Next measurement worth making:** log `usage.input_tokens` /
-`usage.output_tokens` per AI call. That replaces every estimate in this document
-with a measured cost per learner, and it is a few lines in `routes/claude.js`.
+**Next measurement worth making:** run
+`SELECT feature_type, COUNT(*), AVG(input_length), AVG(output_length) FROM ai_usage_logs GROUP BY feature_type;`
+against production. That replaces every estimate in this document with measured
+cost per learner. The instrumentation already exists; nobody has looked at it.
