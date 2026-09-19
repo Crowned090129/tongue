@@ -448,3 +448,70 @@ test('a Resend key alone is reported as unverified, not as working', async () =>
     assert.doesNotMatch(JSON.stringify(status), /re_test_key/, 'API key leaked into the status payload');
   } finally { restore(); }
 });
+
+// ── Product event endpoint ────────────────────────────────────────────────────
+// A write endpoint the browser can reach. The risks are an open name space
+// (anything can be written into the only measurement we have) and storing what
+// a learner typed. Both are asserted here.
+test('only whitelisted event names are accepted', async () => {
+  const ok = await post('/api/events', { verified: true }, { event: 'mission_started', props: { missionId: 'fr-restaurant', lang: 'fr' } });
+  assert.equal(ok.status, 202);
+  for (const bad of ['arbitrary_event', 'mission_started ', '', 'constructor', '__proto__']) {
+    const res = await post('/api/events', { verified: true }, { event: bad });
+    assert.equal(res.status, 400, `accepted unknown event name: ${JSON.stringify(bad)}`);
+  }
+  const noName = await post('/api/events', { verified: true }, { props: { lang: 'fr' } });
+  assert.equal(noName.status, 400);
+});
+
+test('the endpoint requires a signed-in learner', async () => {
+  const res = await post('/api/events', null, { event: 'mission_started' });
+  assert.equal(res.status, 401);
+});
+
+test('only the declared fields are stored, and never what the learner typed', async () => {
+  const marker = `probe_${suffix}`;
+  await post('/api/events', { verified: true }, {
+    event: 'mission_step_checked',
+    props: {
+      missionId: 'fr-restaurant', lang: 'fr', stepId: 'entree', verdict: 'close', attempt: 2,
+      answer: `${marker} je veux la soupe`,        // must be dropped
+      email: `${marker}@tongue-test.invalid`,      // must be dropped
+      nested: { secret: marker },                  // must be dropped
+    },
+  });
+  const row = await db.get(
+    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_step_checked' ORDER BY id DESC LIMIT 1",
+    [user.id]
+  );
+  assert.ok(row, 'event was not recorded');
+  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  assert.deepEqual(meta, { missionId: 'fr-restaurant', lang: 'fr', stepId: 'entree', verdict: 'close', attempt: 2 });
+  assert.doesNotMatch(JSON.stringify(meta), new RegExp(marker), 'learner-supplied content was stored');
+});
+
+test('an invalid verdict is dropped rather than recorded as a real outcome', async () => {
+  await post('/api/events', { verified: true }, {
+    event: 'mission_step_checked',
+    props: { missionId: 'fr-restaurant', lang: 'fr', stepId: 'plat', verdict: 'perfect', attempt: 1 },
+  });
+  const row = await db.get(
+    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_step_checked' ORDER BY id DESC LIMIT 1",
+    [user.id]
+  );
+  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  assert.equal(meta.verdict, undefined, 'an unrecognised verdict was stored');
+  assert.equal(meta.stepId, 'plat');
+});
+
+test('oversized strings are truncated rather than stored whole', async () => {
+  await post('/api/events', { verified: true }, {
+    event: 'mission_started', props: { missionId: 'x'.repeat(5000), lang: 'fr' },
+  });
+  const row = await db.get(
+    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_started' ORDER BY id DESC LIMIT 1",
+    [user.id]
+  );
+  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  assert.equal(meta.missionId.length, 64);
+});

@@ -6370,6 +6370,22 @@ function missionCheck(step, answer){
   return { verdict:"unchecked", message:`We could not check this one automatically — it may still be correct. Compare it with a sentence that works here: “${step.reference}”.` };
 }
 
+// Product events for the mission funnel. Sends the verdict, never the sentence
+// the learner wrote — their answers can contain anything and we do not need them
+// to see where a mission loses people. Failures are swallowed: measurement must
+// never break the thing being measured.
+function missionEvent(event, props){
+  try {
+    if (!isLoggedIn()) return;
+    fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+      body: JSON.stringify({ event, props }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch(e) {}
+}
+
 const MISSIONS = {
   fr: [{
     id: "fr-restaurant",
@@ -6508,17 +6524,30 @@ function MissionView({ mission, tLang, onClose, onFinished }){
   const S = { ...P, background:C.surf2, color:C.text, border:`1px solid ${C.line}` };
   const card = { background:C.card, border:`1px solid ${C.line}`, borderRadius:20, padding:"clamp(18px, 4vw, 32px)", boxShadow:C.sh };
 
-  const check = () => setResult(missionCheck(step, answer));
+  const attempts = useRef({});
+  const check = () => {
+    const outcome = missionCheck(step, answer);
+    attempts.current[step.id] = (attempts.current[step.id] || 0) + 1;
+    missionEvent("mission_step_checked", {
+      missionId: mission.id, lang: tLang, stepId: step.id,
+      verdict: outcome.verdict, attempt: attempts.current[step.id],
+    });
+    setResult(outcome);
+  };
   const advance = () => {
     const done = [...new Set([...cleared, stepIdx])];
     setCleared(done);
     setResult(null); setAnswer("");
     if (stepIdx + 1 < mission.steps.length) setStepIdx(stepIdx + 1);
-    else setStage("done");
+    else {
+      missionEvent("mission_completed", { missionId: mission.id, lang: tLang, cleared: done.length, total: mission.steps.length });
+      setStage("done");
+    }
   };
   const saveForReview = () => {
     let added = 0;
     mission.steps.forEach(s => { if (fcAdd({ lang:tLang, front:s.card.front, back:s.card.back, example:s.cue })) added++; });
+    missionEvent("mission_cards_saved", { missionId: mission.id, lang: tLang, added });
     setSavedMsg(added
       ? `${added} ${added === 1 ? "phrase" : "phrases"} added to your review deck, due today. Cards you already had keep their existing schedule.`
       : "These phrases are already in your review deck — their schedule is unchanged.");
@@ -6526,7 +6555,7 @@ function MissionView({ mission, tLang, onClose, onFinished }){
   const finish = () => { try { localStorage.removeItem(learnerKey(storeKey)); } catch(e) {} onFinished && onFinished(); };
 
   return <div style={{maxWidth:760,margin:"0 auto",paddingBottom:30}}>
-    <button onClick={onClose} style={{...S,padding:"8px 12px",marginBottom:20}}>← Back</button>
+    <button onClick={()=>{if(stage==="steps")missionEvent("mission_abandoned",{missionId:mission.id,lang:tLang,stepId:step?step.id:""});onClose();}} style={{...S,padding:"8px 12px",marginBottom:20}}>← Back</button>
     {storageError && <p role="alert" style={{color:C.red}}>{storageError}</p>}
 
     {stage === "brief" && <section style={card}>
@@ -6541,7 +6570,7 @@ function MissionView({ mission, tLang, onClose, onFinished }){
           <span style={{display:"block",color:C.muted,fontSize:13,marginTop:3}}>{p.note}</span>
         </li>)}
       </ol>
-      <button style={P} onClick={()=>setStage("steps")}>Start the mission</button>
+      <button style={P} onClick={()=>{missionEvent("mission_started",{missionId:mission.id,lang:tLang});setStage("steps");}}>Start the mission</button>
       <p style={{fontSize:12,color:C.muted,margin:"16px 0 0",lineHeight:1.6}}>You will write your answers. We check them against the phrases this mission teaches and explain the difference — we do not score pronunciation and we do not grade your French overall.</p>
     </section>}
 
@@ -6566,7 +6595,7 @@ function MissionView({ mission, tLang, onClose, onFinished }){
 
       {!result && <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:16}}>
         <button style={P} onClick={check}>Check my answer</button>
-        <button style={S} onClick={()=>setResult({verdict:"unchecked",message:`No problem — here is a sentence that works: “${step.reference}”. Try writing it yourself before moving on.`})}>I don't know — show me</button>
+        <button style={S} onClick={()=>{missionEvent("mission_step_skipped",{missionId:mission.id,lang:tLang,stepId:step.id});setResult({verdict:"unchecked",message:`No problem — here is a sentence that works: “${step.reference}”. Try writing it yourself before moving on.`});}}>I don't know — show me</button>
       </div>}
 
       {result && <div ref={feedbackRef} tabIndex={-1} role="status" style={{marginTop:18,padding:"16px 18px",borderRadius:14,outline:"none",

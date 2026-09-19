@@ -111,6 +111,7 @@ app.use("/api/auth",    require("./routes/auth"));
 app.use("/api/claude",  require("./routes/claude"));
 app.use("/api/stripe",  require("./routes/stripe"));
 app.use("/api/streaks", require("./routes/streaks"));
+app.use("/api/events",  require("./routes/events"));
 app.use("/api/content", require("./routes/content"));
 app.use("/api/push",    require("./routes/push"));
 app.use("/api/support", require("./routes/support"));
