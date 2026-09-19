@@ -6483,6 +6483,42 @@ function missionEvent(event, props){
   });
 })();
 
+// A mission is authored for a learner who reads English. `explain` carries the
+// same human-readable text for a learner who reads something else, and this
+// merges it in.
+//
+// Only prose is swapped. The accept lists and the diagnose `test` patterns
+// match the TARGET language — French stays French however the explanation is
+// written — so localising them would break the checker. Anything the overlay
+// omits falls back to the authored English, which means a half-finished
+// translation degrades one line at a time instead of all at once.
+function localizeMission(mission, lang){
+  const o = mission.explain && mission.explain[lang];
+  if (!o) return mission;
+  const mergeMessages = (rules, texts) =>
+    (rules || []).map((r, i) => (texts && texts[i] ? { ...r, message: texts[i] } : r));
+  return {
+    ...mission,
+    title: o.title || mission.title,
+    outcome: o.outcome || mission.outcome,
+    where: o.where || mission.where,
+    phrases: mission.phrases.map((p, i) => ({ ...p, ...((o.phrases && o.phrases[i]) || {}) })),
+    steps: mission.steps.map((st, i) => {
+      const os = (o.steps && o.steps[i]) || {};
+      return {
+        ...st,
+        speaker: os.speaker || st.speaker,
+        cueRef: os.cueRef || st.cueRef,
+        task: os.task || st.task,
+        success: os.success || st.success,
+        refine: mergeMessages(st.refine, os.refine),
+        diagnose: mergeMessages(st.diagnose, os.diagnose),
+        card: { ...st.card, back: (os.card && os.card.back) || st.card.back },
+      };
+    }),
+  };
+}
+
 const MISSIONS = {
   fr: [{
     id: "fr-restaurant",
@@ -6584,6 +6620,87 @@ const MISSIONS = {
         card:{ front:"L'addition, s'il vous plaît.", back:"The bill, please." },
       },
     ],
+    explain: {
+      es: {
+        title: "Pedir una comida y la cuenta",
+        outcome: "Pedir una entrada, un plato principal y una bebida en un restaurante francés, y luego pedir la cuenta.",
+        where: "Un restaurante en Francia, servicio de noche. El camarero habla primero.",
+        phrases: [
+          { ref:"Quisiera…", note:"La fórmula para pedir. «Je veux» significa «quiero» y suena brusco con un camarero, igual que en español." },
+          { ref:"…, por favor.", note:"Va al final. Con el personal se usa «vous», nunca «s'il te plaît»." },
+          { ref:"de entrada / de plato principal", note:"Ojo: en Francia «entrée» es la entrada, no el plato fuerte. Es una confusión común y cara." },
+          { ref:"una jarra de agua del grifo", note:"Es gratis en cualquier restaurante francés. Si pides «de l'eau» a secas, normalmente te venden una botella." },
+          { ref:"La cuenta, por favor.", note:"«La facture» es una factura de empresa. En un restaurante siempre es «l'addition»." },
+        ],
+        steps: [
+          {
+            speaker:"Camarero",
+            cueRef:"Buenas noches, ¿ya ha decidido?",
+            task:"Di que quisieras la sopa de cebolla de entrada.",
+            success:"Eso pide la sopa de cebolla con cortesía, y el camarero sabe que es tu entrada.",
+            refine:["Añade «s'il vous plaît» al final y suena más cálido: «Je voudrais la soupe à l'oignon, s'il vous plaît.»"],
+            diagnose:[
+              "«Je veux» significa «quiero». Es correcto, pero brusco — a un camarero le suena exigente. Usa «Je voudrais» («quisiera»).",
+              "«Onion» es la palabra en inglés. El plato es «la soupe à l'oignon».",
+              "Nombra el plato con su artículo: «la soupe à l'oignon». En francés los sustantivos casi siempre llevan artículo.",
+            ],
+            card:{ back:"Quisiera la sopa de cebolla." },
+          },
+          {
+            speaker:"Camarero",
+            cueRef:"Muy bien. ¿Y de plato principal?",
+            task:"Pide el filete con patatas fritas, con cortesía.",
+            success:"Claro y cortés — el camarero ya tiene tu plato principal.",
+            refine:["Con solo el nombre del plato, «s'il vous plaît» es lo que evita que suene seco: «Le steak-frites, s'il vous plaît.»"],
+            diagnose:[
+              "«Je veux» («quiero») es demasiado brusco aquí. «Je voudrais le steak-frites» o simplemente «Le steak-frites, s'il vous plaît».",
+              "En una carta francesa el plato es «le steak-frites» — carne y patatas juntas, como un solo plato. Pedir «le steak» solo puede llegar sin las patatas.",
+              "Ese es el nombre en inglés. El plato es «le steak-frites».",
+            ],
+            card:{ back:"El filete con patatas, por favor." },
+          },
+          {
+            speaker:"Camarero",
+            cueRef:"¿Y para beber?",
+            task:"Pide una jarra de agua del grifo.",
+            success:"Esa es exactamente la frase que consigue agua del grifo gratis en vez de una botella que te cobran.",
+            refine:["Termina con «s'il vous plaît»: «Une carafe d'eau, s'il vous plaît.»"],
+            diagnose:[
+              "«Carafe» es femenino, así que lleva «une», no «un»: «une carafe d'eau».",
+              "Pedir solo «de l'eau» normalmente te trae una botella de agua mineral en la cuenta. «Une carafe d'eau» es la jarra de agua del grifo, gratis.",
+              "Eso está en inglés. Pide «une carafe d'eau».",
+            ],
+            card:{ back:"Una jarra de agua, por favor." },
+          },
+          {
+            speaker:"Camarero",
+            cueRef:"¿Va a tomar postre?",
+            task:"Di que sí — una crème brûlée.",
+            success:"Aceptado y pedido en una sola frase corta — así se hace normalmente.",
+            refine:["«Oui, une crème brûlée, s'il vous plaît» es la versión completa y cortés."],
+            diagnose:[
+              "«Crème» es femenino: «une crème brûlée».",
+              "Tienes bien el postre. Pídelo con su artículo: «une crème brûlée».",
+              "«Yes» está en inglés — es «oui». Luego nombra el postre: «Oui, une crème brûlée».",
+            ],
+            card:{ back:"Sí, una crème brûlée." },
+          },
+          {
+            speaker:"Has terminado de comer",
+            cueRef:"Nadie te dice nada — esta la tienes que empezar tú.",
+            task:"Pide la cuenta.",
+            success:"Esa es la frase. En Francia la cuenta no se trae hasta que la pides, así que este es el paso que cierra la comida.",
+            refine:["Esta casi siempre se dice con «s'il vous plaît»: «L'addition, s'il vous plaît.»"],
+            diagnose:[
+              "«La facture» es una factura de empresa. En un restaurante se pide «l'addition».",
+              "«La note» es lo que se pide en un hotel. En la mesa de un restaurante es «l'addition».",
+              "Esa es la palabra en inglés. Pide «l'addition, s'il vous plaît».",
+            ],
+            card:{ back:"La cuenta, por favor." },
+          },
+        ],
+      },
+    },
   }],
   es: [{
     id: "es-restaurante",
@@ -6973,7 +7090,7 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   const pct = total ? Math.round(doneCount/total*100) : 0;
   const nextLesson = allLessons.find(l=>!done.has(l.id));
 
-  if (openMission) return <MissionView mission={openMission} tLang={tLang}
+  if (openMission) return <MissionView mission={localizeMission(openMission, _nativeLang)} tLang={tLang}
     onClose={()=>setOpenMission(null)}
     onFinished={()=>{
       const next=new Set([...missionsDone, openMission.id]);
@@ -6992,7 +7109,7 @@ function LearnPath({ L, tLang, onStreakUpdate }){
 
   return (
     <div style={{paddingBottom:24}}>
-      {missions.map(m => <section key={m.id} style={{background:C.card,border:`1px solid ${C.accent}`,borderRadius:20,padding:24,marginBottom:24}}>
+      {missions.map(raw => localizeMission(raw, _nativeLang)).map(m => <section key={m.id} style={{background:C.card,border:`1px solid ${C.accent}`,borderRadius:20,padding:24,marginBottom:24}}>
         <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:8}}>{t("m_heading")}</div>
         <h2 style={{fontFamily:"var(--serif)",fontSize:24,color:C.text,margin:"0 0 10px"}}>{m.title}</h2>
         <p style={{color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>{m.outcome} You write each answer and we tell you what it would communicate — including when we cannot check it.</p>
@@ -9275,6 +9392,7 @@ function SupportChat() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key==="Enter" && send()}
+              aria-label={t("support_placeholder")}
               placeholder={t("support_placeholder")}
               style={{ flex:1, padding:"10px 14px", borderRadius:22, border:"1.5px solid #e2e8f0", fontSize:15, outline:"none", background:"#f8fafc" }}
             />

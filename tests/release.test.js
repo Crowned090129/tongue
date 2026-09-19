@@ -308,6 +308,7 @@ const missionCtx = (() => {
   assert.ok(source.includes('const MISSIONS'), 'mission source block not found in the client');
   vm.runInContext(source, context);
   return {
+    raw: context,
     MISSIONS: vm.runInContext('MISSIONS', context),
     missionCheck: vm.runInContext('missionCheck', context),
   };
@@ -637,4 +638,45 @@ test('a browser crash is recorded without carrying the learner any further', asy
   assert.equal(meta.line, 42);
   assert.equal(meta.secret, undefined);
   assert.doesNotMatch(JSON.stringify(meta), /must-not-persist/);
+});
+
+// ── Mission explanations in the learner's own language ────────────────────────
+// The overlay swaps prose only. If it ever touched the accept lists or the
+// diagnose patterns, the checker would stop matching the target language.
+test('a localized mission keeps the same matching rules as the original', () => {
+  const localize = vm.runInContext('localizeMission', missionCtx.raw);
+  const original = missionCtx.MISSIONS.fr[0];
+  const es = localize(original, 'es');
+
+  assert.notEqual(es.title, original.title, 'nothing was localized');
+  assert.equal(es.steps.length, original.steps.length);
+  for (let i = 0; i < original.steps.length; i++) {
+    assert.deepEqual(es.steps[i].accept, original.steps[i].accept, `step ${i}: accept list was altered`);
+    assert.equal(es.steps[i].reference, original.steps[i].reference, `step ${i}: the model answer changed language`);
+    assert.equal(es.steps[i].cue, original.steps[i].cue, `step ${i}: the French line changed`);
+    assert.equal(es.steps[i].card.front, original.steps[i].card.front, `step ${i}: the review card front changed`);
+    const a = es.steps[i].diagnose || [], b = original.steps[i].diagnose || [];
+    assert.equal(a.length, b.length);
+    for (let j = 0; j < b.length; j++) {
+      assert.equal(String(a[j].test), String(b[j].test), `step ${i}/${j}: a diagnose pattern was altered`);
+      assert.equal(a[j].always, b[j].always, `step ${i}/${j}: an always flag was dropped`);
+    }
+  }
+});
+
+test('the localized mission still checks answers identically', () => {
+  const localize = vm.runInContext('localizeMission', missionCtx.raw);
+  const es = localize(missionCtx.MISSIONS.fr[0], 'es');
+  const step = es.steps.find((s) => s.id === 'entree');
+  assert.equal(missionCtx.missionCheck(step, "Je voudrais la soupe à l'oignon").verdict, 'ok');
+  const close = missionCtx.missionCheck(step, "Je veux la soupe à l'oignon");
+  assert.equal(close.verdict, 'close');
+  assert.match(close.message, /quisiera|brusco/i, 'the explanation was not in Spanish');
+});
+
+test('an unlocalized language falls back to the authored English', () => {
+  const localize = vm.runInContext('localizeMission', missionCtx.raw);
+  const original = missionCtx.MISSIONS.fr[0];
+  assert.equal(localize(original, 'ja').title, original.title);
+  assert.equal(localize(missionCtx.MISSIONS.es[0], 'es').title, missionCtx.MISSIONS.es[0].title);
 });
