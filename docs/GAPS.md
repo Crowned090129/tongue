@@ -7,39 +7,40 @@ launch-gate checklist (that is in `LAUNCH_HANDOFF.md`); it is the answer to
 
 ---
 
-## 1. The teaching experience is one mission deep
+## 1. Two languages have a mission. Ten do not.
 
-**The single biggest gap.** There is exactly one authored mission — "Order a meal
-and ask for the bill" — and it exists only in French.
+**Partly closed 2026-09-19.** French and Spanish each have an authored
+mission. A tester who picks either gets checked answers and real feedback.
+A tester who picks any of the other ten still gets the old experience:
+study a list, rate yourself, nothing checks the answer.
 
-- The other **11 languages** get the old experience: study a list, type from
-  memory, rate yourself. Nothing checks the answer, so nothing tells the learner
-  what they got wrong or why.
-- Even in French, one mission covers one situation. There is no second mission,
-  no ordering between missions, and no sense of a path through them.
-- The rest of the French course is still **44 lessons of word lists** with
-  self-rated recall. The mission sits on top of that; it does not replace it.
+Authoring more is straightforward — the checker, storage, review hand-off,
+tests and translation overlay are all built and proven twice. What is missing
+is content, and it needs someone who knows the language well enough to write
+the diagnostics. **Do not generate these with AI without review.** The value of
+a mission is that a person decided "je veux" sounds demanding to a waiter; a
+generated near-miss explanation that is subtly wrong teaches something false,
+confidently, to someone with no way to detect it.
 
-The mission is a proven template, not a curriculum. Authoring more of them is
-straightforward work — the checker, the storage, the review hand-off and the
-tests are all built and verified. What is missing is the authored content, and
-that needs a human who knows the language well enough to write the diagnostics.
+The order worth doing next is whichever language your testers actually pick.
+That is now measurable — `scripts/health-report.js` reports missions started by
+language.
 
-**Do not scale this by generating missions with AI without linguistic review.**
-The whole value of the mission is that a human decided "je veux" sounds
-demanding to a waiter. A generated near-miss explanation that is subtly wrong
-teaches the learner something false, confidently.
+## 2. Teaching copy: interface translated, content partly
 
-## 2. Teaching copy is English-only
+**Partly closed 2026-09-19.** The mission interface is translated (English and
+Spanish written out, the other ten falling back to English per key, with a test
+that fails if the two dictionaries drift or a placeholder is dropped).
 
-The interface chrome is translated — 203 `t()` call sites across 12 locales. The
-**instructional copy is not.** Lesson framing, the mission brief, every piece of
-feedback and every button inside the learning flow is hardcoded English.
+A mission can also carry its explanations in another language, and the French
+mission has a full Spanish set — so a Spanish speaker learning French reads
+"Di que quisieras la sopa de cebolla de entrada" and gets told that "je veux"
+suena exigente. The French itself is untouched; only the prose is swapped, and
+tests assert the overlay cannot alter an accept list or a diagnose pattern.
 
-A Spanish speaker learning French gets Spanish menus and English teaching. That
-is the single largest thing standing between this and being a product for
-non-English speakers, and the mission added to the problem rather than reducing
-it.
+Still missing: every other pairing. A Portuguese speaker learning French, or a
+French speaker learning Spanish, reads English. The mechanism exists; the
+authoring does not.
 
 ## 3. Account recovery works, but it has a ceiling
 
@@ -95,29 +96,42 @@ are **already being logged** to `ai_usage_logs` and have simply never been read.
 This is the constraint that makes "millions of users" the wrong thing to work on
 next. Read the table, then set the allowances.
 
-## 7. Operational blind spots
+## 7. Operational blind spots — partly closed
 
-- **The container has not been built since `49d10cf`.** Docker is unavailable on
-  the development machine. The multi-stage Dockerfile, its build step and the
-  vendored-asset copy are unexercised. A Fly deploy would be the first real test.
-- **No monitoring, no alerting, no error tracking.** A 500 in production is
-  discovered by a user, not by the team.
-- **No backup or restore rehearsal.** There is a database with real accounts in
-  it and no evidence anyone can restore it.
-- **No rollback runbook**, though the previous image ID is recorded.
-- Rate limiting is a **database write per limited request**, which is the first
-  thing that will break under load.
+**Closed 2026-09-19:** browser crashes are now reported (message, file, line and
+the build hash, so a crash ties to a deploy), capped at five per page load and
+carrying no user content. `scripts/health-report.js` reads them back alongside
+the mission funnel and the verdict spread per step. Verified end to end: threw
+an error in a browser, read it out of the report.
 
-## 8. Reach and accessibility
+**Still open:**
 
-- Verified: keyboard focus handling in the mission, `role="status"` feedback,
-  390px layout with no overflow, reduced-motion and focus styles.
-- **Not verified:** screen readers, colour contrast across the full palette,
-  Safari and Firefox, slow or offline networks, audio permissions and failures.
-- The service worker registers but its registration failed in the test browser;
-  `sw.js` itself serves correctly. Offline behaviour is unknown, not broken.
-- iOS and Android scaffolds exist under `native/`. Neither has been built,
-  submitted, or tested against the current web build.
+- **No backup or restore rehearsal.** There is a database with real accounts and
+  no evidence anyone can restore it. This is the largest remaining operational
+  risk and it is not something code can close — it needs someone to take a
+  snapshot, restore it somewhere else, and confirm the data is intact.
+- **No alerting.** Crashes are recorded, not pushed. Somebody has to run the
+  report to find out.
+- **The container builds on deploy** via Fly's remote builder, which has now run
+  several times, so that gap is closed in practice.
+- Rate limiting is still a database write per limited request.
+
+## 8. Reach and accessibility — partly verified
+
+**Audited 2026-09-19** across the live surface: no interactive element without
+an accessible name, no image without alt text, no positive tabindex breaking tab
+order, and the mission's feedback announces through `role="status"` with focus
+moved to it. One real find, now fixed: the support chat input had a placeholder
+and no label, which screen readers announce inconsistently and which vanishes on
+the first keystroke.
+
+**Still unverified:** actual screen-reader passes, colour contrast across the
+full palette, Safari and Firefox (neither is available on this machine), slow or
+offline networks, and audio permissions and failures. The service worker
+registers in production and its offline behaviour has never been exercised.
+
+iOS and Android scaffolds exist under `native/`. Neither has been built,
+submitted, or tested against the current web build.
 
 ## 9. There is no evidence anyone wants this
 
