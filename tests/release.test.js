@@ -297,6 +297,12 @@ const missionCtx = (() => {
   };
 })();
 const missionSteps = () => missionCtx.MISSIONS.fr[0].steps;
+const stepsOf = (lang) => missionCtx.MISSIONS[lang][0].steps;
+const checkIn = (lang, id, answer) => {
+  const step = stepsOf(lang).find(s => s.id === id);
+  assert.ok(step, `no authored step ${lang}/${id}`);
+  return missionCtx.missionCheck(step, answer);
+};
 const checkStep = (id, answer) => {
   const step = missionSteps().find(s => s.id === id);
   assert.ok(step, `no authored step ${id}`);
@@ -453,6 +459,23 @@ test('a Resend key alone is reported as unverified, not as working', async () =>
 // A write endpoint the browser can reach. The risks are an open name space
 // (anything can be written into the only measurement we have) and storing what
 // a learner typed. Both are asserted here.
+// Earlier tests in this file record events of the same name, so "the latest
+// row" is not enough — wait for one written AFTER the call under test.
+const eventCursor = async () =>
+  Number((await db.get("SELECT COALESCE(MAX(id), 0) AS id FROM analytics_events WHERE user_id=$1", [user.id])).id);
+
+const eventAfter = async (cursor, name, tries = 100) => {
+  for (let i = 0; i < tries; i++) {
+    const row = await db.get(
+      "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name=$2 AND id > $3 ORDER BY id DESC LIMIT 1",
+      [user.id, name, cursor],
+    );
+    if (row) return typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+    await new Promise(r => setTimeout(r, 20));
+  }
+  return null;
+};
+
 test('only whitelisted event names are accepted', async () => {
   const ok = await post('/api/events', { verified: true }, { event: 'mission_started', props: { missionId: 'fr-restaurant', lang: 'fr' } });
   assert.equal(ok.status, 202);
@@ -471,6 +494,7 @@ test('the endpoint requires a signed-in learner', async () => {
 
 test('only the declared fields are stored, and never what the learner typed', async () => {
   const marker = `probe_${suffix}`;
+  const cursor = await eventCursor();
   await post('/api/events', { verified: true }, {
     event: 'mission_step_checked',
     props: {
@@ -480,38 +504,70 @@ test('only the declared fields are stored, and never what the learner typed', as
       nested: { secret: marker },                  // must be dropped
     },
   });
-  const row = await db.get(
-    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_step_checked' ORDER BY id DESC LIMIT 1",
-    [user.id]
-  );
-  assert.ok(row, 'event was not recorded');
-  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  const meta = await eventAfter(cursor, 'mission_step_checked');
+  assert.ok(meta, 'event was not recorded');
   assert.deepEqual(meta, { missionId: 'fr-restaurant', lang: 'fr', stepId: 'entree', verdict: 'close', attempt: 2 });
   assert.doesNotMatch(JSON.stringify(meta), new RegExp(marker), 'learner-supplied content was stored');
 });
 
 test('an invalid verdict is dropped rather than recorded as a real outcome', async () => {
+  const cursor = await eventCursor();
   await post('/api/events', { verified: true }, {
     event: 'mission_step_checked',
     props: { missionId: 'fr-restaurant', lang: 'fr', stepId: 'plat', verdict: 'perfect', attempt: 1 },
   });
-  const row = await db.get(
-    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_step_checked' ORDER BY id DESC LIMIT 1",
-    [user.id]
-  );
-  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  const meta = await eventAfter(cursor, 'mission_step_checked');
+  assert.ok(meta, 'event was not recorded');
   assert.equal(meta.verdict, undefined, 'an unrecognised verdict was stored');
   assert.equal(meta.stepId, 'plat');
 });
 
 test('oversized strings are truncated rather than stored whole', async () => {
+  const cursor = await eventCursor();
   await post('/api/events', { verified: true }, {
     event: 'mission_started', props: { missionId: 'x'.repeat(5000), lang: 'fr' },
   });
-  const row = await db.get(
-    "SELECT metadata FROM analytics_events WHERE user_id=$1 AND event_name='mission_started' ORDER BY id DESC LIMIT 1",
-    [user.id]
-  );
-  const meta = typeof row.metadata === 'string' ? JSON.parse(row.metadata) : row.metadata;
+  const meta = await eventAfter(cursor, 'mission_started');
+  assert.ok(meta, 'event was not recorded');
   assert.equal(meta.missionId.length, 64);
+});
+
+// The Spanish mission is held to exactly the same bar as the French one: the
+// generic test above already asserts every authored answer is accepted for
+// every language. These cover the judgement calls specific to Spanish.
+test('Spanish near misses are diagnosed specifically', () => {
+  const register = checkIn('es', 'primero', 'Quiero la sopa');
+  assert.equal(register.verdict, 'close');
+  assert.match(register.message, /Quisiera/);
+
+  const wrongWord = checkIn('es', 'cuenta', 'La factura, por favor');
+  assert.equal(wrongWord.verdict, 'close');
+  assert.match(wrongWord.message, /cuenta/);
+
+  const english = checkIn('es', 'bebida', 'water please');
+  assert.equal(english.verdict, 'close');
+});
+
+test('Spanish accepts regional alternatives rather than calling them wrong', () => {
+  // "me pone", "me trae", "para mí" and "voy a pedir" are all ordinary ways to
+  // order depending on where the speaker is from. None may be marked wrong.
+  for (const answer of ['Me pone la sopa', 'Me trae la sopa, por favor', 'Para mí la sopa', 'Voy a pedir la sopa']) {
+    assert.equal(checkIn('es', 'primero', answer).verdict, 'ok', `rejected a valid variant: ${answer}`);
+  }
+});
+
+test('an unrecognised Spanish sentence is unchecked, never wrong', () => {
+  const r = checkIn('es', 'primero', 'Quisiera el gazpacho andaluz');
+  assert.equal(r.verdict, 'unchecked');
+  assert.doesNotMatch(r.message, /wrong|incorrect|mistake/i);
+});
+
+test('every language with a mission has one that is complete', () => {
+  for (const [lang, missions] of Object.entries(missionCtx.MISSIONS)) {
+    for (const m of missions) {
+      assert.ok(m.phrases.length >= 3, `${lang}: too few phrases to teach`);
+      assert.ok(m.steps.length >= 3, `${lang}: too few steps`);
+      assert.ok(m.outcome && m.title, `${lang}: missing outcome or title`);
+    }
+  }
 });
