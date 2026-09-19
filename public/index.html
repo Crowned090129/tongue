@@ -2573,6 +2573,69 @@ Object.keys(UI_EXT).forEach(lang => {
   if (UI_STRINGS[lang]) Object.assign(UI_STRINGS[lang], UI_EXT[lang]);
 });
 
+// ── Mission strings ───────────────────────────────────────────────────────────
+// The chrome around a mission. English is the base; t() falls back to it for any
+// language not listed, so a missing locale shows English rather than a raw key.
+// The mission CONTENT (what a phrase means, why an answer lands wrong) is
+// authored per mission and is a separate problem — see `explain` in MISSIONS.
+const UI_MISSION = {
+  en: {
+    m_badge:"MISSION · ABOUT {n} MINUTES", m_byEnd:"By the end:", m_where:"Where you would use it:",
+    m_worthKnowing:"Worth knowing first", m_start:"Start the mission",
+    m_disclaimer:"You will write your answers. We check them against the phrases this mission teaches and explain the difference — we do not score pronunciation and we do not grade your language overall.",
+    m_step:"Step {n} of {m}", m_placeholder:"Write what you would say…",
+    m_check:"Check my answer", m_dontKnow:"I don't know — show me",
+    m_ok:"That works", m_close:"Close — one thing to fix", m_unchecked:"We could not check this one",
+    m_retryHint:"Edit your answer and check it again, or move on and come back to it.",
+    m_next:"Next step", m_finish:"Finish the mission", m_tryAgain:"Try again", m_moveOn:"Move on for now",
+    m_complete:"MISSION COMPLETE", m_worked:"You worked through all {n} steps. You cleared {c} of {n} on your own answer.",
+    m_notScore:"That is a record of this attempt, not a measure of your ability. The real test is saying it out loud.",
+    m_canSay:"What you can now say", m_comeBack:"Come back to it",
+    m_forget:"You will forget most of this within a few days unless you meet it again. Save these phrases and they will come back to you in Review on a spaced schedule.",
+    m_save:"Save these phrases for review", m_done:"Done",
+    m_saved:"{n} added to your review deck, due today. Cards you already had keep their existing schedule.",
+    m_alreadySaved:"These phrases are already in your review deck — their schedule is unchanged.",
+    m_localOnly:"Review cards are stored in this browser only. Clearing site data or switching device loses them.",
+    m_back:"← Back", m_minutes:"About {n} minutes",
+    m_storageError:"This browser could not save your place in the mission. Finish it in this tab or your progress will be lost.",
+    m_writeFirst:"Write your answer first — even a rough attempt is worth checking.",
+    m_accents:"Accents are part of the spelling here: “{ref}”.",
+    m_cannotCheck:"We could not check this one automatically — it may still be correct. Compare it with a sentence that works here: “{ref}”.",
+    m_showMe:"No problem — here is a sentence that works: “{ref}”. Try writing it yourself before moving on.",
+    m_heading:"MISSION · SOMETHING YOU CAN DO", m_startCta:"Start the mission", m_again:"Practise it again",
+    m_doneOnce:"You have completed this mission once. Repeating it is the point — the phrases are in your review deck if you saved them.",
+  },
+  es: {
+    m_badge:"MISIÓN · UNOS {n} MINUTOS", m_byEnd:"Al terminar:", m_where:"Dónde lo usarías:",
+    m_worthKnowing:"Conviene saber esto primero", m_start:"Empezar la misión",
+    m_disclaimer:"Escribirás tus respuestas. Las comparamos con las frases que enseña esta misión y te explicamos la diferencia — no evaluamos la pronunciación ni calificamos tu nivel.",
+    m_step:"Paso {n} de {m}", m_placeholder:"Escribe lo que dirías…",
+    m_check:"Revisar mi respuesta", m_dontKnow:"No lo sé — muéstramelo",
+    m_ok:"Así funciona", m_close:"Casi — una cosa que corregir", m_unchecked:"No pudimos revisar esta",
+    m_retryHint:"Edita tu respuesta y vuelve a revisarla, o sigue y vuelve a esta después.",
+    m_next:"Siguiente paso", m_finish:"Terminar la misión", m_tryAgain:"Intentar de nuevo", m_moveOn:"Seguir por ahora",
+    m_complete:"MISIÓN COMPLETADA", m_worked:"Completaste los {n} pasos. Acertaste {c} de {n} con tu propia respuesta.",
+    m_notScore:"Es el registro de este intento, no una medida de tu nivel. La prueba real es decirlo en voz alta.",
+    m_canSay:"Lo que ya puedes decir", m_comeBack:"Vuelve a esto",
+    m_forget:"Olvidarás casi todo esto en pocos días si no lo vuelves a ver. Guarda estas frases y volverán a aparecerte en Repaso de forma espaciada.",
+    m_save:"Guardar estas frases para repasar", m_done:"Listo",
+    m_saved:"{n} añadidas a tu mazo de repaso, para hoy. Las tarjetas que ya tenías conservan su calendario.",
+    m_alreadySaved:"Estas frases ya están en tu mazo de repaso — su calendario no cambia.",
+    m_localOnly:"Las tarjetas de repaso se guardan solo en este navegador. Si borras los datos del sitio o cambias de dispositivo, se pierden.",
+    m_back:"← Atrás", m_minutes:"Unos {n} minutos",
+    m_storageError:"Este navegador no pudo guardar tu avance en la misión. Termínala en esta pestaña o se perderá.",
+    m_writeFirst:"Escribe primero tu respuesta — incluso un intento aproximado vale la pena revisar.",
+    m_accents:"Los acentos son parte de la escritura aquí: “{ref}”.",
+    m_cannotCheck:"No pudimos revisar esta automáticamente — puede que sea correcta. Compárala con una frase que sí funciona: “{ref}”.",
+    m_showMe:"Sin problema — aquí tienes una frase que funciona: “{ref}”. Intenta escribirla tú antes de seguir.",
+    m_heading:"MISIÓN · ALGO QUE PUEDES HACER", m_startCta:"Empezar la misión", m_again:"Practicarla otra vez",
+    m_doneOnce:"Ya completaste esta misión una vez. Repetirla es justamente el punto — las frases están en tu mazo de repaso si las guardaste.",
+  },
+};
+Object.keys(UI_MISSION).forEach(lang => {
+  if (UI_STRINGS[lang]) Object.assign(UI_STRINGS[lang], UI_MISSION[lang]);
+});
+
 // ── Navigation / home shell strings (i18n) ────────────────────────────────────
 // English base; the other 11 languages are merged from UI_NAV_I18N just below.
 const UI_NAV = {
@@ -6351,12 +6414,12 @@ function missionDroppedAccents(answer, reference){
 // Returns { verdict: "ok" | "close" | "unchecked", message, reference }
 function missionCheck(step, answer){
   const said = missionNormalize(answer);
-  if (!said) return { verdict:"unchecked", message:"Write your answer first — even a rough attempt is worth checking." };
+  if (!said) return { verdict:"unchecked", message:t("m_writeFirst") };
   const hit = step.accept.find(a => said.includes(missionNormalize(a)));
   if (hit) {
     const refinements = [];
     if (missionDroppedAccents(answer, step.reference)) {
-      refinements.push(`Accents are part of the spelling here: “${step.reference.replace(/\.$/, "")}”.`);
+      refinements.push(t("m_accents", { ref: step.reference.replace(/\.$/, "") }));
     }
     (step.refine || []).forEach(r => { if (!r.test.test(said)) refinements.push(r.message); });
     // A correct phrase can sit next to a clumsy one. Precise rules (register,
@@ -6367,7 +6430,7 @@ function missionCheck(step, answer){
   }
   const miss = (step.diagnose || []).find(r => r.test.test(said));
   if (miss) return { verdict:"close", message: miss.message };
-  return { verdict:"unchecked", message:`We could not check this one automatically — it may still be correct. Compare it with a sentence that works here: “${step.reference}”.` };
+  return { verdict:"unchecked", message:t("m_cannotCheck", { ref: step.reference }) };
 }
 
 // Product events for the mission funnel. Sends the verdict, never the sentence
@@ -6610,7 +6673,7 @@ function MissionView({ mission, tLang, onClose, onFinished }){
 
   useEffect(() => {
     try { learnerSet(storeKey, JSON.stringify({ stage, stepIdx, answer, cleared })); setStorageError(""); }
-    catch(e) { setStorageError("This browser could not save your place in the mission. Finish it in this tab or your progress will be lost."); }
+    catch(e) { setStorageError(t("m_storageError")); }
   }, [storeKey, stage, stepIdx, answer, cleared]);
 
   // Move focus to the feedback so a screen reader announces the result, and so
@@ -6646,36 +6709,34 @@ function MissionView({ mission, tLang, onClose, onFinished }){
     let added = 0;
     mission.steps.forEach(s => { if (fcAdd({ lang:tLang, front:s.card.front, back:s.card.back, example:s.cue })) added++; });
     missionEvent("mission_cards_saved", { missionId: mission.id, lang: tLang, added });
-    setSavedMsg(added
-      ? `${added} ${added === 1 ? "phrase" : "phrases"} added to your review deck, due today. Cards you already had keep their existing schedule.`
-      : "These phrases are already in your review deck — their schedule is unchanged.");
+    setSavedMsg(added ? t("m_saved", { n: added }) : t("m_alreadySaved"));
   };
   const finish = () => { try { localStorage.removeItem(learnerKey(storeKey)); } catch(e) {} onFinished && onFinished(); };
 
   return <div style={{maxWidth:760,margin:"0 auto",paddingBottom:30}}>
-    <button onClick={()=>{if(stage==="steps")missionEvent("mission_abandoned",{missionId:mission.id,lang:tLang,stepId:step?step.id:""});onClose();}} style={{...S,padding:"8px 12px",marginBottom:20}}>← Back</button>
+    <button onClick={()=>{if(stage==="steps")missionEvent("mission_abandoned",{missionId:mission.id,lang:tLang,stepId:step?step.id:""});onClose();}} style={{...S,padding:"8px 12px",marginBottom:20}}>{t("m_back")}</button>
     {storageError && <p role="alert" style={{color:C.red}}>{storageError}</p>}
 
     {stage === "brief" && <section style={card}>
-      <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:10}}>MISSION · ABOUT {mission.minutes} MINUTES</div>
+      <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:10}}>{t("m_badge", { n: mission.minutes })}</div>
       <h1 style={{fontFamily:"var(--serif)",fontSize:"clamp(26px, 5vw, 34px)",color:C.text,margin:"0 0 12px",lineHeight:1.2}}>{mission.title}</h1>
-      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px",fontSize:16}}><b>By the end:</b> {mission.outcome}</p>
-      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 24px"}}><b>Where you would use it:</b> {mission.where}</p>
-      <h2 style={{fontSize:15,color:C.text,margin:"0 0 14px"}}>The five things worth knowing first</h2>
+      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px",fontSize:16}}><b>{t("m_byEnd")}</b> {mission.outcome}</p>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 24px"}}><b>{t("m_where")}</b> {mission.where}</p>
+      <h2 style={{fontSize:15,color:C.text,margin:"0 0 14px"}}>{t("m_worthKnowing")}</h2>
       <ol style={{margin:"0 0 26px",padding:"0 0 0 20px",color:C.text}}>
         {mission.phrases.map((p,i) => <li key={i} style={{marginBottom:14,lineHeight:1.65}}>
           <b>{p.target}</b> — {p.ref}
           <span style={{display:"block",color:C.muted,fontSize:13,marginTop:3}}>{p.note}</span>
         </li>)}
       </ol>
-      <button style={P} onClick={()=>{missionEvent("mission_started",{missionId:mission.id,lang:tLang});setStage("steps");}}>Start the mission</button>
-      <p style={{fontSize:12,color:C.muted,margin:"16px 0 0",lineHeight:1.6}}>You will write your answers. We check them against the phrases this mission teaches and explain the difference — we do not score pronunciation and we do not grade your French overall.</p>
+      <button style={P} onClick={()=>{missionEvent("mission_started",{missionId:mission.id,lang:tLang});setStage("steps");}}>{t("m_start")}</button>
+      <p style={{fontSize:12,color:C.muted,margin:"16px 0 0",lineHeight:1.6}}>{t("m_disclaimer")}</p>
     </section>}
 
     {stage === "steps" && step && <section style={card}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:10,flexWrap:"wrap",marginBottom:18}}>
         <span style={{color:C.accent,fontSize:12,fontWeight:700}}>{mission.title.toUpperCase()}</span>
-        <span style={{color:C.muted,fontSize:12,fontWeight:600}}>Step {stepIdx+1} of {mission.steps.length}</span>
+        <span style={{color:C.muted,fontSize:12,fontWeight:600}}>{t("m_step", { n: stepIdx+1, m: mission.steps.length })}</span>
       </div>
       <div style={{height:4,background:C.surf2,borderRadius:99,marginBottom:22,overflow:"hidden"}}>
         <div style={{height:"100%",width:`${(stepIdx/mission.steps.length)*100}%`,background:C.accent,borderRadius:99}}/>
@@ -6688,49 +6749,49 @@ function MissionView({ mission, tLang, onClose, onFinished }){
       <label htmlFor="mission-answer" style={{display:"block",fontSize:16,color:C.text,fontWeight:600,marginBottom:10,lineHeight:1.5}}>{step.task}</label>
       <textarea id="mission-answer" ref={inputRef} value={answer} onChange={e=>{setAnswer(e.target.value); if(result) setResult(null);}}
         onKeyDown={e=>{ if(e.key==="Enter" && (e.metaKey||e.ctrlKey)) { e.preventDefault(); check(); } }}
-        placeholder="Write what you would say…" rows={3}
+        placeholder={t("m_placeholder")} rows={3}
         style={{width:"100%",boxSizing:"border-box",padding:14,borderRadius:12,border:`1px solid ${C.line}`,background:C.surf,color:C.text,fontSize:16,fontFamily:"inherit",lineHeight:1.5,resize:"vertical"}}/>
 
       {!result && <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:16}}>
-        <button style={P} onClick={check}>Check my answer</button>
-        <button style={S} onClick={()=>{missionEvent("mission_step_skipped",{missionId:mission.id,lang:tLang,stepId:step.id});setResult({verdict:"unchecked",message:`No problem — here is a sentence that works: “${step.reference}”. Try writing it yourself before moving on.`});}}>I don't know — show me</button>
+        <button style={P} onClick={check}>{t("m_check")}</button>
+        <button style={S} onClick={()=>{missionEvent("mission_step_skipped",{missionId:mission.id,lang:tLang,stepId:step.id});setResult({verdict:"unchecked",message:t("m_showMe", { ref: step.reference })});}}>{t("m_dontKnow")}</button>
       </div>}
 
       {result && <div ref={feedbackRef} tabIndex={-1} role="status" style={{marginTop:18,padding:"16px 18px",borderRadius:14,outline:"none",
         background: result.verdict==="ok" ? C.accentSoft : C.surf2,
         border:`1px solid ${result.verdict==="ok" ? C.accent : C.line}`}}>
         <div style={{fontWeight:700,color: result.verdict==="ok" ? C.accent : C.text, marginBottom:6,fontSize:14}}>
-          {result.verdict==="ok" ? "That works" : result.verdict==="close" ? "Close — one thing to fix" : "We could not check this one"}
+          {result.verdict==="ok" ? t("m_ok") : result.verdict==="close" ? t("m_close") : t("m_unchecked")}
         </div>
         <p style={{color:C.text,lineHeight:1.65,margin:0}}>{result.message}</p>
         {(result.refinements || []).map((r,i) => <p key={i} style={{color:C.muted,lineHeight:1.65,margin:"8px 0 0",fontSize:14}}>{r}</p>)}
-        {result.verdict !== "ok" && <p style={{color:C.muted,fontSize:13,lineHeight:1.6,margin:"10px 0 0"}}>Edit your answer and check it again, or move on and come back to it.</p>}
+        {result.verdict !== "ok" && <p style={{color:C.muted,fontSize:13,lineHeight:1.6,margin:"10px 0 0"}}>{t("m_retryHint")}</p>}
         <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:16}}>
           {result.verdict === "ok"
-            ? <button style={P} onClick={advance}>{stepIdx+1 < mission.steps.length ? "Next step" : "Finish the mission"}</button>
-            : <><button style={P} onClick={()=>{setResult(null); if(inputRef.current) inputRef.current.focus();}}>Try again</button>
-               <button style={S} onClick={advance}>Move on for now</button></>}
+            ? <button style={P} onClick={advance}>{stepIdx+1 < mission.steps.length ? t("m_next") : t("m_finish")}</button>
+            : <><button style={P} onClick={()=>{setResult(null); if(inputRef.current) inputRef.current.focus();}}>{t("m_tryAgain")}</button>
+               <button style={S} onClick={advance}>{t("m_moveOn")}</button></>}
         </div>
       </div>}
     </section>}
 
     {stage === "done" && <section style={card}>
-      <div style={{color:C.accent,fontSize:12,fontWeight:700,marginBottom:10}}>MISSION COMPLETE</div>
+      <div style={{color:C.accent,fontSize:12,fontWeight:700,marginBottom:10}}>{t("m_complete")}</div>
       <h1 style={{fontFamily:"var(--serif)",fontSize:"clamp(24px, 5vw, 32px)",color:C.text,margin:"0 0 12px"}}>{mission.title}</h1>
-      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px"}}>You worked through all {mission.steps.length} steps. You cleared {cleared.length} of {mission.steps.length} on your own answer.</p>
-      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 22px",fontSize:14}}>That is a record of this attempt, not a measure of your French. The real test is saying it in a restaurant.</p>
+      <p style={{color:C.text,lineHeight:1.7,margin:"0 0 6px"}}>{t("m_worked", { n: mission.steps.length, c: cleared.length })}</p>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 22px",fontSize:14}}>{t("m_notScore")}</p>
       <div style={{background:C.surf2,borderRadius:14,padding:"16px 18px",marginBottom:22}}>
-        <h2 style={{fontSize:14,color:C.text,margin:"0 0 12px"}}>What you can now say</h2>
+        <h2 style={{fontSize:14,color:C.text,margin:"0 0 12px"}}>{t("m_canSay")}</h2>
         {mission.steps.map((s,i) => <p key={i} style={{margin:"0 0 8px",lineHeight:1.6,color:C.text,fontSize:14}}><b>{s.card.front}</b> <span style={{color:C.muted}}>— {s.card.back}</span></p>)}
       </div>
-      <h2 style={{fontSize:15,color:C.text,margin:"0 0 10px"}}>Come back to it</h2>
-      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 14px",fontSize:14}}>You will forget most of this within a few days unless you meet it again. Save these five phrases and they will come back to you in Review on a spaced schedule.</p>
+      <h2 style={{fontSize:15,color:C.text,margin:"0 0 10px"}}>{t("m_comeBack")}</h2>
+      <p style={{color:C.muted,lineHeight:1.7,margin:"0 0 14px",fontSize:14}}>{t("m_forget")}</p>
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-        <button style={S} onClick={saveForReview}>Save these phrases for review</button>
-        <button style={P} onClick={finish}>Done</button>
+        <button style={S} onClick={saveForReview}>{t("m_save")}</button>
+        <button style={P} onClick={finish}>{t("m_done")}</button>
       </div>
       {savedMsg && <p role="status" style={{color:C.muted,marginTop:14,fontSize:14,lineHeight:1.6}}>{savedMsg}</p>}
-      <p style={{fontSize:12,color:C.muted,margin:"18px 0 0",lineHeight:1.6}}>Review cards are stored in this browser only. Clearing site data or switching device loses them.</p>
+      <p style={{fontSize:12,color:C.muted,margin:"18px 0 0",lineHeight:1.6}}>{t("m_localOnly")}</p>
     </section>}
   </div>;
 }
@@ -6898,12 +6959,12 @@ function LearnPath({ L, tLang, onStreakUpdate }){
   return (
     <div style={{paddingBottom:24}}>
       {missions.map(m => <section key={m.id} style={{background:C.card,border:`1px solid ${C.accent}`,borderRadius:20,padding:24,marginBottom:24}}>
-        <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:8}}>MISSION · SOMETHING YOU CAN DO</div>
+        <div style={{color:C.accent,fontSize:12,fontWeight:700,letterSpacing:.4,marginBottom:8}}>{t("m_heading")}</div>
         <h2 style={{fontFamily:"var(--serif)",fontSize:24,color:C.text,margin:"0 0 10px"}}>{m.title}</h2>
         <p style={{color:C.muted,lineHeight:1.6,margin:"0 0 18px",maxWidth:560}}>{m.outcome} You write each answer and we tell you what it would communicate — including when we cannot check it.</p>
-        <button onClick={()=>setOpenMission(m)} style={{background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"14px 20px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>{missionsDone.has(m.id) ? "Practise it again" : "Start the mission"}</button>
-        <span style={{color:C.muted,fontSize:13,marginLeft:14}}>About {m.minutes} minutes</span>
-        {missionsDone.has(m.id) && <p style={{fontSize:12,color:C.muted,margin:"14px 0 0"}}>You have completed this mission once. Repeating it is the point — the phrases are in your review deck if you saved them.</p>}
+        <button onClick={()=>setOpenMission(m)} style={{background:C.accent,color:"#fff",border:"none",borderRadius:11,padding:"14px 20px",fontWeight:700,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>{missionsDone.has(m.id) ? t("m_again") : t("m_startCta")}</button>
+        <span style={{color:C.muted,fontSize:13,marginLeft:14}}>{t("m_minutes", { n: m.minutes })}</span>
+        {missionsDone.has(m.id) && <p style={{fontSize:12,color:C.muted,margin:"14px 0 0"}}>{t("m_doneOnce")}</p>}
       </section>)}
 
       <section style={{background:C.surf,border:`1px solid ${C.line}`,borderRadius:18,padding:"24px",marginBottom:24}}>

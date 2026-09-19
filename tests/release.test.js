@@ -286,7 +286,23 @@ test('health refuses new traffic while the server is draining',async()=>{
 // against its own rules, and the honesty property (an unrecognised sentence is
 // never reported as an error) is asserted directly.
 const missionCtx = (() => {
-  const context = {};
+  // missionCheck now writes its generated messages through the app's
+  // translator, so the sandbox needs one. Use the real English strings from the
+  // page rather than a stub, so these tests still read what a learner reads.
+  const missionStrings = (() => {
+    const src = script.slice(script.indexOf('const UI_MISSION = {'), script.indexOf('Object.keys(UI_MISSION)'));
+    const box = {};
+    vm.createContext(box);
+    vm.runInContext(src, box);
+    return vm.runInContext('UI_MISSION', box).en;
+  })();
+  const context = {
+    t: (key, vars) => {
+      let out = missionStrings[key] || key;
+      if (vars) for (const k of Object.keys(vars)) out = out.replace('{' + k + '}', vars[k]);
+      return out;
+    },
+  };
   vm.createContext(context);
   const source = script.slice(script.indexOf('// ─── MISSIONS'), script.indexOf('function MissionView('));
   assert.ok(source.includes('const MISSIONS'), 'mission source block not found in the client');
@@ -569,5 +585,38 @@ test('every language with a mission has one that is complete', () => {
       assert.ok(m.steps.length >= 3, `${lang}: too few steps`);
       assert.ok(m.outcome && m.title, `${lang}: missing outcome or title`);
     }
+  }
+});
+
+// ── Mission interface strings ─────────────────────────────────────────────────
+// t() falls back to English for a missing key, which is the right runtime
+// behaviour and a terrible way to find out a translation was forgotten.
+test('every mission string offered in English also exists in Spanish', () => {
+  const src = script.slice(script.indexOf('const UI_MISSION = {'), script.indexOf('Object.keys(UI_MISSION)'));
+  const box = {};
+  vm.createContext(box);
+  vm.runInContext(src, box);
+  const dict = vm.runInContext('UI_MISSION', box);
+
+  const missing = Object.keys(dict.en).filter((k) => !dict.es[k]);
+  assert.deepEqual(missing, [], `Spanish is missing mission strings: ${missing.join(', ')}`);
+
+  const extra = Object.keys(dict.es).filter((k) => !dict.en[k]);
+  assert.deepEqual(extra, [], `Spanish has strings English does not: ${extra.join(', ')}`);
+
+  // A placeholder dropped in translation silently renders "{n}" to the learner.
+  for (const [key, english] of Object.entries(dict.en)) {
+    const slots = [...english.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    const translated = [...dict.es[key].matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+    assert.deepEqual(translated, slots, `placeholders differ for ${key}`);
+  }
+});
+
+test('mission chrome is not left hardcoded in the component', () => {
+  const view = script.slice(script.indexOf('function MissionView('), script.indexOf('function lessonPracticeItems('));
+  // These were the literals before they were routed through t(); if one comes
+  // back, a learner in Spanish silently gets English.
+  for (const literal of ['Check my answer', 'Next step', 'Finish the mission', 'MISSION COMPLETE', 'Try again']) {
+    assert.ok(!view.includes(`>${literal}<`), `"${literal}" is hardcoded in MissionView again`);
   }
 });
