@@ -6,47 +6,43 @@ Read this first. Historical handoff claims are not current verification.
 
 | | Commit | Notes |
 |---|---|---|
-| **Deployed** | `88994b5` | image `registry.fly.io/tongue-app:deployment-01M2VDYVWAMWF0GT16ZGW52P1W` |
-| **Branch head** | `7484370` | `codex/tongue-release-readiness` — **not deployed** |
+| **Deployed** | `6535452` | image `registry.fly.io/tongue-app:deployment-01M2VSGSJD05GF4J8Q4H2JFGYW`, deployed 2026-09-19 02:57 UTC |
+| **Branch head** | `6535452` | `codex/tongue-release-readiness` — pushed, CI green |
+| Previous image (rollback) | `88994b5` | `registry.fly.io/tongue-app:deployment-01M2VDYVWAMWF0GT16ZGW52P1W` |
 
-The `49d10cf` hardening candidate is now **finished and locally verified**, and a
-first authored mission ships on top of it. See
-[the verification record](verification/2026-09-19-mission-and-hardening.md) for
-commands, results and the explicit not-verified list.
+Verified in production after the rolling deploy: both machines healthy,
+`/api/version` reports the new image, `/app` serves the content-hashed build with
+**zero third-party JavaScript** and no browser-side Babel, the restaurant mission
+is present in the shipped bundle, and the page renders with **no console errors**.
+The Docker multi-stage build was exercised for the first time by Fly's remote
+builder as part of this deploy.
 
-Local results: clean install, build, **53/53 tests**, **84/84 seeds**, runtime
-audit **9 moderate / 0 high / 0 critical**, SIGTERM drain exit 0, and a browser
-pass on the production-built client. Container build is still unexercised
-(no Docker on this machine); real email, Stripe and load behaviour remain
-untested.
+**Email delivery is confirmed viable.** Both machines log
+`[EMAIL] SMTP transport authenticated — login links can be delivered.` The sender
+domain is `gmail.com`, which has SPF, DKIM and DMARC. No message was sent to
+anyone to establish this — `verify()` authenticates and disconnects.
 
-## What a learner can do now that they could not before
+Local results behind this release: clean install, build, **57/57 tests**, 84/84
+seeds, runtime audit **9 moderate / 0 high / 0 critical**, SIGTERM drain exit 0,
+and a full browser pass on the production-built client. See
+[the verification record](verification/2026-09-19-mission-and-hardening.md) and
+[what is not complete](GAPS.md).
 
-One mission — **"Order a meal and ask for the bill"** (French) — leads the Learn
-screen ahead of the lesson catalogue. It states a concrete outcome, teaches five
-phrases with the reason each matters, then asks the learner to write what they
-would say in five situations. Each answer is checked against authored
-alternatives and the learner is told what it would communicate: "je veux" reads
-as demanding to a waiter, "carafe" is feminine, "la facture" is an invoice rather
-than a restaurant bill. Valid alternatives and accent-free spelling are accepted.
-**An answer matching nothing authored is reported as unchecked, never as wrong.**
-No pronunciation or proficiency scoring. Finishing saves the five phrases into
-the existing SM-2 review deck, so they return on a schedule.
+## New constraint found while verifying email
 
-This is one mission in one language. It is a template, not a finished curriculum.
+Login links are sent through **Gmail SMTP from a personal `@gmail.com` address**.
+Two consequences, neither of which is a bug today and both of which bite later:
 
-## Deploying this changes who stays signed in
+1. **Gmail enforces a daily send cap** — on the order of 500 messages/day for a
+   free account, ~2,000 for Workspace. Magic-link sign-in is the primary recovery
+   path, so the number of people who can log in per day is capped by it. This
+   breaks quietly, at exactly the moment growth starts working.
+2. Sending account-access links from a personal Gmail address is a trust problem
+   and reads as phishing to a careful recipient.
 
-The deployed build issues a session to anyone who submits an **existing** address
-at signup. That is a live account-takeover path: knowing an address is enough to
-get a session for it. This branch closes it (`409`), and stops honouring the
-unverified tokens it already handed out.
-
-Consequence: everyone holding an unverified signup session is signed out on their
-next visit and must return via email link, Google or access code. The sign-in
-screen now explains this and confirms their saved work is intact. **Verify that
-production email actually delivers before deploying**, or those learners have no
-way back. Do not reintroduce a signup bypass to work around broken email.
+Moving to a dedicated sending domain on Resend (already keyed) would fix both.
+That requires SPF/DKIM records on the sending domain — `tongue.app` currently has
+**no MX, SPF or DKIM records at all**, which is why Resend cannot be used today.
 
 ## Decision and scope
 
@@ -97,18 +93,20 @@ Browser verified: French lesson opens; 12 words saved; one completion and one re
 
 ## Exact next action
 
-1. Confirm production email delivery in an authorised way (founder's own inbox),
-   because the sign-out above depends on it. This needs the account owner.
-2. Get answers to the capacity questions still unanswered: registered vs active
-   users, expected peak concurrency, provider budget, latency/availability
-   targets, backup and restore requirements. "Ready for millions" cannot be
-   assessed, let alone claimed, without them.
-3. Build the container somewhere Docker exists and verify the image boots,
-   serves `/app` from `build/index.html`, and drains on SIGTERM.
-4. Then one reviewed deployment: capture the previous image, confirm hosted CI,
-   check rolling health, `/api/version`, the served asset list, and one
-   authenticated journey.
+The release is deployed and verified. What matters next, in order:
 
-Do not expand the feature set to avoid these gates.
+1. **Put the mission in front of one real learner.** It is the first thing in
+   this product that produces a signal — did the feedback help, did they come
+   back for the review. Production logs still show effectively no user activity.
+2. **Read `ai_usage_logs`.** Real per-message token counts are already recorded
+   and have never been looked at. They replace every cost estimate in
+   [CAPACITY.md](CAPACITY.md) with a measurement, and should set the allowances.
+3. **Set up a sending domain** before growth makes the Gmail cap a real ceiling.
+4. **Stripe has never been exercised**, even in test mode. Do that before
+   accepting another payment.
+5. Backups and a restore rehearsal. There are real accounts and no evidence
+   anyone can restore them.
+
+Do not expand the feature set ahead of items 1 and 2.
 
 Historical state is retained in [the September 17 archive](archive/PROJECT_STATE_2026-09-17.md). Other architecture docs describe proposals, not mandatory scope or verified completion.

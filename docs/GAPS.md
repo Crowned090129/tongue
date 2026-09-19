@@ -41,16 +41,23 @@ is the single largest thing standing between this and being a product for
 non-English speakers, and the mission added to the problem rather than reducing
 it.
 
-## 3. Nobody can be sure a returning learner gets back in
+## 3. Account recovery works, but it has a ceiling
 
-- Signup no longer issues a session for an existing address (fixed this release).
-  Recovery therefore depends entirely on **email link, Google, or access code**.
-- **Production email delivery has never been confirmed.** `RESEND_API_KEY`,
-  `SMTP_*` and `EMAIL_FROM` are all set, but no message has been sent and no
-  inbox checked. `tongue.app` has **no SPF, no MX and no Resend DKIM record**,
-  so if mail works it is via SMTP, not Resend.
-- Until someone sends one real message and watches it arrive, account recovery
-  is an assumption.
+**Resolved 2026-09-19.** Production SMTP authenticates on both machines and the
+sender domain (`gmail.com`) has SPF, DKIM and DMARC. Recovery by email link is
+viable. This was established without sending a message to anyone.
+
+What remains:
+
+- **Gmail's daily send cap** (~500/day free, ~2,000 Workspace) limits how many
+  people can receive a login link per day. It is not a problem at today's usage
+  and becomes one the moment growth works.
+- Login links come from a **personal `@gmail.com` address**, which reads as
+  phishing and cannot be branded.
+- Resend is keyed but unusable: `tongue.app` has **no MX, SPF or DKIM records**.
+  Setting those up is the fix for both points above.
+- Still unproven: that a message lands in an inbox rather than a spam folder.
+  The transport authenticating is strong evidence, not proof.
 
 ## 4. Learner progress lives in one browser and nowhere else
 
