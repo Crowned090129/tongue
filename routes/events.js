@@ -20,6 +20,10 @@ const EVENTS = {
   mission_completed:    ["missionId", "lang", "cleared", "total"],
   mission_cards_saved:  ["missionId", "lang", "added"],
   mission_abandoned:    ["missionId", "lang", "stepId"],
+  // A crash in the browser is otherwise invisible: the learner sees a blank
+  // screen and nobody else ever hears about it. Deliberately carries no user
+  // content — a message, where it happened, and which build it was.
+  client_error:         ["message", "source", "line", "build", "view"],
 };
 
 // Deliberately excludes anything the learner typed. Their answers can contain
@@ -34,7 +38,7 @@ function clean(name, raw) {
     if (value === undefined || value === null) continue;
     if (key === "verdict") { if (VERDICTS.has(value)) out[key] = value; continue; }
     if (typeof value === "number") { if (Number.isFinite(value)) out[key] = Math.trunc(value); continue; }
-    if (typeof value === "string") { out[key] = value.slice(0, 64); continue; }
+    if (typeof value === "string") { out[key] = value.slice(0, key === "message" ? 300 : 64); continue; }
     // Anything else (objects, arrays, booleans) is not something we asked for.
   }
   return out;

@@ -620,3 +620,21 @@ test('mission chrome is not left hardcoded in the component', () => {
     assert.ok(!view.includes(`>${literal}<`), `"${literal}" is hardcoded in MissionView again`);
   }
 });
+
+test('a browser crash is recorded without carrying the learner any further', async () => {
+  const cursor = await eventCursor();
+  const long = 'E'.repeat(1000);
+  const res = await post('/api/events', { verified: true }, {
+    event: 'client_error',
+    props: { message: long, source: 'app.abc.js', line: 42, build: 'app.abc.js', view: '#learn', secret: 'must-not-persist' },
+  });
+  assert.equal(res.status, 202);
+  const meta = await eventAfter(cursor, 'client_error');
+  assert.ok(meta, 'crash was not recorded');
+  // Longer than a label, because a truncated stack message is useless — but
+  // still bounded, and still only the declared fields.
+  assert.equal(meta.message.length, 300);
+  assert.equal(meta.line, 42);
+  assert.equal(meta.secret, undefined);
+  assert.doesNotMatch(JSON.stringify(meta), /must-not-persist/);
+});

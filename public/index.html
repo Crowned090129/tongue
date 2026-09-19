@@ -6449,6 +6449,40 @@ function missionEvent(event, props){
   } catch(e) {}
 }
 
+// A crash in a learner's browser is invisible to everyone but them. Report it,
+// without their data: the message, where it came from, and which build it was.
+// Best effort by design — a failing reporter must never make things worse.
+(function installErrorReporter(){
+  // This region is also evaluated outside a browser by the test suite, and a
+  // module-scope crash here would take the whole page with it.
+  if (typeof window === "undefined") return;
+  let sent = 0;
+  const report = (message, source, line) => {
+    try {
+      if (sent >= 5 || !isLoggedIn()) return;   // a loop must not flood the log
+      sent++;
+      const build = (document.querySelector('script[src*="/build/app."]') || {}).src || "";
+      fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + getToken() },
+        body: JSON.stringify({ event: "client_error", props: {
+          message: String(message || "").slice(0, 300),
+          source: String(source || "").split("/").pop().slice(0, 64),
+          line: Number(line) || 0,
+          build: build.split("/").pop().slice(0, 64),
+          view: (location.hash || "").slice(0, 64),
+        }}),
+        keepalive: true,
+      }).catch(() => {});
+    } catch(e) {}
+  };
+  window.addEventListener("error", (e) => report(e.message, e.filename, e.lineno));
+  window.addEventListener("unhandledrejection", (e) => {
+    const r = e && e.reason;
+    report(r && r.message ? r.message : String(r), "promise", 0);
+  });
+})();
+
 const MISSIONS = {
   fr: [{
     id: "fr-restaurant",
